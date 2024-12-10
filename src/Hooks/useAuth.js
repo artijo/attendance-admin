@@ -27,6 +27,7 @@ export const useAuth = () => {
         setUser(null);
         localStorage.removeItem("refreshToken");
     };
+
     
     return { user, login, Logout: logoutUser };
  };

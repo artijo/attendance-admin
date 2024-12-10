@@ -1,9 +1,11 @@
 import { Outlet, Link, NavLink } from "react-router";
-import { useAuth } from "./Hooks/useAuth";
 import { Navigate } from "react-router";
+import { useEffect } from "react";
+import axios from "axios";
+import { HOSTNAME } from "./config";
+
 
 function App() {
-  const { user } = useAuth();
   const navLinks = [
     { name: "แดชบอร์ด", path: "/dashboard", icon:"home.svg" },
     { name: "นักเรียน", path: "/students", icon:"student.svg" },
@@ -20,9 +22,39 @@ function App() {
     document.querySelector("header").classList.toggle("active");
   }
 
+  const checkAuth = async () => {
+    try {
+        await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
+    } catch (error) {
+      const refreshToken = localStorage.getItem("refreshToken");
+        try {
+            // refresh token headers['Authorization'] = 'Bearer ' + token;
+            const response = await axios.post(
+              `${HOSTNAME}/a/auth/refresh`,
+              {},  // ข้อมูลที่ต้องการส่งไปใน request body (ถ้ามี)
+              {
+                headers: {
+                  Authorization: `Bearer ${refreshToken}`,
+                },
+                withCredentials: true
+              }
+            );
+
+        } catch (error) {
+          window.location.href = "/login";
+        }
+    }
+};
+
+
+
     if (!localStorage.getItem("refreshToken")) {
       return <Navigate to="/login" />;
     }
+    useEffect(() => {
+     checkAuth();
+
+    }, []);
 
 
   return (

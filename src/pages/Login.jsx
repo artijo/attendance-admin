@@ -1,6 +1,4 @@
 import { useForm } from "react-hook-form"
-import { HOSTNAME } from "../config.js";
-import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "../Hooks/useAuth.js";
 
