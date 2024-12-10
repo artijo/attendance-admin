@@ -1,6 +1,9 @@
 import { Outlet, Link, NavLink } from "react-router";
+import { useAuth } from "./Hooks/useAuth";
+import { Navigate } from "react-router";
 
 function App() {
+  const { user } = useAuth();
   const navLinks = [
     { name: "แดชบอร์ด", path: "/dashboard", icon:"home.svg" },
     { name: "นักเรียน", path: "/students", icon:"student.svg" },
@@ -16,6 +19,11 @@ function App() {
   function openMenu() {
     document.querySelector("header").classList.toggle("active");
   }
+
+    if (!localStorage.getItem("refreshToken")) {
+      return <Navigate to="/login" />;
+    }
+
 
   return (
     <>
