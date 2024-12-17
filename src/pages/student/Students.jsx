@@ -5,7 +5,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 function Students() {
   const [searchByClass, setSearchByClass] = useState("all");
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState(null);
   const [search, setSearch] = useState("");
   function fetchStudents(searchByClass) {
     axios
@@ -143,7 +143,13 @@ function Students() {
         </div>
       </div>
       <div className="mt-5">
-        <StudentList students={students} studentsPerPage={10} />
+        {
+          students ? (
+            <StudentList students={students} studentsPerPage={10} />
+          ) : (
+            <div>Loading...</div>
+          )
+        }
       </div>
     </div>
   );

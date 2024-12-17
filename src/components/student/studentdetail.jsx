@@ -1,3 +1,4 @@
+import { formatPhoneNumber } from "../../helper";
 function ShowDetail({ student }) {
   return (
     <div className="flow-root bg-white rounded-lg border border-gray-100 py-3 shadow-sm">
@@ -9,7 +10,9 @@ function ShowDetail({ student }) {
   
       <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
         <dt className="font-medium text-gray-900">คำนำหน้า</dt>
-        <dd className="text-gray-700 sm:col-span-2">ลืมเพิ่ม Field</dd>
+        <dd className="text-gray-700 sm:col-span-2">{
+            student.title == "MR" ? "นาย" : student.title == "MRS" ? "นาง" : student.title == "MISS" ? "นางสาว" : "ไม่ระบุ"
+            }</dd>
       </div>
   
       <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
@@ -47,7 +50,7 @@ function ShowDetail({ student }) {
       <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
         <dt className="font-medium text-gray-900">โทรศัพท์</dt>
         <dd className="text-gray-700 sm:col-span-2">
-          {student.tel}
+          {formatPhoneNumber(student.tel)}
         </dd>
   
         
