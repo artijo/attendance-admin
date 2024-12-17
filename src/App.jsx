@@ -24,7 +24,7 @@ function App() {
 
   const checkAuth = async () => {
     try {
-        await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
+      await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
     } catch (error) {
       const refreshToken = localStorage.getItem("refreshToken");
         try {
