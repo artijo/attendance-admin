@@ -2,6 +2,7 @@ import StudentList from "../../components/student/studentlist.jsx";
 import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config.js";
 import axios from "axios";
+import { Link } from "react-router-dom";
 function Students() {
   const [searchByClass, setSearchByClass] = useState("all");
   const [students, setStudents] = useState([]);
@@ -41,20 +42,21 @@ function Students() {
   return (
     <div>
       <h1>Students</h1>
-      <div className="mt-5 flex justify-between">
-        <div>
+      <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียน</Link>
+      <div className="mt-5 flex justify-between items-center">
+    <div className="flex gap-2 items-center">
+
           <label
             htmlFor="HeadlineAct"
-            className="block text-sm font-medium text-gray-900"
+            className="block text-sm font-medium text-gray-900 text-nowrap"
           >
-            {" "}
-            ค้นหาด้วยห้องเรียน{" "}
+            ระดับชั้น: 
           </label>
 
           <select
             name="searchbyclass"
             id="searchbyclass"
-            className="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
+            className="w-24 rounded-lg border-gray-300 text-gray-700 sm:text-sm"
             value={searchByClass}
             onChange={(e) => setSearchByClass(e.target.value)}
           >
@@ -101,7 +103,8 @@ function Students() {
               <option value="6-4">6/4</option>
             </optgroup>
           </select>
-        </div>
+    </div>
+      
 
         <div className="relative">
           <label htmlFor="Search" className="sr-only">

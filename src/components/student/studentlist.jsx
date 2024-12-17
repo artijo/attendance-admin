@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatPhoneNumber } from "../../helper";
+import { Link } from "react-router-dom";
 
 function StudentList({ students, studentsPerPage }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +35,9 @@ function StudentList({ students, studentsPerPage }) {
           <tbody className="divide-y divide-gray-200">
             {currentStudents.map((student) => (
               <tr key={student.stdId}>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
+                
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/students/${student.stdId}`} className="hover:bg-gray-100">{student.stdId}</Link></td>
+                
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(student.tel)}</td>
