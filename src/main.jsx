@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Students from "./pages/student/Students.jsx";
 import CreateForm from "./pages/student/CreateForm.jsx";
 import StudentDetail from "./pages/student/Detail.jsx";
-import AdminSearch from "./pages/AdminSearch.jsx";
+import EditStudent from "./pages/student/EditForm.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -24,11 +24,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="students" element={<Students />} />
         <Route path="students/create" element={<CreateForm />} />
         <Route path="students/:id" element={<StudentDetail />} />
+        <Route path="students/edit/:id" element={<EditStudent />} />
+
       </Route>
-
-      {/* for test ohm */}
-      <Route path="/adminSearch" element={<AdminSearch/>}></Route>
-
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
