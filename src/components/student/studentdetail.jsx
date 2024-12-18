@@ -31,21 +31,22 @@ function ShowDetail({ student }) {
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-medium text-gray-900">ชั้นมัธยมศึกษาปีที่</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {student.classroomMembers[0].classroom.classLevel}
+            {student.classroomMembers[0]?.classroom.classLevel || "ไม่ระบุ"}
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-medium text-gray-900">ห้อง</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {student.classroomMembers[0].classroom.classRoom}
+            {student.classroomMembers[0]?.classroom.classRoom || "ไม่ระบุ"}
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-medium text-gray-900">เลขที่</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {student.classroomMembers[0].stdNo}
+            {student.classroomMembers[0]?.stdNo || "ไม่ระบุ"
+            }
           </dd>
         </div>
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
