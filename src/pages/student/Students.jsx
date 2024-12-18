@@ -2,11 +2,13 @@ import StudentList from "../../components/student/studentlist.jsx";
 import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config.js";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 function Students() {
   const [searchByClass, setSearchByClass] = useState("all");
   const [students, setStudents] = useState(null);
   const [search, setSearch] = useState("");
+  const location = useLocation();
+  const { state } = location;
   function fetchStudents(searchByClass) {
     axios
       .get(HOSTNAME + "/a/students" + "?class=" + searchByClass)
@@ -42,6 +44,49 @@ function Students() {
   return (
     <div>
       <h1>Students</h1>
+      {state && state.message && (
+        <div role="alert" className="rounded-xl border border-gray-100 bg-white p-4">
+        <div className="flex items-start gap-4">
+          <span className="text-green-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </span>
+      
+          <div className="flex-1">
+            <strong className="block font-medium text-gray-900"> บันทึกข้อมูลแล้ว </strong>
+      
+            <p className="mt-1 text-sm text-gray-700">รายชื่อนักเรียนได้ถูกเพิ่มลงฐานข้อมูลเรียบร้อบแล้ว</p>
+          </div>
+      
+          <button className="text-gray-500 transition hover:text-gray-600">
+            <span className="sr-only">Dismiss popup</span>
+      
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      )}
       <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียน</Link>
       <div className="mt-5 flex justify-between items-center">
     <div className="flex gap-2 items-center">
