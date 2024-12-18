@@ -8,10 +8,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import NotFound from "./pages/404.jsx";
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+
+// Student Section
 import Students from "./pages/student/Students.jsx";
 import CreateForm from "./pages/student/CreateForm.jsx";
 import StudentDetail from "./pages/student/Detail.jsx";
 import EditStudent from "./pages/student/EditForm.jsx";
+
+// Classroom Section
+import Classroon from "./pages/classroom/Classroon.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -21,10 +26,13 @@ createRoot(document.getElementById("root")).render(
       <Route path="/" element={<Navigate to="/dashboard" />} />
       <Route path="/" element={<App />}>
         <Route path="dashboard" index element={<Dashboard />} />
+        {/* Student Section */}
         <Route path="students" element={<Students />} />
         <Route path="students/create" element={<CreateForm />} />
         <Route path="students/:id" element={<StudentDetail />} />
         <Route path="students/edit/:id" element={<EditStudent />} />
+        {/* Classroom Section */}
+        <Route path="classroom" element={<Classroon />} />
 
       </Route>
       <Route path="*" element={<NotFound />} />
