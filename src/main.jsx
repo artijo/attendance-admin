@@ -18,6 +18,7 @@ import EditStudent from "./pages/student/EditForm.jsx";
 // Classroom Section
 import Classroon from "./pages/classroom/Classroon.jsx";
 import ClassroomDetail from "./pages/classroom/Detail.jsx";
+import CreateClassroom from "./pages/classroom/CreateForm.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -34,6 +35,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="students/edit/:id" element={<EditStudent />} />
         {/* Classroom Section */}
         <Route path="classroom" element={<Classroon />} />
+        <Route path="classroom/create" element={<CreateClassroom />} />
         <Route path="classroom/:id" element={<ClassroomDetail />} />
 
       </Route>
