@@ -15,7 +15,7 @@ function ClassroomList({classrooms}) {
           {classrooms.map((classroom) => (
             <tr key={classroom.classroomId}>
               
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/classrooms/${classroom.classId}}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></td>
+              <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></td>
               
               <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classroomType.classTypeNameThai}</td>
             </tr>
