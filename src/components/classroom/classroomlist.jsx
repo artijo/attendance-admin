@@ -13,7 +13,7 @@ function ClassroomList({classrooms}) {
 
         <tbody className="divide-y divide-gray-200">
           {classrooms.map((classroom) => (
-            <tr key={classroom.classroomId}>
+            <tr key={classroom.classId}>
               
               <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></td>
               

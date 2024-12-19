@@ -10,7 +10,6 @@ function Classroon() {
             .get(HOSTNAME + "/a/classrooms")
             .then((response) => {
                 setClassrooms(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching classrooms", error);

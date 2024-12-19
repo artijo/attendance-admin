@@ -41,7 +41,7 @@ function ShowDetail({ classroom }) {
             {
                 classroom.timetable? (
                     classroom.timetable.map((timetable) => (
-                        <span key={timetable.ttId}>{timetable.subject.subNameThai} ({timetable.subject.subNameEng}) เวลา {timetable.timeStart} - {timetable.timeEnd} <br /> </span>
+                        <span key={timetable.timetableId}>{timetable.subject.subNameThai} ({timetable.subject.subNameEng}) เวลา {timetable.timeStart} - {timetable.timeEnd} <br /> </span>
                     )) 
                 ) : (
                     <span>ไม่มีวิชาที่เรียน</span>

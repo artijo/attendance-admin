@@ -13,7 +13,6 @@ function ClassroomDetail() {
             .get(HOSTNAME + "/a/classroom/" + id)
             .then((response) => {
                 setClassroom(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching classroom", error);
