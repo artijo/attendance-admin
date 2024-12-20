@@ -2,12 +2,11 @@ import { set, useForm } from "react-hook-form"
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
-function CreateClassroom() {
+function EditClassroom() {
     const [error, setError] = useState(null);
-    // const [teacher, setTeacher] = useState(null);
-    // const [leader, setLeader] = useState(null);
+    const { id } = useParams();
     const [teacherOptions, setTeacherOptions] = useState(null);
     const [leaderOptions, setLeaderOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
@@ -27,15 +26,15 @@ function CreateClassroom() {
     } = useForm();
     const onSubmit = async function (data) {
         try {
-            const response = await axios.post(`${HOSTNAME}/a/classroom`, data);
+            const response = await axios.put(`${HOSTNAME}/a/classroom`, { ...data, classId:id });
             if (response.status === 200) {
-                redirect("/classroom",
-                    {state: {message: "เพิ่มห้องเรียนเรียบร้อยแล้ว"}}
+                redirect("/classroom/"+id,
+                    {state: {message: "แก้ไขห้องเรียนเรียบร้อยแล้ว"}}
                 );
             }
         } catch (error) {
             console.error(error);
-            setError("เกิดข้อผิดพลาดในการสร้างห้องเรียน");
+            setError("เกิดข้อผิดพลาดในการแก้ไขห้องเรียน");
         }
     }
 
@@ -43,11 +42,13 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/teachers")
             .then((response) => {
-                // setTeacher(response.data);
-                setTeacherOptions(response.data.map(t => ({
-                    value: t.tchId,
-                    label: `${t.fName} ${t.lName}`
-                })));
+                setTeacherOptions(response.data
+                    .filter(t => !t.classId) // Filter out teachers with classId
+                    .map(t => ({
+                        value: t.tchId,
+                        label: `${t.fName} ${t.lName}`
+                    }))
+                );
             })
             .catch((error) => {
                 console.error("Error fetching teachers", error);
@@ -58,12 +59,13 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/leaders")
             .then((response) => {
-                // setLeader(response.data);
-                setLeaderOptions(response.data.map(l => ({
-                    value: l.ldrId,
-                    label: `${l.fName} ${l.lName}`
-                })));
-                
+                setLeaderOptions(response.data
+                    .filter(l => !l.classroom.some(c => c.leaderId === l.ldrId)) // Filter out leaders with classroom assignments
+                    .map(l => ({
+                        value: l.ldrId,
+                        label: `${l.fName} ${l.lName}`
+                    }))
+                );
             })
             .catch((error) => {
                 console.error("Error fetching leaders", error);
@@ -74,7 +76,6 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/classrooms/types")
             .then((response) => {
-                console.log(response);
                 setClassroomType(response.data);
             })
             .catch((error) => {
@@ -82,15 +83,57 @@ function CreateClassroom() {
             });
     }
 
+    function fetchClassroom() {
+        axios
+            .get(`${HOSTNAME}/a/classroom/${id}`)
+            .then((response) => {
+                const classroom = response.data;
+                // Set form values
+                setValue("classLevel", classroom.classLevel);
+                setValue("classRoom", classroom.classRoom);
+                setValue("academicYear", classroom.academicYear);
+                setValue("semester", classroom.semester);
+                setValue("classTypeId", classroom.classroomType?.classTypeId);
+                setValue("teacherIds", classroom.teacher?.map(t => t.tchId));
+                setValue("leaderId", classroom.leader?.ldrId);
+
+                // If teacher exists in classroom, add them to teacherOptions
+                if (classroom.teacher?.length > 0) {
+                    setTeacherOptions(prev => [
+                        ...(prev || []),
+                        ...classroom.teacher.map(t => ({
+                            value: t.tchId,
+                            label: `${t.fName} ${t.lName}`
+                        }))
+                    ]);
+                }
+
+                // If leader exists in classroom, add them to leaderOptions
+                if (classroom.leader) {
+                    setLeaderOptions(prev => [
+                        ...(prev || []),
+                        {
+                            value: classroom.leader.ldrId,
+                            label: `${classroom.leader.fName} ${classroom.leader.lName}`
+                        }
+                    ]);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching classroom", error);
+            });
+    }
+
     useEffect(() => {
         fetchTeacher();
         fetchLeader();
         fetchClassroomType();
-    }
-    , []);
+        fetchClassroom();
+    }, []);
+
     return (
         <div>
-            <h1>ฟอร์มเพิ่มห้องเรียนใหม่</h1>
+            <h1>ฟอร์มแก้ไขห้องเรียน</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
                 {error && <div className="text-red-500">{error}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
@@ -126,7 +169,12 @@ function CreateClassroom() {
                             id="ClassType"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                             options={classroomType?.map(ct => ({ value: ct.classTypeId, label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` })) || []}
-                            {...register("classTypeId")}
+                            value={classroomType?.find(ct => ct.classTypeId === watch('classTypeId'))
+                                ? { 
+                                    value: watch('classTypeId'), 
+                                    label: `${classroomType.find(ct => ct.classTypeId === watch('classTypeId')).classTypeNameThai} (${classroomType.find(ct => ct.classTypeId === watch('classTypeId')).classTypeNameEng})`
+                                  }
+                                : null}
                             onChange={(selectedOption) => setValue("classTypeId", selectedOption ? selectedOption.value : null)}
                             isClearable
                         />
@@ -155,16 +203,18 @@ function CreateClassroom() {
                         />
                     </div>
                     <div>
-                    <label htmlFor="ClassTeacher" className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
-                    <Select
-                id="ClassTeacher"
-                className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                options={teacherOptions}
-                {...register("teacherIds")}
-                onChange={(selectedOptions) => setValue("teacherIds", selectedOptions ? selectedOptions.map(option => option.value) : [])}
-                isClearable
-                isMulti
-            />
+                        <label htmlFor="ClassTeacher" className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
+                        <Select
+                            id="ClassTeacher"
+                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            options={teacherOptions}
+                            value={teacherOptions?.filter(option => 
+                                watch('teacherIds')?.includes(option.value)
+                            )}
+                            onChange={(selectedOptions) => setValue("teacherIds", selectedOptions ? selectedOptions.map(option => option.value) : [])}
+                            isClearable
+                            isMulti
+                        />
                     </div>
                     <div>
                         <label htmlFor="Leader" className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
@@ -172,7 +222,7 @@ function CreateClassroom() {
                             id="Leader"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                             options={leaderOptions}
-                            {...register("leaderId")}
+                            value={leaderOptions?.find(option => option.value === watch('leaderId'))}
                             onChange={(selectedOption) => setValue("leaderId", selectedOption ? selectedOption.value : null)}
                             isClearable
                         />
@@ -184,4 +234,4 @@ function CreateClassroom() {
     )
 }
 
-export default CreateClassroom;
+export default EditClassroom;

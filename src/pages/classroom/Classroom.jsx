@@ -3,7 +3,7 @@ import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { Link } from "react-router-dom";
 import ClassroomList from "../../components/classroom/classroomlist";
-function Classroon() {
+function Classroom() {
     const [classrooms, setClassrooms] = useState(null);
     function fetchClassrooms() {
         axios
@@ -33,4 +33,4 @@ function Classroon() {
   );
 }
 
-export default Classroon;
+export default Classroom;
