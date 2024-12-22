@@ -49,6 +49,7 @@ function Students() {
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}
       <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียน</Link>
+      <Link to={'upload'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียนด้วยไฟล์</Link>
       <div className="mt-5 flex justify-between items-center">
     <div className="flex gap-2 items-center">
 

@@ -14,6 +14,7 @@ import Students from "./pages/student/Students.jsx";
 import CreateForm from "./pages/student/CreateForm.jsx";
 import StudentDetail from "./pages/student/Detail.jsx";
 import EditStudent from "./pages/student/EditForm.jsx";
+import UploadWithFile from "./pages/student/UploadFile.jsx";
 
 // Classroom Section
 import Classroom from "./pages/classroom/Classroom.jsx";
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")).render(
         {/* Student Section */}
         <Route path="students" element={<Students />} />
         <Route path="students/create" element={<CreateForm />} />
+        <Route path="students/upload" element={<UploadWithFile />} />
         <Route path="students/:id" element={<StudentDetail />} />
         <Route path="students/edit/:id" element={<EditStudent />} />
         {/* Classroom Section */}
