@@ -22,6 +22,10 @@ import ClassroomDetail from "./pages/classroom/Detail.jsx";
 import CreateClassroom from "./pages/classroom/CreateForm.jsx";
 import EditClassroom from "./pages/classroom/EditForm.jsx";
 
+// Teacher Section
+import Teachers from "./pages/teachers/Teachers.jsx";
+import TeacherDetail from "./pages/teachers/Detail.jsx";
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <BrowserRouter>
@@ -41,6 +45,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="classroom/create" element={<CreateClassroom />} />
         <Route path="classroom/:id" element={<ClassroomDetail />} />
         <Route path="classroom/edit/:id" element={<EditClassroom />} />
+        {/* Teacher Section */}
+        <Route path="teachers" element={<Teachers />} />
+        <Route path="teachers/:id" element={<TeacherDetail />} />
 
       </Route>
       <Route path="*" element={<NotFound />} />
