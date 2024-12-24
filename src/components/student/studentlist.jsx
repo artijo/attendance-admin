@@ -40,7 +40,7 @@ function StudentList({ students, studentsPerPage }) {
                 
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(student.tel)}</td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td>
               </tr>
             ))}
           </tbody>

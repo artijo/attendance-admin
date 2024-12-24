@@ -54,7 +54,7 @@ function App() {
         refreshTokens();
       }
     } catch (error) {
-      window.location.href = "/login";
+      refreshTokens();
     }
 };
 

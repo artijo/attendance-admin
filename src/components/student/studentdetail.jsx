@@ -13,11 +13,11 @@ function ShowDetail({ student }) {
           <dd className="text-gray-700 sm:col-span-2">
             {student.title == "MR"
               ? "นาย"
-              : student.title == "MRS"
-              ? "นาง"
-              : student.title == "MISS"
+              : student.title == "MS"
               ? "นางสาว"
-              : "ไม่ระบุ"}
+              : student.title == "BOY"
+              ? "เด็กชาย"
+              : "เด็กหญิง"}
           </dd>
         </div>
 
@@ -57,7 +57,7 @@ function ShowDetail({ student }) {
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-medium text-gray-900">โทรศัพท์</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {formatPhoneNumber(student.tel)}
+            {student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}
           </dd>
         </div>
       </dl>

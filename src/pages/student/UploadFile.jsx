@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import * as XLSX from 'xlsx';
 import axios from 'axios'; // Add this import
+import { HOSTNAME } from "../../config";
 
 const StudentColumns = {
   NO: 'No',
@@ -187,7 +188,7 @@ function UploadWithFile() {
 
       console.log("Saving all sheets data:", dataToSave);
 
-      const response = await axios.post('/api/students/bulk', dataToSave);
+      const response = await axios.post(HOSTNAME+'/a/students/bulk', dataToSave);
       
       if (response.status === 200) {
         // Clear all modified data after successful save
