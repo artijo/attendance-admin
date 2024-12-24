@@ -22,27 +22,39 @@ function App() {
     document.querySelector("header").classList.toggle("active");
   }
 
+  async function refreshTokens() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    try {
+      // refresh token headers['Authorization'] = 'Bearer ' + token;
+      const response = await axios.post(
+        `${HOSTNAME}/a/auth/refresh`,
+        {},  // ข้อมูลที่ต้องการส่งไปใน request body (ถ้ามี)
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Cannot refresh token");
+      }
+
+  } catch (error) {
+    window.location.href = "/login";
+  }
+  }
+
+
   const checkAuth = async () => {
     try {
-      await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
+      const res = await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
+      if (res.status !== 200) {
+        refreshTokens();
+      }
     } catch (error) {
-      const refreshToken = localStorage.getItem("refreshToken");
-        try {
-            // refresh token headers['Authorization'] = 'Bearer ' + token;
-            const response = await axios.post(
-              `${HOSTNAME}/a/auth/refresh`,
-              {},  // ข้อมูลที่ต้องการส่งไปใน request body (ถ้ามี)
-              {
-                headers: {
-                  Authorization: `Bearer ${refreshToken}`,
-                },
-                withCredentials: true
-              }
-            );
-
-        } catch (error) {
-          window.location.href = "/login";
-        }
+      window.location.href = "/login";
     }
 };
 
