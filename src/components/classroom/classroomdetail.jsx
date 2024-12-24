@@ -1,6 +1,7 @@
 
 function ShowDetail({ classroom }) {
   return (
+    <>
     <div className="flow-root bg-white rounded-lg border border-gray-100 py-3 shadow-sm">
       <dl className="-my-3 divide-y divide-gray-100 text-sm">
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
@@ -52,6 +53,37 @@ function ShowDetail({ classroom }) {
        
       </dl>
     </div>
+     {
+      classroom.classroomMembers.length > 0 && (
+        <div className="mt-5">
+          <h2 className="text-lg font-semibold text-gray-900">รายชื่อนักเรียนในห้องเรียน</h2>
+          <div className="overflow-x-auto mt-3">
+            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+              <thead className="ltr:text-left rtl:text-right">
+                <tr>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสนักเรียน</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
+                  {/* <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขโทรศัพท์</th> */}
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-200">
+                {classroom.classroomMembers.map((student) => (
+                  <tr key={student.stdId}>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.stdId}</td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.title == "MR" ? "นาย" : student.student.title == "MS" ? "นางสาว" : student.student.title == "BOY" ? "เด็กชาย" : "เด็กหญิง"} {student.student.fName} {student.student.lName}</td>
+                    {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td> */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )
+     }
+    </>
   );
 }
 
