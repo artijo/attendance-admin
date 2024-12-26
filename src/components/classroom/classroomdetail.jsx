@@ -1,10 +1,27 @@
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Select from "react-select";
 
 function ShowDetail({ classroom }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [students, setStudents] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [studentNo, setStudentNo] = useState("");
+
+  function fetchStudents() {
+    axios
+      .get(HOSTNAME + "/a/students/withoutClassroom")
+      .then((response) => {
+        setStudents(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching students", error);
+      });
+  }
 
   const handleDeleteClick = (uuid) => {
     setStudentToDelete(uuid);
@@ -29,6 +46,36 @@ function ShowDetail({ classroom }) {
     setShowConfirm(false);
     setStudentToDelete(null);
   };
+
+  const handleStudentSelect = (selected) => {
+    setSelectedStudent(selected);
+    setStudentNo(""); // Reset student number when new student is selected
+  };
+
+  const handleAddStudent = async () => {
+    if (!selectedStudent || !studentNo) return;
+    
+    setIsLoading(true);
+    try {
+      // console.log(classroom.classId, selectedStudent.value, studentNo);
+      await axios.post(HOSTNAME + "/a/classroom/member", {
+        classId: classroom.classId,
+        studentId: selectedStudent.value,
+        stdNo: studentNo
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error("Error adding student to classroom", error);
+    } finally {
+      setIsLoading(false);
+      setSelectedStudent(null);
+      setStudentNo("");
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   return (
     <>
@@ -83,6 +130,53 @@ function ShowDetail({ classroom }) {
        
       </dl>
     </div>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-5">เพิ่มนักเรียนเข้าห้องเรียน</h3>
+            <div className="mt-3 space-y-3">
+              <Select
+                isSearchable
+                isClearable
+                isLoading={isLoading}
+                value={selectedStudent}
+                options={students?.map((student) => ({
+                  value: student.stdId,
+                  label: `${student.stdId} - ${
+                    student.title == "MR" ? "นาย" : 
+                    student.title == "MS" ? "นางสาว" : 
+                    student.title == "BOY" ? "เด็กชาย" : "เด็กหญิง"
+                  } ${student.fName} ${student.lName}`,
+                }))}
+                onChange={handleStudentSelect}
+                placeholder="เลือกนักเรียนที่ต้องการเพิ่ม..."
+                noOptionsMessage={() => "ไม่พบนักเรียน"}
+                loadingMessage={() => "กำลังโหลดข้อมูล..."}
+                isDisabled={isLoading}
+                className="basic-select"
+                classNamePrefix="select"
+              />
+              <div className="flex gap-3">
+                <input
+                  type="number"
+                  value={studentNo}
+                  onChange={(e) => setStudentNo(e.target.value)}
+                  placeholder="เลขที่"
+                  className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  disabled={isLoading || !selectedStudent}
+                />
+                <button
+                  onClick={handleAddStudent}
+                  disabled={!selectedStudent || !studentNo || isLoading}
+                  className={`px-4 py-2 rounded-md text-white font-medium flex-shrink-0
+                    ${!selectedStudent || !studentNo || isLoading
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300'
+                    }`}
+                >
+                  {isLoading ? 'กำลังเพิ่มนักเรียน...' : 'เพิ่มนักเรียน'}
+                </button>
+              </div>
+            </div>
+    
      {
       classroom.classroomMembers.length > 0 && (
         <div className="mt-5">
