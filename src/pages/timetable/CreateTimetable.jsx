@@ -6,8 +6,7 @@ import { Tablebody } from "../../components/timetable/tablebody";
 
 export const CreateTimetable = () => {
     const [timetable, setTimetable] = useState({});
-    let i = 0;
-    const classroomId = '95988c9c-cdd9-4fd6-928a-11d7a5721bd6';
+    const classroomId = '361f81e8-760a-4778-882b-ac2cc11fcb2f';
 
     const fetchData = async () => {
         try {
@@ -20,12 +19,11 @@ export const CreateTimetable = () => {
     };
 
 
-
     const timeStudyList = [
         "08.40 - 09.30",
-        "09.40 - 10.20",
-        "10.30 - 11.10",
-        "11.20 - 12.00",
+        "09.30 - 10.20",
+        "10.20 - 11.10",
+        "11.10 - 12.00",
         "12.00 - 13.00",
         "13.00 - 13.50",
         "13.50 - 14.40",
@@ -51,6 +49,7 @@ export const CreateTimetable = () => {
                                         arraySubject={timetable[key]} 
                                         day={parseInt(key)} 
                                         timeStudyList={timeStudyList} 
+                                        classroomId={classroomId}
                                     />
                                 ))
                             }

@@ -26,6 +26,15 @@ export function calculatedTimeToSeconde(hour, miniute) { // สำหรับ .
   return (parseInt(hour)*3600)+(parseInt(miniute)*60);
 }
 
+export function convertSecondsToTime(seconds) {
+  const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+  const secs = (seconds % 60).toString().padStart(2, '0');
+  
+  return `${hours}:${minutes}:${secs}`;
+}
+
+
 export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
   const timeSplit = time.split(':');
   return (parseInt(timeSplit[0])*3600)+(parseInt(timeSplit[1])*60);
