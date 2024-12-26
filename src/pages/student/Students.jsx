@@ -34,8 +34,7 @@ function Students() {
           student.lName.includes(search) ||
           student.stdId.includes(search) ||
           student.fName.concat(" ", student.lName).includes(search) ||
-          student.lName.concat(" ", student.fName).includes(search) ||
-          student.tel.includes(search)
+          student.lName.concat(" ", student.fName).includes(search)
       );
       setStudents(filteredStudents);
     } else {
