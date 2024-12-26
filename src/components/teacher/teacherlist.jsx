@@ -52,7 +52,7 @@ function TeacherList({ teachers, teachersPerPage }) {
       </div>
 
       <div className="rounded-b-lg border-t border-gray-200 px-4 py-2">
-        <ol className="flex justify-end gap-1 text-xs font-medium">
+        <ol className="flex flex-wrap justify-end gap-1 text-xs font-medium">
           <li>
             <button
               onClick={() => handlePageChange(currentPage - 1)}
