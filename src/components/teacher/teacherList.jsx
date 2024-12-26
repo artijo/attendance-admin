@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { formatPhoneNumber } from "../../helper";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 
-function TeacherList({ teacher, teacherPerPage }) {
+function TeacherList({ teachers, teachersPerPage }) {
   const [currentPage, setCurrentPage] = useState(1);
-  
-  // Calculate total pages
-  const totalPages = Math.ceil(teacher.length / teacherPerPage);
 
-  // Get current students to display
-  const startIndex = (currentPage -1) * teacherPerPage;
-  // const currentTeacher = teacher.slice(startIndex, startIndex + teacherPerPage);
-  const currentTeacher = teacher.slice(startIndex, startIndex + teacherPerPage);
+  // Calculate total pages
+  const totalPages = Math.ceil(teachers.length / teachersPerPage);
+
+  // Get current teachers to display
+  const startIndex = (currentPage - 1) * teachersPerPage;
+  const currentTeachers = teachers.slice(startIndex, startIndex + teachersPerPage);
+
   // Handle page change
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -26,7 +25,7 @@ function TeacherList({ teacher, teacherPerPage }) {
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
             <tr>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสอาจารย์</th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสครู</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขโทรศัพท์</th>
@@ -34,12 +33,18 @@ function TeacherList({ teacher, teacherPerPage }) {
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {currentTeacher.map((teachers) => (
-              <tr key={teachers.tchId}>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/teacherDetails`} state={teachers} className="hover:bg-gray-100">{teachers.tchCode}</Link></td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{teachers.fName} {teachers.lName}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{teachers.email}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(teachers.tel)}</td>
+            {currentTeachers.map((teacher) => (
+              <tr key={teacher.tchId}>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  <Link to={`/teachers/${teacher.tchId}`} className="hover:bg-gray-100">
+                    {teacher.tchCode}
+                  </Link>
+                </td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  {teacher.fName} {teacher.lName}
+                </td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{teacher.email}</td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(teacher.tel)}</td>
               </tr>
             ))}
           </tbody>
@@ -47,7 +52,7 @@ function TeacherList({ teacher, teacherPerPage }) {
       </div>
 
       <div className="rounded-b-lg border-t border-gray-200 px-4 py-2">
-        <ol className="flex justify-end gap-1 text-xs font-medium">
+        <ol className="flex flex-wrap justify-end gap-1 text-xs font-medium">
           <li>
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -114,10 +119,6 @@ function TeacherList({ teacher, teacherPerPage }) {
       </div>
     </div>
   );
-}
-
-TeacherList.propsTypes = {
-  teacher: PropTypes.array.isRequired
 }
 
 export default TeacherList;
