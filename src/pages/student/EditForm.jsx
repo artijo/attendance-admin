@@ -71,9 +71,10 @@ function EditForm() {
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
                             {...register("title")}
                         >
-                            <option value="MR">นาย</option>
-                            <option value="MISS">นาง</option>
-                            <option value="MRS">นางสาว</option>
+                            <option value="BOY">เด็กชาย</option>
+<option value="GIRL">เด็กหญิง</option>
+<option value="MR">นาย</option>
+<option value="MS">นางสาว</option>
                         </select>
                     </div>
                     <div>
