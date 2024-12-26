@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
+import { nameFormat } from "../../helper.js"
+// ...existing code...
+import closeicon from '/public/ico/closeicon.svg';
+// ...existing code...
 
 export const Searchbar = ({ selectedSubject }) => {
     const [subjectList, setSubjectList] = useState([]);
     const [input, setInput] = useState("");
     const [isShow, setIsShow] = useState(false);
+    const [valueShow, setValueShow] = useState(false);
     const wrapperRef = useRef(null);
 
     const handleChange = (value) => {
         setInput(value);
-        fetchSubjectList(value);
+        fetchSubjectList(value);    
     }
+
 
     const fetchSubjectList = async (value) => {
         try {
@@ -23,7 +29,8 @@ export const Searchbar = ({ selectedSubject }) => {
                     subject.teacher.lName.toLowerCase().includes(value.toLowerCase()) ||
                     subject.subCode.toLowerCase().includes(value.toLowerCase()) ||
                     subject.subNameThai.toLowerCase().includes(value.toLowerCase()) ||
-                    subject.subNameEng.toLowerCase().includes(value.toLowerCase())
+                    subject.subNameEng.toLowerCase().includes(value.toLowerCase()) ||
+                    nameFormat(subject.teacher.fName, subject.teacher.lName).toLowerCase().includes(value.toLowerCase())
                 );
             });
             setSubjectList(result);
@@ -32,10 +39,18 @@ export const Searchbar = ({ selectedSubject }) => {
         }
     }
 
+    const handleClickClose = () => {
+        setInput("");
+        setSubjectList([]);
+        selectedSubject({});
+        setValueShow(!valueShow)
+    }
+
     const handleClickResult = (value) => {
         setInput(value.subCode);
         selectedSubject(value);
         setIsShow(false);
+        setValueShow(!valueShow);
     };
 
     const handleClickOutside = (event) => {
@@ -56,14 +71,20 @@ export const Searchbar = ({ selectedSubject }) => {
             <label className="text-xs font-light">ค้นหาวิชา</label>
             <div>
                 <div>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => handleChange(e.target.value)}
-                        onClick={() => setIsShow(true)}
-                        placeholder="Search subjects..."
-                        className="mt-1 px-2 py-1 w-full border rounded-md"
-                    />
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => handleChange(e.target.value)}
+                            onClick={() => setIsShow(true)}
+                            placeholder="Search subjects..."
+                            className="mt-1 px-2 py-1 w-full border rounded-md"
+                        />
+                        <div className={`${valueShow ? "block" : "hidden"} absolute top-0 right-0 bottom-0 flex items-center cursor-pointer pr-1`} onClick={() => handleClickClose()}>
+                            <img src={closeicon} alt="close-icon" className="w-5 h-5" />
+                        </div> 
+                    </div>
+                    
                     <div className={`w-full relative border rounded-lg shadow-lg mt-4 p-4 ${isShow ? "block" : "hidden"}`}>
                         <ul className="w-full overflow-y-auto max-h-40">
                             {subjectList.length > 0 ? (

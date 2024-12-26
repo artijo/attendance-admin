@@ -3,11 +3,11 @@ import { HOSTNAME } from "../../config";
 import axios from "axios";
 import { TableHead } from "../../components/timetable/tablehead";
 import { Tablebody } from "../../components/timetable/tablebody";
+import { useParams } from 'react-router-dom';
 
 export const CreateTimetable = () => {
+    const { classroomId } = useParams();
     const [timetable, setTimetable] = useState({});
-    const classroomId = '361f81e8-760a-4778-882b-ac2cc11fcb2f';
-
     const fetchData = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
@@ -35,28 +35,32 @@ export const CreateTimetable = () => {
     }, []);
 
     return (
-        <div className="rounded-lg border border-gray-200">
-            <div className="overflow-x-auto rounded-t-lg">
-                <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                        <TableHead timelist={timeStudyList}/>
-                        <tbody className="divide-y divide-gray-200 text-center">
+        <div>
+            <h1 className="mb-2">สร้างตารางเรียน</h1>
+            <div className="rounded-lg border border-gray-200">
+                <div className="overflow-x-auto rounded-t-lg">
+                    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                            <TableHead timelist={timeStudyList}/>
+                            <tbody className="divide-y divide-gray-200 text-center">
+                                
+                                {
+                                    Object.keys(timetable).length > 0 && 
+                                    Object.keys(timetable).map((key, index) => (
+                                        <Tablebody 
+                                            key={index} 
+                                            arraySubject={timetable[key]} 
+                                            day={parseInt(key)} 
+                                            timeStudyList={timeStudyList} 
+                                            classroomId={classroomId}
+                                        />
+                                    ))
+                                }
+                            </tbody>
                             
-                            {
-                                Object.keys(timetable).length > 0 && 
-                                Object.keys(timetable).map((key, index) => (
-                                    <Tablebody 
-                                        key={index} 
-                                        arraySubject={timetable[key]} 
-                                        day={parseInt(key)} 
-                                        timeStudyList={timeStudyList} 
-                                        classroomId={classroomId}
-                                    />
-                                ))
-                            }
-                        </tbody>
-                        
-                </table>
-            </div>
+                    </table>
+                </div>
+                </div>
         </div>
+        
     );
 };
