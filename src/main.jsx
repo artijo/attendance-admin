@@ -51,7 +51,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="teachers" element={<Teachers />} />
         <Route path="teachers/:id" element={<TeacherDetail />} />
         {/* Timetable Section */}
-        <Route path="timetable" element={<CreateTimetable/>}/>
+        <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
       </Route>
       <Route path="*" element={<NotFound />} />

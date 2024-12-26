@@ -18,6 +18,10 @@ function ClassroomList({classrooms}) {
               <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></td>
               
               <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classroomType.classTypeNameThai}</td>
+              
+              <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  <Link to={`/timetable/${classroom.classId}`} > <span className="underline text-blue-800">ตารางเรียน</span> </Link>
+              </td>
             </tr>
           ))}
         </tbody>

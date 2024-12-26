@@ -40,3 +40,7 @@ export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
   return (parseInt(timeSplit[0])*3600)+(parseInt(timeSplit[1])*60);
   // return (parseInt(hour)*3600)+(parseInt(miniute)*60);
 }
+
+export function nameFormat(fName, lName) {
+  return `${fName} ${lName}`;
+}

@@ -55,7 +55,7 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
                     }else {
                         return (
                             <td key={timeIndex} className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                                <Link to='/createTimetable' state={{day: day, time: time, classroom:classroomId}}>
+                                <Link className='flex justify-center' to='/createTimetable' state={{day: day, time: time, classroom:classroomId}}>
                                     <Addtimetable />
                                 </Link>
                             </td>

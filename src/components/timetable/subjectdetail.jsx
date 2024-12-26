@@ -34,15 +34,7 @@ export const SubjectDetail = ({ subject, time }) => {
                 )
             }
         </div>
-        // <div className="relative w-64 h-64 bg-yellow-300 text-yellow-900 p-4 rounded-md shadow-lg">
-        //     <h1 className="text-lg font-bold mb-2">Sticky Note</h1>
-        //     <p className="text-sm">
-        //         Remember to check the deadlines and update the progress report!
-        //     </p>
-        //     {/* Corner fold */}
-        //     <div className="absolute bottom-0 right-0 w-12 h-12 bg-yellow-400 rounded-bl-md transform origin-bottom-right rotate-45 -translate-x-6 translate-y-6"></div>
-        // </div>
-
+    
 
     );
 };
