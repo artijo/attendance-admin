@@ -10,12 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
     "axios": "^1.7.9",
     "prop-types": "^15.8.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.54.0",
     "react-router-dom": "^7.0.1",
+    "react-select": "^5.9.0",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

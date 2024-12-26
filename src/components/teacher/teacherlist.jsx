@@ -2,15 +2,15 @@ import { useState } from "react";
 import { formatPhoneNumber } from "../../helper";
 import { Link } from "react-router-dom";
 
-function StudentList({ students, studentsPerPage }) {
+function TeacherList({ teachers, teachersPerPage }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
-  const totalPages = Math.ceil(students.length / studentsPerPage);
+  const totalPages = Math.ceil(teachers.length / teachersPerPage);
 
-  // Get current students to display
-  const startIndex = (currentPage - 1) * studentsPerPage;
-  const currentStudents = students.slice(startIndex, startIndex + studentsPerPage);
+  // Get current teachers to display
+  const startIndex = (currentPage - 1) * teachersPerPage;
+  const currentTeachers = teachers.slice(startIndex, startIndex + teachersPerPage);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -25,7 +25,7 @@ function StudentList({ students, studentsPerPage }) {
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
             <tr>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสนักเรียน</th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสครู</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขโทรศัพท์</th>
@@ -33,14 +33,18 @@ function StudentList({ students, studentsPerPage }) {
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {currentStudents.map((student) => (
-              <tr key={student.stdId}>
-                
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/students/${student.stdId}`} className="hover:bg-gray-100">{student.stdId}</Link></td>
-                
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td>
+            {currentTeachers.map((teacher) => (
+              <tr key={teacher.tchId}>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  <Link to={`/teachers/${teacher.tchId}`} className="hover:bg-gray-100">
+                    {teacher.tchCode}
+                  </Link>
+                </td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  {teacher.fName} {teacher.lName}
+                </td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{teacher.email}</td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(teacher.tel)}</td>
               </tr>
             ))}
           </tbody>
@@ -117,4 +121,4 @@ function StudentList({ students, studentsPerPage }) {
   );
 }
 
-export default StudentList;
+export default TeacherList;
