@@ -6,17 +6,12 @@ import { nameFormat } from "../../helper.js"
 import closeicon from '/public/ico/closeicon.svg';
 // ...existing code...
 
-export const Searchbar = ({ selectedSubject }) => {
+export const Searchbar = ({ selectedSubject, inputvalue, setInputvalue}) => {
     const [subjectList, setSubjectList] = useState([]);
     const [input, setInput] = useState("");
     const [isShow, setIsShow] = useState(false);
     const [valueShow, setValueShow] = useState(false);
     const wrapperRef = useRef(null);
-
-    const handleChange = (value) => {
-        setInput(value);
-        fetchSubjectList(value);    
-    }
 
 
     const fetchSubjectList = async (value) => {
@@ -38,16 +33,22 @@ export const Searchbar = ({ selectedSubject }) => {
             console.error(error);
         }
     }
+    
+    const handleChange = (value) => {
+        setInputvalue(value);
+        fetchSubjectList(value);    
+    }
+
 
     const handleClickClose = () => {
-        setInput("");
+        setInputvalue("");
         setSubjectList([]);
         selectedSubject({});
         setValueShow(!valueShow)
     }
 
     const handleClickResult = (value) => {
-        setInput(value.subCode);
+        setInputvalue(value.subCode);
         selectedSubject(value);
         setIsShow(false);
         setValueShow(!valueShow);
@@ -74,7 +75,7 @@ export const Searchbar = ({ selectedSubject }) => {
                     <div className="relative">
                         <input
                             type="text"
-                            value={input}
+                            value={inputvalue}
                             onChange={(e) => handleChange(e.target.value)}
                             onClick={() => setIsShow(true)}
                             placeholder="Search subjects..."

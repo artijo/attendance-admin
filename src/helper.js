@@ -44,3 +44,8 @@ export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
 export function nameFormat(fName, lName) {
   return `${fName} ${lName}`;
 }
+
+export function formatTime(time) {
+  const timeSplit = time.split(':');
+  return `${timeSplit[0]}:${timeSplit[1]}`;
+}

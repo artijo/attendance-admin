@@ -8,15 +8,24 @@ import { useParams } from 'react-router-dom';
 export const CreateTimetable = () => {
     const { classroomId } = useParams();
     const [timetable, setTimetable] = useState({});
+    const [classroomInfo, setClassroomInfo] = useState({});
     const fetchData = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
             setTimetable(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error(error);
         }
     };
+
+    const fetchClassroomInfo = async () => { 
+        try {
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
+            setClassroomInfo(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 
     const timeStudyList = [
@@ -32,11 +41,22 @@ export const CreateTimetable = () => {
 
     useEffect(() => {
         fetchData();
+        fetchClassroomInfo();
     }, []);
 
     return (
         <div>
-            <h1 className="mb-2">สร้างตารางเรียน</h1>
+            <div className="mb-2">
+                <h1 className="mb-1">สร้างตารางเรียน</h1>
+                {
+                    Object.keys(classroomInfo).length > 0 ? 
+                    <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </h3>
+                    :
+                    <h3>กำลังโหลดข้อมูล....</h3>                   
+                }
+            </div>
+            
+            
             <div className="rounded-lg border border-gray-200">
                 <div className="overflow-x-auto rounded-t-lg">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">

@@ -1,19 +1,25 @@
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { convertSecondsToTime, formatDayOfWeeks, calculatedTimeToSecondeDouleDot } from '../../helper.js';
+import { convertSecondsToTime, formatDayOfWeeks, formatTime } from '../../helper.js';
 import { Inputtimetable } from '../../components/timetable/inputtimetable.jsx';
 import { Searchbar } from '../../components/subject/searchbar.jsx';
 import { HOSTNAME } from '../../config.js';
 import axios from 'axios';
 
+
 export const Formtimetable = () => {
     const location = useLocation();
     const [day, setDay] = useState(0);
+    const [searchbarValue, setSearchbarValue] = useState("");
+    const [classroomInfo, setClassroomInfo] = useState({});
     const [timeStart, setTimeStart] = useState("");
     const [timeEnd, setTimeEnd] = useState("");
     const [timeLate, setTimeLate] = useState(0);
     const [clasrroom, setClassroom] = useState("");
     const [selectedSubject, setSeletedSubject] = useState({});
+
+
+
 
     const sendForm = async () => {
         try {
@@ -40,10 +46,24 @@ export const Formtimetable = () => {
         setTimeLate(parseInt(value))
     }
 
+    const fetchRoomInfo = async (classroomId) => {
+        try{
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
+            setClassroomInfo(response.data);
+        }catch(error){
+            console.error(error);
+        };
+    };
+
     const handleStateLocation = () => {
+        if(location.state.subject){
+            setSeletedSubject(location.state.subject);
+            setSearchbarValue(location.state.subject.subCode);
+        }
         setDay(location.state.day);
         setTimeStart(convertSecondsToTime(location.state.time));
         setClassroom(location.state.classroom);
+        fetchRoomInfo(location.state.classroom);
         setTimeEnd(convertSecondsToTime(parseInt(location.state.time) + 3000)); //3000 = 50 นาที
     }
 
@@ -53,27 +73,39 @@ export const Formtimetable = () => {
 
     return (
         <div>
-            <h1 className='mb-2'> สร้างตารางเรียน วัน {formatDayOfWeeks(day)} เวลา {timeStart} </h1>
+            <div className='mb-2'>
+                <h1 className='mb-1'> สร้างตารางเรียน วัน {formatDayOfWeeks(day)} เวลา {formatTime(timeStart)} ถึง {formatTime(timeEnd)} </h1>
+                {
+                    Object.keys(classroomInfo).length > 0 ? 
+                    <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </h3>
+                    :
+                    <h3>กำลังโหลดข้อมูล....</h3>                   
+                }
+            </div>
+           
             <div className='grid gap-2'>
                 <div className="border bg-white p-4 rounded-lg shadow-sm">
-                    <h4>รายละเอียด<span className="text-sm text-gray-400">(ไม่สามารถแก้ไขได้)</span></h4>
+                    {/* <h4>เวลาเลท</h4> */}
                     <div className="grid grid-cols-2 gap-4">
-                        <Inputtimetable value={day} disabled={true} label={"วัน"} />
-                        <Inputtimetable value={timeStart} disabled={true} label={"เวลาเริ่ม"} />
-                        <Inputtimetable value={timeEnd} disabled={true} label={"เวลาจบคาบ"} />
+                        
                         {/* <Inputtimetable value={timeLate} disabled={false} label={"เวลาเลท"} onChange = {}/> */}
                         <div className='flex flex-col'>
                             <label className="text-xs font-light ">เวลาเลท<span className="text-gray-300">(หน่วยนาที)</span></label>
                             <input type="number" value={15} className="border rounded-sm mt-1 px-2 py-1" onChange={(e) => handleTimeLateValue(e.target.value)} />
                         </div>
-
-                        <Inputtimetable value={clasrroom} disabled={true} label={"รหัสห้องเรียน"} />
+                        <div className='hidden'>
+                            <Inputtimetable value={clasrroom} disabled={true} label={"รหัสห้องเรียน"} />
+                            <Inputtimetable value={day} disabled={true} label={"วัน"} />
+                            <Inputtimetable value={timeStart} disabled={true} label={"เวลาเริ่ม"} />
+                            <Inputtimetable value={timeEnd} disabled={true} label={"เวลาจบคาบ"} />
+                        </div>
+                     
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="border bg-white p-4 rounded-lg shadow-sm ">
-                        <Searchbar selectedSubject={setSeletedSubject} />
+                        <Searchbar selectedSubject={setSeletedSubject} inputvalue={searchbarValue} setInputvalue={setSearchbarValue} />
                     </div>
                     <div className="border bg-white p-4 rounded-lg shadow-sm">
                         <p className="text-xs font-light ">รายละเอียดวิชา</p>
@@ -85,7 +117,7 @@ export const Formtimetable = () => {
                                             <span className="text-xs">รหัสวิชา : {selectedSubject.subCode}</span>
                                         </p>
                                         <p>
-                                            <span className="text-xs">หน่วยกิต : {selectedSubject.credit}</span>
+                                            <span className="text-xs">หน่วยกิต : {selectedSubject.subCredit}</span>
                                         </p>
                                         <p>
                                             <span className="text-xs">ชื่อวิชา : {selectedSubject.subNameThai}<span className='text-gray-300'>({selectedSubject.subNameEng})</span></span>

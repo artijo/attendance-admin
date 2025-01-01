@@ -7,6 +7,7 @@ import { Deletetimetable } from './deletetimetable';
 import { HOSTNAME } from '../../config';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Edittimetable } from './editetimetable';
 
 export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => { // listSubject คือ กลุ่มของวิชาที่มีเรียนในวันนั้น
     const secondInTimeStudyArray = timeStudyList.map((time) => {
@@ -17,7 +18,7 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
 
     const deleteTimetable =  async (timetableId) => {
         try{
-            const response = await axios.delete(`${HOSTNAME}/a/timetable/${timetableId}`);
+            await axios.delete(`${HOSTNAME}/a/timetable/${timetableId}`);
             window.location.reload();
         }catch(error){
             console.error(error);
@@ -38,9 +39,15 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
                     if (subject) {
                         return ( 
                             <td key={timeIndex} className="relative group whitespace-nowrap px-4 py-2 font-medium text-gray-900 cursor-default">
-                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <Deletetimetable onDelete={() => handleDelete(subject.timetableId)}/>
+                                <div className="absolute top-[-6px] right-[-10px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-row-reverse gap-1">
+                                    <div >
+                                        <Deletetimetable onDelete={() => handleDelete(subject.timetableId)}/>
+                                    </div>
+                                    <Link to='/createTimetable' state={{day: day, time: time, classroom:classroomId, subject: subject.subject}}>
+                                        <Edittimetable/>
+                                    </Link>
                                 </div>
+                                
                                 <SubjectDetail subject={subject.subId} time={subject}/>
                             </td>
                         );
@@ -48,7 +55,6 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
                     }else if(time === calculatedTimeToSeconde('12', '00')) {
                         return (
                             <td key={timeIndex} className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                                {/* <Addtimetable /> */}
                             </td>
                         );
 
