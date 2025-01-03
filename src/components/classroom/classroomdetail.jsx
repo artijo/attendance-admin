@@ -186,6 +186,7 @@ function ShowDetail({ classroom }) {
               <thead className="ltr:text-left rtl:text-right">
                 <tr>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสนักเรียน</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขที่</th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">จัดการ</th>
                   {/* <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
@@ -194,14 +195,20 @@ function ShowDetail({ classroom }) {
               </thead>
 
               <tbody className="divide-y divide-gray-200">
-                {classroom.classroomMembers.map((student) => (
-                  <tr key={student.classRoomMemeberId}>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.stdId}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.title == "MR" ? "นาย" : student.student.title == "MS" ? "นางสาว" : student.student.title == "BOY" ? "เด็กชาย" : "เด็กหญิง"} {student.student.fName} {student.student.lName}</td>
-                    {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td> */}
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                    <span className="inline-flex overflow-hidden rounded-md border bg-white shadow-sm">
+                {classroom.classroomMembers
+                  .sort((a, b) => parseInt(a.stdNo) - parseInt(b.stdNo))
+                  .map((student) => (
+                    <tr key={student.classRoomMemeberId}>
+                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.stdId}</td>
+                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
+                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        {student.student.title == "MR" ? "นาย" : 
+                         student.student.title == "MS" ? "นางสาว" : 
+                         student.student.title == "BOY" ? "เด็กชาย" : "เด็กหญิง"} 
+                        {student.student.fName} {student.student.lName}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <span className="inline-flex overflow-hidden rounded-md border bg-white shadow-sm">
 
   <button
     className="inline-block p-3 text-gray-700 hover:bg-gray-50 focus:relative"
@@ -224,9 +231,9 @@ function ShowDetail({ classroom }) {
     </svg>
   </button>
 </span>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
