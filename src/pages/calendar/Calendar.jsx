@@ -1,0 +1,206 @@
+import { useState,useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { formatDate } from "../../helper";
+import { HOSTNAME } from "../../config";
+import { DateTime } from "luxon";
+import axios from "axios";
+import { use } from "react";
+import AlertSuccess from "../../components/alert/success";
+
+
+export const Calendar = () => {
+    const location = useLocation();
+    const [termStart, setTermStart] = useState("");
+    const [termEnd, setTermEnd] = useState("");
+    const [mainHoliday, setMainHoliday] = useState([]); // วันหยุดราชกาลที่ระบบทำออกมาเองจะสี เทา
+
+    const [holiday, setHoliday] = useState([]); // วันหยุดที่ผู้ใช้เพิ่มเองจะสี ฟ้า
+
+
+    //input เพิ่มวันหยุดเอง
+    const [holidayDate, setHolidayDate] = useState("");
+    const [holidayName, setHolidayName] = useState("");
+
+    //จัดการ popup 
+    const [isShowPopup, setIsShowPopup] = useState(false);
+
+
+    const handleHolidayArray = (date, name) => {
+        const newHoliday = [...holiday, {"DTSTART;VALUE=DATE" : formatDate(date), "SUMMARY":name}];
+        setHoliday(newHoliday);
+        console.log(newHoliday);
+    }
+
+    const handleClickAddHoliday = () => {
+        if(holidayDate === "" || holidayName === "") {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+            return;
+        }
+        handleHolidayArray(holidayDate, holidayName);
+    }
+
+    const sentFormData = async (data) => {
+        try{
+            await axios.post(`${HOSTNAME}/a/calendar`, data);
+            setIsShowPopup(true);
+            setTimeout(() => {
+                setIsShowPopup(false);
+                window.location.href = `/timetable/${location.state.classroomId}`
+            }, 3000);
+            
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    const handleClickAddCalendar = () => {
+        const holidayMerge = [...mainHoliday, ...holiday];
+        const data = {
+            classroomId : location.state.classroomId,
+            termStart: formatDate(termStart),
+            termEnd: formatDate(termEnd),
+            holiday: holidayMerge,
+        };
+        sentFormData(data);
+    }
+
+    const handleDeleteHoliday = (index) => {
+        const newHoliday =holiday.filter((holiday, i) => i !== index);
+        setHoliday(newHoliday);
+        
+    }
+
+    const fectHoliday = async () => {
+        try {
+            const response = await axios.get(`${HOSTNAME}/a/holiday`);
+            setMainHoliday(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleDeleteMainHoliday = (index) => {
+        const newMainHoliday = mainHoliday.filter((holiday, i) => i !== index);
+        setMainHoliday(newMainHoliday);
+    }
+
+    useEffect(() => {
+        fectHoliday();
+    },[]);
+
+    return (
+        <div className="container mx-auto">
+            
+            <div
+                className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center  ${isShowPopup ? "block" : "hidden"}`}
+            >
+                <div className="bg-white p-4 rounded shadow-lg">
+                    <AlertSuccess
+                    title="บันทึกปฎิทินการเรียนสำเร็จ"
+                    message="ข้อมูลปฎิทินการเรียนถูกบันทึกเรียบร้อยแล้ว"
+                    />
+                </div>
+            </div>
+
+            <div className="mb-2">
+                <h1>ปฎิทินการเรียน</h1>
+                <h3>ห้องเรียน 6/1</h3>
+                <p className="text-sm">
+                    <span className="text-red-600">**</span>
+                    <span className="text-gray-600">โดยการอิงปฎิทินนั้นจะอิงตามตารางเรียนห้องเรียน</span>
+                </p>
+            </div>
+            <div className="border p-3 rounded-md bg-white shadow flex justify-between gap-y-5 w-100 flex-wrap">
+                <div className="flex flex-col w-1/2 px-1">
+                    <label className="text-xs font-light block">วันเปิดเทอม(วันแรกของการเรียน)</label>
+                    <input 
+                        type="date" 
+                        value={termStart} 
+                        onChange={(e) => {setTermStart(e.target.value)} } 
+                        className="border rounded-md mt-1 px-2 py-1"
+                    />
+                </div>
+                <div className="flex flex-col w-1/2 px-1">
+                    <label className="text-xs font-light block">วันปิดเทอม(วันสุดท้ายของการเรียน)</label>
+                    <input 
+                        type="date" 
+                        value={termEnd} 
+                        onChange={(e) => {setTermEnd(e.target.value)} } 
+                        className="border rounded-md mt-1 px-2 py-1"
+                    />
+                </div>
+                <div className="flex flex-col w-1/2 px-1">
+                    <label className="text-xs font-light block">รายการวันหยุดราชกาล(ปี {DateTime.now().year + 543})</label>
+                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
+                        {
+                            mainHoliday.length > 0 ? 
+                            mainHoliday.map((holiday, index) => {
+                                return (
+                                    <div key={index} className="w-fit">
+                                        <p className="rounded-lg text-xs bg-gray-400 px-2 py-1 text-white">{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteMainHoliday(index)}>x</span> </p>
+                                    </div>
+                                
+                                )
+                            })
+                            : <p className="text-xs">กำลังโหลดข้อมูล....</p>
+                        }
+                        {
+                            holiday.map((holiday, index) => {
+                                return (
+                                    <div key={index} className="w-fit">
+                                        <p className="rounded-lg text-xs bg-blue-400 px-2 py-1 text-white">{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(index)}>x</span> </p>
+                                    </div>
+                                
+                                )
+                            })
+                        }
+                    </div>
+                </div>
+                <div className="flex flex-col w-1/2 flex-1 px-1">
+                    <p className="border-l-4 border-gray-700 pl-1 mb-2"> เพิ่มวันหยุด</p>
+                    <div className="w-fit mb-2">
+                        <p className="text-xs p-2 bg-sky-400 text-white">สีเทาคือวันหยุดตาราชกาลที่เพิ่มให้อัตโนมัติ สีฟ้าคือวันหยุดที่เพิ่มขึ้นมาเอง</p>
+                    </div>
+                    <div className="w-full">
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">วันที่</label>
+                            <input 
+                                type="date" 
+                                value={holidayDate} 
+                                onChange={(e) => {setHolidayDate(e.target.value)} } 
+                                className="border rounded-md mt-1 px-2 py-1 w-full"
+                                required={true}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">ชื่อวันหยุด</label>
+                                <input 
+                                    type="text" 
+                                    value={holidayName} 
+                                    onChange={(e) => {setHolidayName(e.target.value)} } 
+                                    className="border rounded-md mt-1 px-2 py-1 w-full "
+                                    required={true}
+                                />
+                        </div>
+                        <button 
+                            type="button"
+                            className="border  bg-slate-50  rounded-md text-sm font-light px-2 py-1 hover:bg-blue-400 hover:text-white"
+                            onClick={() => handleClickAddHoliday()}
+                        >
+                            เพิ่มวันหยุด
+                        </button>
+                    </div>
+                </div>
+                <div className="flex flex-col w-full px-1">
+                    <button
+                        type="button"
+                        className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                        onClick={() => handleClickAddCalendar()}
+                    >
+                        บันทึกปฎิทินการเรียน
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};

@@ -49,3 +49,8 @@ export function formatTime(time) {
   const timeSplit = time.split(':');
   return `${timeSplit[0]}:${timeSplit[1]}`;
 }
+
+export function formatDate(date){
+  const dateSplit = date.split('-');
+  return `${dateSplit[0]}${dateSplit[1]}${dateSplit[2]}`;
+}
