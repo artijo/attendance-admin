@@ -19,8 +19,6 @@ export const Formtimetable = () => {
     const [selectedSubject, setSeletedSubject] = useState({});
 
 
-
-
     const sendForm = async () => {
         try {
             if (day === 0 || timeStart === "" || clasrroom === "" || Object.keys(selectedSubject).length === 0) {
