@@ -6,17 +6,11 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 function CreateClassroom() {
     const [error, setError] = useState(null);
-    // const [teacher, setTeacher] = useState(null);
-    // const [leader, setLeader] = useState(null);
+    const [isRangeMode, setIsRangeMode] = useState(false);
     const [teacherOptions, setTeacherOptions] = useState(null);
     const [leaderOptions, setLeaderOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
     const redirect = useNavigate();
-
-    // const teacherOptions = teacher?.map(t => ({
-    //     value: t.tchId,
-    //     label: `${t.fName} ${t.lName}`
-    // }));
 
     const {
         register,
@@ -27,8 +21,28 @@ function CreateClassroom() {
     } = useForm();
     const onSubmit = async function (data) {
         try {
-            const response = await axios.post(`${HOSTNAME}/a/classroom`, data);
-            if (response.status === 200) {
+            let classrooms = [];
+            if (isRangeMode && data.endRoom) {
+                const startRoom = parseInt(data.classRoom);
+                const endRoom = parseInt(data.endRoom);
+                
+                for (let room = startRoom; room <= endRoom; room++) {
+                    classrooms.push({
+                        ...data,
+                        classRoom: room.toString()
+                    });
+                }
+            } else {
+                classrooms = [data];
+            }
+
+            const responses = await Promise.all(
+                classrooms.map(classroom => 
+                    axios.post(`${HOSTNAME}/a/classroom`, classroom)
+                )
+            );
+
+            if (responses.every(response => response.status === 200)) {
                 redirect("/classroom",
                     {state: {message: "เพิ่มห้องเรียนเรียบร้อยแล้ว"}}
                 );
@@ -43,7 +57,6 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/teachers")
             .then((response) => {
-                // setTeacher(response.data);
                 setTeacherOptions(response.data.map(t => ({
                     value: t.tchId,
                     label: `${t.fName} ${t.lName}`
@@ -58,7 +71,6 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/leaders")
             .then((response) => {
-                // setLeader(response.data);
                 setLeaderOptions(response.data.map(l => ({
                     value: l.ldrId,
                     label: `${l.fName} ${l.lName}`
@@ -110,16 +122,33 @@ function CreateClassroom() {
                         </select>
                     </div>
                     
-                    <div>
-                        <label htmlFor="ClassRoom" className="block text-xs font-medium text-gray-700"> ห้อง</label>
-                        <input
-                            type="text"
-                            id="ClassRoom"
-                            placeholder="xx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("classRoom")}
-                        />
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label htmlFor="ClassRoom" className="block text-xs font-medium text-gray-700">
+                                {isRangeMode ? "ห้องเริ่มต้น" : "ห้อง"}
+                            </label>
+                            <input
+                                type="text"
+                                id="ClassRoom"
+                                placeholder="xx"
+                                className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                {...register("classRoom")}
+                            />
+                        </div>
+                        {isRangeMode && (
+                            <div className="flex-1">
+                                <label htmlFor="EndRoom" className="block text-xs font-medium text-gray-700">ห้องสุดท้าย</label>
+                                <input
+                                    type="text"
+                                    id="EndRoom"
+                                    placeholder="xx"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("endRoom")}
+                                />
+                            </div>
+                        )}
                     </div>
+
                     <div>
                         <label htmlFor="ClassType" className="block text-xs font-medium text-gray-700"> ประเภทห้องเรียน</label>
                         <Select
@@ -176,6 +205,16 @@ function CreateClassroom() {
                             onChange={(selectedOption) => setValue("leaderId", selectedOption ? selectedOption.value : null)}
                             isClearable
                         />
+                    </div>
+                    <div className="sm:col-span-2">
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" 
+                                className="sr-only peer"
+                                onChange={(e) => setIsRangeMode(e.target.checked)}
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">สร้างหลายห้องเรียน</span>
+                        </label>
                     </div>
                     <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">บันทึก</button>
                 </form>
