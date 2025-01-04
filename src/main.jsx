@@ -25,6 +25,10 @@ import EditClassroom from "./pages/classroom/EditForm.jsx";
 // Teacher Section
 import Teachers from "./pages/teachers/Teachers.jsx";
 import TeacherDetail from "./pages/teachers/Detail.jsx";
+import CreateTeacher from "./pages/teachers/CreateForm.jsx";
+import EditTeacher from "./pages/teachers/EditForm.jsx";
+
+// 
 import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
 import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
 import  { Calendar }  from "./pages/calendar/Calendar.jsx";
@@ -51,6 +55,8 @@ createRoot(document.getElementById("root")).render(
         {/* Teacher Section */}
         <Route path="teachers" element={<Teachers />} />
         <Route path="teachers/:id" element={<TeacherDetail />} />
+        <Route path="teachers/create" element={<CreateTeacher />} />
+        <Route path="teachers/edit/:id" element={<EditTeacher />} />
         {/* Timetable Section */}
         <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
