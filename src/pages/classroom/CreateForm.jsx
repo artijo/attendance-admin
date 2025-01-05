@@ -183,6 +183,8 @@ function CreateClassroom() {
                             {...register("semester")}
                         />
                     </div>
+                    {!isRangeMode && (
+                        <>
                     <div>
                     <label htmlFor="ClassTeacher" className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                     <Select
@@ -195,6 +197,7 @@ function CreateClassroom() {
                 isMulti
             />
                     </div>
+                    
                     <div>
                         <label htmlFor="Leader" className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
                         <Select
@@ -206,6 +209,8 @@ function CreateClassroom() {
                             isClearable
                         />
                     </div>
+                    </>
+                    ) }
                     <div className="sm:col-span-2">
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" 
