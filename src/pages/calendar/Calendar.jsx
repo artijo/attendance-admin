@@ -1,10 +1,9 @@
 import { useState,useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { formatDate } from "../../helper";
+import { formatDate,formatDateYYYYMMDD } from "../../helper";
 import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
 import axios from "axios";
-import { use } from "react";
 import AlertSuccess from "../../components/alert/success";
 
 
@@ -18,34 +17,47 @@ export const Calendar = () => {
 
 
     //input เพิ่มวันหยุดเอง
-    const [holidayDate, setHolidayDate] = useState("");
+    const [startHolidayDate, setStartHolidayDate] = useState(""); // วันเริ่มวันหยุด
+    const [endHolidayDate, setEndHolidayDate] = useState(""); // วันสิ้นสุดวันหยุด
     const [holidayName, setHolidayName] = useState("");
+    const [type, setType] = useState("RATCHAKHAN");
 
     //จัดการ popup 
     const [isShowPopup, setIsShowPopup] = useState(false);
 
 
-    const handleHolidayArray = (date, name) => {
-        const newHoliday = [...holiday, {"DTSTART;VALUE=DATE" : formatDate(date), "SUMMARY":name}];
+    const handleHolidayArray = (startDate, endDate, name, type) => {
+        const newHoliday = [...holiday, 
+            {
+                "DTSTART;VALUE=DATE" : formatDate(startDate),
+                "DTEND;VALUE=DATE" : formatDate(endDate), 
+                "SUMMARY":name,
+                "TYPE" : type
+            }
+        ];
         setHoliday(newHoliday);
         console.log(newHoliday);
     }
 
     const handleClickAddHoliday = () => {
-        if(holidayDate === "" || holidayName === "") {
+        if(startHolidayDate === "" || holidayName === "" || endHolidayDate === ""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
         }
-        handleHolidayArray(holidayDate, holidayName);
+        handleHolidayArray(startHolidayDate, endHolidayDate, holidayName, type);
     }
 
     const sentFormData = async (data) => {
         try{
             await axios.post(`${HOSTNAME}/a/calendar`, data);
+
+            await axios.post(`${HOSTNAME}/a/holiday`, data);
+
+
             setIsShowPopup(true);
             setTimeout(() => {
                 setIsShowPopup(false);
-                window.location.href = `/timetable/${location.state.classroomId}`
+                // window.location.href = `/timetable/${location.state.classroomId}`
             }, 3000);
             
         }catch(err){
@@ -54,7 +66,16 @@ export const Calendar = () => {
     }
 
     const handleClickAddCalendar = () => {
-        const holidayMerge = [...mainHoliday, ...holiday];
+        const newMainHoliday = mainHoliday.map((holiday) => {
+            return {
+                "DTSTART;VALUE=DATE" : holiday["DTSTART;VALUE=DATE"],
+                "DTEND;VALUE=DATE" : holiday["DTEND;VALUE=DATE"],
+                "SUMMARY" : holiday.SUMMARY,
+                "TYPE" : "RATCHAKHAN"
+            }
+        });
+
+        const holidayMerge = [...newMainHoliday, ...holiday];
         const data = {
             classroomId : location.state.classroomId,
             termStart: formatDate(termStart),
@@ -137,7 +158,7 @@ export const Calendar = () => {
                             mainHoliday.map((holiday, index) => {
                                 return (
                                     <div key={index} className="w-fit">
-                                        <p className="rounded-lg text-xs bg-gray-400 px-2 py-1 text-white">{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteMainHoliday(index)}>x</span> </p>
+                                        <p className="rounded-lg text-xs bg-gray-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteMainHoliday(index)}>x</span> </p>
                                     </div>
                                 
                                 )
@@ -148,7 +169,7 @@ export const Calendar = () => {
                             holiday.map((holiday, index) => {
                                 return (
                                     <div key={index} className="w-fit">
-                                        <p className="rounded-lg text-xs bg-blue-400 px-2 py-1 text-white">{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(index)}>x</span> </p>
+                                        <p className="rounded-lg text-xs bg-blue-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(index)}>x</span> </p>
                                     </div>
                                 
                                 )
@@ -163,14 +184,31 @@ export const Calendar = () => {
                     </div>
                     <div className="w-full">
                         <div className="mb-2">
-                            <label className="text-xs font-light block">วันที่</label>
+                            <label className="text-xs font-light block">วันที่เริ่มหยุด</label>
                             <input 
                                 type="date" 
-                                value={holidayDate} 
-                                onChange={(e) => {setHolidayDate(e.target.value)} } 
+                                value={startHolidayDate} 
+                                onChange={(e) => {setStartHolidayDate(e.target.value)} } 
                                 className="border rounded-md mt-1 px-2 py-1 w-full"
                                 required={true}
                             />
+                        </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">วันที่สิ้นสุดการหยุด</label>
+                            <input 
+                                type="date" 
+                                value={endHolidayDate} 
+                                onChange={(e) => {setEndHolidayDate(e.target.value)} } 
+                                className="border rounded-md mt-1 px-2 py-1 w-full"
+                                required={true}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">ประเภทของวันหยุด</label>
+                            <select name="holidayType" id="holidayType" value={type} onChange={(e) => {setType(e.target.value)}} className="border rounded-md mt-1 px-2 py-1 w-full">
+                                <option value="RATCHAKHAN">วันหยุดราชกาล</option>
+                                <option value="SCHOOL">วันหยุดของโรงเรียนหรือกิจกรรมของโรงเรียน</option>
+                            </select>
                         </div>
                         <div className="mb-2">
                             <label className="text-xs font-light block">ชื่อวันหยุด</label>
@@ -182,6 +220,7 @@ export const Calendar = () => {
                                     required={true}
                                 />
                         </div>
+                        
                         <button 
                             type="button"
                             className="border  bg-slate-50  rounded-md text-sm font-light px-2 py-1 hover:bg-blue-400 hover:text-white"

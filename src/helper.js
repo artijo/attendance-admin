@@ -54,3 +54,53 @@ export function formatDate(date){
   const dateSplit = date.split('-');
   return `${dateSplit[0]}${dateSplit[1]}${dateSplit[2]}`;
 }
+
+export function formatDateTimeISOToDate(dateTimeIso){
+  const dateSpilt = dateTimeIso.split('T');
+  return dateSpilt[0];
+}
+
+export function formatDateToThai(date){ // YYYY-MM-DD
+  const dateSpilt = date.split("-");
+  let month = "";
+  let year = parseInt(dateSpilt[0]) + 543;
+  let day = "";
+
+  if(parseInt(dateSpilt[1].charAt(0)) === 0){
+    day += parseInt(dateSpilt[1].charAt(1));
+  }else{
+    day += parseInt(dateSpilt[1]);
+  }
+
+  const thaiMonths = [
+      "มกราคม",   // เดือนที่ 1
+      "กุมภาพันธ์", // เดือนที่ 2
+      "มีนาคม",     // เดือนที่ 3
+      "เมษายน",     // เดือนที่ 4
+      "พฤษภาคม",   // เดือนที่ 5
+      "มิถุนายน",   // เดือนที่ 6
+      "กรกฎาคม",   // เดือนที่ 7
+      "สิงหาคม",    // เดือนที่ 8
+      "กันยายน",    // เดือนที่ 9
+      "ตุลาคม",     // เดือนที่ 10
+      "พฤศจิกายน", // เดือนที่ 11
+      "ธันวาคม"     // เดือนที่ 12
+  ];
+
+  // ตรวจสอบว่าเลขเดือนอยู่ในช่วง 1-12
+  console.log(parseInt(dateSpilt[1]));
+  if (parseInt(dateSpilt[1]) >= 1 && parseInt(dateSpilt[1]) <= 12) {
+      month += thaiMonths[parseInt(dateSpilt[1]) - 1];
+  } else {
+      console.log("เลขเดือนไม่ถูกต้อง")
+  }
+
+  return `วันที่ ${day} เดือน ${month} ปี ${year}`
+}
+
+export function formatDateYYYYMMDD(date) {
+  const year = date.substring(0, 4);
+  const month = date.substring(4, 6);
+  const day = date.substring(6, 8);
+  return `${parseInt(year)+543}-${month}-${day}`;
+}
