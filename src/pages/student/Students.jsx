@@ -7,6 +7,7 @@ import AlertSuccess from "../../components/alert/success.jsx";
 function Students() {
   const [searchByClass, setSearchByClass] = useState("all");
   const [students, setStudents] = useState(null);
+  const [classrooms, setClassrooms] = useState(null);
   const [search, setSearch] = useState("");
   const location = useLocation();
   const { state } = location;
@@ -21,9 +22,24 @@ function Students() {
       });
   }
 
+  function fetchClassrooms() {
+    axios
+      .get(HOSTNAME + "/a/classrooms")
+      .then((response) => {
+        setClassrooms(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching classrooms", error);
+      });
+  }
+
   useEffect(() => {
     fetchStudents(searchByClass);
   }, [searchByClass]);
+
+  useEffect(() => {
+    fetchClassrooms();
+  }, []);
 
   useEffect(() => {
       // Search by name or student ID in the students array
@@ -43,12 +59,14 @@ function Students() {
   }, [search]);
   return (
     <div>
-      <h1>Students</h1>
+      <h1>นักเรียน</h1>
       {state && state.message && (
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}
+      <div className="flex gap-2 items-center mt-5">
       <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียน</Link>
-      <Link to={'upload'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียนด้วยไฟล์</Link>
+      <Link to={'upload'} type="button" className="block w-fit text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มนักเรียนด้วยไฟล์</Link>
+      </div>
       <div className="mt-5 flex justify-between items-center">
     <div className="flex gap-2 items-center">
 
@@ -68,45 +86,57 @@ function Students() {
           >
             <option value="">ทั้งหมด</option>
             <optgroup label="มัธยมศึกษาปีที่ 1">
-              <option value="1-1">1/1</option>
-              <option value="1-2">1/2</option>
-              <option value="1-3">1/3</option>
-              <option value="1-4">1/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 1).map((classroom) => (
+                  <option key={classroom.classId} value={`1-${classroom.classRoom}`}>
+                    {`1/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
 
             <optgroup label="มัธยมศึกษาปีที่ 2">
-              <option value="2-1">2/1</option>
-              <option value="2-2">2/2</option>
-              <option value="2-3">2/3</option>
-              <option value="2-4">2/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 2).map((classroom) => (
+                  <option key={classroom.classId} value={`2-${classroom.classRoom}`}>
+                    {`2/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
 
             <optgroup label="มัธยมศึกษาปีที่ 3">
-              <option value="3-1">3/1</option>
-              <option value="3-2">3/2</option>
-              <option value="3-3">3/3</option>
-              <option value="3-4">3/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 3).map((classroom) => (
+                  <option key={classroom.classId} value={`3-${classroom.classRoom}`}>
+                    {`3/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
 
             <optgroup label="มัธยมศึกษาปีที่ 4">
-              <option value="4-1">4/1</option>
-              <option value="4-2">4/2</option>
-              <option value="4-3">4/3</option>
-              <option value="4-4">4/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 4).map((classroom) => (
+                  <option key={classroom.classId} value={`4-${classroom.classRoom}`}>
+                    {`4/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
 
             <optgroup label="มัธยมศึกษาปีที่ 5">
-              <option value="5-1">5/1</option>
-              <option value="5-2">5/2</option>
-              <option value="5-3">5/3</option>
-              <option value="5-4">5/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 5).map((classroom) => (
+                  <option key={classroom.classId} value={`5-${classroom.classRoom}`}>
+                    {`5/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
 
             <optgroup label="มัธยมศึกษาปีที่ 6">
-              <option value="6-1">6/1</option>
-              <option value="6-2">6/2</option>
-              <option value="6-3">6/3</option>
-              <option value="6-4">6/4</option>
+              {classrooms &&
+                classrooms.filter((classroom) => classroom.classLevel === 6).map((classroom) => (
+                  <option key={classroom.classId} value={`6-${classroom.classRoom}`}>
+                    {`6/${classroom.classRoom}`}
+                  </option>
+                ))}
             </optgroup>
           </select>
     </div>
@@ -151,7 +181,7 @@ function Students() {
       <div className="mt-5">
         {
           students ? (
-            <StudentList students={students} studentsPerPage={10} />
+            <StudentList students={students} studentsPerPage={50} />
           ) : (
             <div>Loading...</div>
           )
