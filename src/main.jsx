@@ -31,9 +31,10 @@ import EditTeacher from "./pages/teachers/EditForm.jsx";
 // 
 import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
 import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
-import  { Calendar }  from "./pages/calendar/Calendar.jsx";
-import { CalendarDate } from "./pages/calendar/CalendarDate.jsx";
-import { EditCalendar } from "./pages/calendar/EditCalendar.jsx";
+import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
+import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
+// import { EditCalendar } from "./pages/calendar/EditCalendar.jsx";
+import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 
 // Subject Section
 import Subjects from "./pages/subject/subjects.jsx";
@@ -67,6 +68,10 @@ createRoot(document.getElementById("root")).render(
         <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
         {/* CalendarSchool study Section */}
+        <Route path="createcalendar" element={<Calendar />}/>
+        <Route path="calendarstudy" element={<CalendarStudy />}/>
+        <Route path="calendarholiday" element={<CalendarHoliday />}/>
+        {/* <Route path="editcalendar" element={<EditCalendar/>}/> */}
         <Route path="calendar" element={<Calendar />}/>
         <Route path="calendarhistory" element={<CalendarDate />}/>
         <Route path="editcalendar" element={<EditCalendar/>}/>
