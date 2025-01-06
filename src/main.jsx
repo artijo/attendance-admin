@@ -37,6 +37,7 @@ import { EditCalendar } from "./pages/calendar/EditCalendar.jsx";
 
 // Subject Section
 import Subjects from "./pages/subject/subjects.jsx";
+import SubjectDetail from "./pages/subject/Detail.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -71,6 +72,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="editcalendar" element={<EditCalendar/>}/>
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
+        <Route path="subjects/:subjectId" element={<SubjectDetail />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
