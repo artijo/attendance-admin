@@ -72,9 +72,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         {/* <Route path="editcalendar" element={<EditCalendar/>}/> */}
-        <Route path="calendar" element={<Calendar />}/>
-        <Route path="calendarhistory" element={<CalendarDate />}/>
-        <Route path="editcalendar" element={<EditCalendar/>}/>
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />
