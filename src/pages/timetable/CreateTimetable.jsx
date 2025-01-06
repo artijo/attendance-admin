@@ -51,14 +51,21 @@ export const CreateTimetable = () => {
                     <h1 className="mb-1">สร้างตารางเรียน</h1>
                     {
                         Object.keys(classroomInfo).length > 0 ? 
-                        <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </h3>
+                        <p>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </p>
                         :
-                        <h3>กำลังโหลดข้อมูล....</h3>                   
+                        <p>กำลังโหลดข้อมูล....</p>                   
                     }
                 </div>
-                <Link to="/calendar" state={{classroomId: classroomId}}  type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" >
-                    สร้างปฎิทินการเรียน
-                </Link>
+                <div className="ml-auto flex gap-3 text-sm">
+                    <Link to="/calendarstudy" state={{classroomId: classroomId, classroomInfo:classroomInfo}}  type="button"  className="underline text-blue-600 active:text-blue-800">
+                        ปฎิทินการเรียน
+                    </Link>
+                    <Link to="/calendarholiday" state={{classroomId: classroomId, classroomInfo:classroomInfo}}  type="button" className="underline text-blue-600 active:text-blue-800">
+                        ปฎิทินวันหยุด
+                    </Link>
+                </div>
+                
+                
             </div>
             
             

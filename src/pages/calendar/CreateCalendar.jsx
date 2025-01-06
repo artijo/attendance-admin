@@ -8,10 +8,18 @@ import AlertSuccess from "../../components/alert/success";
 
 
 export const Calendar = () => {
-    const location = useLocation();
+    // const location = useLocation();
     const [termStart, setTermStart] = useState("");
     const [termEnd, setTermEnd] = useState("");
     const [mainHoliday, setMainHoliday] = useState([]); // วันหยุดราชกาลที่ระบบทำออกมาเองจะสี เทา
+
+    //classroom semester option
+    const [semesterClassroom, setSemesterClassroom] = useState([]);
+   
+    
+    //semester
+    const [selectSemester, setSelectSemester] = useState("");
+
 
     const [holiday, setHoliday] = useState([]); // วันหยุดที่ผู้ใช้เพิ่มเองจะสี ฟ้า
 
@@ -38,6 +46,9 @@ export const Calendar = () => {
         setHoliday(newHoliday);
         console.log(newHoliday);
     }
+    
+    
+
 
     const handleClickAddHoliday = () => {
         if(startHolidayDate === "" || holidayName === "" || endHolidayDate === ""){
@@ -53,7 +64,6 @@ export const Calendar = () => {
 
             await axios.post(`${HOSTNAME}/a/holiday`, data);
 
-
             setIsShowPopup(true);
             setTimeout(() => {
                 setIsShowPopup(false);
@@ -66,6 +76,11 @@ export const Calendar = () => {
     }
 
     const handleClickAddCalendar = () => {
+        if(termStart === "" || termEnd === "" || selectSemester ===""){
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+            return;
+        }
+
         const newMainHoliday = mainHoliday.map((holiday) => {
             return {
                 "DTSTART;VALUE=DATE" : holiday["DTSTART;VALUE=DATE"],
@@ -77,7 +92,8 @@ export const Calendar = () => {
 
         const holidayMerge = [...newMainHoliday, ...holiday];
         const data = {
-            classroomId : location.state.classroomId,
+            // classroomId : location.state.classroomId,
+            semester: selectSemester,
             termStart: formatDate(termStart),
             termEnd: formatDate(termEnd),
             holiday: holidayMerge,
@@ -100,14 +116,55 @@ export const Calendar = () => {
         }
     }
 
+    function setSemester(value){
+        const uniqueData = [];
+        if(value) {
+            const semesterMap = value.map((items) => {
+                return {semester: items.semester, academicYear: items.academicYear}
+            }
+        );
+            // console.log(semesterMap);
+            // const semesterOption = [...new Set(semesterMap.)];
+            
+            for(const item of semesterMap) {
+                let found = uniqueData.some(
+                    (uniqueData) => {
+                        uniqueData.semester === item.semester &&
+                        uniqueData.academicYear === item.academicYear  
+                    }
+                          
+                );
+                if (!found) {
+                    uniqueData.push(item);
+                }
+            };
+            setSemesterClassroom(uniqueData);
+        };
+    };
+
+    const fecthClassroom = async () => {
+        try{
+            const response = await axios.get(`${HOSTNAME}/a/classrooms`);
+            setSemesterClassroom(response.data);
+            setSemester(response.data);
+        }catch(err){
+            console.log(err);
+        };
+    };
+
     const handleDeleteMainHoliday = (index) => {
         const newMainHoliday = mainHoliday.filter((holiday, i) => i !== index);
         setMainHoliday(newMainHoliday);
     }
 
+
     useEffect(() => {
         fectHoliday();
     },[]);
+
+    useEffect(() => {
+        fecthClassroom();
+    },[])
 
     return (
         <div className="container mx-auto">
@@ -149,6 +206,16 @@ export const Calendar = () => {
                         onChange={(e) => {setTermEnd(e.target.value)} } 
                         className="border rounded-md mt-1 px-2 py-1"
                     />
+                </div>
+                <div className="flex flex-col w-full">
+               
+                    <select name="semester" onChange={(e) =>  setSelectSemester(e.target.value) } >
+                        <option value="">เลือกปีการศึกษา</option>
+                        {
+                            semesterClassroom.length > 0 &&
+                            semesterClassroom.map((item, index) => <option key={index} value={`${item.semester}|${item.academicYear}`}>เทอมที่ {item.semester}  ปีการศึกษา {item.academicYear}</option>)
+                        }
+                    </select>
                 </div>
                 <div className="flex flex-col w-1/2 px-1">
                     <label className="text-xs font-light block">รายการวันหยุดราชกาล(ปี {DateTime.now().year + 543})</label>
