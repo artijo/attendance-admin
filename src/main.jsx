@@ -36,6 +36,9 @@ import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 // import { EditCalendar } from "./pages/calendar/EditCalendar.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 
+// Subject Section
+import Subjects from "./pages/subject/subjects.jsx";
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <BrowserRouter>
@@ -68,6 +71,11 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         {/* <Route path="editcalendar" element={<EditCalendar/>}/> */}
+        <Route path="calendar" element={<Calendar />}/>
+        <Route path="calendarhistory" element={<CalendarDate />}/>
+        <Route path="editcalendar" element={<EditCalendar/>}/>
+        {/* Subject Section */}
+        <Route path="subjects" element={<Subjects />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
