@@ -40,6 +40,7 @@ import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 import Subjects from "./pages/subject/subjects.jsx";
 import SubjectDetail from "./pages/subject/Detail.jsx";
 import CreateSubject from "./pages/subject/CreateForm.jsx";
+import EditSubject from "./pages/subject/EditForm.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -77,6 +78,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="subjects" element={<Subjects />} />
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />
         <Route path="subjects/create" element={<CreateSubject />} />
+        <Route path="subjects/edit/:id" element={<EditSubject />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
