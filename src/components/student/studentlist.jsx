@@ -25,10 +25,10 @@ function StudentList({ students, studentsPerPage }) {
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
             <tr>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสนักเรียน</th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขโทรศัพท์</th>
+              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักเรียน</th>
+              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
+              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">อีเมล</th>
+              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขโทรศัพท์</th>
             </tr>
           </thead>
 
@@ -39,7 +39,7 @@ function StudentList({ students, studentsPerPage }) {
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/students/${student.stdId}`} className="hover:bg-gray-100">{student.stdId}</Link></td>
                 
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email}</td>
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email? student.email: "ไม่มีอีเมล"}</td>
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td>
               </tr>
             ))}
