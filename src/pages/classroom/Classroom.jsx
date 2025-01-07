@@ -42,7 +42,7 @@ function Classroom() {
     <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center">
         <label htmlFor="gradeFilter" className="block text-sm font-medium text-gray-700">
-            Filter by Grade
+            ระดับชั้น
         </label>
         <select
             id="gradeFilter"
@@ -54,7 +54,7 @@ function Classroom() {
                 
             }}
         >
-            <option value="all">All Grades</option>
+            <option value="all">ทั้งหมด</option>
             <option value="1">มัธยมศึกษาปีที่ 1</option>
             <option value="2">มัธยมศึกษาปีที่ 2</option>
             <option value="3">มัธยมศึกษาปีที่ 3</option>
