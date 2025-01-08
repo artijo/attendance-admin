@@ -82,28 +82,42 @@ function ShowDetail({ classroom }) {
     <div className="flow-root bg-white rounded-lg border border-gray-100 py-3 shadow-sm">
       <dl className="-my-3 divide-y divide-gray-100 text-sm">
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-medium text-gray-900">ห้องเรียน</dt>
+          <dt className="font-bold text-gray-900">ห้องเรียน</dt>
           <dd className="text-gray-700 sm:col-span-2">{classroom.classLevel}/{classroom.classRoom}</dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-medium text-gray-900">รายละเอียด</dt>
+          <dt className="font-bold text-gray-900">รายละเอียด</dt>
           <dd className="text-gray-700 sm:col-span-2">
            {classroom.classroomType.classTypeNameThai} ({classroom.classroomType.classTypeNameEng})
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-medium text-gray-900">จำนวนนักเรียน</dt>
+          <dt className="font-bold text-gray-900">จำนวนนักเรียน</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {classroom.classroomMembers.length} คน
+            {classroom.classroomMembers? classroom.classroomMembers.length : 0} คน
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-medium text-gray-900">ครูที่ปรึกษาห้องเรียน</dt>
+          <dt className="font-bold text-gray-900">ปีการศึกษา</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {classroom.teacher? (
+            {classroom.academicYear+543}
+          </dd>
+        </div>
+
+        <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+          <dt className="font-bold text-gray-900">เทอม</dt>
+          <dd className="text-gray-700 sm:col-span-2">
+            {classroom.semester}
+          </dd>
+        </div>
+
+        <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+          <dt className="font-bold text-gray-900">ครูที่ปรึกษาห้องเรียน</dt>
+          <dd className="text-gray-700 sm:col-span-2">
+            {classroom.teacher.length > 0 ? (
                 classroom.teacher.map((teacher) => (
                     <span key={teacher.tchId}>{teacher.title} {teacher.fName} {teacher.lName} </span>
                 )) 
@@ -114,10 +128,10 @@ function ShowDetail({ classroom }) {
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-medium text-gray-900">วิชาที่เรียน</dt>
+          <dt className="font-bold text-gray-900">วิชาที่เรียน</dt>
           <dd className="text-gray-700 sm:col-span-2">
             {
-                classroom.timetable? (
+                classroom.timetable.length >0 ? (
                     classroom.timetable.map((timetable) => (
                         <span key={timetable.timetableId}>{timetable.subject.subNameThai} ({timetable.subject.subNameEng}) เวลา {timetable.timeStart} - {timetable.timeEnd} <br /> </span>
                     )) 
@@ -185,10 +199,10 @@ function ShowDetail({ classroom }) {
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
               <thead className="ltr:text-left rtl:text-right">
                 <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">รหัสนักเรียน</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขที่</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">ชื่อ - สกุล</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">จัดการ</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักเรียน</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขที่</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">จัดการ</th>
                   {/* <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">อีเมล</th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">เลขโทรศัพท์</th> */}
                 </tr>

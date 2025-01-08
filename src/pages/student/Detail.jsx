@@ -16,7 +16,6 @@ function StudentDetail() {
             .get(HOSTNAME + "/a/student/" + id)
             .then((response) => {
                 setStudent(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching student", error);

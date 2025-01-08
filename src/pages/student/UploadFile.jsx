@@ -281,6 +281,7 @@ function UploadWithFile() {
 
   return (
     <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-4">อัปโหลดไฟล์ข้อมูลนักเรียน</h2>
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center ${
           isDragging
@@ -332,7 +333,7 @@ function UploadWithFile() {
           onClick={onFileUpload}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          Upload File
+          อัปโหลดไฟล์
         </button>
       )}
       {sheetList.length > 0 && (
@@ -375,7 +376,7 @@ function UploadWithFile() {
                     : 'bg-green-600 hover:bg-green-700'
                   }`}
               >
-                {isSaving ? 'Saving...' : 'Save All Sheets'}
+                {isSaving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}
               </button>
             </div>
           </div>

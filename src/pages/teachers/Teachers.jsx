@@ -45,11 +45,14 @@ function Teachers() {
 
   return (
     <div>
-      <h1>Teachers</h1>
+      <h1>คุณครู</h1>
       {state && state.message && (
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}
+      <div className="flex flex-wrap mt-5">
       <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มครู</Link>
+      <Link to={'departments'} type="button" className="block w-fit text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">จัดการสังกัดกลุ่มสาระ</Link>
+      </div>
       {/* <Link to={'upload'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มครูด้วยไฟล์</Link> */}
       
       <div className="mt-5 flex justify-end">

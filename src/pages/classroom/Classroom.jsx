@@ -42,7 +42,7 @@ function Classroom() {
     <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center">
         <label htmlFor="gradeFilter" className="block text-sm font-medium text-gray-700">
-            Filter by Grade
+            ระดับชั้น
         </label>
         <select
             id="gradeFilter"
@@ -54,7 +54,7 @@ function Classroom() {
                 
             }}
         >
-            <option value="all">All Grades</option>
+            <option value="all">ทั้งหมด</option>
             <option value="1">มัธยมศึกษาปีที่ 1</option>
             <option value="2">มัธยมศึกษาปีที่ 2</option>
             <option value="3">มัธยมศึกษาปีที่ 3</option>
@@ -65,6 +65,7 @@ function Classroom() {
         </div>
    
         <Link to={'create'} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">เพิ่มห้องเรียน</Link>
+        <Link to={'types'} type="button" className="block w-fit text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">จัดการประเภทห้องเรียน</Link>
         </div>
         {classrooms ? (
             <div className="mt-5">

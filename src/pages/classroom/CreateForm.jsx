@@ -86,7 +86,6 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/classrooms/types")
             .then((response) => {
-                console.log(response);
                 setClassroomType(response.data);
             })
             .catch((error) => {

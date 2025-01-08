@@ -21,12 +21,14 @@ import Classroom from "./pages/classroom/Classroom.jsx";
 import ClassroomDetail from "./pages/classroom/Detail.jsx";
 import CreateClassroom from "./pages/classroom/CreateForm.jsx";
 import EditClassroom from "./pages/classroom/EditForm.jsx";
+import ClassroomTypeManage from "./pages/classroom/classroomtype/Manage.jsx";
 
 // Teacher Section
 import Teachers from "./pages/teachers/Teachers.jsx";
 import TeacherDetail from "./pages/teachers/Detail.jsx";
 import CreateTeacher from "./pages/teachers/CreateForm.jsx";
 import EditTeacher from "./pages/teachers/EditForm.jsx";
+import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 
 // 
 import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
@@ -38,6 +40,9 @@ import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 
 // Subject Section
 import Subjects from "./pages/subject/subjects.jsx";
+import SubjectDetail from "./pages/subject/Detail.jsx";
+import CreateSubject from "./pages/subject/CreateForm.jsx";
+import EditSubject from "./pages/subject/EditForm.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -58,11 +63,13 @@ createRoot(document.getElementById("root")).render(
         <Route path="classroom/create" element={<CreateClassroom />} />
         <Route path="classroom/:id" element={<ClassroomDetail />} />
         <Route path="classroom/edit/:id" element={<EditClassroom />} />
+        <Route path="classroom/types" element={<ClassroomTypeManage />} />
         {/* Teacher Section */}
         <Route path="teachers" element={<Teachers />} />
         <Route path="teachers/:id" element={<TeacherDetail />} />
         <Route path="teachers/create" element={<CreateTeacher />} />
         <Route path="teachers/edit/:id" element={<EditTeacher />} />
+        <Route path="teachers/departments" element={<DepartmentManage />} />
         {/* Timetable Section */}
         <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
@@ -73,6 +80,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarmanage" element={<ManageCalendar  />}/>
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
+        <Route path="subjects/:subjectId" element={<SubjectDetail />} />
+        <Route path="subjects/create" element={<CreateSubject />} />
+        <Route path="subjects/edit/:id" element={<EditSubject />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
