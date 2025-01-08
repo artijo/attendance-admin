@@ -43,6 +43,7 @@ import Subjects from "./pages/subject/subjects.jsx";
 import SubjectDetail from "./pages/subject/Detail.jsx";
 import CreateSubject from "./pages/subject/CreateForm.jsx";
 import EditSubject from "./pages/subject/EditForm.jsx";
+import SubjectTypeManage from "./pages/subject/subjecttype/Manage.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -83,6 +84,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />
         <Route path="subjects/create" element={<CreateSubject />} />
         <Route path="subjects/edit/:id" element={<EditSubject />} />
+        <Route path="subjects/types" element={<SubjectTypeManage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
