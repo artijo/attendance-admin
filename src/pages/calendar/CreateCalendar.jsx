@@ -1,39 +1,27 @@
 import { useState,useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { formatDate,formatDateYYYYMMDD } from "../../helper";
 import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
 import axios from "axios";
 import AlertSuccess from "../../components/alert/success";
 
-
 export const Calendar = () => {
     // const location = useLocation();
     const [termStart, setTermStart] = useState("");
     const [termEnd, setTermEnd] = useState("");
     const [mainHoliday, setMainHoliday] = useState([]); // วันหยุดราชกาลที่ระบบทำออกมาเองจะสี เทา
-
     //classroom semester option
     const [semesterClassroom, setSemesterClassroom] = useState([]);
-   
-    
     //semester
     const [selectSemester, setSelectSemester] = useState("");
-
-
     const [holiday, setHoliday] = useState([]); // วันหยุดที่ผู้ใช้เพิ่มเองจะสี ฟ้า
-
-
     //input เพิ่มวันหยุดเอง
     const [startHolidayDate, setStartHolidayDate] = useState(""); // วันเริ่มวันหยุด
     const [endHolidayDate, setEndHolidayDate] = useState(""); // วันสิ้นสุดวันหยุด
     const [holidayName, setHolidayName] = useState("");
     const [type, setType] = useState("RATCHAKHAN");
-
     //จัดการ popup 
     const [isShowPopup, setIsShowPopup] = useState(false);
-
-
     const handleHolidayArray = (startDate, endDate, name, type) => {
         const newHoliday = [...holiday, 
             {
@@ -46,10 +34,6 @@ export const Calendar = () => {
         setHoliday(newHoliday);
         console.log(newHoliday);
     }
-    
-    
-
-
     const handleClickAddHoliday = () => {
         if(startHolidayDate === "" || holidayName === "" || endHolidayDate === ""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -61,26 +45,22 @@ export const Calendar = () => {
     const sentFormData = async (data) => {
         try{
             await axios.post(`${HOSTNAME}/a/calendar`, data);
-
             await axios.post(`${HOSTNAME}/a/holiday`, data);
-
             setIsShowPopup(true);
             setTimeout(() => {
                 setIsShowPopup(false);
-                // window.location.href = `/timetable/${location.state.classroomId}`
+                window.location.href = `/timetable/${location.state.classroomId}`
             }, 3000);
             
         }catch(err){
             console.log(err);
         }
     }
-
     const handleClickAddCalendar = () => {
         if(termStart === "" || termEnd === "" || selectSemester ===""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
         }
-
         const newMainHoliday = mainHoliday.map((holiday) => {
             return {
                 "DTSTART;VALUE=DATE" : holiday["DTSTART;VALUE=DATE"],
@@ -89,10 +69,8 @@ export const Calendar = () => {
                 "TYPE" : "RATCHAKHAN"
             }
         });
-
         const holidayMerge = [...newMainHoliday, ...holiday];
         const data = {
-            // classroomId : location.state.classroomId,
             semester: selectSemester,
             termStart: formatDate(termStart),
             termEnd: formatDate(termEnd),
@@ -100,13 +78,10 @@ export const Calendar = () => {
         };
         sentFormData(data);
     }
-
     const handleDeleteHoliday = (index) => {
         const newHoliday =holiday.filter((holiday, i) => i !== index);
-        setHoliday(newHoliday);
-        
+        setHoliday(newHoliday);   
     }
-
     const fectHoliday = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/holiday`);
@@ -115,60 +90,26 @@ export const Calendar = () => {
             console.error(error);
         }
     }
-
-    function setSemester(value){
-        const uniqueData = [];
-        if(value) {
-            const semesterMap = value.map((items) => {
-                return {semester: items.semester, academicYear: items.academicYear}
-            }
-        );
-            // console.log(semesterMap);
-            // const semesterOption = [...new Set(semesterMap.)];
-            
-            for(const item of semesterMap) {
-                let found = uniqueData.some(
-                    (uniqueData) => {
-                        uniqueData.semester === item.semester &&
-                        uniqueData.academicYear === item.academicYear  
-                    }
-                          
-                );
-                if (!found) {
-                    uniqueData.push(item);
-                }
-            };
-            setSemesterClassroom(uniqueData);
-        };
-    };
-
-    const fecthClassroom = async () => {
+    const fecthSemester = async () => {
         try{
-            const response = await axios.get(`${HOSTNAME}/a/classrooms`);
+            const response = await axios.get(`${HOSTNAME}/a/termAndAcademicYear`);
             setSemesterClassroom(response.data);
-            setSemester(response.data);
         }catch(err){
             console.log(err);
         };
     };
-
     const handleDeleteMainHoliday = (index) => {
         const newMainHoliday = mainHoliday.filter((holiday, i) => i !== index);
         setMainHoliday(newMainHoliday);
     }
-
-
     useEffect(() => {
         fectHoliday();
     },[]);
-
     useEffect(() => {
-        fecthClassroom();
+        fecthSemester();
     },[])
-
     return (
-        <div className="container mx-auto">
-            
+        <div className="container mx-auto">   
             <div
                 className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center  ${isShowPopup ? "block" : "hidden"}`}
             >
@@ -181,8 +122,7 @@ export const Calendar = () => {
             </div>
 
             <div className="mb-2">
-                <h1>ปฎิทินการเรียน</h1>
-                <h3>ห้องเรียน 6/1</h3>
+                <h3>สร้างปฎิทิน</h3>
                 <p className="text-sm">
                     <span className="text-red-600">**</span>
                     <span className="text-gray-600">โดยการอิงปฎิทินนั้นจะอิงตามตารางเรียนห้องเรียน</span>

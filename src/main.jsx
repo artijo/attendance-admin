@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
@@ -33,7 +33,7 @@ import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
 import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
 import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
-// import { EditCalendar } from "./pages/calendar/EditCalendar.jsx";
+import { ManageCalendar } from "./pages/calendar/ManageCalendar.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 
 // Subject Section
@@ -70,10 +70,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="createcalendar" element={<Calendar />}/>
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
-        {/* <Route path="editcalendar" element={<EditCalendar/>}/> */}
-        <Route path="calendar" element={<Calendar />}/>
-        <Route path="calendarhistory" element={<CalendarDate />}/>
-        <Route path="editcalendar" element={<EditCalendar/>}/>
+        <Route path="calendarmanage" element={<ManageCalendar  />}/>
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
       </Route>
