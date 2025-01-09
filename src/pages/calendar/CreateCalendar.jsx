@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
 import axios from "axios";
 import AlertSuccess from "../../components/alert/success";
+// import { DateTime } from "luxon";
 
 export const Calendar = () => {
     // const location = useLocation();
@@ -22,6 +23,25 @@ export const Calendar = () => {
     const [type, setType] = useState("RATCHAKHAN");
     //จัดการ popup 
     const [isShowPopup, setIsShowPopup] = useState(false);
+
+    const [isStartDate, setIsStartDate] = useState(true);
+    const [isEndDate, setIsEndDate] = useState(true);
+
+    const toDay = DateTime.now().toISODate();
+    const handleSelectOption = (e) => {
+        setSelectSemester(e.target.value);
+        setIsStartDate(false);
+    }
+
+    const handleStratDate = (e) => {
+        setTermStart(e.target.value);
+        setIsEndDate(false);
+    }
+
+    const handleEndDate = (e) => {
+        setTermEnd(e.target.value);
+    }
+
     const handleHolidayArray = (startDate, endDate, name, type) => {
         const newHoliday = [...holiday, 
             {
@@ -102,9 +122,13 @@ export const Calendar = () => {
         const newMainHoliday = mainHoliday.filter((holiday, i) => i !== index);
         setMainHoliday(newMainHoliday);
     }
+
+
+
     useEffect(() => {
         fectHoliday();
     },[]);
+
     useEffect(() => {
         fecthSemester();
     },[])
@@ -129,28 +153,10 @@ export const Calendar = () => {
                 </p>
             </div>
             <div className="border p-3 rounded-md bg-white shadow flex justify-between gap-y-5 w-100 flex-wrap">
-                <div className="flex flex-col w-1/2 px-1">
-                    <label className="text-xs font-light block">วันเปิดเทอม(วันแรกของการเรียน)</label>
-                    <input 
-                        type="date" 
-                        value={termStart} 
-                        onChange={(e) => {setTermStart(e.target.value)} } 
-                        className="border rounded-md mt-1 px-2 py-1"
-                    />
-                </div>
-                <div className="flex flex-col w-1/2 px-1">
-                    <label className="text-xs font-light block">วันปิดเทอม(วันสุดท้ายของการเรียน)</label>
-                    <input 
-                        type="date" 
-                        value={termEnd} 
-                        onChange={(e) => {setTermEnd(e.target.value)} } 
-                        className="border rounded-md mt-1 px-2 py-1"
-                    />
-                </div>
                 <div className="flex flex-col w-full px-1">
                     <label className="text-xs font-light block">ปีการศึกษา</label>
-                    <select name="semester" onChange={(e) =>  setSelectSemester(e.target.value) } className="border rounded-md mt-1 px-2 py-1" >
-                        <option value="">เลือกปีการศึกษา</option>
+                    <select name="semester" id="semester"  onChange={(e) =>  handleSelectOption(e) } className="border rounded-md mt-1 px-2 py-1" >
+                        <option value="">ปีการศึกษา</option>
                         {
                             semesterClassroom.length > 0 &&
                             semesterClassroom.map((item, index) => <option key={index} value={`${item.semester}|${item.academicYear}`}>เทอมที่ {item.semester}  ปีการศึกษา {item.academicYear}</option>)
@@ -158,7 +164,43 @@ export const Calendar = () => {
                     </select>
                 </div>
                 <div className="flex flex-col w-1/2 px-1">
-                    <label className="text-xs font-light block">รายการวันหยุดราชกาล(ปี {DateTime.now().year + 543})</label>
+                    <label className="text-xs font-light block">วันเปิดเทอม(วันแรกของการเรียน)</label>
+                    <input 
+                        type="date" 
+                        value={termStart} 
+                        onChange={(e) => handleStratDate(e) } 
+                        className="border rounded-md mt-1 px-2 py-1"
+                        id="termStart"
+                        disabled={isStartDate}
+                        min={toDay}
+                    />
+                </div>
+                <div className="flex flex-col w-1/2 px-1">
+                    <label className="text-xs font-light block">วันปิดเทอม(วันสุดท้ายของการเรียน)</label>
+                    <input 
+                        type="date" 
+                        value={termEnd} 
+                        onChange={(e) => handleEndDate(e) } 
+                        className="border rounded-md mt-1 px-2 py-1"
+                        id="termEnd"
+                        min={termStart}
+                        disabled={isEndDate}
+                    />
+                </div>
+                
+                <div className="flex flex-col w-1/2 px-1 gap-2">
+                    <label className="text-xs font-light block">รายการวันหยุดราชการ(ปี {DateTime.now().year + 543})</label>
+                    <div className="flex gap-5 flex-start">
+                        <div className="flex items-center gap-1 text-xs">
+                            <div className="w-3 h-3 bg-gray-700"></div>
+                            <span className="block">วันหยุดที่เพิ่มอัตโนมัติ</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs">
+                            <div className="w-3 h-3 bg-blue-400"></div>
+                            <span className="block">วันหยุดที่เพิ่มเอง</span>
+                        </div>
+                        
+                    </div>
                     <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
                         {
                             mainHoliday.length > 0 ? 
@@ -172,6 +214,8 @@ export const Calendar = () => {
                             })
                             : <p className="text-xs">กำลังโหลดข้อมูล....</p>
                         }
+                    </div>
+                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
                         {
                             holiday.map((holiday, index) => {
                                 return (
@@ -186,37 +230,7 @@ export const Calendar = () => {
                 </div>
                 <div className="flex flex-col w-1/2 flex-1 px-1">
                     <p className="border-l-4 border-gray-700 pl-1 mb-2"> เพิ่มวันหยุด</p>
-                    <div className="w-fit mb-2">
-                        <p className="text-xs p-2 bg-sky-400 text-white">สีเทาคือวันหยุดตาราชกาลที่เพิ่มให้อัตโนมัติ สีฟ้าคือวันหยุดที่เพิ่มขึ้นมาเอง</p>
-                    </div>
                     <div className="w-full">
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">วันที่เริ่มหยุด</label>
-                            <input 
-                                type="date" 
-                                value={startHolidayDate} 
-                                onChange={(e) => {setStartHolidayDate(e.target.value)} } 
-                                className="border rounded-md mt-1 px-2 py-1 w-full"
-                                required={true}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">วันที่สิ้นสุดการหยุด</label>
-                            <input 
-                                type="date" 
-                                value={endHolidayDate} 
-                                onChange={(e) => {setEndHolidayDate(e.target.value)} } 
-                                className="border rounded-md mt-1 px-2 py-1 w-full"
-                                required={true}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">ประเภทของวันหยุด</label>
-                            <select name="holidayType" id="holidayType" value={type} onChange={(e) => {setType(e.target.value)}} className="border rounded-md mt-1 px-2 py-1 w-full">
-                                <option value="RATCHAKHAN">วันหยุดราชกาล</option>
-                                <option value="SCHOOL">วันหยุดของโรงเรียนหรือกิจกรรมของโรงเรียน</option>
-                            </select>
-                        </div>
                         <div className="mb-2">
                             <label className="text-xs font-light block">ชื่อวันหยุด</label>
                                 <input 
@@ -227,6 +241,36 @@ export const Calendar = () => {
                                     required={true}
                                 />
                         </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">วันที่เริ่มหยุด</label>
+                            <input 
+                                type="date" 
+                                value={startHolidayDate} 
+                                onChange={(e) => {setStartHolidayDate(e.target.value)} } 
+                                className="border rounded-md mt-1 px-2 py-1 w-full"
+                                required={true}
+                                min={toDay}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">วันที่สิ้นสุดการหยุด</label>
+                            <input 
+                                type="date" 
+                                value={endHolidayDate} 
+                                onChange={(e) => {setEndHolidayDate(e.target.value)} } 
+                                className="border rounded-md mt-1 px-2 py-1 w-full"
+                                required={true}
+                                min={startHolidayDate}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label className="text-xs font-light block">ประเภทของวันหยุด</label>
+                            <select name="holidayType" id="holidayType" value={type} onChange={(e) => {setType(e.target.value)}} className="border rounded-md mt-1 px-2 py-1 w-full">
+                                <option value="RATCHAKHAN">วันหยุดราชการ</option>
+                                <option value="SCHOOL">วันหยุดของโรงเรียนหรือกิจกรรมของโรงเรียน</option>
+                            </select>
+                        </div>
+                       
                         
                         <button 
                             type="button"

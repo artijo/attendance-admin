@@ -5,13 +5,14 @@ import timegridPlugin from "@fullcalendar/timegrid"
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-export const CalendarDetatils = ({classroomId}) => {
-    // const navigate = useNavigate();
+export const CalendarDetatils = () => {
+    const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     
     const fectHolidayList = async () => {
-        const response = await axios.get(`${HOSTNAME}/a/holidayCalendar?${classroomId}`);
+        const response = await axios.get(`${HOSTNAME}/a/holidayCalendar?classroomId=${location.state.classroomId}`);
         setHolidayList(response.data);
     }
 
@@ -20,7 +21,7 @@ export const CalendarDetatils = ({classroomId}) => {
     }, []);
 
     return (
-        <div className="p-5 rounded-md shadow-md bg-white">
+        <div>
                 <FullCalendar
                 plugins={[ dayGridPlugin, timegridPlugin, interactionPlugin]}
                 timeZone="Asia/Bangkok"
@@ -30,10 +31,15 @@ export const CalendarDetatils = ({classroomId}) => {
                 // initialView="dayGridMonth"
                 // dateClick={handleDateClick}
                 eventDisplay="block"
-                eventTimeFormat={{
-                    hour: undefined,
-                    minute: undefined,
-                }}
+                // eventTimeFormat={{
+                //     hour: undefined,
+                //     minute: undefined,
+                //     second: undefined,
+                //     day: undefined,
+                //     weekday: undefined,
+                //     month: undefined,
+                //     year: undefined,
+                // }}  
                 eventDidMount={(info) => {
                     // เพิ่ม cursor: pointer โดยใช้ JavaScript
                     info.el.style.cursor = 'pointer';
@@ -43,7 +49,18 @@ export const CalendarDetatils = ({classroomId}) => {
                     center: 'title',
                     right: 'dayGridMonth' //calendardetails.jsx,timeGridWeek,timeGridDay
                 }}
+                eventContent={(eventInfo) => {
+                    // แสดงเฉพาะชื่อ event
+                    return <span>{eventInfo.event.title}</span>;
+                }}
                 events={holidayList}
+                allDayText="กี่โมง"
+                buttonText={{
+                    today: 'วันนี้',
+                    month: 'เดือน',
+                    week: 'สัปดาห์',
+                    day: 'วัน',
+                }}
                 // eventClick={(info) => {
                 // directToEditFrom(info.event)
                 

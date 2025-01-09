@@ -5,14 +5,14 @@ export const CalendarStudy = () => {
     const location = useLocation();
     const classroomInfo = location.state.classroomInfo;
     return (
-        <div>
+        <div className="container mx-auto">
             <div>
-                <h1>ปฎิทินการเรียน</h1>
+                <h1 className="mb-2">ปฎิทินการเรียน</h1>
                 <p>
                     ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester}  ปีการศึกษา {classroomInfo.academicYear}
                 </p>
             </div>
-            <div className="container mt-2">
+            <div className="p-5 rounded-md shadow-md bg-white mt-2">
                 <CalendarDetatils classroomId={location}/>
             </div>
         </div>

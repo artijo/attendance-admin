@@ -23,7 +23,7 @@ export const ManageCalendar = () => {
                             className={`py-2 px-2 cursor-pointer ${selectPage === 1 && "border-b-4 border-gray-600"} hover:bg-slate-200`}
                             onClick={() => setSetSelectPage(1)}
                         >
-                            แก้ไขวันหยุด
+                            วันหยุด
                         </span>
                         
                     </li>

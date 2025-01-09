@@ -5,13 +5,14 @@ import timegridPlugin from "@fullcalendar/timegrid"
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-export const CalendarDetatils = ({classroomId}) => {
-    // const navigate = useNavigate();
+export const CalendarDetatils = () => {
+    const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     
     const fectHolidayList = async () => {
-        const response = await axios.get(`${HOSTNAME}/a/calendarStudy?${classroomId}`);
+        const response = await axios.get(`${HOSTNAME}/a/calendarStudy?classroomId=${location.state.classroomId}`);
         setHolidayList(response.data);
     }
 
@@ -22,19 +23,13 @@ export const CalendarDetatils = ({classroomId}) => {
     }, []);
 
     return (
-        <div className="p-5 rounded-md shadow-md bg-white">
+        <div>
                 <FullCalendar
                 plugins={[ dayGridPlugin, timegridPlugin, interactionPlugin]}
                 timeZone="Asia/Bangkok"
                 locale={"th"}
                 height={600}
-                // initialView="dayGridMonth"
-                // dateClick={handleDateClick}
                 eventDisplay="block"
-                eventTimeFormat={{
-                    hour: undefined,
-                    minute: undefined,
-                }}
                 eventDidMount={(info) => {
                     // เพิ่ม cursor: pointer โดยใช้ JavaScript
                     info.el.style.cursor = 'pointer';
@@ -45,10 +40,18 @@ export const CalendarDetatils = ({classroomId}) => {
                     right: 'dayGridMonth, timeGridWeek, timeGridDay' //calendardetails.jsx,timeGridWeek,timeGridDay
                 }}
                 events={holidayList}
-                // eventClick={(info) => {
-                // directToEditFrom(info.event)
+                allDayText="กี่โมง"
+                buttonText={{
+                    today: 'วันนี้',
+                    month: 'เดือน',
+                    week: 'สัปดาห์',
+                    day: 'วัน',
+                }}
+                eventContent={(eventInfo) => {
+                    // แสดงเฉพาะชื่อ event
+                    return <span>{eventInfo.timeText} { eventInfo.event.title}</span>;
+                }}
                 
-                // }}
             />
         </div>
     )
