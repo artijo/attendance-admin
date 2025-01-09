@@ -24,12 +24,10 @@ export const CalendarDetatils = ({classroomId}) => {
     return (
         <div className="p-5 rounded-md shadow-md bg-white">
                 <FullCalendar
-                
                 plugins={[ dayGridPlugin, timegridPlugin, interactionPlugin]}
                 timeZone="Asia/Bangkok"
                 locale={"th"}
                 height={600}
-                
                 // initialView="dayGridMonth"
                 // dateClick={handleDateClick}
                 eventDisplay="block"

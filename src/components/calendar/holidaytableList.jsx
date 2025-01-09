@@ -69,5 +69,6 @@ export const HolidaytableList = ({holidayList, semester, academicYear, handleSel
 HolidaytableList.propTypes = {
     holidayList: PropTypes.array.isRequired,
     semester: PropTypes.number.isRequired,
-    academicYear: PropTypes.number.isRequired
+    academicYear: PropTypes.number.isRequired,
+    handleSelectOption: PropTypes.func.isRequired
 };

@@ -147,9 +147,9 @@ export const Calendar = () => {
                         className="border rounded-md mt-1 px-2 py-1"
                     />
                 </div>
-                <div className="flex flex-col w-full">
-               
-                    <select name="semester" onChange={(e) =>  setSelectSemester(e.target.value) } >
+                <div className="flex flex-col w-full px-1">
+                    <label className="text-xs font-light block">ปีการศึกษา</label>
+                    <select name="semester" onChange={(e) =>  setSelectSemester(e.target.value) } className="border rounded-md mt-1 px-2 py-1" >
                         <option value="">เลือกปีการศึกษา</option>
                         {
                             semesterClassroom.length > 0 &&

@@ -103,10 +103,10 @@ export function formatDateToThaiNot543(date){ // YYYY-MM-DD
   let year = parseInt(dateSpilt[0]);
   let day = "";
 
-  if(parseInt(dateSpilt[1].charAt(0)) === 0){
-    day += parseInt(dateSpilt[1].charAt(1));
+  if(parseInt(dateSpilt[2].charAt(0)) === 0){
+    day += parseInt(dateSpilt[2].charAt(1));
   }else{
-    day += parseInt(dateSpilt[1]);
+    day += parseInt(dateSpilt[2]);
   }
 
   const thaiMonths = [

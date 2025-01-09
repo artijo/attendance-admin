@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Calendar } from "./CreateCalendar.jsx";
-import { EditHoliday } from "./EditHoliday.jsx"; 
+import { Holiday } from "./Holiday.jsx"; 
 
 export const ManageCalendar = () => {
     const [selectPage, setSetSelectPage] = useState(0);
@@ -34,7 +34,7 @@ export const ManageCalendar = () => {
                     selectPage === 0 && <Calendar/>
                 }
                 {
-                    selectPage === 1 && <EditHoliday/>
+                    selectPage === 1 && <Holiday/>
                 }
             </div>
         </div>

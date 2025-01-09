@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME } from "../../config.js";
 import { HolidaytableList } from "../../components/calendar/holidaytableList.jsx";
-export const EditHoliday = () => {
+export const Holiday = () => {
     const [academicYearList, setAcademicYearList] = useState([]);
     const [holidayList, setHolidayList] = useState([]);
 

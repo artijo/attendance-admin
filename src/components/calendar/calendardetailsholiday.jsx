@@ -5,7 +5,6 @@ import timegridPlugin from "@fullcalendar/timegrid"
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 
 export const CalendarDetatils = ({classroomId}) => {
     // const navigate = useNavigate();
