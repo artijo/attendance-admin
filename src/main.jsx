@@ -30,13 +30,15 @@ import CreateTeacher from "./pages/teachers/CreateForm.jsx";
 import EditTeacher from "./pages/teachers/EditForm.jsx";
 import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 
-// 
+// Timetable
 import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
 import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
+//  Calendar
 import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { ManageCalendar } from "./pages/calendar/ManageCalendar.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
+// import { EditHoliday } from "./pages/calendar/EditHoliday.jsx";
 
 // Subject Section
 import Subjects from "./pages/subject/subjects.jsx";
@@ -79,6 +81,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         <Route path="calendarmanage" element={<ManageCalendar  />}/>
+        {/* <Route path="calendaredit" element={<EditHoliday/>}/> */}
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />

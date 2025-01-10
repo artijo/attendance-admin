@@ -5,9 +5,7 @@ import { HolidaytableList } from "../../components/calendar/holidaytableList.jsx
 export const Holiday = () => {
     const [academicYearList, setAcademicYearList] = useState([]);
     const [holidayList, setHolidayList] = useState([]);
-
     const [value, setValue] = useState({});
-
     const fectHolidayList = async (value) => {
         try{
             const response = await axios.post(`${HOSTNAME}/a/holidayList`, value);
@@ -62,7 +60,7 @@ export const Holiday = () => {
                 </div>
             </div>
             <div>
-                <HolidaytableList holidayList={holidayList} semester={value.semester} academicYear={value.academicYear} handleSelectOption={handleSelectOption}/>
+                <HolidaytableList holidayList={holidayList} semester={value.semester} academicYear={value.academicYear} handleSelectOption={handleSelectOption} fectHolidayList={fectHolidayList}/>
             </div>
         </div>
     );

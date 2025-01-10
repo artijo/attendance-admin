@@ -1,11 +1,17 @@
 import { formatDateYYYYMMDD, formatDateToThaiNot543 } from "../../helper.js";
 import { PropTypes } from "prop-types";
 import { HOSTNAME } from "../../config.js";
+import { Link } from "react-router-dom";
+import { EditHoliday } from "./EditHoliday.jsx";
 import axios from "axios";
+import { useState } from "react";
 
-export const HolidaytableList = ({holidayList, semester, academicYear, handleSelectOption}) => {
+export const HolidaytableList = ({holidayList, semester, academicYear, handleSelectOption, fectHolidayList}) => {
+    const [onClick, setOnClick] = useState(0);
 
-
+    const editOnClick = (value) => {
+        onClick === value ? setOnClick(0) : setOnClick(value);
+    }
     const deleteHoliday = async (holidayName, sDate, eDate) => {
         try {
             const formData = {
@@ -51,12 +57,23 @@ export const HolidaytableList = ({holidayList, semester, academicYear, handleSel
                     <tbody className="divide-y divide-gray-200">
                         {
                             holidayList.map((holiday, index) => (
-                                <tr key={index}>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{holiday.holidayName}</td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThaiNot543(formatDateYYYYMMDD(holiday.sDate))}</td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThaiNot543(formatDateYYYYMMDD(holiday.eDate))}</td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-red-600 cursor-pointer" onClick={() => handleDelete(holiday.holidayName, holiday.sDate, holiday.eDate)} title="Delete">ลบ</td>
+                                <tr key={index+1}>
+                                    {index+1 === onClick ?
+                                        <EditHoliday holidayName={holiday.holidayName} sDate={holiday.sDate} eDate={holiday.eDate} setOnClick={setOnClick} semester={semester} academicYear={academicYear} fectHolidayList={fectHolidayList}/>
+                                            :
+                                        <>
+                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">{holiday.holidayName}</td>
+                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThaiNot543(formatDateYYYYMMDD(holiday.sDate))}</td>
+                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThaiNot543(formatDateYYYYMMDD(holiday.eDate))}</td>
+                                            <td className="whitespace-nowrap px-4 py-2 text-red-600 cursor-pointer" onClick={() => handleDelete(holiday.holidayName, holiday.sDate, holiday.eDate)} title="Delete">ลบ</td>
+                                            <td className="whitespace-nowrap px-4 py-2 text-yellow-600 cursor-pointer" onClick={() => editOnClick(index+1)}>แก้ไข</td>
+                                        </>
+                                    }
+                                    {/* <EditHoliday holidayName={holiday.holidayName} sDate={holiday.sDate} eDate={holiday.eDate}/> */}
+
+                                   
                                 </tr>
+                                
                             ))
                         }
                     </tbody>
