@@ -31,7 +31,6 @@ function UploadWithFile() {
       const response = await axios.get(HOSTNAME+'/a/students');
       if (response.status === 200) {
         setAllStudents(response.data);
-        console.log(response.data);
       }
     } catch (error) {
       console.error('Error fetching all students:', error);
@@ -119,7 +118,6 @@ function UploadWithFile() {
       });
 
       setSheetsData(allSheetsData);
-      console.log("All Sheets Data:", allSheetsData);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -221,7 +219,7 @@ function UploadWithFile() {
         sheets: newStudentsToSave
       };
 
-      console.log("Saving new students data:", dataToSave);
+
 
       const response = await axios.post(HOSTNAME+'/a/students/bulk', dataToSave);
       
@@ -231,7 +229,6 @@ function UploadWithFile() {
         fetchAllStudents(); // Refresh the students list
       }
     } catch (error) {
-      console.error('Error saving data:', error);
       setSaveError(error.response?.data?.message || 'Error saving data to server');
     } finally {
       setIsSaving(false);
