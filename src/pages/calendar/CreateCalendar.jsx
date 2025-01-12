@@ -35,6 +35,7 @@ export const Calendar = () => {
 
     const handleStratDate = (e) => {
         setTermStart(e.target.value);
+    
         setIsEndDate(false);
     }
 
@@ -43,17 +44,22 @@ export const Calendar = () => {
     }
 
     const handleHolidayArray = (startDate, endDate, name, type) => {
-        const newHoliday = [...holiday, 
-            {
-                "DTSTART;VALUE=DATE" : formatDate(startDate),
-                "DTEND;VALUE=DATE" : formatDate(endDate), 
+        const start = DateTime.fromISO(startDate);
+        const end = DateTime.fromISO(endDate);
+        const array = daybetween(start, end).map((date) => {
+            return {
+                "DTSTART;VALUE=DATE" : date,
+                "DTEND;VALUE=DATE" : date,
                 "SUMMARY":name,
                 "TYPE" : type
             }
+        });
+        const newHoliday = [...holiday, 
+            ...array
         ];
         setHoliday(newHoliday);
-        console.log(newHoliday);
     }
+
     const handleClickAddHoliday = () => {
         if(startHolidayDate === "" || holidayName === "" || endHolidayDate === ""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -76,6 +82,44 @@ export const Calendar = () => {
             console.log(err);
         }
     }
+   
+    const handleDeleteHoliday = (index) => {
+        const newHoliday =holiday.filter((holiday, i) => i !== index);
+        setHoliday(newHoliday);   
+    }
+
+    function daybetween(Start, End) {
+        const dates = [];
+        if (Start !== "" && End !== "") {
+            const startDate = DateTime.fromISO(Start);
+            const endDate = DateTime.fromISO(End);
+            // console.log("Start Date:", startDate.toString());
+            // console.log("End Date:", endDate.toString());
+            let currentDate = startDate;
+            while (currentDate <= endDate) {
+                dates.push(currentDate.toISODate().split("-").join("")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
+                currentDate = currentDate.plus({ days: 1 }); // เพิ่มวันทีละ 1
+            }
+        } else {
+            console.error("termStart or termEnd is not set!");
+        }
+        return dates;
+    }
+    
+    const fectHoliday = async () => {    
+        const array = daybetween(termStart, termEnd);
+        try {
+            const response = await axios.get(`${HOSTNAME}/a/holiday`);
+            if(response.status === 200){
+                const mainHoliday = response.data.filter((holiday) => array.includes(holiday["DTSTART;VALUE=DATE"]));
+                setMainHoliday(mainHoliday);
+            }
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const handleClickAddCalendar = () => {
         if(termStart === "" || termEnd === "" || selectSemester ===""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -98,18 +142,11 @@ export const Calendar = () => {
         };
         sentFormData(data);
     }
-    const handleDeleteHoliday = (index) => {
-        const newHoliday =holiday.filter((holiday, i) => i !== index);
-        setHoliday(newHoliday);   
-    }
-    const fectHoliday = async () => {
-        try {
-            const response = await axios.get(`${HOSTNAME}/a/holiday`);
-            setMainHoliday(response.data);
-        } catch (error) {
-            console.error(error);
+    useEffect(() => {
+        if (termStart && termEnd) {
+            fectHoliday();
         }
-    }
+    }, [termStart, termEnd]);
     const fecthSemester = async () => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/termAndAcademicYear`);
@@ -122,13 +159,6 @@ export const Calendar = () => {
         const newMainHoliday = mainHoliday.filter((holiday, i) => i !== index);
         setMainHoliday(newMainHoliday);
     }
-
-
-
-    useEffect(() => {
-        fectHoliday();
-    },[]);
-
     useEffect(() => {
         fecthSemester();
     },[])
@@ -199,7 +229,6 @@ export const Calendar = () => {
                             <div className="w-3 h-3 bg-blue-400"></div>
                             <span className="block">วันหยุดที่เพิ่มเอง</span>
                         </div>
-                        
                     </div>
                     <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
                         {
@@ -212,10 +241,10 @@ export const Calendar = () => {
                                 
                                 )
                             })
-                            : <p className="text-xs">กำลังโหลดข้อมูล....</p>
+                            : <p className="text-xs">กรุณาเลือกปีการศึกษาจนถึงวันปิดเทอม.... หรือ ไม่มีวันหยุดในระหว่างวันที่คุณเลือก</p>
                         }
                     </div>
-                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
+                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-x-2.5 p-2 h-44 overflow-y-auto">
                         {
                             holiday.map((holiday, index) => {
                                 return (
@@ -249,7 +278,7 @@ export const Calendar = () => {
                                 onChange={(e) => {setStartHolidayDate(e.target.value)} } 
                                 className="border rounded-md mt-1 px-2 py-1 w-full"
                                 required={true}
-                                min={toDay}
+                                min={termStart}
                             />
                         </div>
                         <div className="mb-2">

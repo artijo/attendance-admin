@@ -141,3 +141,10 @@ export function formatDateYYYYMMDD(date) {
   const day = date.substring(6, 8);
   return `${parseInt(year)+543}-${month}-${day}`;
 }
+
+export function formatDateYYYYMMDDNot543(date) {
+  const year = date.substring(0, 4);
+  const month = date.substring(4, 6);
+  const day = date.substring(6, 8);
+  return `${parseInt(year)}-${month}-${day}`;
+}

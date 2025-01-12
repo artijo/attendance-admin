@@ -23,6 +23,10 @@ export const Holiday = () => {
             setValue(updatedValue);
             fectHolidayList(updatedValue);
         }
+        if(value === "") {
+            setValue({});
+            setHolidayList([]);
+        }
     }
 
     const fecthSemester = async () => {
@@ -59,7 +63,7 @@ export const Holiday = () => {
                     </select>
                 </div>
             </div>
-            <div>
+            <div>   
                 <HolidaytableList holidayList={holidayList} semester={value.semester} academicYear={value.academicYear} handleSelectOption={handleSelectOption} fectHolidayList={fectHolidayList}/>
             </div>
         </div>

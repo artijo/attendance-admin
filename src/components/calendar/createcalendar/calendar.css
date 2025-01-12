@@ -1,0 +1,8 @@
+.calendar-create .fc-daygrid-day:hover {
+    cursor: pointer;
+    background-color: rgb(226, 226, 226);
+}
+
+.calendar-create .selected-day {
+    background-color: gray !important;
+}

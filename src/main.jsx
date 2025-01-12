@@ -38,6 +38,7 @@ import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { ManageCalendar } from "./pages/calendar/ManageCalendar.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
+import { AddHoliday } from "./pages/calendar/AddHoliday.jsx";
 // import { EditHoliday } from "./pages/calendar/EditHoliday.jsx";
 
 // Subject Section
@@ -81,6 +82,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         <Route path="calendarmanage" element={<ManageCalendar  />}/>
+        <Route path="createholiday" element={<AddHoliday/>}/>
         {/* <Route path="calendaredit" element={<EditHoliday/>}/> */}
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
