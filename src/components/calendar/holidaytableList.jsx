@@ -58,66 +58,79 @@ export const HolidaytableList = ({holidayList, semester, academicYear, handleSel
                     เพิ่มวันหยุด
                 </Link>
             </div>
-            <div className="rounded-lg border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
-                    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                        <thead className="ltr:text-left rtl:text-right">
-                            <tr>
-                                <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">ชื่อวันหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">วันที่เริ่มหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">วันที่สิ้นสุดการหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900"></th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {holidayList.length > 0 && holidayList.map((holiday, index) => (
-                                <tr key={index + 1}>
-                                    {index + 1 === onClick ? (
-                                        <EditHoliday 
-                                            holidayName={holiday.holidayName} 
-                                            sDate={holiday.sDate} 
-                                            eDate={holiday.eDate} 
-                                            setOnClick={setOnClick} 
-                                            semester={semester} 
-                                            academicYear={academicYear} 
-                                            fectHolidayList={fectHolidayList} 
-                                        />
-                                    ) : (
-                                        <>
-                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                                {holiday.holidayName}
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                                {formatDateToThaiNot543(formatDateYYYYMMDD(holiday.sDate))}
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                                {formatDateToThaiNot543(formatDateYYYYMMDD(holiday.eDate))}
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-2">
-                                                <span 
-                                                    className="text-red-600 cursor-pointer" 
-                                                    onClick={() => handleDelete(holiday.holidayName, holiday.sDate, holiday.eDate)} 
-                                                    title="Delete"
-                                                >
-                                                    ลบ
-                                                </span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-2">
-                                                <span 
-                                                    className="text-yellow-600 cursor-pointer" 
-                                                    onClick={() => editOnClick(index + 1)}
-                                                >
-                                                    แก้ไข
-                                                </span>
-                                            </td>
-                                        </>
-                                    )}
+            {
+                semester && academicYear> 0 &&
+                <div className="rounded-lg border border-gray-200">
+                    <div className="overflow-x-auto rounded-t-lg">
+                        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                            <thead className="ltr:text-left rtl:text-right">
+                                <tr>
+                                    <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">ชื่อวันหยุด</th>
+                                    <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">วันที่เริ่มหยุด</th>
+                                    <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">วันที่สิ้นสุดการหยุด</th>
+                                    <th className="whitespace-nowrap px-4 py-3 font-medium text-gray-900"></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {
+                                holidayList.length > 0 ? holidayList.map((holiday, index) => (
+                                    <tr key={index + 1}>
+                                        {index + 1 === onClick ? (
+                                            <EditHoliday 
+                                                holidayName={holiday.holidayName} 
+                                                sDate={holiday.sDate} 
+                                                eDate={holiday.eDate} 
+                                                setOnClick={setOnClick} 
+                                                semester={semester} 
+                                                academicYear={academicYear} 
+                                                fectHolidayList={fectHolidayList} 
+                                            />
+                                        ) : (
+                                            <>
+                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                                    {holiday.holidayName}
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                                    {formatDateToThaiNot543(formatDateYYYYMMDD(holiday.sDate))}
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                                    {formatDateToThaiNot543(formatDateYYYYMMDD(holiday.eDate))}
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-2">
+                                                    <span 
+                                                        className="text-red-600 cursor-pointer" 
+                                                        onClick={() => handleDelete(holiday.holidayName, holiday.sDate, holiday.eDate)} 
+                                                        title="Delete"
+                                                    >
+                                                        ลบ
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-2">
+                                                    <span 
+                                                        className="text-yellow-600 cursor-pointer" 
+                                                        onClick={() => editOnClick(index + 1)}
+                                                    >
+                                                        แก้ไข
+                                                    </span>
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                ))
+                                :
+                                    <tr>
+                                        <td colSpan="4" className="whitespace-nowrap px-4 py-2 text-gray-700 text-center">
+                                            ไม่มีวันหยุด
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+
+            }
+            
         </>
     );
 };

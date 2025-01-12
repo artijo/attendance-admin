@@ -120,7 +120,8 @@ export const Calendar = () => {
         }
     }
 
-    const handleClickAddCalendar = () => {
+    const handleClickAddCalendar = (e) => {
+        e.preventDefault();
         if(termStart === "" || termEnd === "" || selectSemester ===""){
             alert("กรุณากรอกข้อมูลให้ครบถ้วน");
             return;
@@ -163,163 +164,182 @@ export const Calendar = () => {
         fecthSemester();
     },[])
     return (
-        <div className="container mx-auto">   
-            <div
-                className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center  ${isShowPopup ? "block" : "hidden"}`}
-            >
-                <div className="bg-white p-4 rounded shadow-lg">
-                    <AlertSuccess
-                    title="บันทึกปฎิทินการเรียนสำเร็จ"
-                    message="ข้อมูลปฎิทินการเรียนถูกบันทึกเรียบร้อยแล้ว"
-                    />
-                </div>
-            </div>
-
+        <div className="container mx-auto">
             <div className="mb-2">
-                <h3>สร้างปฎิทิน</h3>
-                <p className="text-sm">
-                    <span className="text-red-600">**</span>
-                    <span className="text-gray-600">โดยการอิงปฎิทินนั้นจะอิงตามตารางเรียนห้องเรียน</span>
-                </p>
+                    <h3>สร้างปฎิทิน</h3>
+                    <p className="text-sm">
+                        <span className="text-red-600">**</span>
+                        <span className="text-gray-600">โดยการอิงปฎิทินนั้นจะอิงตามตารางเรียนห้องเรียน</span>
+                    </p>
             </div>
-            <div className="border p-3 rounded-md bg-white shadow flex justify-between gap-y-5 w-100 flex-wrap">
-                <div className="flex flex-col w-full px-1">
-                    <label className="text-xs font-light block">ปีการศึกษา</label>
-                    <select name="semester" id="semester"  onChange={(e) =>  handleSelectOption(e) } className="border rounded-md mt-1 px-2 py-1" >
-                        <option value="">ปีการศึกษา</option>
-                        {
-                            semesterClassroom.length > 0 &&
-                            semesterClassroom.map((item, index) => <option key={index} value={`${item.semester}|${item.academicYear}`}>เทอมที่ {item.semester}  ปีการศึกษา {item.academicYear}</option>)
-                        }
-                    </select>
-                </div>
-                <div className="flex flex-col w-1/2 px-1">
-                    <label className="text-xs font-light block">วันเปิดเทอม(วันแรกของการเรียน)</label>
-                    <input 
-                        type="date" 
-                        value={termStart} 
-                        onChange={(e) => handleStratDate(e) } 
-                        className="border rounded-md mt-1 px-2 py-1"
-                        id="termStart"
-                        disabled={isStartDate}
-                        min={toDay}
-                    />
-                </div>
-                <div className="flex flex-col w-1/2 px-1">
-                    <label className="text-xs font-light block">วันปิดเทอม(วันสุดท้ายของการเรียน)</label>
-                    <input 
-                        type="date" 
-                        value={termEnd} 
-                        onChange={(e) => handleEndDate(e) } 
-                        className="border rounded-md mt-1 px-2 py-1"
-                        id="termEnd"
-                        min={termStart}
-                        disabled={isEndDate}
-                    />
-                </div>
-                
-                <div className="flex flex-col w-1/2 px-1 gap-2">
-                    <label className="text-xs font-light block">รายการวันหยุดราชการ(ปี {DateTime.now().year + 543})</label>
-                    <div className="flex gap-5 flex-start">
-                        <div className="flex items-center gap-1 text-xs">
-                            <div className="w-3 h-3 bg-gray-700"></div>
-                            <span className="block">วันหยุดที่เพิ่มอัตโนมัติ</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-xs">
-                            <div className="w-3 h-3 bg-blue-400"></div>
-                            <span className="block">วันหยุดที่เพิ่มเอง</span>
-                        </div>
-                    </div>
-                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
-                        {
-                            mainHoliday.length > 0 ? 
-                            mainHoliday.map((holiday, index) => {
-                                return (
-                                    <div key={index} className="w-fit">
-                                        <p className="rounded-lg text-xs bg-gray-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteMainHoliday(index)}>x</span> </p>
-                                    </div>
-                                
-                                )
-                            })
-                            : <p className="text-xs">กรุณาเลือกปีการศึกษาจนถึงวันปิดเทอม.... หรือ ไม่มีวันหยุดในระหว่างวันที่คุณเลือก</p>
-                        }
-                    </div>
-                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-x-2.5 p-2 h-44 overflow-y-auto">
-                        {
-                            holiday.map((holiday, index) => {
-                                return (
-                                    <div key={index} className="w-fit">
-                                        <p className="rounded-lg text-xs bg-blue-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(index)}>x</span> </p>
-                                    </div>
-                                
-                                )
-                            })
-                        }
-                    </div>
-                </div>
-                <div className="flex flex-col w-1/2 flex-1 px-1">
-                    <p className="border-l-4 border-gray-700 pl-1 mb-2"> เพิ่มวันหยุด</p>
-                    <div className="w-full">
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">ชื่อวันหยุด</label>
-                                <input 
-                                    type="text" 
-                                    value={holidayName} 
-                                    onChange={(e) => {setHolidayName(e.target.value)} } 
-                                    className="border rounded-md mt-1 px-2 py-1 w-full "
-                                    required={true}
-                                />
-                        </div>
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">วันที่เริ่มหยุด</label>
-                            <input 
-                                type="date" 
-                                value={startHolidayDate} 
-                                onChange={(e) => {setStartHolidayDate(e.target.value)} } 
-                                className="border rounded-md mt-1 px-2 py-1 w-full"
-                                required={true}
-                                min={termStart}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">วันที่สิ้นสุดการหยุด</label>
-                            <input 
-                                type="date" 
-                                value={endHolidayDate} 
-                                onChange={(e) => {setEndHolidayDate(e.target.value)} } 
-                                className="border rounded-md mt-1 px-2 py-1 w-full"
-                                required={true}
-                                min={startHolidayDate}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label className="text-xs font-light block">ประเภทของวันหยุด</label>
-                            <select name="holidayType" id="holidayType" value={type} onChange={(e) => {setType(e.target.value)}} className="border rounded-md mt-1 px-2 py-1 w-full">
-                                <option value="RATCHAKHAN">วันหยุดราชการ</option>
-                                <option value="SCHOOL">วันหยุดของโรงเรียนหรือกิจกรรมของโรงเรียน</option>
-                            </select>
-                        </div>
-                       
-                        
-                        <button 
-                            type="button"
-                            className="border  bg-slate-50  rounded-md text-sm font-light px-2 py-1 hover:bg-blue-400 hover:text-white"
-                            onClick={() => handleClickAddHoliday()}
-                        >
-                            เพิ่มวันหยุด
-                        </button>
-                    </div>
-                </div>
-                <div className="flex flex-col w-full px-1">
-                    <button
-                        type="button"
-                        className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                        onClick={() => handleClickAddCalendar()}
+            <div className="flex gap-5  md:flex-row flex-col">
+                <form className="w-full md:w-1/2" onSubmit={(e) => handleClickAddCalendar(e)}>   
+                    <div
+                        className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center  ${isShowPopup ? "block" : "hidden"}`}
                     >
-                        บันทึกปฎิทินการเรียน
-                    </button>
+                        <div className="bg-white p-4 rounded shadow-lg">
+                            <AlertSuccess
+                            title="บันทึกปฎิทินการเรียนสำเร็จ"
+                            message="ข้อมูลปฎิทินการเรียนถูกบันทึกเรียบร้อยแล้ว"
+                            />
+                        </div>
+                    </div>
+                    <div className="border p-5 rounded-md bg-white shadow flex flex-col w-100 gap-3">
+                        <div>
+                            <h4 className="mb-1">ขั้นตอนที่ 1 เลือกปีการศึกษา</h4>
+                            <div className="flex flex-col w-full">
+                                <label className="text-xs font-light block">ปีการศึกษา</label>
+                                <select name="semester" id="semester"  onChange={(e) =>  handleSelectOption(e) } className="border rounded-md mt-1 px-2 py-1" >
+                                    <option value="">.... เลือกปีการศึกษา</option>
+                                    {
+                                        semesterClassroom.length > 0 &&
+                                        semesterClassroom.map((item, index) => <option key={index} value={`${item.semester}|${item.academicYear}`}>เทอมที่ {item.semester}  ปีการศึกษา {item.academicYear}</option>)
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="mb-1">ขั้นตอนที่ 2 เลือกวันเปิดเทอมและปิดเทอม</h4>
+                            <div className="flex gap-5">
+                                <div className="flex flex-col w-1/2">
+                                    <label className="text-xs font-light block">วันเปิดเทอม(วันแรกของการเรียน)</label>
+                                    <input 
+                                        type="date" 
+                                        value={termStart} 
+                                        onChange={(e) => handleStratDate(e) } 
+                                        className="border rounded-md mt-1 px-2 py-1"
+                                        id="termStart"
+                                        disabled={isStartDate}
+                                        min={toDay}
+                                    />
+                                </div>
+                                <div className="flex flex-col w-1/2">
+                                    <label className="text-xs font-light block">วันปิดเทอม(วันสุดท้ายของการเรียน)</label>
+                                    <input 
+                                        type="date" 
+                                        value={termEnd} 
+                                        onChange={(e) => handleEndDate(e) } 
+                                        className="border rounded-md mt-1 px-2 py-1"
+                                        id="termEnd"
+                                        min={termStart}
+                                        disabled={isEndDate}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="flex w-full gap-5">
+                                <div className="w-1/2">
+                                    <label className="text-xs font-light block">รายการวันหยุดราชการ(ปี {DateTime.now().year + 543})</label>
+                                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-1 p-2 h-44 overflow-y-auto">
+                                        {
+                                            mainHoliday.length > 0 ? 
+                                            mainHoliday.map((holiday, index) => {
+                                                return (
+                                                    <div key={index} className="w-fit">
+                                                        <p className="rounded-lg text-xs bg-gray-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteMainHoliday(index)}>x</span> </p>
+                                                    </div>
+                                                
+                                                )
+                                            })
+                                            : <p className="text-xs">หากระหว่างวันเปิดเทอมจนถึงเปิดเทอมแล้วมีวันหยุดระหว่างนั้น จะทำการเพิ่มวันหยุดอัตโนมัติ (เฉพาะวันหยุดราชการ)</p>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="text-xs font-light block">รายการวันหยุดที่เพิ่มขึ้นมาเอง</label>
+                                    <div className="border rounded-md mt-1 flex flex-wrap w-full gap-x-2.5 p-2 h-44 overflow-y-auto">
+                                        {
+                                            holiday.map((holiday, index) => {
+                                                return (
+                                                    <div key={index} className="w-fit">
+                                                        <p className="rounded-lg text-xs bg-blue-400 px-2 py-1 text-white">{formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"])}-{holiday.SUMMARY}<span className="ml-1 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(index)}>x</span> </p>
+                                                    </div>
+                                                
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        <div className="flex flex-col w-full px-1">
+                            <button
+                                type="submit"
+                                className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                            >
+                                บันทึกปฎิทินการเรียน
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div className="border rounded-md shadow-md bg-white p-5 h-fit w-full md:w-1/2">
+                    <h4 className="mb-1">เพิ่มวันหยุด</h4>
+                    <div 
+                        className="flex flex-col w-full flex-1" 
+                        onSubmit={(e) => handleClickAddHoliday(e)}
+                    >
+                        <div className="w-full">
+                            <div className="mb-2">
+                                <label className="text-xs font-light block">ชื่อวันหยุด</label>
+                                <input
+                                    type="text"
+                                    value={holidayName}
+                                    onChange={(e) => setHolidayName(e.target.value)}
+                                    className="border rounded-md mt-1 px-2 py-1 w-full"
+                                />
+                            </div>
+                            <div className="w-full flex gap-5 mb-2">
+                                <div className="w-1/2">
+                                    <label className="text-xs font-light block">วันที่เริ่มหยุด</label>
+                                    <input
+                                        type="date"
+                                        value={startHolidayDate}
+                                        onChange={(e) => setStartHolidayDate(e.target.value)}
+                                        className="border rounded-md mt-1 px-2 py-1 w-full"
+                                        min={termStart}
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <label className="text-xs font-light block">วันที่สิ้นสุดการหยุด</label>
+                                    <input
+                                        type="date"
+                                        value={endHolidayDate}
+                                        onChange={(e) => setEndHolidayDate(e.target.value)}
+                                        className="border rounded-md mt-1 px-2 py-1 w-full"
+                                        min={startHolidayDate}
+                                    />
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <label className="text-xs font-light block">ประเภทของวันหยุด</label>
+                                <select
+                                    name="holidayType"
+                                    id="holidayType"
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                    className="border rounded-md mt-1 px-2 py-1 w-full"
+                                >
+                                    <option value="RATCHAKHAN">วันหยุดราชการ</option>
+                                    <option value="SCHOOL">วันหยุดของโรงเรียนหรือกิจกรรมของโรงเรียน</option>
+                                </select>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleClickAddHoliday()}
+                                className="border bg-slate-50 rounded-md text-sm font-light px-2 py-1 hover:bg-blue-400 hover:text-white mt-4"
+                            >
+                                เพิ่มวันหยุด
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        
     );
 };
+
