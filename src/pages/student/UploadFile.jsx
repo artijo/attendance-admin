@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import * as XLSX from 'xlsx';
 import axios from 'axios'; // Add this import
 import { HOSTNAME } from "../../config";
@@ -24,6 +24,22 @@ function UploadWithFile() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [modifiedData, setModifiedData] = useState({}); // Track modified records
+  const [allStudents, setAllStudents] = useState([]);
+
+  const fetchAllStudents = async () => {
+    try {
+      const response = await axios.get(HOSTNAME+'/a/students');
+      if (response.status === 200) {
+        setAllStudents(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching all students:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllStudents();
+  }, []);
 
   const acceptedTypes = [
     'application/vnd.ms-excel',
@@ -90,7 +106,7 @@ function UploadWithFile() {
         const validData = jsonData.map((row, index) => ({
           id: index,
           no: row[StudentColumns.NO],
-          studentId: row[StudentColumns.STUDENT_ID],
+          studentId: String(row[StudentColumns.STUDENT_ID]), // Convert to string
           title: row[StudentColumns.TITLE],
           firstName: row[StudentColumns.FIRSTNAME],
           lastName: row[StudentColumns.LASTNAME],
@@ -102,7 +118,6 @@ function UploadWithFile() {
       });
 
       setSheetsData(allSheetsData);
-      console.log("All Sheets Data:", allSheetsData);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -168,35 +183,52 @@ function UploadWithFile() {
     }
   };
 
+  const checkStudentExists = (studentId) => {
+    return allStudents.some(student => student.stdId === studentId);
+  };
+
   const handleSaveToServer = async () => {
     try {
       setIsSaving(true);
       setSaveError("");
       
-      // Prepare all sheets data
-      const allSheetsToSave = {};
+      // Prepare only new students data from all sheets
+      const newStudentsToSave = {};
       Object.keys(sheetsData).forEach(sheetName => {
-        allSheetsToSave[sheetName] = sheetsData[sheetName].map(student => ({
+        // Filter only new students (those that don't exist)
+        const newStudents = sheetsData[sheetName].filter(student => 
+          !checkStudentExists(student.studentId)
+        ).map(student => ({
           ...student,
           isModified: Boolean(modifiedData[sheetName]?.[student.id])
         }));
+
+        if (newStudents.length > 0) {
+          newStudentsToSave[sheetName] = newStudents;
+        }
       });
 
+      // If no new students, show message and return
+      if (Object.keys(newStudentsToSave).length === 0) {
+        alert('ไม่มีข้อมูลนักเรียนใหม่ที่ต้องเพิ่ม');
+        setIsSaving(false);
+        return;
+      }
+
       const dataToSave = {
-        sheets: allSheetsToSave
+        sheets: newStudentsToSave
       };
 
-      console.log("Saving all sheets data:", dataToSave);
+
 
       const response = await axios.post(HOSTNAME+'/a/students/bulk', dataToSave);
       
       if (response.status === 200) {
-        // Clear all modified data after successful save
         setModifiedData({});
-        alert('All sheets data saved successfully!');
+        alert(`บันทึกข้อมูลนักเรียนใหม่สำเร็จ!`);
+        fetchAllStudents(); // Refresh the students list
       }
     } catch (error) {
-      console.error('Error saving data:', error);
       setSaveError(error.response?.data?.message || 'Error saving data to server');
     } finally {
       setIsSaving(false);
@@ -211,6 +243,7 @@ function UploadWithFile() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
@@ -225,6 +258,17 @@ function UploadWithFile() {
             {data.map((row) => (
               <tr key={`${sheetName}-${row.id}`} 
                   className={modifiedData[sheetName]?.[row.id] ? 'bg-yellow-50' : ''}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {checkStudentExists(row.studentId) ? (
+                    <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs">
+                      Exists - Will Skip
+                    </span>
+                  ) : (
+                    <span className="text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs">
+                      New - Will Add
+                    </span>
+                  )}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">{row.no}</td>
                 {Object.entries({
                   studentId: 'Student ID',
