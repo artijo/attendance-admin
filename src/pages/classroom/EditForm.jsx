@@ -10,6 +10,7 @@ function EditClassroom() {
     const [teacherOptions, setTeacherOptions] = useState(null);
     const [leaderOptions, setLeaderOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
+    const [academicterms, setAcademicTerms] = useState(null);
     const redirect = useNavigate();
 
     // const teacherOptions = teacher?.map(t => ({
@@ -83,6 +84,17 @@ function EditClassroom() {
             });
     }
 
+    function fetchAcademicTerms() {
+        axios
+            .get(HOSTNAME + "/a/academicterms")
+            .then((response) => {
+                setAcademicTerms(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching academic terms", error);
+            });
+    }
+
     function fetchClassroom() {
         axios
             .get(`${HOSTNAME}/a/classroom/${id}`)
@@ -91,11 +103,16 @@ function EditClassroom() {
                 // Set form values
                 setValue("classLevel", classroom.classLevel);
                 setValue("classRoom", classroom.classRoom);
-                setValue("academicYear", classroom.academicYear);
-                setValue("semester", classroom.semester);
                 setValue("classTypeId", classroom.classroomType?.classTypeId);
                 setValue("teacherIds", classroom.teacher?.map(t => t.tchId));
                 setValue("leaderId", classroom.leader?.ldrId);
+
+                // Set term related values
+                if (classroom.term) {
+                    setValue("termId", classroom.term.termId);
+                    setValue("academicYear", classroom.term.academicYear);
+                    setValue("semester", classroom.term.semester);
+                }
 
                 // If teacher exists in classroom, add them to teacherOptions
                 if (classroom.teacher?.length > 0) {
@@ -128,6 +145,7 @@ function EditClassroom() {
         fetchTeacher();
         fetchLeader();
         fetchClassroomType();
+        fetchAcademicTerms();
         fetchClassroom();
     }, []);
 
@@ -180,26 +198,33 @@ function EditClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="ClassYear" className="block text-xs font-medium text-gray-700"> ปีการศึกษา (ค.ศ.)</label>
-                        <input
-                            type="number"
-                            id="ClassYear"
-                            placeholder="xxxx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            min={new Date().getFullYear()}
-                            {...register("academicYear")}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="Semester" className="block text-xs font-medium text-gray-700">เทอมที่</label>
-                        <input
-                            type="number"
-                            id="Semester"
-                            placeholder="x"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            min={1}
-                            max={2}
-                            {...register("semester")}
+                        <label htmlFor="AcademicTerm" className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                        <Select
+                            id="AcademicTerm"
+                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            options={academicterms?.map(term => ({
+                                value: term.termId,
+                                label: `ปีการศึกษา ${term.academicYear + 543} เทอม ${term.semester}`
+                            })) || []}
+                            value={academicterms?.map(term => ({
+                                value: term.termId,
+                                label: `ปีการศึกษา ${term.academicYear + 543} เทอม ${term.semester}`
+                            })).find(option => 
+                                academicterms?.find(t => t.termId === watch('termId'))?.termId === option.value
+                            )}
+                            onChange={(selectedOption) => {
+                                const term = academicterms?.find(t => t.termId === selectedOption?.value);
+                                if (term) {
+                                    setValue("termId", term.termId);
+                                    setValue("academicYear", term.academicYear);
+                                    setValue("semester", term.semester);
+                                } else {
+                                    setValue("termId", null);
+                                    setValue("academicYear", null);
+                                    setValue("semester", null);
+                                }
+                            }}
+                            isClearable
                         />
                     </div>
                     <div>

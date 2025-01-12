@@ -179,14 +179,14 @@ function ShowDetail({ classroom }) {
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-bold text-gray-900">ปีการศึกษา</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {classroom.academicYear+543}
+            {classroom.term.academicYear+543}
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
           <dt className="font-bold text-gray-900">เทอม</dt>
           <dd className="text-gray-700 sm:col-span-2">
-            {classroom.semester}
+            {classroom.term.semester}
           </dd>
         </div>
 

@@ -22,8 +22,8 @@ function ClassroomList({classrooms}) {
               
               <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classroomType.classTypeNameThai}</td>
 
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.academicYear+543}</td>
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.semester}</td>
+              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.term.academicYear+543}</td>
+              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.term.semester}</td>
               
               <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                   <Link to={`/timetable/${classroom.classId}`} > <span className="underline text-blue-800">ตารางเรียน</span> </Link>

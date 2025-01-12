@@ -12,6 +12,7 @@ function CreateClassroom() {
     const [leaderOptions, setLeaderOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
     const [selectedTeachers, setSelectedTeachers] = useState(new Set());
+    const [academicterms, setAcademicTerms] = useState(null);
     const redirect = useNavigate();
 
     const {
@@ -50,6 +51,17 @@ function CreateClassroom() {
             console.error(error);
             setError("เกิดข้อผิดพลาดในการสร้างห้องเรียน");
         }
+    }
+
+    function fetchAcademicTerms() {
+        axios
+            .get(HOSTNAME + "/a/academicterms")
+            .then((response) => {
+                setAcademicTerms(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching academic terms", error);
+            });
     }
 
     function fetchTeacher() {
@@ -100,6 +112,7 @@ function CreateClassroom() {
         fetchTeacher();
         fetchLeader();
         fetchClassroomType();
+        fetchAcademicTerms();
     }
     , []);
 
@@ -175,28 +188,26 @@ function CreateClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor={`ClassYear_${index}`} className="block text-xs font-medium text-gray-700"> ปีการศึกษา (ค.ศ.)</label>
-                        <input
-                            type="number"
-                            id={`ClassYear_${index}`}
-                            placeholder="xxxx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            min={new Date().getFullYear()}
-                            {...register(`classroom_${index}.academicYear`)}
+                        <label htmlFor={`AcademicTerm_${index}`} className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                        <Select
+                            id={`AcademicTerm_${index}`}
+                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            options={academicterms?.map(term => ({
+                                value: term.termId,
+                                label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+                            })) || []}
+                            onChange={(selectedOption) => {
+                                const term = academicterms?.find(t => t.termId === selectedOption?.value);
+                                if (term) {
+                                    setValue(`classroom_${index}.academicYear`, term.academicYear);
+                                    setValue(`classroom_${index}.semester`, term.semester);
+                                    setValue(`classroom_${index}.termId`, term.termId);
+                                }
+                            }}
+                            isClearable
                         />
                     </div>
-                    <div>
-                        <label htmlFor={`Semester_${index}`} className="block text-xs font-medium text-gray-700">เทอมที่</label>
-                        <input
-                            type="number"
-                            id={`Semester_${index}`}
-                            placeholder="x"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            min={1}
-                            max={2}
-                            {...register(`classroom_${index}.semester`)}
-                        />
-                    </div>
+
                     <div>
                         <label htmlFor={`ClassTeacher_${index}`} className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                         <Select
@@ -326,26 +337,23 @@ function CreateClassroom() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="ClassYear" className="block text-xs font-medium text-gray-700"> ปีการศึกษา (ค.ศ.)</label>
-                                <input
-                                    type="number"
-                                    id="ClassYear"
-                                    placeholder="xxxx"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                                    min={new Date().getFullYear()}
-                                    {...register("academicYear")}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="Semester" className="block text-xs font-medium text-gray-700">เทอมที่</label>
-                                <input
-                                    type="number"
-                                    id="Semester"
-                                    placeholder="x"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                                    min={1}
-                                    max={2}
-                                    {...register("semester")}
+                                <label htmlFor="AcademicTerm" className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                                <Select
+                                    id="AcademicTerm"
+                                    className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    options={academicterms?.map(term => ({
+                                        value: term.termId,
+                                        label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+                                    })) || []}
+                                    onChange={(selectedOption) => {
+                                        const term = academicterms?.find(t => t.termId === selectedOption?.value);
+                                        if (term) {
+                                            setValue("academicYear", term.academicYear);
+                                            setValue("semester", term.semester);
+                                            setValue("termId", term.termId);
+                                        }
+                                    }}
+                                    isClearable
                                 />
                             </div>
                             <div>
