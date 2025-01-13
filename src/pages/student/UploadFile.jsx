@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import * as XLSX from 'xlsx';
 import axios from 'axios'; // Add this import
 import { HOSTNAME } from "../../config";
+import { useNavigate } from "react-router-dom";
 
 const StudentColumns = {
   NO: 'No',
@@ -25,6 +26,7 @@ function UploadWithFile() {
   const [saveError, setSaveError] = useState("");
   const [modifiedData, setModifiedData] = useState({}); // Track modified records
   const [allStudents, setAllStudents] = useState([]);
+  const navigate = useNavigate();
 
   const fetchAllStudents = async () => {
     try {
@@ -225,7 +227,7 @@ function UploadWithFile() {
       
       if (response.status === 200) {
         setModifiedData({});
-        alert(`บันทึกข้อมูลนักเรียนใหม่สำเร็จ!`);
+        navigate('/students');
         fetchAllStudents(); // Refresh the students list
       }
     } catch (error) {
