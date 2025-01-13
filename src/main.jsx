@@ -36,10 +36,12 @@ import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
 //  Calendar
 import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
-import { ManageCalendar } from "./pages/calendar/ManageCalendar.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
-import { AddHoliday } from "./pages/calendar/AddHoliday.jsx";
+// Calendar new fix
+import CreateCalendar from "./pages/calendarmanage_new/CreateCalendar.jsx";
 // import { EditHoliday } from "./pages/calendar/EditHoliday.jsx";
+// Holiday Section
+import CreateHoliday from "./pages/holiday/CreateHoliday.jsx";
 
 // Subject Section
 import Subjects from "./pages/subject/subjects.jsx";
@@ -86,8 +88,12 @@ createRoot(document.getElementById("root")).render(
         <Route path="createcalendar" element={<Calendar />}/>
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
-        <Route path="calendarmanage" element={<ManageCalendar  />}/>
-        <Route path="createholiday" element={<AddHoliday/>}/>
+
+        <Route path="calendar" element={<CreateCalendar/>}/>
+        {/* Holiday Section */}
+        <Route path="holiday/create" element={<CreateHoliday/>}/>
+        {/* <Route path="calendarmanage" element={<ManageCalendar  />}/>
+        <Route path="createholiday" element={<AddHoliday/>}/> */}
         {/* <Route path="calendaredit" element={<EditHoliday/>}/> */}
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
