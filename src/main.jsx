@@ -48,6 +48,11 @@ import CreateSubject from "./pages/subject/CreateForm.jsx";
 import EditSubject from "./pages/subject/EditForm.jsx";
 import SubjectTypeManage from "./pages/subject/subjecttype/Manage.jsx";
 
+// Term
+import CreatetermForm from "./pages/term/CreatetermForm.jsx";
+import MainTermPage from "./pages/term/MainTermPage.jsx";
+import EdittermForm from "./pages/term/EdittermForm.jsx";
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <BrowserRouter>
@@ -90,6 +95,10 @@ createRoot(document.getElementById("root")).render(
         <Route path="subjects/create" element={<CreateSubject />} />
         <Route path="subjects/edit/:id" element={<EditSubject />} />
         <Route path="subjects/types" element={<SubjectTypeManage />} />
+        {/* Term mannage */}
+        <Route path="terms" element={<MainTermPage/>} />
+        <Route path="terms/edit" element={<EdittermForm/>} />
+        <Route path="terms/create" element={<CreatetermForm />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
