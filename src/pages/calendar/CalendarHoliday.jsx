@@ -9,7 +9,7 @@ export const CalendarHoliday = () => {
             <div>
                 <h1 className="mb-2">ปฎิทินวันหยุด</h1>
                 <p>
-                    ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.semester}  ปีการศึกษา {classroomInfo.academicYear}
+                    ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}
                 </p>
             </div>
             

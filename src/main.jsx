@@ -34,7 +34,6 @@ import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
 import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
 //  Calendar
-import  { Calendar }  from "./pages/calendar/CreateCalendar.jsx";
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 // Calendar new fix
@@ -90,11 +89,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
         {/* CalendarSchool study Section */}
-        <Route path="createcalendar" element={<Calendar />}/>
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
-
-        <Route path="calendar" element={<CreateCalendar/>}/>
+        <Route path="calendar/create" element={<CreateCalendar/>}/> 
         {/* Holiday Section */}
         <Route path="holiday" element={<Holiday/>}/>
         <Route path="holiday/edit/:id" element={<EditHoliday/>}/>

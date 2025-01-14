@@ -12,8 +12,6 @@ function daybetween(Start, End) {
     if (Start !== "" && End !== "") {
         const startDate = DateTime.fromISO(Start);
         const endDate = DateTime.fromISO(End);
-        // console.log("Start Date:", startDate.toString());
-        // console.log("End Date:", endDate.toString());
         let currentDate = startDate;
         while (currentDate <= endDate) {
             dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
@@ -26,29 +24,38 @@ function daybetween(Start, End) {
 }
 
 function CreateHoliday(){
+    const [holidayList, setHolidayList] = useState([]); // เก็บตัวอันตโนมัติไว้
     const [holidayAutoList, setHolidayAutoList] = useState([]);
-    
+    const [isMultipleMode, setIsMultipleMode] = useState(false);
+
     const fecthHolidayAuto = async () => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/holidayauto`)
             if(response.status === 200){
                 const newList = response.data.map((holiday,index) => ({
-                    id: index,
+                    id: `${holiday.SUMMARY}-${holiday["DTSTART;VALUE=DATE"]}-${index}`,
                     holidayname: holiday.SUMMARY,
                     startDate: formatDateYYYYMMDD(holiday["DTSTART;VALUE=DATE"]),
                     endDate: formatDateYYYYMMDD(holiday["DTEND;VALUE=DATE"]),
                     type:"RATCHAKHAN"
                 }));
-                setHolidayAutoList(newList);
+                setHolidayAutoList([...holidayAutoList,...newList]);
+                setHolidayList([...newList]);
             };
         }catch(error){
             console.error(error);
         };
     };
 
-    useEffect(()=> {
-        fecthHolidayAuto()
-    },[])
+    const deleteFectholidayAuto = () => {
+        if(holidayList.length > 0){
+            const newAutoList = holidayAutoList.filter(holiday => !holidayList.some(auto => auto.id === holiday.id));
+            setHolidayAutoList(newAutoList);
+            setHolidayList([]);
+        }else{
+            return;
+        }
+    }
 
     const [academicYearTermList, setAcademicYearTermList] = useState([]);
     const fecthAcademicYearTerms = async () => {
@@ -64,9 +71,19 @@ function CreateHoliday(){
             console.error(error)
         };
     };
+
+    useEffect(() => {
+        if(isMultipleMode === true){
+            fecthHolidayAuto();
+        }else{
+            deleteFectholidayAuto();
+        }
+    },[isMultipleMode]);
+
     useEffect(() => {
         fecthAcademicYearTerms();
     },[]);
+
     // input
     const [holidayName, setHolidayName] = useState("");
     const [startDate, setStartDate] = useState("");
@@ -92,7 +109,8 @@ function CreateHoliday(){
     
     const handleAddHoliday = (e) => {
         e.preventDefault();
-        const data = daybetween(startDate, endDate).map((date) => ({
+        const data = daybetween(startDate, endDate).map((date,index) => ({
+            id: `${holidayName}-${date}-${holidayType}-${index}`,
             holidayname: holidayName,
             startDate: date,
             endDate: date,
@@ -110,13 +128,28 @@ function CreateHoliday(){
     return (
         <div>
             <h1 className="font-medium mb-4">ฟอร์มสร้างวันหยุด</h1>
+            
             <div className="grid gap-2 md:grid-cols-2">
                 <div className="holiday" id="holiday-box">
-                    <Holidaylisttable holidayList={holidayAutoList}/>
+                    <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />
                 </div>
                 <div className="grid gap-2 md:grid-cols-1">
+                    
                     <form className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2" onSubmit={(e) => handleAddHoliday(e)}>
-                        <h4 className="mb-4 font-medium">เพิ่มรายการวันหยุด</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                            <h4 className="font-medium place-self-start">เพิ่มรายการวันหยุด</h4>
+                            <div className="place-self-end">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                        className="sr-only peer"
+                                        onChange={(e) => setIsMultipleMode(e.target.checked)}
+                                    />
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">สร้างวันหยุดราชการอัตโนมัติ</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div>
                             <label className="block text-xs font-medium text-gray-700">
                                 ชื่อวันหยุด

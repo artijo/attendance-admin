@@ -2,10 +2,22 @@ import PropTypes from 'prop-types';
 import { formatDateToThai, formatTypeToThai } from "../../../helper";
 import { useState } from 'react';
 
-export const Holidaylisttable = ({holidayList}) => {
+export const Holidaylisttable = ({holidayList, setHolidayAutoList, setHolidayList}) => {
     const page = Math.ceil(holidayList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceHolidayList = holidayList.slice((seletedPage - 1) * 10, seletedPage * 10);
+
+    const handleDeleteHoliday = async (id) => {
+        try{
+            const confirmDelete = window.confirm("คุณต้องการลบวันหยุดนี้หรือไม่");
+            if(!confirmDelete) return;
+            setHolidayList(prevList => prevList.filter(holiday => holiday.id !== id));
+            setHolidayAutoList(prevList => prevList.filter(holiday => holiday.id !== id));
+        }catch(error){
+            console.error(error);
+        };
+    };
+
     return (
         <div className="grid gap-2 md:grid-cols-1">
             <div className="rounded-lg border border-gray-200">
@@ -29,6 +41,7 @@ export const Holidaylisttable = ({holidayList}) => {
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.startDate)}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.endDate)}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatTypeToThai(holiday.type)}</td>
+                                                <td className ="whitespace-nowrap px-4 py-2 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(holiday.id)}>ลบรายการ</td>
                                             </tr>
                                         ))
                                     ) : 

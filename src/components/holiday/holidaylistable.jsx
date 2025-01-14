@@ -15,7 +15,6 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
             if(!confirmDelete) return;
             const response = await axios.delete(`${HOSTNAME}/a/holiday/${id}`);
             if(response.status === 200) {
-                // console.log(response.data);
                 alert(`${response.data.holidayName} ถูกลบเรียบร้อย`);
                 fectHolidayList();
             };
@@ -70,6 +69,7 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                         key={i+1}
                         className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
                         onClick={() => setSeletedPage(i+1)}
+                        type="button"
                     >
                         {i + 1}
                     </button>
