@@ -57,6 +57,9 @@ import CreatetermForm from "./pages/term/CreatetermForm.jsx";
 import MainTermPage from "./pages/term/MainTermPage.jsx";
 import EdittermForm from "./pages/term/EdittermForm.jsx";
 
+// Activities
+import Activities from "./pages/activity/Activities.jsx";
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <BrowserRouter>
@@ -110,6 +113,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="terms" element={<MainTermPage/>} />
         <Route path="terms/edit" element={<EdittermForm/>} />
         <Route path="terms/create" element={<CreatetermForm />} />
+        {/* Activities */}
+        <Route path="activities" element={<Activities />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
