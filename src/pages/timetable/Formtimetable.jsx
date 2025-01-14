@@ -75,7 +75,7 @@ export const Formtimetable = () => {
                 <h1 className='mb-1'> สร้างตารางเรียน วัน {formatDayOfWeeks(day)} เวลา {formatTime(timeStart)} ถึง {formatTime(timeEnd)} </h1>
                 {
                     Object.keys(classroomInfo).length > 0 ? 
-                    <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </h3>
+                    <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.term.semester} ปีการศึกษา {classroomInfo.term.academicYear+543} </h3>
                     :
                     <h3>กำลังโหลดข้อมูล....</h3>                   
                 }

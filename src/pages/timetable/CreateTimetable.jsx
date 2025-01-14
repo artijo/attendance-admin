@@ -51,7 +51,7 @@ export const CreateTimetable = () => {
                     <h1 className="mb-1">สร้างตารางเรียน</h1>
                     {
                         Object.keys(classroomInfo).length > 0 ? 
-                        <p>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.semester} ปีการศึกษา {classroomInfo.academicYear} </p>
+                        <p>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.term.semester} ปีการศึกษา {classroomInfo.term.academicYear + 543} </p>
                         :
                         <p>กำลังโหลดข้อมูล....</p>                   
                     }

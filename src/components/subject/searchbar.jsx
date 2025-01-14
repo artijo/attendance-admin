@@ -39,6 +39,12 @@ export const Searchbar = ({ selectedSubject, inputvalue, setInputvalue}) => {
         fetchSubjectList(value);    
     }
 
+    useEffect(() => {
+        if (inputvalue === "") {
+            fetchSubjectList("");  
+        }
+    }, [inputvalue]);
+
 
     const handleClickClose = () => {
         setInputvalue("");
