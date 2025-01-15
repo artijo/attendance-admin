@@ -134,7 +134,6 @@ function CreateHoliday(){
                     <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />
                 </div>
                 <div className="grid gap-2 md:grid-cols-1">
-                    
                     <form className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2" onSubmit={(e) => handleAddHoliday(e)}>
                         <div className="grid grid-cols-2 gap-2">
                             <h4 className="font-medium place-self-start">เพิ่มรายการวันหยุด</h4>

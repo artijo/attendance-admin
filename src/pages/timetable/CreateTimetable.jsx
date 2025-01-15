@@ -56,16 +56,6 @@ export const CreateTimetable = () => {
                         <p>กำลังโหลดข้อมูล....</p>                   
                     }
                 </div>
-                <div className="ml-auto flex gap-3 text-sm">
-                    <Link to="/calendarstudy" state={{classroomId: classroomId, classroomInfo:classroomInfo}}  type="button"  className="underline text-blue-600 active:text-blue-800">
-                        ปฎิทินการเรียน
-                    </Link>
-                    <Link to="/calendarholiday" state={{classroomId: classroomId, classroomInfo:classroomInfo}}  type="button" className="underline text-blue-600 active:text-blue-800">
-                        ปฎิทินวันหยุด
-                    </Link>
-                </div>
-                
-                
             </div>
             
             

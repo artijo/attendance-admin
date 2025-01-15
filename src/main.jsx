@@ -58,6 +58,7 @@ import EdittermForm from "./pages/term/EdittermForm.jsx";
 
 // Activities
 import Activities from "./pages/activity/Activities.jsx";
+import Calendar from "./pages/calendarmanage_new/Calendar.jsx";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
@@ -91,6 +92,7 @@ createRoot(document.getElementById("root")).render(
         {/* CalendarSchool study Section */}
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
+        <Route path="calendar" element={<Calendar/>}/>
         <Route path="calendar/create" element={<CreateCalendar/>}/> 
         {/* Holiday Section */}
         <Route path="holiday" element={<Holiday/>}/>

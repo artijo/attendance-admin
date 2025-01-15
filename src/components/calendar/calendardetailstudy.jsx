@@ -13,7 +13,7 @@ export const CalendarDetatils = () => {
     
     const fectStudyList = async () => {
         const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${location.state.classroomId}`);
-        console.log(response.data);
+        // console.log(response.data);
         setStudyList(response.data);
     }
 
