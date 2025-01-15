@@ -12,7 +12,6 @@ function Calendar(){
     const fetchAcademicYearTermList = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/academicterms`);
-            // console.log(response.data);
             if(response.status === 200){
                 setAcademicYearTermList(response.data);
                 setSelectedAcademicYearTerm(response.data[0].termId);

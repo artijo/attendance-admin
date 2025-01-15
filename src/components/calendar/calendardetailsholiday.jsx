@@ -70,6 +70,10 @@ export const CalendarDetatils = () => {
                         // }}
                     />
             }
+            {
+                holidayList.length == 0 &&
+                <div>ไม่มีรายการวันหยุด</div>
+            }
                 
         </div>
         

@@ -57,6 +57,10 @@ export const CalendarDetatils = () => {
                     
                 />
             }
+            {
+                studyList.length == 0 &&
+                <div>ไม่มีรายการวันเรียน</div>
+            }
            
         </div>
     )

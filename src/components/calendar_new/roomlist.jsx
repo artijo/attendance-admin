@@ -14,6 +14,18 @@ export const RoomList = ({ academicYearTermId } ) => {
             console.error(error);
         }
     };
+    const handelDeleteStuingTime = async (classroomId) => {
+        try {
+            const confirmDelete = window.confirm("คุณต้องการลบห้องเรียนนี้หรือไม่");
+            if(!confirmDelete) return;
+            const response = await axios.delete(`${HOSTNAME}/a/studingtime/${classroomId}`);
+            if(response.status === 200){
+                window.location.reload();
+            };
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         fecthClassrooms();
@@ -35,6 +47,7 @@ export const RoomList = ({ academicYearTermId } ) => {
                                     <tr key={classroom.classId}>
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700">{classroom.classLevel}</td>
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700">{classroom.classRoom}</td>
+                                        <td className="whitespace-nowrap text-center px-4 py-2 text-red-700 cursor-pointer" onClick={() => handelDeleteStuingTime(classroom.classId)}>ลบปฎิทิน</td>
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-blue-700 cursor-pointer"><Link to="/calendarstudy" state={{classroomId:classroom.classId,classroomInfo:classroom}}>ปฎิทินการเรียน</Link></td>
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-blue-700 cursor-pointer"><Link to="/calendarholiday" state={{classroomId:classroom.classId,classroomInfo:classroom}}>ปฎิทินวันหยุด</Link></td>      
                                     </tr>

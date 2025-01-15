@@ -3,20 +3,22 @@ import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config";
 import { Link } from "react-router-dom";
 import { HolidayListable} from "../../components/holiday/holidaylistable.jsx";
-import { formatDateTimeISOToDate } from "../../helper";
+import { formatDateTimeISOToDate,formatDateToThai } from "../../helper";
+import { CreateCalendarClassroomTable } from "../../components/calendar_new/createcalendatclassroomtable.jsx";
 
 function CreateCalendar(){
     const [academicYearTermList, setAcademicYearTermList] = useState([]);
     const [holidayList, setHolidayList] = useState([]);
     // input
     const [academicYearSemester, setAcademicYearSemester] = useState("");
-
+    const [selectedClassrooms, setSelectedClassrooms] = useState([]);
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         const data = {
             holidayList: holidayList,
-            termId: academicYearSemester
+            termId: academicYearSemester,
+            classroomids: selectedClassrooms
         }
         try{
             const response = await axios.post(`${HOSTNAME}/a/studingtime`,data);
@@ -81,7 +83,12 @@ function CreateCalendar(){
                             academicYearTermList.length > 0 ? 
                                 academicYearTermList.map((academicYearTermList) => {
                                     return (
-                                        <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543}-เทอม {academicYearTermList.semester}</option>
+                                        <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543} เทอม {academicYearTermList.semester} 
+                                          
+                                                (วันที่เริ่มเปิดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termStart))} 
+                                                 วันสิ้นสุดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termEnd))})
+                                            
+                                        </option>
                                     );
                                 })
                             :
@@ -90,12 +97,24 @@ function CreateCalendar(){
                                 </option>
                         }
                     </select>
+                    
                 </div>
-                <div className="grid gap-1">
-                    <label className="block text-xs font-medium text-gray-700">
-                        วันหยุดในเทอมนั้นและปีการศึกษานั้น <span> <Link to="/holiday/create" className="ml-2 text-blue-600 underline">เพิ่มวันหยุด</Link> </span>
-                    </label>
-                    <HolidayListable holidayList={holidayList} fectHolidayList={fetchHolidayList} />
+                <div className="grid md:grid-cols-2 gap-2">
+                    <div className="grid gap-1">
+                        <label className="block text-xs font-medium text-gray-700">
+                            วันหยุดในเทอมนั้นและปีการศึกษานั้น <span> <Link to="/holiday/create" className="ml-2 text-blue-600 underline">เพิ่มวันหยุด</Link> </span>
+                        </label>
+                        <HolidayListable holidayList={holidayList} fectHolidayList={fetchHolidayList} />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700">
+                            ห้องเรียน
+                        </label>
+                        {
+                            academicYearSemester !== "" &&
+                            <CreateCalendarClassroomTable academicYearTermId={academicYearSemester} setSelectedClassrooms={setSelectedClassrooms} selectedClassrooms={selectedClassrooms}/>
+                        }
+                    </div>
                 </div>
                 <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                         เพิ่มปีการศึกษา
