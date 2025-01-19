@@ -6,6 +6,11 @@ import {formatDateYYYYMMDD} from "../../helper.js"
 import { DateTime } from "luxon";
 import axios from "axios";
 
+//alert
+import  AlertSuccess  from "../../components/alert/success.jsx";
+import Loading from "../../components/alert/loading.jsx";
+import ErrorAlert from "../../components/alert/error.jsx";
+
 
 function daybetween(Start, End) {
     const dates = [];
@@ -99,9 +104,18 @@ function CreateHoliday(){
         }
         try{
             const response = await axios.post(`${HOSTNAME}/a/holiday`,data);
+            setAlertShow([false,true,false]);
             if(response.status === 200){
-                alert("เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย");
-            };
+                setAlertShow([true,false,false]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                }, 3000);
+            }else{
+                setAlertShow([false,false,true]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                }, 3000);
+            }
         }catch(error){
             console.error(error);
         }
@@ -125,118 +139,134 @@ function CreateHoliday(){
         setHolidayType("RATCHAKHAN");
     }
 
+    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
+
     return (
-        <div>
-            <h1 className="font-medium mb-4">ฟอร์มสร้างวันหยุด</h1>
-            
-            <div className="grid gap-2 md:grid-cols-2">
-                <div className="holiday" id="holiday-box">
-                    <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />
+        <div className="relative mx-auto containers">
+            <div className={`bg-white w-full h-full absolute top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
+            <div className="absolute  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
+                <div className={alertShow[0] ? "block" : "hidden"}>
+                    <AlertSuccess title="สําเร็จ" message="เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย"/>
                 </div>
-                <div className="grid gap-2 md:grid-cols-1">
-                    <form className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2" onSubmit={(e) => handleAddHoliday(e)}>
-                        <div className="grid grid-cols-2 gap-2">
-                            <h4 className="font-medium place-self-start">เพิ่มรายการวันหยุด</h4>
-                            <div className="place-self-end">
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" 
-                                        className="sr-only peer"
-                                        onChange={(e) => setIsMultipleMode(e.target.checked)}
-                                    />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                    <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">สร้างวันหยุดราชการอัตโนมัติ</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700">
-                                ชื่อวันหยุด
-                            </label>
-                            <input
-                                className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                                type="text"
-                                name="academicYear"
-                                value={holidayName}
-                                onChange={(e) => setHolidayName(e.target.value)}
-                                required={true}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700">
-                                ประเภทวันหยุด
-                            </label>
-                            <select name="holidayType" 
-                                className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                                value={holidayType}
-                                onChange={(e) => setHolidayType(e.target.value)}
-                            >
-                                <option value="RATCHAKHAN">วันหยุดราชกาล</option>
-                                <option value="SCHOOL">วันหยุดโรงเรียน</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700">
-                                วันที่เริ่มหยุด
-                            </label>
-                            <input
-                                className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                                type="date"
-                                name="semester"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                required={true}
-                                min={startDate}
-                            />
-                        </div>
-                        
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-700">
-                                วันที่สิ้นสุดการหยุด
-                            </label>
-                            <input
-                                className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                                type="date"
-                                name="semester"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                required={true}
-                            />
-                        </div>
-                        <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-                            เพิ่มรายการวันหยุด
-                        </button>
-                    </form>
-                    <form onSubmit={(e) => handleOnSubmit(e)} className="h-fit border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
-                        <div className="grid gap-5 md:grid-cols-2">
-                            <div>
-                                <label className="block text-xs font-medium text-gray-700">
-                                    ปีการศึกษาและเทอม <span> <Link to="/terms/create">เพิ่มปีการศึกษา</Link> </span>
-                                </label>
-                                <select name="academicyear_semester" onChange={(e)=> setAcademicYearSemester(e.target.value)} className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border">
-                                    {
-                                        academicYearTermList.length > 0 ? 
-                                            academicYearTermList.map((academicYearTermList) => {
-                                                return (
-                                                    <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543}-เทอม {academicYearTermList.semester}</option>
-                                                );
-                                            })
-                                        :
-                                            <option value={""}>
-                                                ไม่มีปีการศึกษา
-                                            </option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-                            เพิ่มวันหยุดในเทอมนั้น
-                        </button>
-                    </form>
+                <div className={alertShow[1] ? "block" : "hidden"}>
+                    <Loading title="กำลังสร้างรายการวันหยุด" message="กรุณารอสักครู่"/>
+                </div>
+                <div className={alertShow[2] ? "block" : "hidden"}>
+                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างรายการวันหยุด"/>
                 </div>
             </div>
-            
+            <div>
+                <h1 className="font-medium mb-4">ฟอร์มสร้างวันหยุด</h1>
+                <div className="grid gap-2 md:grid-cols-2">
+                    <div className="holiday" id="holiday-box">
+                        <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />
+                    </div>
+                    <div className="grid gap-2 md:grid-cols-1">
+                        <form className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2" onSubmit={(e) => handleAddHoliday(e)}>
+                            <div className="grid grid-cols-2 gap-2">
+                                <h4 className="font-medium place-self-start">เพิ่มรายการวันหยุด</h4>
+                                <div className="place-self-end">
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" 
+                                            className="sr-only peer"
+                                            onChange={(e) => setIsMultipleMode(e.target.checked)}
+                                        />
+                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">สร้างวันหยุดราชการอัตโนมัติ</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700">
+                                    ชื่อวันหยุด
+                                </label>
+                                <input
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
+                                    type="text"
+                                    name="academicYear"
+                                    value={holidayName}
+                                    onChange={(e) => setHolidayName(e.target.value)}
+                                    required={true}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700">
+                                    ประเภทวันหยุด
+                                </label>
+                                <select name="holidayType" 
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
+                                    value={holidayType}
+                                    onChange={(e) => setHolidayType(e.target.value)}
+                                >
+                                    <option value="RATCHAKHAN">วันหยุดราชกาล</option>
+                                    <option value="SCHOOL">วันหยุดโรงเรียน</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700">
+                                    วันที่เริ่มหยุด
+                                </label>
+                                <input
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
+                                    type="date"
+                                    name="semester"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    required={true}
+                                    min={startDate}
+                                />
+                            </div>
+                            
+                            <div className="mb-4">
+                                <label className="block text-xs font-medium text-gray-700">
+                                    วันที่สิ้นสุดการหยุด
+                                </label>
+                                <input
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
+                                    type="date"
+                                    name="semester"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    required={true}
+                                />
+                            </div>
+                            <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                                เพิ่มรายการวันหยุด
+                            </button>
+                        </form>
+                        <form onSubmit={(e) => handleOnSubmit(e)} className="h-fit border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
+                            <div className="grid gap-5 md:grid-cols-2">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-700">
+                                        ปีการศึกษาและเทอม <span> <Link to="/terms/create">เพิ่มปีการศึกษา</Link> </span>
+                                    </label>
+                                    <select name="academicyear_semester" onChange={(e)=> setAcademicYearSemester(e.target.value)} className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border">
+                                        {
+                                            academicYearTermList.length > 0 ? 
+                                                academicYearTermList.map((academicYearTermList) => {
+                                                    return (
+                                                        <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543}-เทอม {academicYearTermList.semester}</option>
+                                                    );
+                                                })
+                                            :
+                                                <option value={""}>
+                                                    ไม่มีปีการศึกษา
+                                                </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                                เพิ่มวันหยุดในเทอมนั้น
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
         </div>
+        
     );
 };
 

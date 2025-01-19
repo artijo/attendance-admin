@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { formatDateToThai, formatTypeToThai } from "../../helper";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-
-export const HolidayListable = ({holidayList,fectHolidayList}) => {
-    const page = Math.ceil(holidayList.length/10);
-    const [seletedPage, setSeletedPage] = useState(1);
-    const sliceHolidayList = holidayList.slice((seletedPage - 1) * 12, seletedPage * 12);
-
-    const handleDeleteHoliday = async (id) => {
-        try{
-            const confirmDelete = window.confirm("คุณต้องการลบวันหยุดนี้หรือไม่");
-            if(!confirmDelete) return;
-            const response = await axios.delete(`${HOSTNAME}/a/holiday/${id}`);
-            if(response.status === 200) {
-                alert(`${response.data.holidayName} ถูกลบเรียบร้อย`);
-                fectHolidayList();
+import { Link } from "react-router-dom";
+export const ClassroomAttendenceList = ({ classLevel, academicYearTerm }) => {
+    const [classrooms, setClassrooms] = useState([]);
+    
+    const fecthClassrooms = async () => {
+        try {
+            const response = await axios.get(`${HOSTNAME}/a/classrooms/filterTA/${academicYearTerm}/${classLevel}`);
+            if (response.status === 200) {
+                setClassrooms(response.data);
             };
-        }catch(error){
+        } catch (error) {
             console.error(error);
         };
     };
+
+    useEffect(() => {
+        if(academicYearTerm !== "" && classLevel !== null){
+            fecthClassrooms();
+        }
+    }, [academicYearTerm, classLevel]);
 
     return (
         <div className="grid gap-2 md:grid-cols-1">
@@ -30,14 +30,31 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                         <thead className="ltr:text-left rtl:text-right">
                             <tr>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อวันหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่เริ่มหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่สิ้นสุดการหยุด</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ประเภทวันหยุด</th>
+                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชั้นมัธยมศึกษา</th>
+                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ห้องเรียน</th>
+                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียดการเข้าเรียน</th>
+
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {
+                                classrooms.length === 0 ? 
+                                    <tr>
+                                        <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={3}>ไม่มีข้อมูล</td>
+                                    </tr> :
+                                classrooms.map((classroom) => (
+                                    <tr key={classroom.classId}>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classLevel}</td>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classRoom}</td>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            <Link to={`/attendances/details/${classroom.classId}`}>
+                                                <span className="text-blue-800">รายละเอียดการเข้าเรียน</span>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                            {/* {
                                 sliceHolidayList.length > 0 ? 
                                     (
                                         sliceHolidayList.map((holiday, index) => (
@@ -48,7 +65,7 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatTypeToThai(holiday.type)}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-red-600 cursor-pointer" onClick={() => handleDeleteHoliday(holiday.id)}>ลบ</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-yellow-600 cursor-pointer">
-                                                    <Link to={`/holiday/edit/${holiday.id}`} >
+                                                    <Link to={`/holiday/edit/${holiday.id}`}>
                                                         แก้ไข
                                                     </Link>
                                                 </td>
@@ -58,13 +75,13 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                                     <tr>
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
                                     </tr>
-                            }
+                            } */}
                         </tbody>
                     </table>
                 </div>
             </div>
             <div>
-                {Array.from({ length: page }, (_, i) => (
+                {/* {Array.from({ length: page }, (_, i) => (
                     <button
                         key={i+1}
                         className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
@@ -73,9 +90,13 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                     >
                         {i + 1}
                     </button>
-                ))}
+                ))} */}
             </div>
-        </div>
-        
+        </div> 
     );
+};
+
+ClassroomAttendenceList.propTypes = {
+    classLevel: PropTypes.number.isRequired,
+    academicYearTerm: PropTypes.string.isRequired,
 };
