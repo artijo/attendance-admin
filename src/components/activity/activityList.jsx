@@ -26,7 +26,7 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เวลา</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานที่</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ</th>
+                                {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ</th> */}
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">การเข้าร่วม</th>
                             </tr>
                         </thead>
@@ -47,9 +47,9 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                         {activity.actLocation}
                                     </td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                    {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                         {activity.actStatus}
-                                    </td>
+                                    </td> */}
                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                         <Link to={`/activity/${activity.actId}/attendance`}>
                                             <span className="underline text-blue-800">การเข้าร่วม</span>
