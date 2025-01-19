@@ -59,6 +59,7 @@ import EdittermForm from "./pages/term/EdittermForm.jsx";
 // Activities
 import Activities from "./pages/activity/Activities.jsx";
 import ActivityDetail from "./pages/activity/Detail.jsx";
+import CreateActivity from "./pages/activity/Create.jsx";
 
 import Calendar from "./pages/calendarmanage_new/Calendar.jsx";
 
@@ -116,6 +117,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="terms/create" element={<CreatetermForm />} />
         {/* Activities */}
         <Route path="activities" element={<Activities />} />
+        <Route path="activities/create" element={<CreateActivity />} />
         <Route path="activity/:id" element={<ActivityDetail />} />
       </Route>
       <Route path="*" element={<NotFound />} />

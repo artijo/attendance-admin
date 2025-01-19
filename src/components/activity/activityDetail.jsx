@@ -1,17 +1,18 @@
+import { DateTime } from "luxon";
+
 function ShowDetail({ activity }) {
     const formatDate = (dateString) => {
+        // this formate 2025-01-18 17:00:00.000
         return new Date(dateString).toLocaleDateString('th-TH', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
+            day: 'numeric'
         });
     };
 
     const formatTime = (timeString) => {
-        return new Date(timeString).toLocaleTimeString('th-TH', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        // แปลงเวลารูปแบบ "23:12" ให้เป็นเวลาไทย 24 ชั่วโมง ด้วย Luxon
+        return DateTime.fromISO(timeString).toLocaleString(DateTime.TIME_SIMPLE);
     };
 
     return (
@@ -43,9 +44,9 @@ function ShowDetail({ activity }) {
                         </dd>
                     </div>
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">วันที่จัดกิจกรรม</dt>
+                        <dt className="text-sm font-medium text-gray-500">ระยะเวลากิจกรรม</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            {formatDate(activity.actDate)}
+                            {formatDate(activity.actDate)} - {formatDate(activity.actDateEnd)}
                         </dd>
                     </div>
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -74,6 +75,29 @@ function ShowDetail({ activity }) {
                             )}
                         </dd>
                     </div>
+                    {/* แสดงห้องเรียนที่สามารถเข้าร่วมได้ */}
+                    {activity.joinLimit && (
+                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">ห้องเรียนที่สามารถเข้าร่วมได้</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                <ul className="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                    {activity.classroom.map((classroom) => (
+                                        <li key={classroom.classroom.classId} 
+                                            className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                            <div className="flex w-0 flex-1 items-center">
+                                                <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                                    <span className="truncate font-medium">
+                                                        มัธยมศึกษาปีที่ {classroom.classroom.classLevel}/{classroom.classroom.classRoom}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </dd>
+                        </div>
+                    )    
+                    }
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">อาจารย์ผู้ดูแล</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">

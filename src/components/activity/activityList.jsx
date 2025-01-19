@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { DateTime } from "luxon";
 
 function ActivityList({ continuousActivities, nonContinuousActivities }) {
     const formatDate = (dateString) => {
@@ -10,10 +11,7 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
     };
 
     const formatTime = (timeString) => {
-        return new Date(timeString).toLocaleTimeString('th-TH', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        return DateTime.fromISO(timeString).toLocaleString(DateTime.TIME_SIMPLE);
     };
 
     const ActivityTable = ({ activities, title }) => (
