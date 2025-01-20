@@ -14,7 +14,7 @@ export const AttendenceBySubjectList = ({classroomId}) => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/subjectTimetable/${classroomId}`);  
             setSubjectList(response.data);
-            (console.log(response.data));
+            // (console.log(response.data));
         } catch (error) {
             console.error(error);
         }

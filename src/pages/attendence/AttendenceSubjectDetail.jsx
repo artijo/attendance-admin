@@ -6,6 +6,15 @@ import { AttendenceBySubjectDetailList} from "../../components/attendence/attend
 function AttendenceSubjectDetail() {
     const location = useLocation();
     const [studentList, setStudentList] = useState([]);
+    const [classroomInfo, setClassroomInfo] = useState(null);
+    const fetchClassroomInfo = async () => {
+        try {
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
+            setClassroomInfo(response.data);
+        } catch (error) {
+            console.error(error);
+        };
+    };
     const fecthData = async (req, res) => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/attendence/${location.state.subject.subId}/${location.state.classroomId}`);
@@ -18,10 +27,24 @@ function AttendenceSubjectDetail() {
 
     useEffect(() => {
         fecthData();
+        fetchClassroomInfo();
     }, []);
 
     return (
-        <div>
+        <div className="mx-auto container">
+            {
+                classroomInfo && (
+                    <div className="mb-2">
+                        <h1 className="mb-2">การเข้าเรียนของ {classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}</h1>
+                        <p>
+                            ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}
+                        </p>
+                        <p>
+                            วิชา {location.state.subject.subNameThai}({location.state.subject.subCode} - {location.state.subject.subNameEng})
+                        </p>
+                    </div>
+                )
+            }
             <AttendenceBySubjectDetailList studentList={studentList} />
         </div>
     );
