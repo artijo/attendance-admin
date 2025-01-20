@@ -44,7 +44,7 @@ export const AttendenceBySubjectList = ({classroomId}) => {
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`(${subject.subCode})${subject.subNameThai} - ${subject.subNameEng}`}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`คุณครู ${subject.teacher.fName} ${subject.teacher.lName}`}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
-                                                    <Link to={``} >
+                                                    <Link to={`/attendances/details/bysubject`} state={{subject:subject,classroomId:classroomId}}>
                                                         รายละเอียด
                                                     </Link>
                                                 </td>
