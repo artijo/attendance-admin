@@ -41,28 +41,7 @@ function EditActivity() {
                 const startDate = new Date(activity.actDate).toISOString().split('T')[0];
                 const endDate = new Date(activity.actDateEnd).toISOString().split('T')[0];
 
-                // Format times properly for input[type="time"]
-                const formatTimeForInput = (timeString) => {
-                    const date = new Date(timeString);
-                    return date.toLocaleTimeString('en-GB', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false
-                    });
-                };
-
-                // Format teachers and classrooms
-                const formattedTeachers = activity.teacher.map(t => ({
-                    value: t.teacher.tchId,
-                    label: `${t.teacher.tchCode} - ${t.teacher.fName} ${t.teacher.lName}`
-                }));
-                
-                const formattedClassrooms = activity.classroom ? activity.classroom.map(c => ({
-                    value: c.classroom.classId,
-                    label: `${c.classroom.classLevel}/${c.classroom.classRoom}`
-                })) : [];
-
-                // Reset form with existing data
+                // Reset form with properly formatted dates and original time strings
                 reset({
                     actName: activity.actName,
                     actDate: startDate,
@@ -73,11 +52,18 @@ function EditActivity() {
                     },
                     actDesc: activity.actDesc,
                     actLocation: activity.actLocation,
-                    actStartTime: formatTimeForInput(activity.actStartTime),
-                    actEndTime: formatTimeForInput(activity.actEndTime),
+                    // ใช้ค่าเวลาจากฐานข้อมูลโดยตรง เนื่องจากอยู่ในรูปแบบ HH:mm อยู่แล้ว
+                    actStartTime: activity.actStartTime,
+                    actEndTime: activity.actEndTime,
                     joinLimit: activity.joinLimit,
-                    teachers: formattedTeachers,
-                    classrooms: formattedClassrooms
+                    teachers: activity.teacher.map(t => ({
+                        value: t.teacher.tchId,
+                        label: `${t.teacher.tchCode} - ${t.teacher.fName} ${t.teacher.lName}`
+                    })),
+                    classrooms: activity.classroom ? activity.classroom.map(c => ({
+                        value: c.classroom.classId,
+                        label: `${c.classroom.classLevel}/${c.classroom.classRoom}`
+                    })) : []
                 });
                 setIsLoading(false);
             })
