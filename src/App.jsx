@@ -7,6 +7,41 @@ import { HOSTNAME } from "./config";
 // config axios
 axios.defaults.withCredentials = true;
 
+let isRefreshing = false;
+
+// Add axios interceptor for handling responses
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 && !error.config._retry) {
+      error.config._retry = true;
+      
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const refreshToken = localStorage.getItem("refreshToken");
+          await axios.post(
+            `${HOSTNAME}/auth/a/refresh`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
+          );
+          isRefreshing = false;
+          window.location.reload();
+          return;
+        } catch (refreshError) {
+          isRefreshing = false;
+          window.location.href = "/login";
+          return Promise.reject(refreshError);
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   const navLinks = [
@@ -45,6 +80,9 @@ function App() {
       }
 
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      window.location.reload();
+    }
     window.location.href = "/login";
   }
   }
