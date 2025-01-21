@@ -10,7 +10,7 @@ export const useAuth = () => {
     
     const login = async (username, password) => {
         try {
-        const response = await axios.post(HOSTNAME+"/a/auth/login", {
+        const response = await axios.post(HOSTNAME+"/auth/a/login", {
             username,
             password,
         }, { withCredentials: true });

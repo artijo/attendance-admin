@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import axios from "axios";
 import { HOSTNAME } from "./config";
 
+// config axios
+axios.defaults.withCredentials = true;
+
 
 function App() {
   const navLinks = [
@@ -27,7 +30,7 @@ function App() {
     try {
       // refresh token headers['Authorization'] = 'Bearer ' + token;
       const response = await axios.post(
-        `${HOSTNAME}/a/auth/refresh`,
+        `${HOSTNAME}/auth/a/refresh`,
         {},  // ข้อมูลที่ต้องการส่งไปใน request body (ถ้ามี)
         {
           headers: {
@@ -49,7 +52,7 @@ function App() {
 
   const checkAuth = async () => {
     try {
-      const res = await axios.get(HOSTNAME+"/a/auth/check", { withCredentials: true });
+      const res = await axios.get(HOSTNAME+"/auth/a/check", { withCredentials: true });
       if (res.status !== 200) {
         refreshTokens();
       }
