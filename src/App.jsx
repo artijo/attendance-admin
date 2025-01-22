@@ -1,6 +1,6 @@
 import { Outlet, Link, NavLink } from "react-router";
 import { Navigate } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";  // Add this import at the top with other imports
 import axios from "axios";
 import { HOSTNAME } from "./config";
 
@@ -44,6 +44,8 @@ axios.interceptors.response.use(
 );
 
 function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const navLinks = [
     { name: "แดชบอร์ด", path: "/dashboard", icon:"home.svg" },
     { name: "นักเรียน", path: "/students", icon:"student.svg" },
@@ -57,6 +59,7 @@ function App() {
   ];
 
   function openMenu() {
+    setIsMenuOpen(!isMenuOpen);
     document.querySelector("header").classList.toggle("active");
   }
 
@@ -116,37 +119,50 @@ function App() {
         <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
           <div
             id="toggle"
-            className="sm:hidden flex items-center gap-1 border-2 my-2 p-2"
+            className="sm:hidden flex items-center rounded-md border-2 my-2 p-2"
             onClick={openMenu}
           >
-            <svg
-              width={25}
-              viewBox="-2.4 -2.4 28.80 28.80"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                stroke="#CCCCCC"
-                strokeWidth="0.624"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                {" "}
+            {!isMenuOpen ? (
+              <svg
+                width={25}
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M4 6H20M4 12H20M4 18H20"
                   stroke="#ffffff"
-                  strokeWidth="1.2"
+                  strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                ></path>{" "}
-              </g>
-            </svg>
-            <span className="text-sm">MENU</span>
+                />
+              </svg>
+            ) : (
+              <svg
+                width={25}
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6L18 18M6 18L18 6"
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
           </div>
-          <h1 className="text-center text-xl md:text-left">
+          {/* Logo */}
+          <div className="hidden md:block">
+            <img
+              src="nps-logo.webp"
+              alt="Logo"
+              className="w-10 h-10 md:w-12 md:h-12 mx-auto"
+            />
+          </div>
+          <h1 className="md:hidden text-center text-xl md:text-left">
             ระบบบันทึกการเข้าเรียนและกิจกรรม
           </h1>
           <div className="sm:hidden">
@@ -203,8 +219,13 @@ function App() {
           <button className="p-2 md:p-3">ออกจากระบบ</button>
         </div>
       </header>
-      <main className="md:ml-56 p-4 min-h-dvh">
-        <Outlet />
+      <main className="md:ml-56 min-h-dvh">
+            <div className="hidden md:block sticky top-0 z-10 mt-0 ml-0 mr-0 mb-4 bg-background-alt p-4 shadow-sm">
+              <h1 className="text-2xl font-bold text-white">ระบบบันทึกการเข้าเรียนและกิจกรรม</h1>
+            </div>
+            <div className="p-4">
+              <Outlet />
+            </div>
       </main>
     </>
   );
