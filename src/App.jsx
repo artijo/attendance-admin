@@ -118,7 +118,14 @@ function App() {
 
   return (
     <>
-      <header className="bg-background-alt text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-full">
+      <header className="bg-background-alt text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-full overflow-y-auto
+  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
         <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
           <div
             id="toggle"
