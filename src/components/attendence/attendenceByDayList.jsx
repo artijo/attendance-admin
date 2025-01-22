@@ -6,8 +6,7 @@ import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
 import { formatDateToThai } from "../../helper";
 
-export const AttendenceByDayList = ({termId}) => {
-    // const [termInfo, setTermInfo] = useState(null);
+export const AttendenceByDayList = ({termId,classroomId}) => {
     const [dayList, setDayList] = useState([]);
     const page = Math.ceil(dayList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
@@ -55,57 +54,59 @@ export const AttendenceByDayList = ({termId}) => {
     },[termId]);
 
     return (
-        <div className="grid gap-2 md:grid-cols-1">
-            <div className="rounded-lg border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
-                    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                        <thead className="ltr:text-left rtl:text-right">
-                            <tr>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วัน</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {
-                                sliceDayList.length > 0 ? 
-                                    (
-                                        sliceDayList.map((day, index) => (
-                                            <tr key={index}>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(day)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
-                                                    <Link to={``} >
-                                                        รายละเอียด
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : 
-                                    <tr>
-                                        <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
-                                    </tr>
-                            }
-                        </tbody>
-                    </table>
+        <>
+            <div className="grid gap-2 md:grid-cols-1">
+                <div className="rounded-lg border border-gray-200">
+                    <div className="overflow-x-auto rounded-t-lg">
+                        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                            <thead className="ltr:text-left rtl:text-right">
+                                <tr>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วัน</th>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {
+                                    sliceDayList.length > 0 ? 
+                                        (
+                                            sliceDayList.map((day, index) => (
+                                                <tr key={index}>
+                                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(day)}</td>
+                                                    <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
+                                                        <Link to={`/attendances/details/byday`} state={{ classroomId: classroomId, date: day }} >
+                                                            รายละเอียด
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : 
+                                        <tr>
+                                            <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
+                                        </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    {Array.from({ length: page }, (_, i) => (
+                        <button
+                            key={i+1}
+                            className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
+                            onClick={() => setSeletedPage(i+1)}
+                            type="button"
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
-            <div>
-                {Array.from({ length: page }, (_, i) => (
-                    <button
-                        key={i+1}
-                        className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
-                        onClick={() => setSeletedPage(i+1)}
-                        type="button"
-                    >
-                        {i + 1}
-                    </button>
-                ))}
-            </div>
-        </div>
-    
+        </>
     );
 };
 
 AttendenceByDayList.propTypes = {
     termId: PropTypes.string.isRequired,
+    classroomId: PropTypes.string.isRequired
 };
 

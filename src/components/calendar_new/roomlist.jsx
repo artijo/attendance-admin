@@ -20,6 +20,17 @@ export const RoomList = ({ academicYearTermId } ) => {
         }
     };
 
+    const handelDeleteStudingTime = async (classroomId) => {
+        try {
+            const response = await axios.delete(`${HOSTNAME}/a/studingtime/${classroomId}`);
+            if(response.status === 200){
+                fecthClassrooms();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         if(academicYearTermId){
             fecthClassrooms();

@@ -2,11 +2,13 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect,useState } from "react";
-import { AttendenceBySubjectDetailList} from "../../components/attendence/attendenceBySubjectDetailList";
-function AttendenceSubjectDetail() {
+import { AttendanceByDayDetailList } from "../../components/attendence/attendenceByDayDetailList";
+function AttendenceByDayDetail() {
     const location = useLocation();
     const [studentList, setStudentList] = useState([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
+    const classroomId = location.state.classroomId;
+    const date = location.state.date;
     const fetchClassroomInfo = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
@@ -15,21 +17,19 @@ function AttendenceSubjectDetail() {
             console.error(error);
         };
     };
+    
     const fecthData = async () => {
         try{
-            const response = await axios.get(`${HOSTNAME}/a/attendence/${location.state.subject.subId}/${location.state.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/attendence/byDate/${date}/${classroomId}`);
             setStudentList(response.data);
-            console.log(response.data);
         }catch(error){
             console.error(error);
-        };
+        }
     };
-
     useEffect(() => {
         fecthData();
         fetchClassroomInfo();
-    }, []);
-
+    },[]);
     return (
         <div className="mx-auto container">
             {
@@ -39,14 +39,12 @@ function AttendenceSubjectDetail() {
                         <p>
                             ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}
                         </p>
-                        <p>
-                            วิชา {location.state.subject.subNameThai}({location.state.subject.subCode} - {location.state.subject.subNameEng})
-                        </p>
                     </div>
                 )
             }
-            <AttendenceBySubjectDetailList studentList={studentList} />
+            {studentList.length > 0 && <AttendanceByDayDetailList studentList={studentList}/>}
         </div>
     );
 };
-export default AttendenceSubjectDetail;
+
+export default AttendenceByDayDetail;

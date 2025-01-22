@@ -24,9 +24,9 @@ function AttendanceDetail() {
             <div className="grid grid-cols-1 gap-2">
                 <h1>การเข้าเรียนตามวัน</h1>
                 <div>
-                    {classroomInfo != null && <AttendenceByDayList termId={classroomInfo != null && classroomInfo.term.termId} />}
+                    {classroomInfo != null && <AttendenceByDayList termId={classroomInfo != null && classroomInfo.term.termId} classroomId={classroomInfo != null && classroomInfo.classId} />}
                 </div>
-                <h1>การเข้าเรียนตารายวิชา</h1>
+                <h1>การเข้าเรียนตามรายวิชา</h1>
                 <div>
                     {classroomInfo != null && <AttendenceBySubjectList classroomId={classroomInfo != null && classroomInfo.classId} />}
                 </div>
