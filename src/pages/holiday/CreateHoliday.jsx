@@ -109,11 +109,13 @@ function CreateHoliday(){
                 setAlertShow([true,false,false]);
                 setTimeout(() => {
                     setAlertShow([false,false,false]);
+                    window.location.href = "/holiday";
                 }, 3000);
             }else{
                 setAlertShow([false,false,true]);
                 setTimeout(() => {
                     setAlertShow([false,false,false]);
+                    window.location.href = "/holiday";
                 }, 3000);
             }
         }catch(error){
@@ -143,8 +145,8 @@ function CreateHoliday(){
 
     return (
         <div className="relative mx-auto containers">
-            <div className={`bg-white w-full h-full absolute top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
-            <div className="absolute  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
+            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
+            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
                 <div className={alertShow[0] ? "block" : "hidden"}>
                     <AlertSuccess title="สําเร็จ" message="เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย"/>
                 </div>
@@ -214,7 +216,6 @@ function CreateHoliday(){
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
                                     required={true}
-                                    min={startDate}
                                 />
                             </div>
                             
@@ -229,6 +230,7 @@ function CreateHoliday(){
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
                                     required={true}
+                                    min={startDate}
                                 />
                             </div>
                             <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">

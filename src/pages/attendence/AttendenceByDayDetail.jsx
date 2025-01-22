@@ -42,7 +42,7 @@ function AttendenceByDayDetail() {
                     </div>
                 )
             }
-            {studentList.length > 0 && <AttendanceByDayDetailList studentList={studentList}/>}
+            {studentList && <AttendanceByDayDetailList studentList={studentList}/>}
         </div>
     );
 };

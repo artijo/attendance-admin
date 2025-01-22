@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { HOSTNAME } from "../../config";
+import AlertSuccess from "../../components/alert/success";
+import Loading from "../../components/alert/loading";
+import ErrorAlert from "../../components/alert/error";
 
 function CreatetermForm() {
     const [academicYear, setAcademicYear] = useState("");
@@ -12,8 +15,19 @@ function CreatetermForm() {
     const sentFormData =  async(data) => {
         try{
             const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
+            setAlertShow([false, true, false]);
             if(response.status === 200){
-                console.log(response.data)
+                setAlertShow([true, false, false]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/terms";
+                }, 3000);
+            }else{
+                setAlertShow([false, false, true]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/terms";
+                }, 3000);
             }
         }catch(error){
             console.error(error)
@@ -30,11 +44,21 @@ function CreatetermForm() {
         }
         sentFormData(data)
     }
-
-
-
+    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
     return( 
-        <div>
+        <div className="container mx-auto relative">
+            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
+            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
+                <div className={alertShow[0] ? "block" : "hidden"}>
+                    <AlertSuccess title="สําเร็จ" message="เพิ่มเทอมเรียบร้อย"/>
+                </div>
+                <div className={alertShow[1] ? "block" : "hidden"}>
+                    <Loading title="กำลังสร้างเทอม" message="กรุณารอสักครู่"/>
+                </div>
+                <div className={alertShow[2] ? "block" : "hidden"}>
+                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างเทอม"/>
+                </div>
+            </div>
             <h1 className="font-medium mb-4">ฟอร์มสร้างเทอมและการศึกษาใหม่</h1>
             <form onSubmit={(e) => handleOnSubmit(e)} className="border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
                 <div className="grid gap-5 md:grid-cols-2">

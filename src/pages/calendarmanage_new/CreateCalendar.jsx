@@ -33,17 +33,19 @@ function CreateCalendar(){
             classroomids: selectedClassrooms
         }
         try{
-            const response = await axios.post(`${HOSTNAME}/a/studingtime`,data);
             setAlertShow([false,true,false,false]);
+            const response = await axios.post(`${HOSTNAME}/a/studingtime`,data);
             if(response.status === 200){
                 setAlertShow([true,false,false,false]);
                 setTimeout(() => {
                     setAlertShow([false,false,false,false]);
+                    window.location.href = "/calendar";
                 }, 3000);
             }else{
                 setAlertShow([false,false,true,false]);
                 setTimeout(() => {
                     setAlertShow([false,false,false,false]);
+                    window.location.href = "/calendar";
                 }, 3000);
             };
             return;
@@ -100,16 +102,16 @@ function CreateCalendar(){
             <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
             <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
                 <div className={alertShow[0] ? "block" : "hidden"}>
-                    <AlertSuccess title="สําเร็จ" message="เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย"/>
+                    <AlertSuccess title="สําเร็จ" message="เพิ่มปฎิทินในเทอมนั้นเรียบร้อย"/>
                 </div>
                 <div className={alertShow[1] ? "block" : "hidden"}>
-                    <Loading title="กำลังสร้างรายการวันหยุด" message="กรุณารอสักครู่"/>
+                    <Loading title="กำลังเพิ่มปฎิทินการเรียน" message="กรุณารอสักครู่"/>
                 </div>
                 <div className={alertShow[2] ? "block" : "hidden"}>
-                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างรายการวันหยุด"/>
+                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการเพิ่มปฎิทินการเรียน"/>
                 </div>
                 <div className={alertShow[3] ? "block" : "hidden"}>
-                    <ErrorAlert title="กรุณาเลือกห้องเรียน" message="กรุณาเลือกห้องเรียนก่อนสร้างปฎิทิน"/>
+                    <ErrorAlert title="กรุณาเลือกห้องเรียน" message="กรุณาเลือกห้องเรียนก่อนสร้างปฎิทินการเรียน"/>
                 </div>
             </div>
             <div className="mx-auto container">

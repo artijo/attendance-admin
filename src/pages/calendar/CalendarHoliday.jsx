@@ -25,7 +25,6 @@ export const CalendarHoliday = () => {
                     </div>
                 </div>
                 <CalendarDetatils classroomId={location.state.classroomId}/>
-               
             </div>
         </div>
     )

@@ -4,6 +4,9 @@ import axios from 'axios';
 import { HOSTNAME } from '../../config';
 import { formatDateTimeISOToDate } from "../../helper.js";
 import { DateTime } from "luxon";
+import AlertSuccess from '../../components/alert/success.jsx';
+import Loading from '../../components/alert/loading.jsx';
+import ErrorAlert from '../../components/alert/error.jsx';
 function EditHoliday() {
     const params = useParams();
 
@@ -13,14 +16,24 @@ function EditHoliday() {
 
     const onSubmitEdit = async () => {
         try {
+            setAlertShow([false, true, false]);
             const response = await axios.put(`${HOSTNAME}/a/holiday/${params.id}`, {
                 holidayName: holidayName,
                 startHolidayDate: DateTime.fromISO(dateStartDateEndDate+"T00:00:00Z", { zone: "UTC" }),
                 type: holidayType,
             });
             if (response.status === 200) {
-                alert("แก้ไขวันหยุดเรียบร้อย");
-                window.location.href = "/holiday";
+                setAlertShow([true, false, false]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/holiday";
+                }, 3000);
+            }else{
+                setAlertShow([false, false, true]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/holiday";
+                }, 3000);
             }
             
         } catch (error) {
@@ -30,13 +43,14 @@ function EditHoliday() {
 
     const feachData = async () => {
         try {
+        
             const response = await axios.get(`${HOSTNAME}/a/holiday/one/${params.id}`);
             if (response.status === 200) {
-                console.log(response.data);
+                
                 setHolidayName(response.data.holidayName || "");
                 setDateStartDateEndDate(formatDateTimeISOToDate(response.data.startHolidayDate) || "");
                 setHolidayType(response.data.type || "RATCHAKHAN");
-            }
+            };
         } catch (error) {
             console.error(error);
         }
@@ -45,9 +59,21 @@ function EditHoliday() {
     useEffect(() => {
         feachData();
     }, []);
-
+    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
     return (
-        <div>
+        <div className='container mx-auto relative' >
+            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
+            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
+                <div className={alertShow[0] ? "block" : "hidden"}>
+                    <AlertSuccess title="สําเร็จ" message="แก้ไขวันหยุดในเทอมนั้นเรียบร้อย"/>
+                </div>
+                <div className={alertShow[1] ? "block" : "hidden"}>
+                    <Loading title="กำลังแก้ไขวันหยุด" message="กรุณารอสักครู่"/>
+                </div>
+                <div className={alertShow[2] ? "block" : "hidden"}>
+                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการแก้ไขการวันหยุด"/>
+                </div>
+            </div>
             <h1 className="mb-4 font-medium">ฟอร์มแก้ไขวันหยุด</h1>
             <form
                 className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2"

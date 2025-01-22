@@ -2,6 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config";
 import { useLocation } from "react-router-dom";
+import AlertSuccess from "../../components/alert/success";
+import Loading from "../../components/alert/loading";
+import ErrorAlert from "../../components/alert/error";
 function EdittermForm(){
     const location = useLocation();
     const [termId, setTermId] = useState("");
@@ -32,10 +35,23 @@ function EdittermForm(){
 
     const sentFormData = async (data) => {
         try{
+            setAlertShow([false, true, false]);
             const response = await axios.put(`${HOSTNAME}/a/academicterms`,data);
             if(response.status === 200) {
-                console.log(response.data);
-            };
+                setAlertShow([true, false, false]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/terms";
+                }, 3000);
+                
+            }else{
+                setAlertShow([false, false, true]);
+                setTimeout(() => {
+                    setAlertShow([false,false,false]);
+                    window.location.href = "/terms";
+                }, 3000);
+               
+            }
         }catch(error){
             console.error(error);
         };
@@ -56,20 +72,24 @@ function EdittermForm(){
     useEffect(() => {
         fecthData();
     },[])
-
+    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
     return (
-        <div>
+        <div className="container mx-auto relative">
+            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
+            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
+                <div className={alertShow[0] ? "block" : "hidden"}>
+                    <AlertSuccess title="สําเร็จ" message="เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย"/>
+                </div>
+                <div className={alertShow[1] ? "block" : "hidden"}>
+                    <Loading title="กำลังสร้างรายการวันหยุด" message="กรุณารอสักครู่"/>
+                </div>
+                <div className={alertShow[2] ? "block" : "hidden"}>
+                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างรายการวันหยุด"/>
+                </div>
+            </div>
             <h1 className="font-medium mb-4">ฟอร์มแก้ไขเทอมและการศึกษา</h1>
             <form onSubmit={(e) => handleOnSubmit(e)} className="border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
                 <div className="grid gap-5 md:grid-cols-2">
-                    {/* <div>
-                        <label className="block text-xs font-medium text-gray-700">
-                            เทอม Id
-                        </label>
-                        <input 
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                            type="text" name="academicYear" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)} required={true} disabled/>
-                    </div> */}
                     <div>
                         <label className="block text-xs font-medium text-gray-700">
                             ปีการศึกษา

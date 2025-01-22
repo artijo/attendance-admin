@@ -63,7 +63,7 @@ export const Termlistable = () => {
                                             <td className="whitespace-nowrap px-4 py-2 text-gray-700">{academicYearTerm.semester}</td>
                                             <td className="whitespace-nowrap px-4 py-2 text-gray-700">{datetimeFormat(academicYearTerm.termStart)}</td>
                                             <td className="whitespace-nowrap px-4 py-2 text-gray-700">{datetimeFormat(academicYearTerm.termEnd)}</td>
-                                            <td className="whitespace-nowrap px-4 py-2 text-red-700" onClick={()=> handleOnDelete(academicYearTerm.termId)}>
+                                            <td className="whitespace-nowrap px-4 py-2 text-red-700 cursor-pointer" onClick={()=> handleOnDelete(academicYearTerm.termId)}>
                                                 ลบ
                                             </td>
                                             <td className="whitespace-nowrap px-4 py-2 text-gray-700">

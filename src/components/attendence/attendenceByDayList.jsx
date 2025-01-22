@@ -34,7 +34,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
         const datebetween = daybetween(dateTimeStart, dateTimeEnd).filter((date) => {
             const weekday = DateTime.fromISO(`${date}`, { zone: 'UTC' }).weekday; // filter เพื่อตัดวันที่เป้นเสาร์ อาทิตย์ออก
             return weekday !== 6 && weekday !== 7;
-        }).filter((date) => !holidayList.includes(date)); 
+        }).filter((date) => !holidayList.includes(date));
         setDayList(datebetween);
     }
 
@@ -42,6 +42,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/academicterms/${termId}`);
             getDay(response.data);
+            console.log(response.data);
         }catch(err){
             console.error(err);
         };
