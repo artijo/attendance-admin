@@ -3,7 +3,7 @@ import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { nameFormat } from "../../helper.js"
 // ...existing code...
-import closeicon from '/public/ico/closeicon.svg';
+import closeicon from '/ico/closeicon.svg';
 // ...existing code...
 
 export const Searchbar = ({ selectedSubject, inputvalue, setInputvalue}) => {
