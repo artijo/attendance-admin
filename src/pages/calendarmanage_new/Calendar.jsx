@@ -38,7 +38,8 @@ function Calendar(){
                                 </label>
                         <select 
                             name="academicyear_term" 
-                            onChange={(e) => setSelectedAcademicYearTerm(e.target.value)}
+                            onChange={(e) => {setSelectedAcademicYearTerm(e.target.value) 
+                                console.log(e.target.value)}}
                             className="mt-1 w-fit px-2 h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
                         >
                             {

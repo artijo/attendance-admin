@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 export const RoomList = ({ academicYearTermId } ) => {
     const [classrooms, setClassrooms] = useState([]);
-
     const page = Math.ceil(classrooms.length/12);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceHolidayList = classrooms.slice((seletedPage - 1) * 12, seletedPage * 12);
@@ -35,7 +34,7 @@ export const RoomList = ({ academicYearTermId } ) => {
         if(academicYearTermId){
             fecthClassrooms();
         }
-    }, []);
+    }, [academicYearTermId]);
 
     return(
         <div>

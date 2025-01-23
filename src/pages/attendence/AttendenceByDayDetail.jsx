@@ -21,6 +21,7 @@ function AttendenceByDayDetail() {
     const fecthData = async () => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/attendence/byDate/${date}/${classroomId}`);
+            console.log(response.data);
             setStudentList(response.data);
         }catch(error){
             console.error(error);
