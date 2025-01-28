@@ -51,8 +51,9 @@ function CreateForm() {
         className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
         {...register("title")}
     >
+        <option value={"BOY"}>เด็กชาย</option>
+        <option value={"GIRL"}>เด็กหญิง</option>
         <option value={"MR"}>นาย</option>
-        <option value={"MISS"}>นาง</option>
         <option value={"MRS"}>นางสาว</option>
     </select>
 </div>
@@ -98,7 +99,7 @@ function CreateForm() {
         {...register("tel")}
     />
 </div>
-<div>
+{/* <div>
     <label htmlFor="CityzenId" className="block text-xs font-medium text-gray-700"> เลขบัตรประชาชน</label>
     <input
         type="text"
@@ -107,7 +108,7 @@ function CreateForm() {
         className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
         {...register("cityzenId")}
     />
-</div>
+</div> */}
 
            <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                 เพิ่มนักเรียน
