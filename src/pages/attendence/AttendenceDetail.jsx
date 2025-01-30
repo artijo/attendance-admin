@@ -4,6 +4,7 @@ import { useState,useEffect } from "react";
 import { HOSTNAME } from "../../config";
 import { AttendenceByDayList } from "../../components/attendence/attendenceByDayList";
 import { AttendenceBySubjectList } from "../../components/attendence/attendenceBySubjectList";
+import AttendenceSummaryByClassroom from "./AttendenceSummaryByClassroom";
 function AttendanceDetail() {
     const params = useParams();
     const [classroomInfo, setClassroomInfo] = useState(null);
@@ -29,6 +30,10 @@ function AttendanceDetail() {
                 <h1>การเข้าเรียนตามรายวิชา</h1>
                 <div>
                     {classroomInfo != null && <AttendenceBySubjectList classroomId={classroomInfo != null && classroomInfo.classId} />}
+                </div>
+                <h1>แบบสรุปเวลาเรียนตามห้องเรียน</h1>
+                <div>
+                    {classroomInfo != null && <AttendenceSummaryByClassroom classroomId={classroomInfo != null && classroomInfo.classId}/>}
                 </div>
             </div>
         </div>

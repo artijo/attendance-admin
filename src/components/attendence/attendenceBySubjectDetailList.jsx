@@ -13,7 +13,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
             case 'absent':
                 return 'ไม่เข้าเรียน';
             case 'late':
-                return 'เข้าเรียนสักหน่อย';
+                return 'มาสาย';
             case 'activity':
                 return 'เข้าเรียนกิจกรรม';
             case 'leave':

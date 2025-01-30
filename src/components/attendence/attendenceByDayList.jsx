@@ -42,7 +42,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/academicterms/${termId}`);
             getDay(response.data);
-            console.log(response.data);
+            // console.log(response.data);
         }catch(err){
             console.error(err);
         };

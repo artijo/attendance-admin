@@ -55,7 +55,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                 return 'ไม่เข้าเรียน';
             }
             case 'late': {
-                return 'เข้าเรียนสักหน่อย';
+                return 'มาสาย';
             }
             case 'activity': {
                 
