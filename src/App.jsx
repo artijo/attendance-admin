@@ -118,14 +118,7 @@ function App() {
 
   return (
     <>
-      <header className="bg-background-alt text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-full overflow-y-auto
-  [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-gray-100
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <header className="font-heading bg-background-alt text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-screen flex flex-col">
         <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
           <div
             id="toggle"
@@ -195,7 +188,14 @@ function App() {
             </svg>
           </div>
         </div>
-        <nav>
+        <nav className="overflow-y-auto flex-1 md:max-h-[calc(100vh-180px)]
+  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
           <ul className="grid grid-cols-5 md:block">
             {navLinks.map((link, index) => (
               <li key={index}>
