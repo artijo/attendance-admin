@@ -1,7 +1,6 @@
 import { Termlistable } from "../../components/term/termlistable";
 import { Link } from "react-router-dom";
 function MainTermPage() {
-    
     return (
         <div className="container mx-auto">
             <h1 className="mb-4">รายการเทอมและปีการศึกษา</h1>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatDateToThai } from "../../helper";
+import PropTypes from "prop-types";
 import Noanything from "../../pages/Noanything";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const page = Math.ceil(studentList.length/5);
@@ -95,3 +96,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         
     )
 };
+AttendenceBySubjectDetailList.propTypes = {
+    studentList: PropTypes.array.isRequired
+}

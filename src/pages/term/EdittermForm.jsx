@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config";
 import { useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success";
-import Loading from "../../components/alert/loading";
 import ErrorAlert from "../../components/alert/error";
 function EdittermForm(){
     const location = useLocation();
@@ -12,6 +11,10 @@ function EdittermForm(){
     const [semester, setSemester] = useState("");
     const [termStart, setTermStart] = useState("");
     const [termEnd, setTermEnd] = useState("");
+    // responed from server 
+    const [msg, setMsg] = useState("");
+    const [error, setError] = useState(false);
+    const [success,setSuccess] = useState(false);
 
     function spiltUtcTime(value){
         const date = value.split("T")[0];
@@ -35,25 +38,19 @@ function EdittermForm(){
 
     const sentFormData = async (data) => {
         try{
-            setAlertShow([false, true, false]);
             const response = await axios.put(`${HOSTNAME}/a/academicterms`,data);
-            if(response.status === 200) {
-                setAlertShow([true, false, false]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false]);
-                    window.location.href = "/terms";
-                }, 3000);
-                
-            }else{
-                setAlertShow([false, false, true]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false]);
-                    window.location.href = "/terms";
-                }, 3000);
-               
+            if (response.status === 200) {
+                let countdownTime = 1000;
+                setMsg(response.data.message);
+                setSuccess(true);
+                setTimeout(() => {window.location.href = "/terms"}, countdownTime);
+            } else {
+                throw new Error(response.data.message);
             }
         }catch(error){
-            console.error(error);
+            setMsg(error.response?.data?.message || "เกิดข้อผิดพลาด");
+            setError(true);
+            
         };
     };
 
@@ -72,22 +69,22 @@ function EdittermForm(){
     useEffect(() => {
         fecthData();
     },[])
-    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
     return (
-        <div className="container mx-auto relative">
-            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
-            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
-                <div className={alertShow[0] ? "block" : "hidden"}>
-                    <AlertSuccess title="สําเร็จ" message="เพิ่มรายการวันหยุดในเทอมนั้นเรียบร้อย"/>
-                </div>
-                <div className={alertShow[1] ? "block" : "hidden"}>
-                    <Loading title="กำลังสร้างรายการวันหยุด" message="กรุณารอสักครู่"/>
-                </div>
-                <div className={alertShow[2] ? "block" : "hidden"}>
-                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างรายการวันหยุด"/>
-                </div>
-            </div>
+        <div className="container mx-auto">
+            
             <h1 className="font-medium mb-4">ฟอร์มแก้ไขเทอมและการศึกษา</h1>
+            <div className="mb-2"  onClick={() => {
+                setError(false)
+                setSuccess(false)
+                setMsg("")
+            }}>
+                {
+                    error &&  <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>
+                }
+                {
+                    success && <AlertSuccess title="สำเร็จ" message={msg}/>
+                }
+            </div>
             <form onSubmit={(e) => handleOnSubmit(e)} className="border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>

@@ -9,9 +9,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
         activity: 0,
         leave: 0
     });
-
-    console.log(studentList)
-
+    // console.log(studentList)
     const setuptotalstatus = () => {
         const updatedTotalStatus = {
             present: 0,
@@ -35,7 +33,6 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                         updatedTotalStatus.leave++;
                     }
                 };
-               
             });
         })
         setTotalStatus(updatedTotalStatus);
@@ -43,7 +40,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
 
     useEffect(()=> {
         setuptotalstatus();
-    },[])
+    },[studentList]);
 
     const formatAttStatus = (status) => {
         

@@ -24,6 +24,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เข้าสาย(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลา(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">กิจกรรม(ครั้ง)</th>
+                                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เข้าเรียน(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ร้อยละการเข้าเรียนทั้งหมดรวมลา</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ ไม่มีสิทธ์สอบ</th>
                                             </tr>
@@ -39,6 +40,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceLateCount}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceLeaveCount}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceActivity}</td>
+                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceCount}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendencePercent}%</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.canExam}</td>
                                                     </tr>

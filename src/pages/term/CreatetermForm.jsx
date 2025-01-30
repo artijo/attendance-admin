@@ -10,27 +10,24 @@ function CreatetermForm() {
     const [semester, setSemester] = useState("");
     const [termStart, setTermStart] = useState("");
     const [termEnd, setTermEnd] = useState("");
-    
+    // responed from server 
+    const [msg, setMsg] = useState("");
+    const [error, setError] = useState(false);
+    const [success,setSuccess] = useState(false);
     
     const sentFormData =  async(data) => {
-        try{
+        try {
             const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
-            setAlertShow([false, true, false]);
-            if(response.status === 200){
-                setAlertShow([true, false, false]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false]);
-                    window.location.href = "/terms";
-                }, 3000);
-            }else{
-                setAlertShow([false, false, true]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false]);
-                    window.location.href = "/terms";
-                }, 3000);
+
+            if (response.status === 200) {
+                setMsg(response.data.message);
+                setSuccess(true);
+            } else {
+                throw new Error(response.data.message);
             }
-        }catch(error){
-            console.error(error)
+        } catch (error) {
+            setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการแก้ไข");
+            setError(true);
         }
     }
 
@@ -44,22 +41,22 @@ function CreatetermForm() {
         }
         sentFormData(data)
     }
-    const [alertShow, setAlertShow] = useState([false, false, false]); // [success, loading, error]
+
     return( 
-        <div className="container mx-auto relative">
-            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
-            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
-                <div className={alertShow[0] ? "block" : "hidden"}>
-                    <AlertSuccess title="สําเร็จ" message="เพิ่มเทอมเรียบร้อย"/>
-                </div>
-                <div className={alertShow[1] ? "block" : "hidden"}>
-                    <Loading title="กำลังสร้างเทอม" message="กรุณารอสักครู่"/>
-                </div>
-                <div className={alertShow[2] ? "block" : "hidden"}>
-                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการสร้างเทอม"/>
-                </div>
-            </div>
+        <div className="container mx-auto">
             <h1 className="font-medium mb-4">ฟอร์มสร้างเทอมและการศึกษาใหม่</h1>
+            <div className="mb-2"  onClick={() => {
+                setError(false)
+                setSuccess(false)
+                setMsg("")
+            }}>
+                {
+                    error &&  <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>
+                }
+                {
+                    success && <AlertSuccess title="สำเร็จ" message={msg}/>
+                }
+            </div>
             <form onSubmit={(e) => handleOnSubmit(e)} className="border p-4 rounded-lg mb-4 bg-white grid grid-cols-1 gap-5">
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>
