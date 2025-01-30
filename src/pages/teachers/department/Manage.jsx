@@ -7,7 +7,7 @@ const DepartmentManage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [departmentToDelete, setDepartmentToDelete] = useState(null);
-  const [formData, setFormData] = useState({ deptCode: '', deptName: '' });
+  const [formData, setFormData] = useState({ deptName: '' });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
 
@@ -34,7 +34,7 @@ const DepartmentManage = () => {
         await axios.post(`${HOSTNAME}/a/department`, formData);
       }
       setIsModalOpen(false);
-      setFormData({ deptCode: '', deptName: '' });
+      setFormData({  deptName: '' });
       setEditingId(null);
       fetchDepartments();
     } catch (error) {
@@ -70,14 +70,14 @@ const DepartmentManage = () => {
 
   return (
     <div>
-      <h1>จัดการสังกัดกลุ่มสาระของคุณครู</h1>
+      <h1 className='text-center font-bold'>จัดการสังกัดกลุ่มสาระของคุณครู</h1>
       <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
         {error && <div className="text-red-500 mb-4">{error}</div>}
         
         <button
           onClick={() => {
             setIsModalOpen(true);
-            setFormData({ deptCode: '', deptName: '' });
+            setFormData({ deptName: '' });
             setEditingId(null);
           }}
           className="mb-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
@@ -90,7 +90,7 @@ const DepartmentManage = () => {
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
               <thead className="ltr:text-left rtl:text-right">
                 <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสสังกัดกลุ่มสาระ</th>
+                  {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสสังกัดกลุ่มสาระ</th> */}
                   <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อกลุ่มสาระ</th>
                   <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">จัดการ</th>
                 </tr>
@@ -98,9 +98,9 @@ const DepartmentManage = () => {
               <tbody className="divide-y divide-gray-200">
                 {departments.map((dept) => (
                   <tr key={dept.deptId}>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{dept.deptCode}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{dept.deptName}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{dept.deptCode}</td> */}
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700 text-center">{dept.deptName}</td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700 text-center">
                       <button
                         onClick={() => handleEdit(dept)}
                         className="mr-2 text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2"
@@ -156,7 +156,7 @@ const DepartmentManage = () => {
                 {editingId ? 'แก้ไขสังกัดกลุ่มสาระ' : 'เพิ่มสังกัดกลุ่มสาระ'}
               </h2>
               <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-                <div>
+                {/* <div>
                   <label className="block text-xs font-medium text-gray-700">
                     รหัสสังกัดกลุ่มสาระ
                   </label>
@@ -168,7 +168,7 @@ const DepartmentManage = () => {
                     required
                     maxLength={10}
                   />
-                </div>
+                </div> */}
                 
                 <div>
                   <label className="block text-xs font-medium text-gray-700">

@@ -27,7 +27,7 @@ function ClassroomDetail() {
     }, []);
   return (
     <div>
-      <h1>รายละเอียดห้องเรียน</h1>
+      <h1 className="text-center font-bold">รายละเอียดห้องเรียน</h1>
       <Link to={`/classroom/edit/${classroom?.classId}`} type="button" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">แก้ไขข้อมูลห้องเรียน</Link>
         {state && state.message && (
             <AlertSuccess title="แก้ไขข้อมูลแล้ว" message={state.message} />
