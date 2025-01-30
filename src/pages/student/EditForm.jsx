@@ -5,14 +5,14 @@ import { HOSTNAME } from "../../config.js";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EditForm() {
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
     const redirect = useNavigate();
     const { id } = useParams();
     const {
         register,
         handleSubmit,
         setValue,
-        formState: { errors },
+        formState: { errors: formErrors },
     } = useForm();
 
     const onSubmit = async function (data) {
@@ -23,7 +23,16 @@ function EditForm() {
             }
         } catch (error) {
             console.error(error);
-            setError("เกิดข้อผิดพลาดในการแก้ไขนักเรียน");
+            if (error.response && error.response.data) {
+                const serverErrors = error.response.data;
+                const errorMessages = {
+                    email: serverErrors.email === "duplicate" ? "อีเมลนี้มีอยู่ในระบบแล้ว" : "",
+                    tel: serverErrors.tel === "duplicate" ? "เบอร์โทรศัพท์นี้มีอยู่ในระบบแล้ว" : "",
+                };
+                setErrors(errorMessages);
+            } else {
+                setErrors({ general: "เกิดข้อผิดพลาดในการแก้ไขนักเรียน" });
+            }
         }
     };
 
@@ -39,7 +48,7 @@ function EditForm() {
             })
             .catch((error) => {
                 console.error("Error fetching student", error);
-                setError("ไม่สามารถโหลดข้อมูลนักเรียนได้");
+                setErrors({ general: "ไม่สามารถโหลดข้อมูลนักเรียนได้" });
             });
     }, [id, setValue]);
 
@@ -47,7 +56,7 @@ function EditForm() {
         <div>
             <h1>ฟอร์มแก้ไขนักเรียน</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {error && <div className="text-red-500">{error}</div>}
+                {errors.general && <div className="text-red-500 mb-4">{errors.general}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label htmlFor="StudentId" className="block text-xs font-medium text-gray-700">
@@ -112,6 +121,7 @@ function EditForm() {
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
                             {...register("email")}
                         />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
                     <div>
                         <label htmlFor="Tel" className="block text-xs font-medium text-gray-700">
@@ -124,18 +134,7 @@ function EditForm() {
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
                             {...register("tel")}
                         />
-                    </div>
-                    <div>
-                        <label htmlFor="CityzenId" className="block text-xs font-medium text-gray-700">
-                            เลขบัตรประชาชน
-                        </label>
-                        <input
-                            type="text"
-                            id="CityzenId"
-                            placeholder="0000000000000"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("cityzenId")}
-                        />
+                        {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}
                     </div>
 
                     <button

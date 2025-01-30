@@ -59,7 +59,7 @@ function Students() {
   }, [search]);
   return (
     <div>
-      <h1>นักเรียน</h1>
+      <h1 className="font-bold text-center">นักเรียน</h1>
       {state && state.message && (
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}
@@ -80,11 +80,11 @@ function Students() {
           <select
             name="searchbyclass"
             id="searchbyclass"
-            className="w-24 rounded-lg border-gray-300 text-gray-700 sm:text-sm"
+            className="w-32 rounded-lg border-gray-300 text-gray-700 sm:text-sm focus:border-blue-500 focus:ring-blue-500"
             value={searchByClass}
             onChange={(e) => setSearchByClass(e.target.value)}
           >
-            <option value="">ทั้งหมด</option>
+            <option value="">ทุกระดับชั้น</option>
             <optgroup label="มัธยมศึกษาปีที่ 1">
               {classrooms &&
                 classrooms.filter((classroom) => classroom.classLevel === 1).map((classroom) => (
@@ -179,13 +179,23 @@ function Students() {
         </div>
       </div>
       <div className="mt-5">
-        {
-          students ? (
+        {students ? (
+          students.length > 0 ? (
             <StudentList students={students} studentsPerPage={50} />
           ) : (
-            <div>Loading...</div>
+            <div className="text-center py-10 bg-gray-50 rounded-lg">
+              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <p className="mt-2 text-gray-500">ไม่พบข้อมูลนักเรียน</p>
+            </div>
           )
-        }
+        ) : (
+          <div className="text-center py-10">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-300 border-r-gray-800"></div>
+            <p className="mt-2 text-gray-500">กำลังโหลดข้อมูล...</p>
+          </div>
+        )}
       </div>
     </div>
   );
