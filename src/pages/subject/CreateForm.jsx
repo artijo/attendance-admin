@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function CreateForm() {
     const [error, setError] = useState(null);
+    const [subjects, setSubjects] = useState([]);
     const [subjectTypes, setSubjectTypes] = useState([]);
     const [teachers, setTeachers] = useState([]);
     const redirect = useNavigate();
@@ -33,9 +34,25 @@ function CreateForm() {
             .catch(error => {
                 console.error("Error fetching teachers:", error);
             });
+
+            // Fetch subjects
+        axios.get(`${HOSTNAME}/a/subjects`)
+            .then(response => {
+                setSubjects(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching subjects:", error);
+            });
     }, []);
 
     const onSubmit = async function (data) {
+        // Check if subject code already exists
+        const existingSubject = subjects.find(subject => subject.subCode === data.subCode);
+        if (existingSubject) {
+            setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
+            return;
+        }
+
         try {
             const response = await axios.post(`${HOSTNAME}/a/subject`, data);
             if (response.status === 200) {
@@ -53,7 +70,11 @@ function CreateForm() {
         <div>
             <h1>ฟอร์มเพิ่มวิชาใหม่</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {error && <div className="text-red-500">{error}</div>}
+                {error && (
+                    <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                        {error}
+                    </div>
+                )}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label htmlFor="subCode" className="block text-xs font-medium text-gray-700">รหัสวิชา</label>

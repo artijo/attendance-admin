@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function EditForm() {
     const [error, setError] = useState(null);
+    const [subjects, setSubjects] = useState([]);
     const [subjectTypes, setSubjectTypes] = useState([]);
     const [teachers, setTeachers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -23,9 +24,10 @@ function EditForm() {
         Promise.all([
             axios.get(`${HOSTNAME}/a/subjects/type`),
             axios.get(`${HOSTNAME}/a/teachers`),
-            axios.get(`${HOSTNAME}/a/subject/${id}`)
+            axios.get(`${HOSTNAME}/a/subject/${id}`),
+            axios.get(`${HOSTNAME}/a/subjects`)
         ])
-        .then(([typesRes, teachersRes, subjectRes]) => {
+        .then(([typesRes, teachersRes, subjectRes, subjectsRes]) => {
             setSubjectTypes(typesRes.data);
             setTeachers(teachersRes.data);
             // Pre-fill form with existing subject data
@@ -37,6 +39,8 @@ function EditForm() {
                 subTypeId: subjectRes.data.subTypeId,
                 tchId: subjectRes.data.tchId
             });
+
+            setSubjects(subjectsRes.data);
             setIsLoading(false);
         })
         .catch(error => {
@@ -47,6 +51,11 @@ function EditForm() {
     }, [id, reset]);
 
     const onSubmit = async function (data) {
+        const existingSubject = subjects.find(subject => subject.subCode === data.subCode);
+        if (existingSubject && existingSubject.subId !== id) {
+            setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
+            return;
+        }
         try {
             const response = await axios.put(`${HOSTNAME}/a/subject/${id}`, data);
             if (response.status === 200) {
@@ -68,7 +77,11 @@ function EditForm() {
         <div>
             <h1>แก้ไขข้อมูลวิชา</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {error && <div className="text-red-500">{error}</div>}
+            {error && (
+                    <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                        {error}
+                    </div>
+                )}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label htmlFor="subCode" className="block text-xs font-medium text-gray-700">รหัสวิชา</label>

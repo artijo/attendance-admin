@@ -31,32 +31,40 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {activities.map((activity) => (
-                                <tr key={activity.actId}>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        <Link to={`/activity/${activity.actId}`} className="hover:bg-gray-100">
-                                            {activity.actName}
-                                        </Link>
-                                    </td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        {formatDate(activity.actDate)}
-                                    </td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
-                                    </td>
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        {activity.actLocation}
-                                    </td>
-                                    {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        {activity.actStatus}
-                                    </td> */}
-                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                        <Link to={`/activity/${activity.actId}/attendance`}>
-                                            <span className="underline text-blue-800">การเข้าร่วม</span>
-                                        </Link>
+                            {activities.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" className="px-4 py-4 text-center text-gray-500">
+                                        ไม่พบข้อมูลกิจกรรม
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                activities.map((activity) => (
+                                    <tr key={activity.actId}>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            <Link to={`/activity/${activity.actId}`} className="hover:bg-gray-100">
+                                                {activity.actName}
+                                            </Link>
+                                        </td>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            {formatDate(activity.actDate)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            {activity.actLocation}
+                                        </td>
+                                        {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            {activity.actStatus}
+                                        </td> */}
+                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                            <Link to={`/activity/${activity.actId}/attendance`}>
+                                                <span className="underline text-blue-800">การเข้าร่วม</span>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
