@@ -29,7 +29,7 @@ function TeacherDetail() {
 
     return (
         <div>
-            <h1>รายละเอียดครู</h1>
+            <h1 className="text-center font-bold">รายละเอียดครู</h1>
             <Link 
                 to={`/teachers/edit/${teacher?.tchId}`} 
                 type="button" 

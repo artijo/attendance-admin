@@ -3,6 +3,7 @@ import { Navigate } from "react-router";
 import { useEffect, useState } from "react";  // Add this import at the top with other imports
 import axios from "axios";
 import { HOSTNAME } from "./config";
+import Logo from "./assets/nps-logo.webp";
 
 // config axios
 axios.defaults.withCredentials = true;
@@ -160,7 +161,7 @@ function App() {
           {/* Logo */}
           <div className="hidden md:block">
             <img
-              src="nps-logo.webp"
+              src={Logo}
               alt="Logo"
               className="w-10 h-10 md:w-12 md:h-12 mx-auto"
             />

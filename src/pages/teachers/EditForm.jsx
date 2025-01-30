@@ -1,21 +1,19 @@
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EditForm() {
-    const [error, setError] = useState(null);
-    const [teacher, setTeacher] = useState(null);
+    const [errors, setErrors] = useState({});
     const redirect = useNavigate();
     const { id } = useParams();
-
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
-        formState: { errors },
+        watch,
+        formState: { errors: formErrors },
     } = useForm();
 
     const password = watch("password");
@@ -26,7 +24,6 @@ function EditForm() {
             try {
                 const response = await axios.get(`${HOSTNAME}/a/teacher/${id}`);
                 const teacherData = response.data;
-                setTeacher(teacherData);
                 
                 // Set form values
                 setValue("tchCode", teacherData.tchCode);
@@ -36,7 +33,7 @@ function EditForm() {
                 setValue("tel", teacherData.tel);
             } catch (error) {
                 console.error(error);
-                setError("ไม่สามารถดึงข้อมูลครูได้");
+                setErrors("ไม่สามารถดึงข้อมูลครูได้");
             }
         };
 
@@ -59,19 +56,29 @@ function EditForm() {
             }
         } catch (error) {
             console.error(error);
-            setError("เกิดข้อผิดพลาดในการแก้ไขข้อมูลครู");
+            if (error.response && error.response.data) {
+                const serverErrors = error.response.data;
+                const errorMessages = {
+                    tchCode: serverErrors.tchCode === "duplicate" ? "รหัสครูนี้มีอยู่ในระบบแล้ว" : "",
+                    email: serverErrors.email === "duplicate" ? "อีเมลนี้มีอยู่ในระบบแล้ว" : "",
+                    tel: serverErrors.tel === "duplicate" ? "เบอร์โทรศัพท์นี้มีอยู่ในระบบแล้ว" : "",
+                };
+                setErrors(errorMessages);
+            } else {
+                setErrors({ general: "เกิดข้อผิดพลาดในการแก้ไขข้อมูลครู" });
+            }
         }
-    }
+    };
 
-    if (!teacher) {
-        return <div>Loading...</div>;
-    }
+    // if (!teacher) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <div>
             <h1>แก้ไขข้อมูลครู</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {error && <div className="text-red-500">{error}</div>}
+                {errors.general && <div className="text-red-500 mb-4">{errors.general}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label htmlFor="TeacherCode" className="block text-xs font-medium text-gray-700">รหัสครู</label>
@@ -82,6 +89,7 @@ function EditForm() {
                             {...register("tchCode")}
                             readOnly
                         />
+                        {errors.tchCode && <p className="text-red-500 text-xs mt-1">{errors.tchCode}</p>}
                     </div>
 
                     <div>
@@ -115,6 +123,7 @@ function EditForm() {
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
                             {...register("email")}
                         />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
 
                     <div>
@@ -126,6 +135,7 @@ function EditForm() {
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
                             {...register("tel")}
                         />
+                        {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}
                     </div>
 
                     <div>
@@ -142,8 +152,8 @@ function EditForm() {
                                 }
                             })}
                         />
-                        {errors.password && (
-                            <span className="text-red-500 text-xs">{errors.password.message}</span>
+                        {formErrors.password && (
+                            <span className="text-red-500 text-xs">{formErrors.password.message}</span>
                         )}
                     </div>
 
@@ -159,8 +169,8 @@ function EditForm() {
                                     !password || value === password || "รหัสผ่านไม่ตรงกัน"
                             })}
                         />
-                        {errors.confirmPassword && (
-                            <span className="text-red-500 text-xs">{errors.confirmPassword.message}</span>
+                        {formErrors.confirmPassword && (
+                            <span className="text-red-500 text-xs">{formErrors.confirmPassword.message}</span>
                         )}
                     </div>
 

@@ -34,7 +34,7 @@ function Activities() {
 
     return (
         <div>
-            <h1>กิจกรรม</h1>
+            <h1 className="text-center font-bold">กิจกรรม</h1>
             <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 justify-end">
                 <Link 
                     to={'create'} 

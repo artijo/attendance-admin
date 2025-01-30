@@ -45,7 +45,7 @@ function Teachers() {
 
   return (
     <div>
-      <h1>คุณครู</h1>
+      <h1 className="font-bold text-center">คุณครู</h1>
       {state && state.message && (
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}

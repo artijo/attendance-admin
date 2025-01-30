@@ -37,8 +37,8 @@ function Classroom() {
     }, [selectedGrade]);
 
   return (
-    <div className="p-2 sm:p-4">
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">ห้องเรียน</h1>
+    <div>
+      <h1 className="text-center font-bold">ห้องเรียน</h1>
       <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <label htmlFor="gradeFilter" className="block text-sm font-medium text-gray-700">

@@ -74,7 +74,7 @@ function Subjects() {
 
   return (
     <div>
-      <h1>รายวิชา</h1>
+      <h1 className="font-bold text-center">รายวิชา</h1>
       {state && state.message && (
         <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
       )}
