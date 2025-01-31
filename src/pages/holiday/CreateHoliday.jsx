@@ -91,6 +91,10 @@ function CreateHoliday(){
     const [endDate, setEndDate] = useState("");
     const [holidayType, setHolidayType] = useState("RATCHAKHAN");
     const [academicYearSemester, setAcademicYearSemester] = useState("");
+    // responed from server 
+    const [msg, setMsg] = useState("");
+    const [error, setError] = useState(false);
+    const [success,setSuccess] = useState(false);
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
@@ -101,12 +105,15 @@ function CreateHoliday(){
         try{
             const response = await axios.post(`${HOSTNAME}/a/holiday`,data);
             if(response.status === 200){
-                
+                setMsg(response.data.message);
+                setSuccess(true);
             }else{
-                
+                throw new Error(response.data.message);
             }
         }catch(error){
-            console.error(error);
+            // console.error(error);
+            setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างวันหยุด");
+            setError(true);
         }
     };
     
@@ -129,11 +136,21 @@ function CreateHoliday(){
     }
     return (
         <div className="mx-auto containers">
-            {
-
-            }
+        
             <div>
                 <h1 className="font-medium mb-4">ฟอร์มสร้างวันหยุด</h1>
+                <div className="mb-2"  onClick={() => {
+                    setError(false)
+                    setSuccess(false)
+                    setMsg("")
+                }}>
+                    {
+                        error &&  <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>
+                    }
+                    {
+                        success && <AlertSuccess title="สำเร็จ" message={msg}/>
+                    }
+                </div>
                 <div className="grid gap-2 md:grid-cols-2">
                     <div className="holiday" id="holiday-box">
                         <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />

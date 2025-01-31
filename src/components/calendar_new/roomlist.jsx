@@ -64,7 +64,7 @@ export const RoomList = ({ academicYearTermId } ) => {
                             {
                                 sliceHolidayList.length === 0 && (
                                     <tr>
-                                        <td colSpan="2" className="whitespace-nowrap text-center px-4 py-2 text-gray-700">ไม่มีห้องเรียน</td>
+                                        <td colSpan={4} className="whitespace-nowrap text-center px-4 py-2 text-gray-700">ไม่มีห้องเรียน</td>
                                     </tr>
                                 )
                             }
