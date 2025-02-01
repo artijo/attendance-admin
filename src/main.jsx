@@ -69,6 +69,7 @@ import AttendenceSubjectDetail from "./pages/attendence/AttendenceSubjectDetail.
 import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx";
 
 createRoot(document.getElementById("root")).render(
+  
   // <StrictMode>
   <BrowserRouter>
     <Routes>
