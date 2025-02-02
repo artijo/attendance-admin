@@ -2,11 +2,11 @@ import { useState } from "react";
 import { formatDateToThai } from "../../helper";
 import PropTypes from "prop-types";
 import Noanything from "../../pages/Noanything";
+import { AttendanceBySubject } from "../../exportExcel";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
-    const page = Math.ceil(studentList.length/5);
+    const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
-    const sliceStudentList = studentList.slice((seletedPage - 1) * 5, seletedPage * 5);
-
+    const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
     const formatAttStatus = (status) => {
         switch (status) {
             case 'present':
@@ -24,11 +24,26 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         }
     };
 
+    const handaleExportExcel = () => {
+        AttendanceBySubject(studentList);
+        
+
+    }
+
     return (
         <>
             {
                 studentList.length === 0 &&
                 <Noanything title="ไม่พบข้อมูล" description="ไม่มีปฎิทินการเรียน" />
+            }
+            {
+                studentList.length > 0 && 
+                <div 
+                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
+                    onClick={handaleExportExcel}
+                >
+                    <span>Export Excel</span>
+                </div>
             }
             {studentList.length > 0 && (
                 studentList[0].attendance.length > 0 &&
@@ -46,8 +61,9 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                         (
                                             studentList[0].attendance.map((attendance, index) => (
                                                 <th key={index} className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                                                    {
-                                                        formatDateToThai(attendance.studingTimeDate.split('T')[0])} <br/>{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[0]}:{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[1]} <br/> คาบที่{index+1}
+                                                    {/* {
+                                                        formatDateToThai(attendance.studingTimeDate.split('T')[0])} <br/>{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[0]}:{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[1]} <br/> คาบที่{index+1} */}
+                                                    คาบที่ {index+1}
                                                 </th>
                                             ))
                                         )

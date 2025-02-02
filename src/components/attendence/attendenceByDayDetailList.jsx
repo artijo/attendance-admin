@@ -1,7 +1,9 @@
 import {PropTypes} from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Noanything from "../../pages/Noanything";
+import { AttendanceSummaryByDay } from "../../exportExcel";
 export const AttendanceByDayDetailList = ({studentList}) => {
+    const ref = useRef();
     const [totalStatus, setTotalStatus] = useState({
         present: 0,
         late: 0,
@@ -66,8 +68,31 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                 return status;
         }
     };
+
+    const handaleExportExcel = () => {
+        if(ref.current) {
+            // console.log(ref.current);
+            const tableList = ref.current;
+        // if(!tableList || tableList[0]) return;
+            console.log(tableList);
+            AttendanceSummaryByDay(tableList);
+        }
+        
+        // AttendanceSummaryByDay(tableList[0]);
+        
+    }
+
     return (
         <>
+            {
+                studentList.length > 0 &&
+                <div 
+                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
+                    onClick={handaleExportExcel}
+                >
+                    <span>Export Excel</span>
+                </div>
+            }
             {
                 studentList.length === 0 && (
                     <Noanything title={"ไม่มีการเรียนในวันนี้"} description={"ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฎิทินการเรียน"}/>
@@ -76,7 +101,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
             {studentList.length > 0 && <div className="grid gap-2 md:grid-cols-1">
                 <div className="rounded-lg border border-gray-200">
                     <div className="overflow-x-auto rounded-t-lg">
-                        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                        <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr className="border">
                                     <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>คาบที่</td>

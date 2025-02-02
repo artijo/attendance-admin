@@ -12,6 +12,7 @@ function AttendenceByDayDetail() {
     const fetchClassroomInfo = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
+            console.log(response.data);
             setClassroomInfo(response.data);
         } catch (error) {
             console.error(error);
@@ -27,6 +28,8 @@ function AttendenceByDayDetail() {
             console.error(error);
         }
     };
+
+
     useEffect(() => {
         fecthData();
         fetchClassroomInfo();
@@ -43,7 +46,8 @@ function AttendenceByDayDetail() {
                     </div>
                 )
             }
-            {studentList && <AttendanceByDayDetailList studentList={studentList}/>}
+            
+            {studentList && <AttendanceByDayDetailList studentList={studentList} date={date}/>}
         </div>
     );
 };
