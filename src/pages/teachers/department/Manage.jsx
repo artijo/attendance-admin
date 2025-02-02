@@ -70,21 +70,25 @@ const DepartmentManage = () => {
 
   return (
     <div>
-      <h1 className='text-center font-bold'>จัดการสังกัดกลุ่มสาระของคุณครู</h1>
-      <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        
+      <h1 className="font-bold text-center">จัดการสังกัดกลุ่มสาระของคุณครู</h1>
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 justify-end">
         <button
           onClick={() => {
             setIsModalOpen(true);
             setFormData({ deptName: '' });
             setEditingId(null);
           }}
-          className="mb-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
           เพิ่มสังกัดกลุ่มสาระ
         </button>
-
+      </div>
+      <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        
         <div className="rounded-lg border border-gray-200">
           <div className="overflow-x-auto rounded-t-lg">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -103,14 +107,20 @@ const DepartmentManage = () => {
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700 text-center">
                       <button
                         onClick={() => handleEdit(dept)}
-                        className="mr-2 text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2"
+                        className="inline-flex justify-center items-center px-4 py-2 mr-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                       >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
                         แก้ไข
                       </button>
                       <button
                         onClick={() => handleDelete(dept)}
-                        className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2"
+                        className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                       >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                         ลบ
                       </button>
                     </td>
