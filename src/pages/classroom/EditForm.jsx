@@ -151,9 +151,9 @@ function EditClassroom() {
 
     return (
         <div>
-            <h1>ฟอร์มแก้ไขห้องเรียน</h1>
+            <h1 className="font-bold text-center">แก้ไขข้อมูลห้องเรียน</h1>
             <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {error && <div className="text-red-500">{error}</div>}
+                {error && <div className="text-red-500 mb-4">{error}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label htmlFor="ClassName" className="block text-xs font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
@@ -252,7 +252,15 @@ function EditClassroom() {
                             isClearable
                         />
                     </div>
-                    <button type="submit" className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">บันทึก</button>
+                    <button 
+                        type="submit"
+                        className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        บันทึกการแก้ไข
+                    </button>
                 </form>
             </div>
         </div>
