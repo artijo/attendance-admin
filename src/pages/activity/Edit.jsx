@@ -115,197 +115,211 @@ function EditActivity() {
     };
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="text-center py-10 bg-gray-50 rounded-lg">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="mt-2 text-gray-500">กำลังโหลดข้อมูล...</p>
+            </div>
+        );
     }
 
     return (
         <div>
-            <h1>แก้ไขกิจกรรม</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
-                <div className="space-y-6">
-                    <div className="border-b border-gray-900/10 pb-6">
-                        <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            {/* Activity Name */}
-                            <div className="sm:col-span-full">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    ชื่อกิจกรรม
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("actName", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Activity Description */}
-                            <div className="sm:col-span-full">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    รายละเอียดกิจกรรม
-                                </label>
-                                <textarea
-                                    {...register("actDesc", { required: true })}
-                                    rows={3}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Activity Location */}
-                            <div className="sm:col-span-full">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    สถานที่จัดกิจกรรม
-                                </label>
-                                <input
-                                    type="text"
-                                    {...register("actLocation", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Activity Type Select */}
-                            <div className="sm:col-span-3">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    ประเภทกิจกรรม
-                                </label>
-                                <Controller
-                                    name="actTypeId"
-                                    control={control}
-                                    rules={{ required: true }}
-                                    render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            options={activityTypes}
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            placeholder="เลือกประเภทกิจกรรม"
-                                        />
-                                    )}
-                                />
-                            </div>
-
-                            {/* Activity Start Date */}
-                            <div className="sm:col-span-3">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    วันที่เริ่มกิจกรรม
-                                </label>
-                                <input
-                                    type="date"
-                                    {...register("actDate", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Activity End Date */}
-                            <div className="sm:col-span-3">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    วันที่สิ้นสุดกิจกรรม
-                                </label>
-                                <input
-                                    type="date"
-                                    {...register("actDateEnd", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Start Time */}
-                            <div className="sm:col-span-3">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    เวลาเริ่มกิจกรรม
-                                </label>
-                                <input
-                                    type="time"
-                                    {...register("actStartTime", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* End Time */}
-                            <div className="sm:col-span-3">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    เวลาสิ้นสุดกิจกรรม
-                                </label>
-                                <input
-                                    type="time"
-                                    {...register("actEndTime", { required: true })}
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-
-                            {/* Join Limit Toggle Switch */}
-                            <div className="sm:col-span-full">
-                                <div className="flex items-center">
-                                    <label className="relative inline-flex items-center cursor-pointer">
+            <h1 className="text-center font-bold">แก้ไขข้อมูลกิจกรรม</h1>
+            <div className="mt-5">
+                <div className="bg-white shadow sm:rounded-lg p-6">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="space-y-6">
+                            <div className="border-b border-gray-900/10 pb-6">
+                                <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                    {/* Activity Name */}
+                                    <div className="sm:col-span-full">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            ชื่อกิจกรรม
+                                        </label>
                                         <input
-                                            type="checkbox"
-                                            {...register("joinLimit")}
-                                            className="sr-only peer"
+                                            type="text"
+                                            {...register("actName", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                        <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                            จำกัดการเข้าร่วมกิจกรรม
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
+                                    </div>
 
-                            {/* Classroom Multi-Select (Conditional) */}
-                            {joinLimit && (
-                                <div className="sm:col-span-full">
-                                    <label className="block text-sm font-medium leading-6 text-gray-900">
-                                        ห้องเรียนที่สามารถเข้าร่วมได้
-                                    </label>
-                                    <Controller
-                                        name="classrooms"
-                                        control={control}
-                                        rules={{ required: joinLimit }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                isMulti
-                                                options={classrooms}
-                                                className="basic-multi-select"
-                                                classNamePrefix="select"
-                                                placeholder="เลือกห้องเรียน"
+                                    {/* Activity Description */}
+                                    <div className="sm:col-span-full">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            รายละเอียดกิจกรรม
+                                        </label>
+                                        <textarea
+                                            {...register("actDesc", { required: true })}
+                                            rows={3}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* Activity Location */}
+                                    <div className="sm:col-span-full">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            สถานที่จัดกิจกรรม
+                                        </label>
+                                        <input
+                                            type="text"
+                                            {...register("actLocation", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* Activity Type Select */}
+                                    <div className="sm:col-span-3">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            ประเภทกิจกรรม
+                                        </label>
+                                        <Controller
+                                            name="actTypeId"
+                                            control={control}
+                                            rules={{ required: true }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    options={activityTypes}
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                    placeholder="เลือกประเภทกิจกรรม"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* Activity Start Date */}
+                                    <div className="sm:col-span-3">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            วันที่เริ่มกิจกรรม
+                                        </label>
+                                        <input
+                                            type="date"
+                                            {...register("actDate", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* Activity End Date */}
+                                    <div className="sm:col-span-3">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            วันที่สิ้นสุดกิจกรรม
+                                        </label>
+                                        <input
+                                            type="date"
+                                            {...register("actDateEnd", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* Start Time */}
+                                    <div className="sm:col-span-3">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            เวลาเริ่มกิจกรรม
+                                        </label>
+                                        <input
+                                            type="time"
+                                            {...register("actStartTime", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* End Time */}
+                                    <div className="sm:col-span-3">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            เวลาสิ้นสุดกิจกรรม
+                                        </label>
+                                        <input
+                                            type="time"
+                                            {...register("actEndTime", { required: true })}
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        />
+                                    </div>
+
+                                    {/* Join Limit Toggle Switch */}
+                                    <div className="sm:col-span-full">
+                                        <div className="flex items-center">
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    {...register("joinLimit")}
+                                                    className="sr-only peer"
+                                                />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                                <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                    จำกัดการเข้าร่วมกิจกรรม
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    {/* Classroom Multi-Select (Conditional) */}
+                                    {joinLimit && (
+                                        <div className="sm:col-span-full">
+                                            <label className="block text-sm font-medium leading-6 text-gray-900">
+                                                ห้องเรียนที่สามารถเข้าร่วมได้
+                                            </label>
+                                            <Controller
+                                                name="classrooms"
+                                                control={control}
+                                                rules={{ required: joinLimit }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        isMulti
+                                                        options={classrooms}
+                                                        className="basic-multi-select"
+                                                        classNamePrefix="select"
+                                                        placeholder="เลือกห้องเรียน"
+                                                    />
+                                                )}
                                             />
-                                        )}
-                                    />
-                                </div>
-                            )}
-
-                            {/* Teachers Multi-Select */}
-                            <div className="sm:col-span-full">
-                                <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    ครูผู้ดูแลกิจกรรม
-                                </label>
-                                <Controller
-                                    name="teachers"
-                                    control={control}
-                                    rules={{ required: true }}
-                                    render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            isMulti
-                                            options={teachers}
-                                            className="basic-multi-select"
-                                            classNamePrefix="select"
-                                            placeholder="เลือกครูผู้ดูแล"
-                                        />
+                                        </div>
                                     )}
-                                />
+
+                                    {/* Teachers Multi-Select */}
+                                    <div className="sm:col-span-full">
+                                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                                            ครูผู้ดูแลกิจกรรม
+                                        </label>
+                                        <Controller
+                                            name="teachers"
+                                            control={control}
+                                            rules={{ required: true }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    isMulti
+                                                    options={teachers}
+                                                    className="basic-multi-select"
+                                                    classNamePrefix="select"
+                                                    placeholder="เลือกครูผู้ดูแล"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                {/* Submit Button */}
-                <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button
-                        type="submit"
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >
-                        บันทึก
-                    </button>
+                        {/* Submit Button */}
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                บันทึก
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }
