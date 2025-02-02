@@ -54,96 +54,107 @@ function EditForm() {
 
     return (
         <div>
-            <h1>ฟอร์มแก้ไขนักเรียน</h1>
-            <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
-                {errors.general && <div className="text-red-500 mb-4">{errors.general}</div>}
-                <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-                    <div>
-                        <label htmlFor="StudentId" className="block text-xs font-medium text-gray-700">
-                            รหัสนักเรียน
-                        </label>
-                        <input
-                            type="text"
-                            id="StudentId"
-                            placeholder="xxxxxx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("stdId")}
-                            disabled
-                        />
+            <h1 className="font-bold text-center">แก้ไขข้อมูลนักเรียน</h1>
+            <div className="mt-5">
+                {errors.general ? (
+                    <div className="text-center py-10 bg-gray-50 rounded-lg">
+                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="mt-2 text-gray-500">{errors.general}</p>
                     </div>
-                    <div>
-                        <label htmlFor="Title" className="block text-xs font-medium text-gray-700">
-                            คำนำหน้า
-                        </label>
-                        <select
-                            id="Title"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("title")}
-                        >
-                            <option value="BOY">เด็กชาย</option>
-<option value="GIRL">เด็กหญิง</option>
-<option value="MR">นาย</option>
-<option value="MS">นางสาว</option>
-                        </select>
+                ) : (
+                    <div className="bg-white shadow sm:rounded-lg p-6">
+                        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+                            <div>
+                                <label htmlFor="StudentId" className="block text-xs font-medium text-gray-700">
+                                    รหัสนักเรียน
+                                </label>
+                                <input
+                                    type="text"
+                                    id="StudentId"
+                                    placeholder="xxxxxx"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("stdId")}
+                                    disabled
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="Title" className="block text-xs font-medium text-gray-700">
+                                    คำนำหน้า
+                                </label>
+                                <select
+                                    id="Title"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("title")}
+                                >
+                                    <option value="BOY">เด็กชาย</option>
+                                    <option value="GIRL">เด็กหญิง</option>
+                                    <option value="MR">นาย</option>
+                                    <option value="MS">นางสาว</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="Firstname" className="block text-xs font-medium text-gray-700">
+                                    ชื่อ
+                                </label>
+                                <input
+                                    type="text"
+                                    id="Firstname"
+                                    placeholder="ชื่อ"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("fName")}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="Lastname" className="block text-xs font-medium text-gray-700">
+                                    นามสกุล
+                                </label>
+                                <input
+                                    type="text"
+                                    id="Lastname"
+                                    placeholder="นามสกุล"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("lName")}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="Email" className="block text-xs font-medium text-gray-700">
+                                    อีเมล
+                                </label>
+                                <input
+                                    type="text"
+                                    id="Email"
+                                    placeholder="user@nps.ac.th"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("email")}
+                                />
+                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                            </div>
+                            <div>
+                                <label htmlFor="Tel" className="block text-xs font-medium text-gray-700">
+                                    เบอร์โทรศัพท์
+                                </label>
+                                <input
+                                    type="text"
+                                    id="Tel"
+                                    placeholder="000-000-0000"
+                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    {...register("tel")}
+                                />
+                                {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}
+                            </div>
+                            <div className="sm:col-span-2 flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                >
+                                    บันทึกการแก้ไข
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div>
-                        <label htmlFor="Firstname" className="block text-xs font-medium text-gray-700">
-                            ชื่อ
-                        </label>
-                        <input
-                            type="text"
-                            id="Firstname"
-                            placeholder="ชื่อ"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("fName")}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="Lastname" className="block text-xs font-medium text-gray-700">
-                            นามสกุล
-                        </label>
-                        <input
-                            type="text"
-                            id="Lastname"
-                            placeholder="นามสกุล"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("lName")}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="Email" className="block text-xs font-medium text-gray-700">
-                            อีเมล
-                        </label>
-                        <input
-                            type="text"
-                            id="Email"
-                            placeholder="user@nps.ac.th"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("email")}
-                        />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                    </div>
-                    <div>
-                        <label htmlFor="Tel" className="block text-xs font-medium text-gray-700">
-                            เบอร์โทรศัพท์
-                        </label>
-                        <input
-                            type="text"
-                            id="Tel"
-                            placeholder="000-000-0000"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            {...register("tel")}
-                        />
-                        {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                    >
-                        บันทึกการแก้ไข
-                    </button>
-                </form>
+                )}
             </div>
         </div>
     );
