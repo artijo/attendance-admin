@@ -3,6 +3,8 @@ import { formatDateToThai } from "../../helper";
 import PropTypes from "prop-types";
 import Noanything from "../../pages/Noanything";
 import { AttendanceBySubject } from "../../exportExcel";
+import ExportExcelButton from "../exportExcelButton";
+import ExportPdfButton from "../exportPdfButton";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
@@ -26,8 +28,10 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
 
     const handaleExportExcel = () => {
         AttendanceBySubject(studentList);
-        
+    }
 
+    const handaleExportPdf = () => {
+        console.log("pdf Clicked")
     }
 
     return (
@@ -37,13 +41,16 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                 <Noanything title="ไม่พบข้อมูล" description="ไม่มีปฎิทินการเรียน" />
             }
             {
-                studentList.length > 0 && 
-                <div 
-                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
-                    onClick={handaleExportExcel}
-                >
-                    <span>Export Excel</span>
-                </div>
+                            studentList.length > 0 &&
+                            <ul className="flex flex-row-reverse">
+                                <li>
+                                    <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
+                                </li>
+                                <li>
+                                    <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                                </li>
+                                 
+                            </ul>
             }
             {studentList.length > 0 && (
                 studentList[0].attendance.length > 0 &&
@@ -74,7 +81,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                 {
                                     sliceStudentList.length > 0 ? 
                                         (
-                                            sliceStudentList.map((student, index) => (
+                                            studentList.map((student, index) => (
                                                 <tr key={index}>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
@@ -95,7 +102,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                         </table>
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     {Array.from({ length: page }, (_, i) => (
                         <button
                             key={i+1}
@@ -106,7 +113,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                             {i + 1}
                         </button>
                     ))}
-                </div>
+                </div> */}
             </div>)}
         </>
         

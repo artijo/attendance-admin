@@ -1,10 +1,11 @@
 import { PropTypes } from 'prop-types';
 import { useState, useRef } from 'react';
 import { AttendanceSummaryByDay } from '../../exportExcel';
+import ExportExcelButton from '../exportExcelButton';
+import ExportPdfButton from '../exportPdfButton';
 export const AttendenceBySummaryByClassroomList = ({studentList}) => {
     // console.log(studentList);
     const ref = useRef();
-    const refForPdf = useRef(null);
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
@@ -18,19 +19,24 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
             }
             
         }
+        const handaleExportPdf = () => {
+            console.log("pdf Clicked")
+        }
     return (
         <>
             {studentList.length === 0 && <div>ไม่พบข้อมูล</div>}
-            {studentList.length > 0 &&
-                <div 
-                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
-                    onClick={handaleExportExcel}
-                >
-                    <span>Export Excel</span>
-                </div>
-            
-            
-            }
+             {
+                                        studentList.length > 0 &&
+                                        <ul className="flex flex-row-reverse">
+                                            <li>
+                                                <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
+                                            </li>
+                                            <li>
+                                                <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                                            </li>
+                                             
+                                        </ul>
+                        }
             {
                 studentList.length > 0 && (
                     <div>
@@ -54,7 +60,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 text-center">
                                             {
-                                                sliceStudentList.map((student, index) => (
+                                                studentList.map((student, index) => (
                                                     <tr key={index}>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
@@ -73,7 +79,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                     </table>
                                 </div>
                             </div>
-                            <div>
+                            {/* <div>
                                 {Array.from({ length: page }, (_, i) => (
                                     <button
                                         key={i+1}
@@ -84,7 +90,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                         {i + 1}
                                     </button>
                                 ))}
-                            </div>
+                            </div> */}
                         </div>
                         
                     </div>  

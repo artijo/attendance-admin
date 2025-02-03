@@ -4,8 +4,7 @@ import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import {App } from "../../exportPdf.jsx";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);    
     const [totalStatus, setTotalStatus] = useState({
@@ -79,31 +78,19 @@ export const AttendanceByDayDetailList = ({studentList}) => {
             const tableList = ref.current;
         // if(!tableList || tableList[0]) return;
             console.log(tableList);
-            AttendanceSummaryByDay(tableList);
+            
         }
         
         // AttendanceSummaryByDay(tableList[0]);
         
     }
 
+    
+
     const handaleExportPdf = async () => {
-        if(ref.current) {
-            const tableList = ref.current;
-
-            const canvas = await html2canvas(tableList);
-            const data = canvas.toDataURL('image/png');
-
-            const pdf = new jsPDF({
-                orientation: "landscape",
-                unit: "px",
-                format: "a4",
-
-            })
-            pdf.addImage(data, "jpeg",0 ,0,400,200);
-            pdf.save("AttendeceByDaySummary.pdf")
-        }
+        App();
     }
-
+    
     return (
         <>
             {
