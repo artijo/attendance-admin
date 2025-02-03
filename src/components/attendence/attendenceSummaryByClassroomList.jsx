@@ -1,20 +1,43 @@
 import { PropTypes } from 'prop-types';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { AttendanceSummaryByDay } from '../../exportExcel';
 export const AttendenceBySummaryByClassroomList = ({studentList}) => {
     // console.log(studentList);
+    const ref = useRef();
+    const refForPdf = useRef(null);
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
+    const handaleExportExcel = () => {
+            if(ref.current) {
+                // console.log(ref.current);
+                const tableList = ref.current;
+            // if(!tableList || tableList[0]) return;
+                console.log(tableList);
+                AttendanceSummaryByDay(tableList);
+            }
+            
+        }
     return (
         <>
             {studentList.length === 0 && <div>ไม่พบข้อมูล</div>}
+            {studentList.length > 0 &&
+                <div 
+                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
+                    onClick={handaleExportExcel}
+                >
+                    <span>Export Excel</span>
+                </div>
+            
+            
+            }
             {
                 studentList.length > 0 && (
                     <div>
                         <div className="grid gap-2 md:grid-cols-1">
                             <div className="rounded-lg border border-gray-200">
                                 <div className="overflow-x-auto rounded-t-lg">
-                                    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                                    <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                                         <thead className="ltr:text-left rtl:text-right">
                                             <tr>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขที่</th>

@@ -17,6 +17,8 @@
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "axios": "^1.7.9",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "luxon": "^3.5.0",
     "node-xlsx": "^0.24.0",
     "prop-types": "^15.8.1",

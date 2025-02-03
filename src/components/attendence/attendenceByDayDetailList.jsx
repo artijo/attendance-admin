@@ -2,8 +2,12 @@ import {PropTypes} from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
+import ExportExcelButton from "../exportExcelButton";
+import ExportPdfButton from "../exportPdfButton";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 export const AttendanceByDayDetailList = ({studentList}) => {
-    const ref = useRef();
+    const ref = useRef(null);    
     const [totalStatus, setTotalStatus] = useState({
         present: 0,
         late: 0,
@@ -82,16 +86,37 @@ export const AttendanceByDayDetailList = ({studentList}) => {
         
     }
 
+    const handaleExportPdf = async () => {
+        if(ref.current) {
+            const tableList = ref.current;
+
+            const canvas = await html2canvas(tableList);
+            const data = canvas.toDataURL('image/png');
+
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "px",
+                format: "a4",
+
+            })
+            pdf.addImage(data, "jpeg",0 ,0,400,200);
+            pdf.save("AttendeceByDaySummary.pdf")
+        }
+    }
+
     return (
         <>
             {
                 studentList.length > 0 &&
-                <div 
-                    className=" w-fit px-4 py-2 border-2 border-green-400 rounded-lg text-green-500 font-semibold mb-2"
-                    onClick={handaleExportExcel}
-                >
-                    <span>Export Excel</span>
-                </div>
+                <ul className="flex flex-row-reverse">
+                    <li>
+                        <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
+                    </li>
+                    <li>
+                        <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                    </li>
+                     
+                </ul>
             }
             {
                 studentList.length === 0 && (

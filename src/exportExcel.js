@@ -42,7 +42,7 @@ export function AttendanceBySubject(studentArrayOfJson) {
         )
     })
     
-    const worksheet = XLSX.utils.json_to_sheet(cellItemRows );
+    const worksheet = XLSX.utils.json_to_sheet(cellItemRows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook,worksheet, "SheetSubject")
     XLSX.utils.sheet_add_aoa(
