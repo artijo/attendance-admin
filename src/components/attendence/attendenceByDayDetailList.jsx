@@ -4,7 +4,7 @@ import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import {App } from "../../exportPdf.jsx";
+import { Link } from "react-router-dom";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);    
     const [totalStatus, setTotalStatus] = useState({
@@ -78,19 +78,13 @@ export const AttendanceByDayDetailList = ({studentList}) => {
             const tableList = ref.current;
         // if(!tableList || tableList[0]) return;
             console.log(tableList);
-            
+            AttendanceSummaryByDay(tableList);
         }
         
         // AttendanceSummaryByDay(tableList[0]);
         
     }
 
-    
-
-    const handaleExportPdf = async () => {
-        App();
-    }
-    
     return (
         <>
             {
@@ -100,7 +94,10 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                         <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                     </li>
                     <li>
-                        <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                        <Link to="/att/byday/pdf" state={{ studentList: studentList }}>
+                            <ExportPdfButton/>
+                        </Link>
+                        
                     </li>
                      
                 </ul>

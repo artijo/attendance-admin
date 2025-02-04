@@ -5,6 +5,7 @@ import Noanything from "../../pages/Noanything";
 import { AttendanceBySubject } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
+import { Link } from "react-router-dom";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
@@ -30,10 +31,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         AttendanceBySubject(studentList);
     }
 
-    const handaleExportPdf = () => {
-        console.log("pdf Clicked")
-    }
-
     return (
         <>
             {
@@ -47,7 +44,9 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                     <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                                 </li>
                                 <li>
-                                    <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                                <Link to="/att/bysubject/pdf" state={{ studentList: studentList }}>
+                                    <ExportPdfButton/>
+                                </Link>
                                 </li>
                                  
                             </ul>
@@ -60,9 +59,9 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" rowSpan={2}>เลขที่</th>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" rowSpan={2}>รหัสนักเรียน</th>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" rowSpan={2}>ชื่อ-นามสกุล</th>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >เลขที่</th>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >รหัสนักเรียน</th>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >ชื่อ-นามสกุล</th>
                                     {
                                         studentList.length > 0 && 
                                         (

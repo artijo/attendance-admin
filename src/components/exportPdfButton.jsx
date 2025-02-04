@@ -1,9 +1,8 @@
 import PropTypes from "prop-types";
-export default function ExportPdfButton({handelOnClickFunction}) {
+export default function ExportPdfButton() {
     return (
         <div 
             className="cursor-pointer flex items-center gap-2 w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-            onClick={handelOnClickFunction}
         >
             <div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -13,8 +12,4 @@ export default function ExportPdfButton({handelOnClickFunction}) {
             <span>ดาวน์โหลดไฟล์ Pdf</span>
         </div>
     );
-};
-
-ExportPdfButton.propTypes = {
-    handelOnClickFunction: PropTypes.func.isRequired
 };

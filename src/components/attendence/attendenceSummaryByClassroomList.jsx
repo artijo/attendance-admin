@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { AttendanceSummaryByDay } from '../../exportExcel';
 import ExportExcelButton from '../exportExcelButton';
 import ExportPdfButton from '../exportPdfButton';
+import { Link } from 'react-router-dom';
 export const AttendenceBySummaryByClassroomList = ({studentList}) => {
     // console.log(studentList);
     const ref = useRef();
@@ -32,7 +33,9 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                                 <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                                             </li>
                                             <li>
-                                                <ExportPdfButton handelOnClickFunction={handaleExportPdf}/>
+                                                <Link to="/att/byclassroom/pdf" state={{ studentList: studentList }}>
+                                                    <ExportPdfButton/>
+                                                </Link>
                                             </li>
                                              
                                         </ul>
