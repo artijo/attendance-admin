@@ -8,7 +8,6 @@ const SubjectTypeManage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [subjectTypeToDelete, setSubjectTypeToDelete] = useState(null);
   const [formData, setFormData] = useState({ 
-    subTypeCode: '', 
     subTypeNameThai: '', 
     subTypeNameEng: '' 
   });
@@ -37,7 +36,7 @@ const SubjectTypeManage = () => {
         await axios.post(`${HOSTNAME}/a/subject/type`, formData);
       }
       setIsModalOpen(false);
-      setFormData({ subTypeCode: '', subTypeNameThai: '', subTypeNameEng: '' });
+      setFormData({  subTypeNameThai: '', subTypeNameEng: '' });
       setEditingId(null);
       fetchSubjectTypes();
     } catch (error) {
@@ -87,7 +86,7 @@ const SubjectTypeManage = () => {
           <button
             onClick={() => {
               setIsModalOpen(true);
-              setFormData({ subTypeCode: '', subTypeNameThai: '', subTypeNameEng: '' });
+              setFormData({ subTypeNameThai: '', subTypeNameEng: '' });
               setEditingId(null);
             }}
             className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -104,7 +103,7 @@ const SubjectTypeManage = () => {
               <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                 <thead className="ltr:text-left rtl:text-right">
                   <tr>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสประเภทวิชา</th>
+                    {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสประเภทวิชา</th> */}
                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อประเภทวิชา (ไทย)</th>
                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อประเภทวิชา (อังกฤษ)</th>
                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">จัดการ</th>
@@ -113,7 +112,7 @@ const SubjectTypeManage = () => {
                 <tbody className="divide-y divide-gray-200">
                   {subjectTypes.map((type) => (
                     <tr key={type.subTypeId}>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">{type.subTypeCode}</td>
+                      {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{type.subTypeCode}</td> */}
                       <td className="whitespace-nowrap px-4 py-2 text-gray-700">{type.subTypeNameThai}</td>
                       <td className="whitespace-nowrap px-4 py-2 text-gray-700">{type.subTypeNameEng}</td>
                       <td className="whitespace-nowrap px-4 py-2 text-gray-700">
@@ -178,7 +177,7 @@ const SubjectTypeManage = () => {
                   {editingId ? 'แก้ไขประเภทวิชา' : 'เพิ่มประเภทวิชา'}
                 </h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-                  <div>
+                  {/* <div>
                     <label className="block text-xs font-medium text-gray-700">
                       รหัสประเภทวิชา
                     </label>
@@ -190,7 +189,7 @@ const SubjectTypeManage = () => {
                       required
                       maxLength={10}
                     />
-                  </div>
+                  </div> */}
                   
                   <div>
                     <label className="block text-xs font-medium text-gray-700">
