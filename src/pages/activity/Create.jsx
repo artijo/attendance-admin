@@ -21,12 +21,15 @@ function CreateActivity() {
             actStartTime: "",
             actEndTime: "",
             joinLimit: false,
+            joinLimitType: "classroom", // Add this line
+            joinLimitNumber: "", // Add this line
             teachers: [],
             classrooms: []
         }
     });
 
     const joinLimit = watch("joinLimit");
+    const joinLimitType = watch("joinLimitType"); // Add this line
 
     useEffect(() => {
         // Fetch activity types
@@ -74,8 +77,10 @@ function CreateActivity() {
             actStartTime: data.actStartTime,
             actEndTime: data.actEndTime,
             joinLimit: data.joinLimit,
+            joinLimitType: data.joinLimitType, // Add this line
+            joinLimitNumber: data.joinLimitType === 'number' ? parseInt(data.joinLimitNumber) : null, // Add this line
             teacher: data.teachers.map(t => ({ tchId: t.value })),
-            actParticipate: data.joinLimit ? data.classrooms.map(c => ({ classId: c.value })) : []
+            actParticipate: data.joinLimit && data.joinLimitType === 'classroom' ? data.classrooms.map(c => ({ classId: c.value })) : []
         };
 
         console.log("Activity data:", activityData);
@@ -220,8 +225,52 @@ function CreateActivity() {
                                         </div>
                                     </div>
 
-                                    {/* Classroom Multi-Select (Conditional) */}
+                                    {/* Join Limit Options - Add after the toggle switch */}
                                     {joinLimit && (
+                                        <div className="sm:col-span-full">
+                                            <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                                                ประเภทการจำกัดการเข้าร่วม
+                                            </label>
+                                            <div className="flex gap-4">
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        {...register("joinLimitType")}
+                                                        value="classroom"
+                                                        className="form-radio h-4 w-4 text-blue-600"
+                                                    />
+                                                    <span className="ml-2">จำกัดตามห้องเรียน</span>
+                                                </label>
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        {...register("joinLimitType")}
+                                                        value="number"
+                                                        className="form-radio h-4 w-4 text-blue-600"
+                                                    />
+                                                    <span className="ml-2">จำกัดตามจำนวนผู้เข้าร่วม</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Participant Number Limit Input */}
+                                    {joinLimit && joinLimitType === 'number' && (
+                                        <div className="sm:col-span-3">
+                                            <label className="block text-sm font-medium leading-6 text-gray-900">
+                                                จำนวนผู้เข้าร่วมสูงสุด
+                                            </label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                {...register("joinLimitNumber", { required: joinLimitType === 'number' })}
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Classroom Multi-Select (Conditional) */}
+                                    {joinLimit && joinLimitType === 'classroom' && (
                                         <div className="sm:col-span-full">
                                             <label className="block text-sm font-medium leading-6 text-gray-900">
                                                 ห้องเรียนที่สามารถเข้าร่วมได้
@@ -229,7 +278,7 @@ function CreateActivity() {
                                             <Controller
                                                 name="classrooms"
                                                 control={control}
-                                                rules={{ required: joinLimit }}
+                                                rules={{ required: joinLimit && joinLimitType === 'classroom' }}
                                                 render={({ field }) => (
                                                     <Select
                                                         {...field}

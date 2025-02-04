@@ -24,12 +24,15 @@ function EditActivity() {
             actStartTime: "",
             actEndTime: "",
             joinLimit: false,
+            joinLimitType: "classroom", // Add this
+            joinLimitNumber: "", // Add this
             teachers: [],
             classrooms: []
         }
     });
 
     const joinLimit = watch("joinLimit");
+    const joinLimitType = watch("joinLimitType"); // Add this
 
     useEffect(() => {
         // Fetch activity data
@@ -56,6 +59,8 @@ function EditActivity() {
                     actStartTime: activity.actStartTime,
                     actEndTime: activity.actEndTime,
                     joinLimit: activity.joinLimit,
+                    joinLimitType: activity.joinLimitNumber ? 'number' : 'classroom', // Add this
+                    joinLimitNumber: activity.joinLimitNumber || "", // Add this
                     teachers: activity.teacher.map(t => ({
                         value: t.teacher.tchId,
                         label: `${t.teacher.tchCode} - ${t.teacher.fName} ${t.teacher.lName}`
@@ -101,8 +106,10 @@ function EditActivity() {
             actStartTime: data.actStartTime,
             actEndTime: data.actEndTime,
             joinLimit: data.joinLimit,
+            joinLimitType: data.joinLimitType, // Add this
+            joinLimitNumber: data.joinLimitType === 'number' ? parseInt(data.joinLimitNumber) : null, // Add this
             teacher: data.teachers.map(t => ({ tchId: t.value })),
-            actParticipate: data.joinLimit ? data.classrooms.map(c => ({ classId: c.value })) : []
+            actParticipate: data.joinLimit && data.joinLimitType === 'classroom' ? data.classrooms.map(c => ({ classId: c.value })) : []
         };
 
         axios.put(HOSTNAME + "/a/activity/" + id, activityData)
@@ -256,8 +263,52 @@ function EditActivity() {
                                         </div>
                                     </div>
 
-                                    {/* Classroom Multi-Select (Conditional) */}
+                                    {/* Add after Join Limit Toggle Switch */}
                                     {joinLimit && (
+                                        <div className="sm:col-span-full">
+                                            <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                                                ประเภทการจำกัดการเข้าร่วม
+                                            </label>
+                                            <div className="flex gap-4">
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        {...register("joinLimitType")}
+                                                        value="classroom"
+                                                        className="form-radio h-4 w-4 text-blue-600"
+                                                    />
+                                                    <span className="ml-2">จำกัดตามห้องเรียน</span>
+                                                </label>
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        {...register("joinLimitType")}
+                                                        value="number"
+                                                        className="form-radio h-4 w-4 text-blue-600"
+                                                    />
+                                                    <span className="ml-2">จำกัดตามจำนวนผู้เข้าร่วม</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Participant Number Limit Input */}
+                                    {joinLimit && joinLimitType === 'number' && (
+                                        <div className="sm:col-span-3">
+                                            <label className="block text-sm font-medium leading-6 text-gray-900">
+                                                จำนวนผู้เข้าร่วมสูงสุด
+                                            </label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                {...register("joinLimitNumber", { required: joinLimitType === 'number' })}
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Update Classroom Multi-Select condition */}
+                                    {joinLimit && joinLimitType === 'classroom' && (
                                         <div className="sm:col-span-full">
                                             <label className="block text-sm font-medium leading-6 text-gray-900">
                                                 ห้องเรียนที่สามารถเข้าร่วมได้
@@ -265,7 +316,7 @@ function EditActivity() {
                                             <Controller
                                                 name="classrooms"
                                                 control={control}
-                                                rules={{ required: joinLimit }}
+                                                rules={{ required: joinLimit && joinLimitType === 'classroom' }}
                                                 render={({ field }) => (
                                                     <Select
                                                         {...field}
