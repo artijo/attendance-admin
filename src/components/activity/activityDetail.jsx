@@ -55,19 +55,18 @@ function ShowDetail({ activity }) {
                             {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
                         </dd>
                     </div>
-                    {/* <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">สถานะ</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            {activity.actStatus}
-                        </dd>
-                    </div> */}
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">การจำกัดการเข้าร่วม</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             {activity.joinLimit ? (
-                                <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-                                    จำกัดการเข้าร่วม
-                                </span>
+                                <div>
+                                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                                        จำกัดการเข้าร่วม
+                                    </span>
+                                    <span className="ml-2">
+                                        ({activity.classroom.length > 0 ? 'จำกัดตามห้องเรียน' : 'จำกัดตามจำนวน'})
+                                    </span>
+                                </div>
                             ) : (
                                 <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                                     ไม่จำกัดการเข้าร่วม
@@ -75,8 +74,19 @@ function ShowDetail({ activity }) {
                             )}
                         </dd>
                     </div>
-                    {/* แสดงห้องเรียนที่สามารถเข้าร่วมได้ */}
-                    {activity.joinLimit && (
+
+                    {/* แสดงจำนวนผู้เข้าร่วมสูงสุด (กรณีจำกัดตามจำนวน) */}
+                    {activity.joinLimit && activity.classroom.length < 1  && (
+                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">จำนวนผู้เข้าร่วมสูงสุด</dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                {activity.joinLimitNumber} คน
+                            </dd>
+                        </div>
+                    )}
+
+                    {/* แสดงห้องเรียนที่สามารถเข้าร่วมได้ (เฉพาะกรณีจำกัดตามห้องเรียน) */}
+                    {activity.joinLimit && activity.classroom.length > 0 && (
                         <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt className="text-sm font-medium text-gray-500">ห้องเรียนที่สามารถเข้าร่วมได้</dt>
                             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
@@ -96,8 +106,7 @@ function ShowDetail({ activity }) {
                                 </ul>
                             </dd>
                         </div>
-                    )    
-                    }
+                    )}
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">อาจารย์ผู้ดูแล</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
