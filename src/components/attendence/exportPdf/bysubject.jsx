@@ -4,12 +4,14 @@ import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
 function BySubject(){
     const location = useLocation();
+    const subject = location.state.subject;
+    console.log(subject)
     const studentList = location.state.studentList;
     const BySubjectPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
             <View>
-              <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาราย SubjectName</Text>
+              <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai} {`${subject.subCode} - ${subject.subNameEng}`}</Text>
             </View>
             <Table style={styles.table}>
                 <TH style={styles.tableHeader}>
@@ -19,20 +21,20 @@ function BySubject(){
                     <TD style={[styles.td,{flex:2}]}>รหัสนักเรียน</TD>
                     {
                         studentList[0].attendance.map((_, index) => (
-                            <TD style={styles.td}>คาบที่ {index+1}</TD>
+                            <TD key={index} style={styles.td}>คาบที่ {index+1}</TD>
                         ))
                     }
                 </TH>
                 {
-                    studentList.map((student) => (
-                        <TR>
+                    studentList.map((student,index) => (
+                        <TR key={student.stdNo}>
                             <TD style={[styles.td,{flex:2}]}>{student.stdNo}</TD>
                             <TD style={[styles.td,{flex:2}]}>{student.fName}</TD>
                             <TD style={[styles.td,{flex:2}]}>{student.lName}</TD>
                             <TD style={[styles.td,{flex:2}]}>{student.stdId}</TD>
                             {
-                                student.attendance.map((attendance) => (
-                                    <TD style={styles.td}>{attendance.attStatus != null ? attendance.attStatus : '-'}</TD>
+                                student.attendance.map((attendance,index) => (
+                                    <TD key={index+1+"att"} style={styles.td}>{attendance.attStatus != null ? attendance.attStatus : '-'}</TD>
                                 ))
                             }
                         </TR>

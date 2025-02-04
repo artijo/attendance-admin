@@ -56,9 +56,11 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
 
     return (
         <>
+            <span className="text-xs text-gray-500">จำนวนวันที่มีการเรียนตามเทอม มีอยู่ {dayList.length} วัน</span>
             <div className="grid gap-2 md:grid-cols-1">
                 <div className="rounded-lg border border-gray-200">
                     <div className="overflow-x-auto rounded-t-lg">
+                        
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr>

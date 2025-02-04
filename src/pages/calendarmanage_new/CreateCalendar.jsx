@@ -17,14 +17,16 @@ function CreateCalendar(){
     // input
     const [academicYearSemester, setAcademicYearSemester] = useState("");
     const [selectedClassrooms, setSelectedClassrooms] = useState([]);
+    // responed from server 
+    const [msg, setMsg] = useState("");
+    const [error, setError] = useState(false);
+    const [success,setSuccess] = useState(false);
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         if(selectedClassrooms.length === 0) {
-            setAlertShow([false,false,false,true]);
-            setTimeout(() => {
-                setAlertShow([false,false,false,false]);
-            }, 3000);
+            setError(true);
+            setMsg("กรุณาเลือกห้องเรียน");
             return;  
         };
         const data = {
@@ -33,24 +35,18 @@ function CreateCalendar(){
             classroomids: selectedClassrooms
         }
         try{
-            setAlertShow([false,true,false,false]);
             const response = await axios.post(`${HOSTNAME}/a/studingtime`,data);
             if(response.status === 200){
-                setAlertShow([true,false,false,false]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false,false]);
-                    window.location.href = "/calendar";
-                }, 3000);
+                setMsg(response.data.message);
+                setSuccess(true);
+                
             }else{
-                setAlertShow([false,false,true,false]);
-                setTimeout(() => {
-                    setAlertShow([false,false,false,false]);
-                    window.location.href = "/calendar";
-                }, 3000);
+                throw new Error(response.data.message);
             };
             return;
         }catch(error){
-            console.error(error);
+            setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการเพิ่มปฎิทิน");
+            setError(true);
         }
     };
 
@@ -95,27 +91,24 @@ function CreateCalendar(){
         fetchHolidayList();
     },[academicYearSemester]);
 
-    
-    const [alertShow, setAlertShow] = useState([false, false, false, false]); // [success, loading, error]
+
     return (
-        <div className="realative">
-            <div className={`bg-black w-full h-screen fixed top-0 left-0 opacity-50 z-10 ${alertShow.some((value) => value === true) ? "" : "hidden"}`}></div>
-            <div className="fixed  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20" id="AlertBox">
-                <div className={alertShow[0] ? "block" : "hidden"}>
-                    <AlertSuccess title="สําเร็จ" message="เพิ่มปฎิทินในเทอมนั้นเรียบร้อย"/>
-                </div>
-                <div className={alertShow[1] ? "block" : "hidden"}>
-                    <Loading title="กำลังเพิ่มปฎิทินการเรียน" message="กรุณารอสักครู่"/>
-                </div>
-                <div className={alertShow[2] ? "block" : "hidden"}>
-                    <ErrorAlert title="เกิดข้อผิดพลาด" message="เกิดข้อผิดพลาดในการเพิ่มปฎิทินการเรียน"/>
-                </div>
-                <div className={alertShow[3] ? "block" : "hidden"}>
-                    <ErrorAlert title="กรุณาเลือกห้องเรียน" message="กรุณาเลือกห้องเรียนก่อนสร้างปฎิทินการเรียน"/>
-                </div>
-            </div>
+        <div className="container mx-auto">
+            
             <div className="mx-auto container">
                 <h1 className="font-medium mb-4">สร้างปฏิทินการเรียน</h1>
+                <div className="mb-2"  onClick={() => {
+                    setError(false)
+                    setSuccess(false)
+                    setMsg("")
+                }}>
+                    {
+                        error &&  <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>
+                    }
+                    {
+                        success && <AlertSuccess title="สำเร็จ" message={msg}/>
+                    }
+                </div>
                 <form className=" border bg-white p-4 grid-cols-1 rounded-lg mb-4 grid md:grid-cols-1 gap-4" onSubmit={(e) => handleOnSubmit(e)}>
                     <div className="grid gap-1">
                         <label className="block text-xs font-medium text-gray-700">

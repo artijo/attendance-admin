@@ -3,9 +3,12 @@ import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useState } from "react";
+import { formatDateToThai } from "../../../helper";
 function ByDay() {
   const location = useLocation();
   const studentList = location.state.studentList;
+  const date = location.state.date
+  console.log(date);
   const [totalStatus, setTotalStatus] = useState({
           present: 0,
           late: 0,
@@ -47,7 +50,7 @@ function ByDay() {
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
         <View>
-          <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวันที่ DD เดือน MM ปี YYYY</Text>
+          <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {formatDateToThai(date)}</Text>
         </View>
 
         {/* ตาราง */}
@@ -75,7 +78,7 @@ function ByDay() {
           {/* แถวที่ 3: ข้อมูลนักศึกษา */}
           <TH style={styles.tableHeader}>
             <TD style={[styles.td, { flex: 1 }]}>เลขที่</TD>
-            <TD style={[styles.td, { flex: 1 }]}>รหัสนักศึกษา</TD>
+            <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
             <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
             {studentList[0].attendance.map((att, index) => (
               <TD key={index} style={[styles.td, { flex: 1 }]}>{att.subjectName}</TD>

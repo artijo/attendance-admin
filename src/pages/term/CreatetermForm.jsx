@@ -30,7 +30,6 @@ function CreatetermForm() {
             setError(true);
         }
     }
-
     const handleOnSubmit = (e) => {
         e.preventDefault();
         const data = {
