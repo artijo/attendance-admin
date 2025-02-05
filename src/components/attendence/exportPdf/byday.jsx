@@ -2,14 +2,14 @@ import { useLocation } from "react-router-dom";
 import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
-// import { useEffect, useState } from "react";
 import { formatDateToThai } from "../../../helper";
 function ByDay() {
   const location = useLocation();
   const studentList = location.state.studentList;
   const totalStatus = location.state.total;
-  console.log(totalStatus);
-  const date = location.state.date
+  const date = location.state.date;
+  const classroomInfo =  location.state.classroomInfo;
+  console.log(classroomInfo);
   const formatAttStatus = (status) => {     
     switch (status) {
         case 'present': {
@@ -34,13 +34,15 @@ function ByDay() {
     }
   };
 
+
+
   const ByDayPDF = () => (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
-        <View>
+        <View style={styles.headerDisplay}>
           <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {formatDateToThai(date)}</Text>
+          <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
         </View>
-
         {/* ตาราง */}
         <Table style={styles.table}>
           {/* แถวที่ 1: คาบที่ */}

@@ -5,11 +5,13 @@ import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
+import { HOSTNAME } from "../../config";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);
     const location = useLocation();
     const [totalStatus, setTotalStatus] = useState(null);
-    // console.log(studentList)
+    const [classroomInfo, setClassroomInfo] = useState(null);
     const setuptotalstatus = () => {
         const updatedTotalStatus = {
             present: 0,
@@ -69,16 +71,26 @@ export const AttendanceByDayDetailList = ({studentList}) => {
 
     const handaleExportExcel = () => {
         if(ref.current) {
-            // console.log(ref.current);
             const tableList = ref.current;
-        // if(!tableList || tableList[0]) return;
-            console.log(tableList);
+            // console.log(tableList);
             AttendanceSummaryByDay(tableList);
         }
-        
-        // AttendanceSummaryByDay(tableList[0]);
-        
     }
+
+    const fetchClassroomInfo = async () => {
+        try{
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`)
+            if(response.status === 200) {
+                setClassroomInfo(response.data);
+            }
+        }catch(error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchClassroomInfo();
+    },[])
 
     return (
         <>
@@ -89,7 +101,14 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                         <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                     </li>
                     <li>
-                        <Link to="/att/byday/pdf" state={{ studentList: studentList , date: location.state.date,total: totalStatus}}>
+                        <Link to="/att/byday/pdf" state={
+                            { 
+                                studentList: studentList , 
+                                date: location.state.date,
+                                total: totalStatus,
+                                classroomInfo : classroomInfo
+                            }
+                        }>
                             <ExportPdfButton/>
                         </Link>
                         

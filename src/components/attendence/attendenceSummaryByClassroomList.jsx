@@ -1,28 +1,43 @@
 import { PropTypes } from 'prop-types';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { AttendanceSummaryByDay } from '../../exportExcel';
 import ExportExcelButton from '../exportExcelButton';
 import ExportPdfButton from '../exportPdfButton';
 import { Link } from 'react-router-dom';
-export const AttendenceBySummaryByClassroomList = ({studentList}) => {
+import axios from 'axios';
+import { HOSTNAME } from '../../config';
+export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) => {
     // console.log(studentList);
     const ref = useRef();
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
+    const [classroomInfo, setClassroomInfo] = useState(null);
     const handaleExportExcel = () => {
             if(ref.current) {
                 // console.log(ref.current);
                 const tableList = ref.current;
             // if(!tableList || tableList[0]) return;
-                console.log(tableList);
+                // console.log(tableList);
                 AttendanceSummaryByDay(tableList);
             }
             
         }
-        const handaleExportPdf = () => {
-            console.log("pdf Clicked")
+        const fetchClassroomInfo = async () => {
+            try{
+                const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`)
+                if(response.status === 200) {
+                    setClassroomInfo(response.data);
+                }
+            }catch(error) {
+                console.log(error)
+            }
         }
+    
+        useEffect(() => {
+            fetchClassroomInfo();
+        },[])
+    
     return (
         <>
             {studentList.length === 0 && <div>ไม่พบข้อมูล</div>}
@@ -33,7 +48,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList}) => {
                                                 <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                                             </li>
                                             <li>
-                                                <Link to="/att/byclassroom/pdf" state={{ studentList: studentList }}>
+                                                <Link to="/att/byclassroom/pdf" state={{ studentList: studentList, classroomInfo:classroomInfo}}>
                                                     <ExportPdfButton/>
                                                 </Link>
                                             </li>

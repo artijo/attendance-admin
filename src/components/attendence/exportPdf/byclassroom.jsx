@@ -4,14 +4,19 @@ import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
 function ByClassroom(){
     const location = useLocation();
+    const classroomInfo = location.state.classroomInfo;
     const studentList = location.state.studentList;
-    console.log(studentList);
+    // console.log(studentList);
+
     const ByClassroomPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
-            <View>
-              <Text style={styles.textHeader}>แบบสรุปการเรียนตามห้อง</Text>
-              <Text style={[styles.textHeader,{fontSize:10}]}>**ร้อยละการเข้าเรียนเป็นการรวมการลาเข้าไปด้วย</Text>
+            <View style={styles.headerDisplay}>
+              <View>
+                <Text style={styles.textHeader}>แบบสรุปการเรียนตามห้อง</Text>
+                <Text style={styles.textHeader}>**ร้อยละการเข้าเรียนเป็นการรวมการลาเข้าไปด้วย</Text>
+              </View>
+              <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
             </View>
             <Table style={styles.table}>
                 <TR style={styles.tableHeader}>

@@ -6,8 +6,8 @@ function BySubject(){
     const location = useLocation();
     const subject = location.state.subject;
     const studentList = location.state.studentList;
+    const classroomInfo =  location.state.classroomInfo;
     const formatAttStatus = (status) => {
-        
       switch (status) {
           case 'present': {
               return 'เข้าเรียน';
@@ -33,9 +33,9 @@ function BySubject(){
     const BySubjectPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
-            <View>
-              <Text>ห้องเรียน 6/1 </Text>
+            <View style={styles.headerDisplay}>
               <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai} {`${subject.subCode} - ${subject.subNameEng}`}</Text>
+              <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
             </View>
             <Table style={styles.table}>
                 <TH style={styles.tableHeader}>

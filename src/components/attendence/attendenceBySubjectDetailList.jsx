@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { formatDateToThai } from "../../helper";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Noanything from "../../pages/Noanything";
 import { AttendanceBySubject } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { Link, useLocation } from "react-router-dom";
+import { HOSTNAME } from "../../config";
+import axios from "axios";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
     const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
+    const [classroomInfo, setClassroomInfo] = useState(null);
     const location = useLocation();
     const formatAttStatus = (status) => {
         switch (status) {
@@ -32,6 +34,21 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         AttendanceBySubject(studentList);
     }
 
+    const fetchClassroomInfo = async () => {
+        try{
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`)
+            if(response.status === 200) {
+                setClassroomInfo(response.data);
+            }
+        }catch(error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchClassroomInfo();
+    },[])
+
     return (
         <>
             {
@@ -45,7 +62,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                     <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                                 </li>
                                 <li>
-                                <Link to="/att/bysubject/pdf" state={{ studentList: studentList, subject:location.state.subject }}>
+                                <Link to="/att/bysubject/pdf" state={{ studentList: studentList, subject:location.state.subject, classroomInfo:classroomInfo }}>
                                     <ExportPdfButton/>
                                 </Link>
                                 </li>

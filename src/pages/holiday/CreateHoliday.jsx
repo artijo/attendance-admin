@@ -193,7 +193,7 @@ function CreateHoliday(){
                                     value={holidayType}
                                     onChange={(e) => setHolidayType(e.target.value)}
                                 >
-                                    <option value="RATCHAKHAN">วันหยุดราชกาล</option>
+                                    <option value="RATCHAKHAN">วันหยุดราชการ</option>
                                     <option value="SCHOOL">วันหยุดโรงเรียน</option>
                                 </select>
                             </div>

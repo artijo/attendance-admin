@@ -18,7 +18,7 @@ function AttendenceSummaryByClassroom({classroomId}){
     },[]);
 
     return(
-        <AttendenceBySummaryByClassroomList studentList={studentList}/>
+        <AttendenceBySummaryByClassroomList studentList={studentList} classroomId={classroomId}/>
     );
 };
 

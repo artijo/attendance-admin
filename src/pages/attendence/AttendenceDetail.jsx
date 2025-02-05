@@ -38,6 +38,7 @@ function AttendanceDetail() {
         setIsTabOpen(newIsTabOpen)
         console.log(newIsTabOpen);
         sessionStorage.setItem("savedIsTapOpenArray",[...newIsTabOpen]);
+        
     }
     useEffect(() => {
         fetchClassroomInfo();
