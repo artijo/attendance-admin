@@ -2,49 +2,37 @@ import { useLocation } from "react-router-dom";
 import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
-import { useState } from "react";
+// import { useEffect, useState } from "react";
 import { formatDateToThai } from "../../../helper";
 function ByDay() {
   const location = useLocation();
   const studentList = location.state.studentList;
+  const totalStatus = location.state.total;
+  console.log(totalStatus);
   const date = location.state.date
-  console.log(date);
-  const [totalStatus, setTotalStatus] = useState({
-          present: 0,
-          late: 0,
-          absent: 0,
-          activity: 0,
-          leave: 0
-      });
-      // console.log(studentList)
-      const setuptotalstatus = () => {
-          const updatedTotalStatus = {
-              present: 0,
-              late: 0,
-              absent: 0,
-              activity: 0,
-              leave: 0
-          };
-          studentList.forEach((student) => {
-              student.attendance.forEach((attendance) => {
-                  if(attendance.attStatus !== null){
-                      if (attendance.attStatus.toLowerCase() === 'present') {
-                          updatedTotalStatus.present++;
-                      } else if (attendance.attStatus.toLowerCase() === 'late') {
-                          updatedTotalStatus.late++;
-                      } else if (attendance.attStatus.toLowerCase() === 'absent') {
-                          updatedTotalStatus.absent++;
-                      } else if (attendance.attStatus.toLowerCase() === 'activity') {
-                          updatedTotalStatus.activity++;
-                      } else if (attendance.attStatus.toLowerCase() === 'leave') {
-                          updatedTotalStatus.leave++;
-                      }
-                  };
-              });
-          })
-          setTotalStatus(updatedTotalStatus);
-      }
-  
+  const formatAttStatus = (status) => {     
+    switch (status) {
+        case 'present': {
+            return 'เข้าเรียน';
+        }
+        case 'absent': {
+            return 'ไม่เข้าเรียน';
+        }
+        case 'late': {
+            return 'มาสาย';
+        }
+        case 'activity': {
+            
+            return 'เข้าเรียนกิจกรรม';
+        }
+        case 'leave': {
+    
+            return 'ลา';
+        }
+        default:
+            return status;
+    }
+  };
 
   const ByDayPDF = () => (
     <Document>
@@ -91,7 +79,7 @@ function ByDay() {
                     <TD style={[styles.td, { flex: 1 }]}>{student.stdId}</TD>
                     <TD style={[styles.td, { flex: 1 }]}>{`${student.fName} ${student.lName}`}</TD>
                     {student.attendance.map((attendance, index) => (
-                    <TD key={index} style={[styles.td, { flex: 1 }]}>{attendance.attStatus != null ? attendance.attStatus : "-"}</TD>
+                    <TD key={index} style={[styles.td, { flex: 1 }]}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : "-"}</TD>
                     ))}
                 </TR>
             ))

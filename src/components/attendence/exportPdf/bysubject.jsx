@@ -5,12 +5,36 @@ import { useLocation } from "react-router-dom";
 function BySubject(){
     const location = useLocation();
     const subject = location.state.subject;
-    console.log(subject)
     const studentList = location.state.studentList;
+    const formatAttStatus = (status) => {
+        
+      switch (status) {
+          case 'present': {
+              return 'เข้าเรียน';
+          }
+          case 'absent': {
+              return 'ไม่เข้าเรียน';
+          }
+          case 'late': {
+              return 'มาสาย';
+          }
+          case 'activity': {
+              
+              return 'เข้าเรียนกิจกรรม';
+          }
+          case 'leave': {
+      
+              return 'ลา';
+          }
+          default:
+              return status;
+      }
+    };
     const BySubjectPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
             <View>
+              <Text>ห้องเรียน 6/1 </Text>
               <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai} {`${subject.subCode} - ${subject.subNameEng}`}</Text>
             </View>
             <Table style={styles.table}>
@@ -34,7 +58,7 @@ function BySubject(){
                             <TD style={[styles.td,{flex:2}]}>{student.stdId}</TD>
                             {
                                 student.attendance.map((attendance,index) => (
-                                    <TD key={index+1+"att"} style={styles.td}>{attendance.attStatus != null ? attendance.attStatus : '-'}</TD>
+                                    <TD key={index+1+"att"} style={styles.td}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</TD>
                                 ))
                             }
                         </TR>

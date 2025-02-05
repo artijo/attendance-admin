@@ -8,13 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);
     const location = useLocation();
-    const [totalStatus, setTotalStatus] = useState({
-        present: 0,
-        late: 0,
-        absent: 0,
-        activity: 0,
-        leave: 0
-    });
+    const [totalStatus, setTotalStatus] = useState(null);
     // console.log(studentList)
     const setuptotalstatus = () => {
         const updatedTotalStatus = {
@@ -95,7 +89,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                         <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
                     </li>
                     <li>
-                        <Link to="/att/byday/pdf" state={{ studentList: studentList , date: location.state.date}}>
+                        <Link to="/att/byday/pdf" state={{ studentList: studentList , date: location.state.date,total: totalStatus}}>
                             <ExportPdfButton/>
                         </Link>
                         
