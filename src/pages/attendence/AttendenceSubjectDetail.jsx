@@ -5,7 +5,7 @@ import { useEffect,useState } from "react";
 import { AttendenceBySubjectDetailList} from "../../components/attendence/attendenceBySubjectDetailList";
 function AttendenceSubjectDetail() {
     const location = useLocation();
-    const [studentList, setStudentList] = useState([]);
+    const [studentList, setStudentList] = useState(null);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const fetchClassroomInfo = async () => {
         try {

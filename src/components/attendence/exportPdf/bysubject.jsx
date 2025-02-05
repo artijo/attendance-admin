@@ -5,8 +5,12 @@ import { useLocation } from "react-router-dom";
 function BySubject(){
     const location = useLocation();
     const subject = location.state.subject;
-    const studentList = location.state.studentList;
     const classroomInfo =  location.state.classroomInfo;
+    const month = location.state.month;
+    const json = location.state.tableJson;
+    console.log(json[0][0]);
+    const rowRange = Object.keys(json[0][0]).length - 3;
+    console.log(rowRange);
     const formatAttStatus = (status) => {
       switch (status) {
           case 'present': {
@@ -34,7 +38,7 @@ function BySubject(){
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
             <View style={styles.headerDisplay}>
-              <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai} {`${subject.subCode} - ${subject.subNameEng}`}</Text>
+              <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai} {`${subject.subCode} - ${subject.subNameEng}`} เดือน {month}</Text>
               <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
             </View>
             <Table style={styles.table}>
@@ -44,25 +48,29 @@ function BySubject(){
                     <TD style={[styles.td,{flex:2}]}>นามสกุล</TD>
                     <TD style={[styles.td,{flex:2}]}>รหัสนักเรียน</TD>
                     {
-                        studentList[0].attendance.map((_, index) => (
-                            <TD key={index} style={styles.td}>คาบที่ {index+1}</TD>
+                        Array(rowRange).fill("rows").map((_, index) => (
+                          <TD key={index} style={[styles.td,{flex:2}]}>คาบที่ {index+1}</TD>
                         ))
                     }
                 </TH>
                 {
-                    studentList.map((student,index) => (
-                        <TR key={student.stdNo}>
-                            <TD style={[styles.td,{flex:2}]}>{student.stdNo}</TD>
-                            <TD style={[styles.td,{flex:2}]}>{student.fName}</TD>
-                            <TD style={[styles.td,{flex:2}]}>{student.lName}</TD>
-                            <TD style={[styles.td,{flex:2}]}>{student.stdId}</TD>
-                            {
-                                student.attendance.map((attendance,index) => (
-                                    <TD key={index+1+"att"} style={styles.td}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</TD>
-                                ))
-                            }
-                        </TR>
+                    json[0].map((student,index) => (
+                      <TR key={student["เลขที่"]}>
+                        <TD style={[styles.td,{flex:2}]}>{student["เลขที่"]}</TD>
+                        <TD style={[styles.td,{flex:2}]}>{student["ชื่อ-นามสกุล"].split(" ")[0]}</TD>
+                        <TD style={[styles.td,{flex:2}]}>{student["ชื่อ-นามสกุล"].split(" ")[1]}</TD>
+                        <TD style={[styles.td,{flex:2}]}>{student["รหัสนักเรียน"]}</TD>
+                        {
+                          Array(rowRange).fill("rows").map((_, index) => (
+                            <TD key={index} style={[styles.td,{flex:2}]}>{student[`คาบที่ ${index+1}`]}</TD>
+                          ))
+                        }
+                    </TR>
+                      // console.log(student);
                     ))
+                    // studentList.map((student,index) => (
+                    
+                    // ))
                 }
             </Table>
           </Page>
