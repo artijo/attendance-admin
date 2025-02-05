@@ -73,10 +73,17 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     }
 
 
-    const Table = ({month, children,index}) => {
+    const Table = ({month,exportPdf, exportExcel,index}) => {
         return(
             <>
-                {children}
+                <ul className="flex ml-auto w-fit">
+                    <li>
+                        {exportPdf}
+                    </li>
+                    <li>
+                        {exportExcel}
+                    </li>
+                </ul>
                 <div ref={(element) => (ref.current[index] = element)} className="grid gap-2 md:grid-cols-1 ">
                     {/* <span>{month}</span> */}
                     <div className="rounded-lg border border-gray-200">
@@ -173,10 +180,15 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                     handleIsTabOpen={handleIsTabOpen}
                                 >
                                     {/* <TableHeader month={month}/> */}
-                                    <Table month={month} index={index}>
-                                        <ExportPdfButtonKK index={index} month={month}/>
-                                        {/* <ExportExcelButton handelOnClickFunction={() => handelExportExcel(index)}/> */}
-                                    </Table>
+                                    <Table 
+                                        month={month} 
+                                        index={index} 
+                                        exportPdf={<ExportPdfButtonKK index={index} month={month}/>}
+                                        exportExcel={ <ExportExcelButton handelOnClickFunction={() => handelExportExcel(index)}/>}
+                                    />
+                                        
+                                       
+                                    
                                 </TapAttendenceSummaryOpen>
                             </div>
                             
