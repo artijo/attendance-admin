@@ -73,7 +73,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">กิจกรรม(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เข้าเรียน(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ร้อยละการเข้าเรียนทั้งหมดรวมลา</th>
-                                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ ไม่มีสิทธ์สอบ</th>
+                                                {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ ไม่มีสิทธ์สอบ</th> */}
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 text-center">
@@ -89,7 +89,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceActivity}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceCount}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendencePercent}%</td>
-                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.canExam}</td>
+                                                        {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.canExam}</td> */}
                                                     </tr>
                                                 ))
                                             }
@@ -97,20 +97,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                     </table>
                                 </div>
                             </div>
-                            {/* <div>
-                                {Array.from({ length: page }, (_, i) => (
-                                    <button
-                                        key={i+1}
-                                        className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
-                                        onClick={() => setSeletedPage(i+1)}
-                                        type="button"
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
-                            </div> */}
                         </div>
-                        
                     </div>  
                 )
             }

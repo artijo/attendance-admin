@@ -3,8 +3,6 @@ import { Font, StyleSheet, } from '@react-pdf/renderer';
 // import boldFont from '../../../assets/fonts/pdffont/Anakotmai-Bold.ttf'
 // import mediumFont from '../../../assets/fonts/pdffont/Anakotmai-Medium.ttf'
 import bold from '../../../assets/fonts/TH-Sarabun-New/THSarabunNew Bold.ttf'
-import boldItalic from '../../../assets/fonts/TH-Sarabun-New/THSarabunNew BoldItalic.ttf'
-import italic from '../../../assets/fonts/TH-Sarabun-New/THSarabunNew Italic.ttf'
 import normal from '../../../assets/fonts/TH-Sarabun-New/THSarabunNew.ttf'
 Font.register({
     family: 'TH Sarabun New',
@@ -13,14 +11,8 @@ Font.register({
             src: normal,
         },
         {
-            src: italic,
-        },
-        {
             src: bold,
         },
-        {
-            src: boldItalic
-        }
     ]
 })
 

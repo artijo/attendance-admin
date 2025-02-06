@@ -70,6 +70,8 @@ import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx"
 import ByDay from "./components/attendence/exportPdf/byday.jsx";
 import BySubject from "./components/attendence/exportPdf/bysubject.jsx";
 import ByClassroom from "./components/attendence/exportPdf/byclassroom.jsx";
+import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
+import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
 
 createRoot(document.getElementById("root")).render(
   
@@ -133,10 +135,12 @@ createRoot(document.getElementById("root")).render(
         <Route path="attendances" element={<Attendence/>} />
         <Route path="attendances/details/:id" element={<AttendanceDetail/>} />
         <Route path="attendances/details/bysubject" element={<AttendenceSubjectDetail/>} />
+        <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
         <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
         <Route path="att/byday/pdf" element={<ByDay/>} />  {/*export pdf by day page*/}
         <Route path="att/bysubject/pdf" element={<BySubject/>} />  {/*export pdf by subject page*/}
         <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  {/*export pdf by classroom page*/}
+        <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

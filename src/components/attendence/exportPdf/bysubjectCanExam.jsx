@@ -2,17 +2,19 @@ import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
-function ByClassroom(){
+function BySubejctCanExamPDF(){
     const location = useLocation();
     const classroomInfo = location.state.classroomInfo;
     const studentList = location.state.studentList;
-   
-    const ByClassroomPDF = () => (
+    const subject = location.state.subject;
+    // console.log(studentList);
+
+    const BySubejctCanExamPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
             <View style={styles.headerDisplay}>
               <View>
-                <Text style={styles.textHeader}>แบบสรุปการเรียนตามห้อง</Text>
+                <Text style={styles.textHeader}>แบบสรุปการเรียนตามวิชา {subject.subNameThai}({subject.subCode}-{subject.subNameEng})</Text>
                 <Text style={styles.textHeader}>**ร้อยละการเข้าเรียนเป็นการรวมการลาเข้าไปด้วย</Text>
               </View>
               <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
@@ -29,7 +31,7 @@ function ByClassroom(){
                     <TD style={[styles.td, { flex: 2 }]}>กิจกรรม(ครั้ง)</TD>
                     <TD style={[styles.td, { flex: 2 }]}>เข้าเรียน(ครั้ง)</TD>
                     <TD style={[styles.td, { flex: 2 }]}>ร้อยละการเข้าเรียน</TD>
-                    {/* <TD style={[styles.td, { flex: 2 }]}>สถานะ ไม่มีสิทธ์สอบ</TD> */}
+                    <TD style={[styles.td, { flex: 2 }]}>สถานะ ไม่มีสิทธ์สอบ</TD>
                 </TR>
                 {
                     studentList.map((student) => ( 
@@ -43,8 +45,8 @@ function ByClassroom(){
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceLeaveCount}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceActivity}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceCount}</TD>
-                            <TD style={[styles.td, { flex: 2 }]}>{student.attendencePercent}</TD>
-                            {/* <TD style={[styles.td, { flex: 2 }]}>{student.canExam}</TD> */}
+                            <TD style={[styles.td, { flex: 2 }]}>{student.attendencePercent}%</TD>
+                            <TD style={[styles.td, { flex: 2 }]}>{student.canExam}</TD>
                         </TR>
                     ))
                     
@@ -57,10 +59,10 @@ function ByClassroom(){
         <div className="container mx-auto">
           <div className="w-full h-[750px]">
             <PDFViewer width="100%" height="100%">
-              <ByClassroomPDF />
+              <BySubejctCanExamPDF />
             </PDFViewer>
           </div>
         </div>
       );
 };
-export default ByClassroom;
+export default BySubejctCanExamPDF;

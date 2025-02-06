@@ -12,10 +12,11 @@ import { tabletojson }from "tabletojson";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const location = useLocation();
     const subject = location.state.subject;
+    const classroomId = location.state.classroomId;
     const ref = useRef([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState([]);
- 
+    let indexReal = 0;
     const formatAttStatus = (status) => {
         switch (status) {
             case 'present':
@@ -33,7 +34,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         }
     };
     const TableHeader = ({month}) => {
-        let indexReal = 0;
         return (
             <tr>
                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >เลขที่</th>
@@ -53,7 +53,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     }
 
     const TableBody = ({month}) => {
-        let indexReal = 0;
         return (
             studentList.data.map((student, index) => (
                 <tr key={index}>
@@ -146,7 +145,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         const tableElement = ref.current[index];
         if (tableElement) {
             const tableJson = tabletojson.convert(tableElement.outerHTML);
-            // setJsonElement(tableJson);
             navigate('/att/bysubject/pdf', { state: { tableJson: tableJson, classroomInfo:classroomInfo,  subject:subject, month: convertNumberToThaiMonth(month)} });
         }
     }
@@ -161,13 +159,46 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         );
     }
 
+    const IsCanExamButton = () => {
+        const handleNavigateOnClick = () => {
+            navigate('/attendances/abstract/subject', 
+                    {
+                        state: {
+                            classroomInfo: classroomInfo,
+                            subject: subject,
+                            studentList : studentList.data
+                        }
+                    }
+            )
+        }
+        return (
+            <>
+                <div 
+                    className="cursor-pointer inline-flex w-fit gap-2 justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    onClick={handleNavigateOnClick}
+                >
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
+                    </div>
+                    <span>แบบสรุปการมีสิทธิ์สอบตามรายวิชา</span>
+                </div>
+
+            </>
+        );
+    };
+
     return (
         <>
-            <div>
+            <div className="mx-auto container flex flex-col gap-2">
+                {
+                    studentList != null && <IsCanExamButton/>
+                }
                 {
                     studentList != null && (
                         studentList.month.map((month, index) => (
-                            <div key={index} className="mb-2">
+                            <div key={index}>
                                 
                                 {/* {console.log(month)} */}
                                 <TapAttendenceSummaryOpen 
@@ -176,16 +207,12 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                     isTabOpen={isTabOpen} 
                                     handleIsTabOpen={handleIsTabOpen}
                                 >
-                                    {/* <TableHeader month={month}/> */}
                                     <Table 
                                         month={month} 
                                         index={index} 
                                         exportPdf={<ExportPdfButtonKK index={index} month={month}/>}
                                         exportExcel={ <ExportExcelButton handelOnClickFunction={() => handelExportExcel(index)}/>}
                                     />
-                                        
-                                       
-                                    
                                 </TapAttendenceSummaryOpen>
                             </div>
                             
@@ -201,74 +228,3 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
 AttendenceBySubjectDetailList.propTypes = {
     studentList: PropTypes.object.isRequired
 }
-// {
-//     studentList.length === 0 &&
-//     <Noanything title="ไม่พบข้อมูล" description="ไม่มีปฎิทินการเรียน" />
-// }
-// {
-//                 studentList.length > 0 &&
-//                 <ul className="flex flex-row-reverse">
-//                     <li>
-//                         <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
-//                     </li>
-//                     <li>
-//                     <Link to="/att/bysubject/pdf" state={{ studentList: studentList, subject:location.state.subject, classroomInfo:classroomInfo }}>
-//                         <ExportPdfButton/>
-//                     </Link>
-//                     </li>
-                     
-//                 </ul>
-// }
-// {studentList.length > 0 && (
-//     studentList[0].attendance.length > 0 &&
-//     <div className="grid gap-2 md:grid-cols-1">
-//     <div className="rounded-lg border border-gray-200">
-//         <div className="overflow-x-auto rounded-t-lg">
-//             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-//                 <thead className="ltr:text-left rtl:text-right">
-//                     <tr>
-//                         <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >เลขที่</th>
-//                         <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >รหัสนักเรียน</th>
-//                         <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >ชื่อ-นามสกุล</th>
-//                         {
-//                             studentList.length > 0 && 
-//                             (
-//                                 studentList[0].attendance.map((attendance, index) => (
-//                                     <th key={index} className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-//                                         {/* {
-//                                             formatDateToThai(attendance.studingTimeDate.split('T')[0])} <br/>{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[0]}:{attendance.studingTimeDate.split('T')[1].split('.')[0].split(':')[1]} <br/> คาบที่{index+1} */}
-//                                         คาบที่ {index+1}
-//                                     </th>
-//                                 ))
-//                             )
-//                         }
-//                     </tr>
-//                 </thead>
-//                 <tbody className="divide-y divide-gray-200">
-//                     {
-//                         sliceStudentList.length > 0 ? 
-//                             (
-//                                 studentList.map((student, index) => (
-//                                     <tr key={index}>
-//                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
-//                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
-//                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`${student.fName} ${student.lName}`}</td>
-//                                         {
-//                                             student.attendance.map((attendance, index) => (
-//                                                 <td key={index} className="whitespace-nowrap px-4 py-2 text-gray-700 text-center">{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
-//                                             ))
-//                                         }
-//                                     </tr>
-//                                 ))
-//                             ) : 
-//                             <tr>
-//                                 <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
-//                             </tr>
-//                     }
-//                 </tbody>
-//             </table>
-//         </div>
-//     </div>
-// </div>
-// )
-// }
