@@ -32,6 +32,7 @@ export const AttendenceBySubjectList = ({classroomId}) => {
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลำดับ</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วิชา</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ผู้สอน</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
@@ -43,6 +44,9 @@ export const AttendenceBySubjectList = ({classroomId}) => {
                                         (
                                             sliceSubjectList.map((subject, index) => (
                                                 <tr key={index}>
+                                                    {
+                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{((seletedPage - 1)*5)+(index+1) }</td>
+                                                    }
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`(${subject.subCode})${subject.subNameThai} - ${subject.subNameEng}`}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`คุณครู ${subject.teacher.fName} ${subject.teacher.lName}`}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">

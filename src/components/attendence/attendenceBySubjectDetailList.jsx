@@ -105,9 +105,6 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         
     }
 
-
-    
-
     const fetchClassroomInfo = async () => {
         try{
             const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`)

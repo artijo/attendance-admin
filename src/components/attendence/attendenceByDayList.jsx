@@ -63,6 +63,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลำดับ</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วัน</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
                                 </tr>
@@ -73,6 +74,9 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                         (
                                             sliceDayList.map((day, index) => (
                                                 <tr key={index}>
+                                                    {
+                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{((seletedPage - 1)*10)+(index+1) }</td>
+                                                    }
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(day)}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
                                                         <Link to={`/attendances/details/byday`} state={{ classroomId: classroomId, date: day }} >
