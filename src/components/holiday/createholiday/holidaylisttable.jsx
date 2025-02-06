@@ -36,12 +36,14 @@ export const Holidaylisttable = ({holidayList, setHolidayAutoList, setHolidayLis
                                 sliceHolidayList.length > 0  ? 
                                     (
                                         sliceHolidayList.map((holiday, index) => (
-                                            <tr key={index}>
+                                            <tr key={index} className="even:bg-slate-100/70 text-center">
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{holiday.holidayname}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.startDate)}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.endDate)}</td>
                                                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatTypeToThai(holiday.type)}</td>
-                                                <td className ="whitespace-nowrap px-4 py-2 text-red-700 cursor-pointer" onClick={() => handleDeleteHoliday(holiday.id)}>ลบรายการ</td>
+                                                <td className ="whitespace-nowrap px-4 py-2" onClick={() => handleDeleteHoliday(holiday.id)}>
+                                                <button className="cursor-pointer bg-red-200 text-red-600 px-5 py-[2px] rounded-sm hover:bg-red-400 hover:text-red-700">ลบรายการ</button>
+                                                    </td>
                                             </tr>
                                         ))
                                     ) : 

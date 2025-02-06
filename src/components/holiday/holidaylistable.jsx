@@ -50,15 +50,16 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                     }
             </div>
             <div className="grid gap-2 md:grid-cols-1">
-                <div className="rounded-lg border border-gray-200">
-                    <div className="overflow-x-auto rounded-t-lg">
+                <div className="border shadow-md border-gray-200">
+                    <div className="overflow-x-auto">
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
-                                <tr>
+                                <tr className="h-12 text-center shadow-md">
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อวันหยุด</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่เริ่มหยุด</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่สิ้นสุดการหยุด</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ประเภทวันหยุด</th>
+                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -66,16 +67,17 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                                     sliceHolidayList.length > 0 ? 
                                         (
                                             sliceHolidayList.map((holiday, index) => (
-                                                <tr key={index}>
+                                                <tr key={index} className="even:bg-slate-100/70 text-center">
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{holiday.holidayname}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.startDate)}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.endDate)}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatTypeToThai(holiday.type)}</td>
-                                                    <td className="whitespace-nowrap px-4 py-2 text-red-600 cursor-pointer" onClick={() => handleDeleteHoliday(holiday.id)}>ลบ</td>
-                                                    <td className="whitespace-nowrap px-4 py-2 text-yellow-600 cursor-pointer">
+                                                    <td className="whitespace-nowrap px-4 py-2 flex gap-2 justify-center" onClick={() => handleDeleteHoliday(holiday.id)}>
                                                         <Link to={`/holiday/edit/${holiday.id}`} >
-                                                            แก้ไข
+                                                            <button className="cursor-pointer bg-yellow-200/60 text-yellow-600 px-5 py-[2px] rounded-sm hover:bg-yellow-200/100 hover:text-yellow-700" >แก้ไข</button>
+                                                            
                                                         </Link>
+                                                        <button className="cursor-pointer bg-red-200 text-red-600 px-5 py-[2px] rounded-sm hover:bg-red-400 hover:text-red-700">ลบ</button>
                                                     </td>
                                                 </tr>
                                             ))

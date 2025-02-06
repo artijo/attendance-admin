@@ -17,11 +17,11 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
     const ActivityTable = ({ activities, title }) => (
         <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">{title}</h2>
-            <div className="rounded-lg border border-gray-200">
+            <div className="shadow-md border border-gray-200">
                 <div className="overflow-x-auto rounded-t-lg">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                         <thead className="ltr:text-left rtl:text-right">
-                            <tr>
+                            <tr className="text-center h-12 shadow-md">
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อกิจกรรม</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เวลา</th>
@@ -39,7 +39,7 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                 </tr>
                             ) : (
                                 activities.map((activity) => (
-                                    <tr key={activity.actId}>
+                                    <tr key={activity.actId} className="even:bg-slate-100/70 text-center">
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             <Link to={`/activity/${activity.actId}`} className="hover:bg-gray-100">
                                                 {activity.actName}

@@ -59,8 +59,8 @@ export const CreateTimetable = () => {
             </div>
             
             
-            <div className="rounded-lg border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
+            <div className="shadow border border-gray-200">
+                <div className="overflow-x-auto">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <TableHead timelist={timeStudyList}/>
                             <tbody className="divide-y divide-gray-200 text-center">

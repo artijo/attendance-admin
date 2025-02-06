@@ -63,11 +63,11 @@ export const AttendanceBySubjectCanExam = () => {
     const Table = () => {
         return (
         <div className="grid gap-2 md:grid-cols-1">
-            <div className="rounded-lg border border-gray-200">
-            <div className="overflow-x-auto rounded-t-lg">
+            <div className="shadow-md border border-gray-200">
+            <div className="overflow-x-auto">
                 <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm" ref={ref}>
                 <thead className="ltr:text-left rtl:text-right">
-                    <tr>
+                    <tr className="shadow-md text-center h-12">
                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
                         เลขที่
                     </th>

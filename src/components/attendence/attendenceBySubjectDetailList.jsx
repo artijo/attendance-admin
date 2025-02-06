@@ -35,7 +35,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     };
     const TableHeader = ({month}) => {
         return (
-            <tr>
+            <tr className="shadow-md text-center h-12">
                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >เลขที่</th>
                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >รหัสนักเรียน</th>
                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900" >ชื่อ-นามสกุล</th>
@@ -55,7 +55,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     const TableBody = ({month}) => {
         return (
             studentList.data.map((student, index) => (
-                <tr key={index}>
+                <tr key={index} className="even:bg-slate-100/70 text-center">
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`${student.fName} ${student.lName}`}</td>
@@ -85,8 +85,8 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                 </ul>
                 <div ref={(element) => (ref.current[index] = element)} className="grid gap-2 md:grid-cols-1 ">
                     {/* <span>{month}</span> */}
-                    <div className="rounded-lg border border-gray-200">
-                        <div className="overflow-x-auto rounded-t-lg">
+                    <div className="border shadow-md border-gray-200">
+                        <div className="overflow-x-auto">
                             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                                 <thead className="ltr:text-left rtl:text-right">
                                     <TableHeader month={month}/>

@@ -99,7 +99,7 @@ function Classroom() {
           <div className="text-sm text-gray-400">กรุณาเพิ่มห้องเรียนหรือเปลี่ยนตัวกรอง</div>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
+        <div className="bg-white shadow overflow-hidden overflow-x-auto">
           <ClassroomList classrooms={classrooms} />
         </div>
       )}

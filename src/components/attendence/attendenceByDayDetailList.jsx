@@ -122,8 +122,8 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                 )
             }
             {studentList.length > 0 && <div className="grid gap-2 md:grid-cols-1">
-                <div className="rounded-lg border border-gray-200">
-                    <div className="overflow-x-auto rounded-t-lg">
+                <div className="shadow-md border border-gray-200">
+                    <div className="overflow-x-auto">
                         <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
                                 <tr className="border">

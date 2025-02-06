@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 export const Deletetimetable = ({ onDelete }) => {
     return (
         <div className="flex justify-center items-center w-full h-full cursor-pointer" onClick={onDelete}>
-            <p className="rounded-sm shadow-lg bg-red-500 hover:bg-red-600 text-white font-medium text-sm w-fit h-fit py-1 px-2">ลบ</p>
+            <p className="cursor-pointer bg-red-200 text-red-600 px-2 py-[2px] rounded-sm hover:bg-red-400 hover:text-red-700">ลบ</p>
         </div>
     );
 }

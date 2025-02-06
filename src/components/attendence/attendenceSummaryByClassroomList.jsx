@@ -59,11 +59,11 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                 studentList.length > 0 && (
                     <div>
                         <div className="grid gap-2 md:grid-cols-1">
-                            <div className="rounded-lg border border-gray-200">
-                                <div className="overflow-x-auto rounded-t-lg">
+                            <div className="shadow-md border border-gray-200">
+                                <div className="overflow-x-auto">
                                     <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                                         <thead className="ltr:text-left rtl:text-right">
-                                            <tr>
+                                            <tr className='h-12 shadow-md'>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขที่</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักศึกษา</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ-สกุล</th>
@@ -79,7 +79,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                         <tbody className="divide-y divide-gray-200 text-center">
                                             {
                                                 studentList.map((student, index) => (
-                                                    <tr key={index}>
+                                                    <tr key={index} className=''>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`${student.fName} ${student.lName}`}</td>

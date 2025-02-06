@@ -70,71 +70,73 @@ export const Formtimetable = () => {
     }, []);
 
     return (
-        <div>
+        <div className='mx-auto container'>
             <div className='mb-2'>
-                <h1 className='mb-1'> สร้างตารางเรียน วัน {formatDayOfWeeks(day)} เวลา {formatTime(timeStart)} ถึง {formatTime(timeEnd)} </h1>
-                {
-                    Object.keys(classroomInfo).length > 0 ? 
-                    <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.term.semester} ปีการศึกษา {classroomInfo.term.academicYear+543} </h3>
-                    :
-                    <h3>กำลังโหลดข้อมูล....</h3>                   
-                }
+                    <h1 className='mb-1'>ฟอร์มสร้างตารางเรียน วัน {formatDayOfWeeks(day)} เวลา {formatTime(timeStart)} ถึง {formatTime(timeEnd)} </h1>
+                    {
+                        Object.keys(classroomInfo).length > 0 ? 
+                        <h3>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.term.semester} ปีการศึกษา {classroomInfo.term.academicYear+543} </h3>
+                        :
+                        <h3>กำลังโหลดข้อมูล....</h3>                   
+                    }
             </div>
-           
-            <div className='grid gap-2'>
-                <div className="border bg-white p-4 rounded-lg shadow-sm">
-                    {/* <h4>เวลาเลท</h4> */}
-                    <div className="grid grid-cols-2 gap-4">
+            <div className='bg-white py-10 px-4 shadow-sm border'>
+                <div className='grid gap-2 border-collapse'>
+                    <div className="border bg-white p-4 rounded-sm">
+                        {/* <h4>เวลาเลท</h4> */}
+                        <div className="grid grid-cols-2 gap-4">
+                            
+                            {/* <Inputtimetable value={timeLate} disabled={false} label={"เวลาเลท"} onChange = {}/> */}
+                            <div className='flex flex-col'>
+                                <label className="text-xs font-light ">เวลาเลท<span className="text-gray-300">(หน่วยนาที)</span></label>
+                                <input type="number" value={15} className="border rounded-sm mt-1 px-2 py-1" onChange={(e) => handleTimeLateValue(e.target.value)} />
+                            </div>
+                            <div className='hidden'>
+                                <Inputtimetable value={clasrroom} disabled={true} label={"รหัสห้องเรียน"} />
+                                <Inputtimetable value={day} disabled={true} label={"วัน"} />
+                                <Inputtimetable value={timeStart} disabled={true} label={"เวลาเริ่ม"} />
+                                <Inputtimetable value={timeEnd} disabled={true} label={"เวลาจบคาบ"} />
+                            </div>
                         
-                        {/* <Inputtimetable value={timeLate} disabled={false} label={"เวลาเลท"} onChange = {}/> */}
-                        <div className='flex flex-col'>
-                            <label className="text-xs font-light ">เวลาเลท<span className="text-gray-300">(หน่วยนาที)</span></label>
-                            <input type="number" value={15} className="border rounded-sm mt-1 px-2 py-1" onChange={(e) => handleTimeLateValue(e.target.value)} />
                         </div>
-                        <div className='hidden'>
-                            <Inputtimetable value={clasrroom} disabled={true} label={"รหัสห้องเรียน"} />
-                            <Inputtimetable value={day} disabled={true} label={"วัน"} />
-                            <Inputtimetable value={timeStart} disabled={true} label={"เวลาเริ่ม"} />
-                            <Inputtimetable value={timeEnd} disabled={true} label={"เวลาจบคาบ"} />
-                        </div>
-                     
                     </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="border bg-white p-4 rounded-lg shadow-sm ">
-                        <Searchbar selectedSubject={setSeletedSubject} inputvalue={searchbarValue} setInputvalue={setSearchbarValue} />
-                    </div>
-                    <div className="border bg-white p-4 rounded-lg shadow-sm">
-                        <p className="text-xs font-light ">รายละเอียดวิชา</p>
-                        <div className="mt-1 border p-2 rounded-lg shadow-sm">
-                            {
-                                Object.keys(selectedSubject).length === 0 ? <p className="text-xs text-center">ไม่มีข้อมูล</p> :
-                                    <>
-                                        <p>
-                                            <span className="text-xs">รหัสวิชา : {selectedSubject.subCode}</span>
-                                        </p>
-                                        <p>
-                                            <span className="text-xs">หน่วยกิต : {selectedSubject.subCredit}</span>
-                                        </p>
-                                        <p>
-                                            <span className="text-xs">ชื่อวิชา : {selectedSubject.subNameThai}<span className='text-gray-300'>({selectedSubject.subNameEng})</span></span>
-                                        </p>
-                                        <p>
-                                            <span className="text-xs">ผู้สอน : {selectedSubject.teacher.fName} {selectedSubject.teacher.lName}</span>
-                                        </p>
-                                    </>
-                            }
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="border bg-white p-4 shadow-sm ">
+                            <Searchbar selectedSubject={setSeletedSubject} inputvalue={searchbarValue} setInputvalue={setSearchbarValue} />
+                        </div>
+                        <div className="border bg-white p-4  shadow-sm">
+                            <p className="text-xs font-light ">รายละเอียดวิชา</p>
+                            <div>
+                                {
+                                    Object.keys(selectedSubject).length === 0 ? <p className="text-xs text-center">ไม่มีข้อมูล</p> :
+                                        <>
+                                            <p>
+                                                <span className="text-xs">รหัสวิชา : {selectedSubject.subCode}</span>
+                                            </p>
+                                            <p>
+                                                <span className="text-xs">หน่วยกิต : {selectedSubject.subCredit}</span>
+                                            </p>
+                                            <p>
+                                                <span className="text-xs">ชื่อวิชา : {selectedSubject.subNameThai}<span className='text-gray-300'>({selectedSubject.subNameEng})</span></span>
+                                            </p>
+                                            <p>
+                                                <span className="text-xs">ผู้สอน : {selectedSubject.teacher.fName} {selectedSubject.teacher.lName}</span>
+                                            </p>
+                                        </>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
+                <button
+                     className="flex mt-5 ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    onClick={sendForm}
+                >
+                    บันทึกเวลา
+                </button>
             </div>
-            <button
-                className="mt-5 block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                onClick={sendForm}
-            >
-                บันทึกเวลา
-            </button>
         </div>
+        
     );
 }

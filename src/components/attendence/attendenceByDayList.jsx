@@ -57,12 +57,12 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
         <>
             <span className="text-xs text-gray-500">จำนวนวันที่มีการเรียนตามเทอม มีอยู่ {dayList.length} วัน</span>
             <div className="grid gap-2 md:grid-cols-1">
-                <div className="rounded-lg border border-gray-200">
-                    <div className="overflow-x-auto rounded-t-lg">
+                <div className=" border border-gray-200 shadow-md">
+                    <div className="overflow-x-auto">
                         
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
-                                <tr>
+                                <tr className="text-center h-12 shadow-md">
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลำดับ</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วัน</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
@@ -73,14 +73,14 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                     sliceDayList.length > 0 ? 
                                         (
                                             sliceDayList.map((day, index) => (
-                                                <tr key={index}>
+                                                <tr key={index} className="even:bg-slate-100/70 text-center">
                                                     {
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{((seletedPage - 1)*10)+(index+1) }</td>
                                                     }
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(day)}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
                                                         <Link to={`/attendances/details/byday`} state={{ classroomId: classroomId, date: day }} >
-                                                            รายละเอียด
+                                                        <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700">รายละเอียด</button>
                                                         </Link>
                                                     </td>
                                                 </tr>

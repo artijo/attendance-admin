@@ -25,11 +25,11 @@ export const ClassroomAttendenceList = ({ classLevel, academicYearTerm }) => {
 
     return (
         <div className="grid gap-2 md:grid-cols-1">
-            <div className="rounded-lg border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
+            <div className="border shadow-md border-gray-200">
+                <div className="overflow-x-auto ">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                         <thead className="ltr:text-left rtl:text-right">
-                            <tr>
+                            <tr className="h-12 shadow-md">
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชั้นมัธยมศึกษา</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ห้องเรียน</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียดการเข้าเรียน</th>
@@ -43,12 +43,12 @@ export const ClassroomAttendenceList = ({ classLevel, academicYearTerm }) => {
                                         <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={3}>ไม่มีข้อมูล</td>
                                     </tr> :
                                 classrooms.map((classroom) => (
-                                    <tr key={classroom.classId}>
+                                    <tr key={classroom.classId} className="even:bg-slate-100/70 text-center" >
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classLevel}</td>
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classRoom}</td>
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             <Link to={`/attendances/details/${classroom.classId}`}>
-                                                <span className="text-blue-800">รายละเอียดการเข้าเรียน</span>
+                                                <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700">รายละเอียดการเข้าเรียน</button>
                                             </Link>
                                         </td>
                                     </tr>

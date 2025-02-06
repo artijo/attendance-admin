@@ -20,11 +20,11 @@ function TeacherList({ teachers, teachersPerPage }) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200">
-      <div className="overflow-x-auto rounded-t-lg">
+    <div className="border border-gray-200">
+      <div className="overflow-x-auto">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
-            <tr>
+            <tr className="h-12 text-center shadow-md">
               <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสครู</th>
               <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
               <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">อีเมล</th>
@@ -34,7 +34,7 @@ function TeacherList({ teachers, teachersPerPage }) {
 
           <tbody className="divide-y divide-gray-200">
             {currentTeachers.map((teacher) => (
-              <tr key={teacher.tchId}>
+              <tr key={teacher.tchId} className="even:bg-slate-100/70 text-center">
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                   <Link to={`/teachers/${teacher.tchId}`} className="hover:bg-gray-100">
                     {teacher.tchCode}

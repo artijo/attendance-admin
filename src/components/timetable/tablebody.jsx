@@ -28,10 +28,29 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
         deleteTimetable(timetableId);
     }
 
+
+    const spanDay = (day) => {
+        switch (day) {
+            case 1: // จันทร์ (เหลือง)
+                return "cursor-pointer bg-yellow-200 text-yellow-600 px-5 py-[2px] rounded-sm";
+            case 2: // อังคาร (ชมพู)
+                return "cursor-pointer bg-pink-200 text-pink-600 px-5 py-[2px] rounded-sm";
+            case 3: // พุธ (เขียว)
+                return "cursor-pointer bg-green-200 text-green-600 px-5 py-[2px] rounded-sm";
+            case 4: // พฤหัสบดี (ส้ม)
+                return "cursor-pointer bg-orange-200 text-orange-600 px-5 py-[2px] rounded-sm";
+            case 5: // ศุกร์ (ฟ้า)
+                return "cursor-pointer bg-blue-200 text-blue-600 px-5 py-[2px] rounded-sm";
+            default:
+                return "cursor-pointer bg-gray-200 text-gray-600 px-5 py-[2px] rounded-sm"; // ค่าเริ่มต้น (สีเทา)
+        }
+    };
+    
+
     return (
-        <tr>
-            <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                <span>{formatDayOfWeeks(day)}</span>
+        <tr className=''>
+            <td className="whitespace-nowrap px-4 py-2 font-medium">
+                <span className="text-black px-5 py-[2px] rounded-sm">{formatDayOfWeeks(day)}</span>
             </td>
             {
                 secondInTimeStudyArray.map((time, timeIndex) => {
@@ -39,7 +58,7 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
                     if (subject) {
                         return ( 
                             <td key={timeIndex} className="relative group whitespace-nowrap px-4 py-2 font-medium text-gray-900 cursor-default">
-                                <div className="absolute top-[-6px] right-[-10px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-row-reverse gap-1">
+                                <div className="absolute top-[-6px] right-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col-reverse text-xs gap-1">
                                     <div >
                                         <Deletetimetable onDelete={() => handleDelete(subject.timetableId)}/>
                                     </div>
@@ -48,7 +67,7 @@ export const Tablebody = ({ arraySubject, day, timeStudyList, classroomId }) => 
                                     </Link>
                                 </div>
                                 
-                                <SubjectDetail subject={subject.subId} time={subject}/>
+                                <SubjectDetail subject={subject.subId} time={subject} day={day}/>
                             </td>
                         );
                     

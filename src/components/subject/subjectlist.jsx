@@ -15,11 +15,11 @@ function SubjectList({ subjects, subjectsPerPage }) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200">
+    <div className="shadow-md border border-gray-200">
       <div className="overflow-x-auto rounded-t-lg">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
-            <tr>
+            <tr className="h-12 shadow-md">
               <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
                 รหัสวิชา
               </th>
@@ -34,7 +34,7 @@ function SubjectList({ subjects, subjectsPerPage }) {
 
           <tbody className="divide-y divide-gray-200">
             {currentSubjects.map((subject, index) => (
-              <tr key={index}>
+              <tr key={index} className="even:bg-slate-100/70 text-center">
                 <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                   <Link
                     to={`/subjects/${subject.subId}`}

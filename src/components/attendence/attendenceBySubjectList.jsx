@@ -27,11 +27,11 @@ export const AttendenceBySubjectList = ({classroomId}) => {
         <>
             <span className="text-xs text-gray-500">จำนวนวิชามีอยู่ {subjectList.length} วิชา</span>
             <div className="grid gap-2 md:grid-cols-1">
-                <div className="rounded-lg border border-gray-200">
-                    <div className="overflow-x-auto rounded-t-lg">
+                <div className="border shadow-md border-gray-200">
+                    <div className="overflow-x-auto ">
                         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
-                                <tr>
+                                <tr className="h-12 shadow-md">
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลำดับ</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วิชา</th>
                                     <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ผู้สอน</th>
@@ -43,7 +43,7 @@ export const AttendenceBySubjectList = ({classroomId}) => {
                                     sliceSubjectList.length > 0 ? 
                                         (
                                             sliceSubjectList.map((subject, index) => (
-                                                <tr key={index}>
+                                                <tr key={index} className="even:bg-slate-100/70 text-center">
                                                     {
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{((seletedPage - 1)*5)+(index+1) }</td>
                                                     }
@@ -51,7 +51,7 @@ export const AttendenceBySubjectList = ({classroomId}) => {
                                                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`คุณครู ${subject.teacher.fName} ${subject.teacher.lName}`}</td>
                                                     <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
                                                         <Link to={`/attendances/details/bysubject`} state={{subject:subject,classroomId:classroomId}}>
-                                                            รายละเอียด
+                                                        <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700">รายละเอียด</button>
                                                         </Link>
                                                     </td>
                                                 </tr>

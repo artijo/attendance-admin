@@ -49,7 +49,7 @@ function CreateForm() {
                         <p className="mt-2 text-gray-500">{errors.general}</p>
                     </div>
                 ) : (
-                    <div className="bg-white shadow sm:rounded-lg p-6">
+                    <div className="border bg-white shadow  p-6">
                         <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                             {/* Student ID field */}
                             <div>

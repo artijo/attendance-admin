@@ -62,11 +62,11 @@ export const Termlistable = () => {
                     success && <AlertSuccess title="สำเร็จ" message={msg}/>
                 }
             </div>
-            <div className="rounded-lg border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
+            <div className="border border-gray-200 shadow">
+                <div className="overflow-x-auto">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                        <thead className="ltr:text-left rtl:text-right">
-                            <tr>
+                        <thead className="ltr:text-left rtl:text-right ">
+                            <tr className="shadow-md h-12 text-center ">
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ปีการศึกษา</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เทอม</th>
                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่เริ่ม</th>
@@ -74,33 +74,31 @@ export const Termlistable = () => {
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-gray-200">
-                            {
-                                academicYearTerm.length > 0 ? 
-                                    (
-                                        academicYearTerm.map((academicYearTerm) => (
-                                            <tr key={academicYearTerm.termId}>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{academicYearTerm.academicYear + 543}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{academicYearTerm.semester}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{datetimeFormat(academicYearTerm.termStart)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{datetimeFormat(academicYearTerm.termEnd)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-red-700 cursor-pointer" onClick={()=> handleOnDelete(academicYearTerm.termId)}>
-                                                    ลบ
-                                                </td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                                    <Link to="/terms/edit" state={{termId: academicYearTerm.termId}}>
-                                                        <span className="text-yellow-400">แก้ไข</span>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : 
-                                    <tr>
-                                        <td colSpan={4}>ไม่มีข้อมูล</td>
-                                    </tr>
-
-                            }
+                        <tbody className="divide-y divide-gray-200 ">
+                            {academicYearTerm.length === 0 ? (
+                                <tr>
+                                <td colSpan={6} className="px-4 py-2 text-center text-gray-500">ไม่มีข้อมูล</td>
+                                </tr>
+                            ) : (
+                                academicYearTerm.map((term) => (
+                                <tr key={term.termId} className="even:bg-slate-100/70 text-center">
+                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{term.academicYear ? term.academicYear + 543 : '-'}</td>
+                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{term.semester || '-'}</td>
+                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{term.termStart ? datetimeFormat(term.termStart) : '-'}</td>
+                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{term.termEnd ? datetimeFormat(term.termEnd) : '-'}</td>
+                                    <td className="whitespace-nowrap px-4 py-2" onClick={() => handleOnDelete(term.termId)}>
+                                        <button className="cursor-pointer bg-red-200 text-red-600 px-5 py-[2px] rounded-sm hover:bg-red-400 hover:text-red-700">ลบ</button>
+                                    </td>
+                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                        <Link to="/terms/edit" state={{ termId: term.termId }}>
+                                            <button className="cursor-pointer bg-yellow-200/60 text-yellow-600 px-5 py-[2px] rounded-sm hover:bg-yellow-200/100 hover:text-yellow-700">แก้ไข</button>
+                                        </Link>
+                                    </td>
+                                </tr>
+                                ))
+                            )}
                         </tbody>
+
                     </table>
                 </div>
             </div>
