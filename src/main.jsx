@@ -45,7 +45,7 @@ import CreateHoliday from "./pages/holiday/CreateHoliday.jsx";
 import Holiday from "./pages/holiday/Holiday.jsx";
 
 // Subject Section
-import Subjects from "./pages/subject/subjects.jsx";
+import Subjects from "./pages/subject/Subjects.jsx";
 import SubjectDetail from "./pages/subject/Detail.jsx";
 import CreateSubject from "./pages/subject/CreateForm.jsx";
 import EditSubject from "./pages/subject/EditForm.jsx";
