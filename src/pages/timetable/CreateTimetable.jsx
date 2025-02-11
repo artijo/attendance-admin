@@ -4,12 +4,11 @@ import axios from "axios";
 import { TableHead } from "../../components/timetable/tablehead";
 import { Tablebody } from "../../components/timetable/tablebody";
 import { useParams, Link } from 'react-router-dom';
-import TimetableCreate from "./TimetableCreate";
-
 export const CreateTimetable = () => {
     const { classroomId } = useParams();
     const [timetable, setTimetable] = useState({});
     const [classroomInfo, setClassroomInfo] = useState({});
+
     const fetchData = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
@@ -81,10 +80,6 @@ export const CreateTimetable = () => {
                     </table>
                 </div>
                 
-            </div>
-            <div>
-                <h1>เพิ่มตารางเรียน</h1>
-                <TimetableCreate/>
             </div>
         </div>
         
