@@ -4,6 +4,7 @@ import axios from "axios";
 import { TableHead } from "../../components/timetable/tablehead";
 import { Tablebody } from "../../components/timetable/tablebody";
 import { useParams, Link } from 'react-router-dom';
+import TimetableCreate from "./TimetableCreate";
 
 export const CreateTimetable = () => {
     const { classroomId } = useParams();
@@ -45,10 +46,10 @@ export const CreateTimetable = () => {
     }, []);
 
     return (
-        <div className="container mx-auto">
-            <div className="mb-2 flex items-end justify-between">
+        <div className="container grid grid-cols-1 gap-5 mx-auto">
+            <div className="flex items-end justify-between">
                 <div>
-                    <h1 className="mb-1">สร้างตารางเรียน</h1>
+                    <h1 className="mb-1">ตารางเรียน</h1>
                     {
                         Object.keys(classroomInfo).length > 0 ? 
                         <p>ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom} ภาคเรียนที่ {classroomInfo.term.semester} ปีการศึกษา {classroomInfo.term.academicYear + 543} </p>
@@ -56,9 +57,7 @@ export const CreateTimetable = () => {
                         <p>กำลังโหลดข้อมูล....</p>                   
                     }
                 </div>
-            </div>
-            
-            
+            </div>  
             <div className="shadow border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -81,7 +80,12 @@ export const CreateTimetable = () => {
                             
                     </table>
                 </div>
-                </div>
+                
+            </div>
+            <div>
+                <h1>เพิ่มตารางเรียน</h1>
+                <TimetableCreate/>
+            </div>
         </div>
         
     );
