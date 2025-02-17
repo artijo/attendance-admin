@@ -35,7 +35,7 @@ function EditForm() {
             // Format teachers for React-Select
             const teacherOptions = teachersRes.data.map(teacher => ({
                 value: teacher.tchId,
-                label: `${teacher.tchCode} - ${teacher.fName} ${teacher.lName}`
+                label: `${teacher.fName} ${teacher.lName}`
             }));
             setTeachers(teacherOptions);
             
