@@ -86,7 +86,7 @@ function EditActivity() {
             })));
             setTeachers(teachersList.data.map(teacher => ({
                 value: teacher.tchId,
-                label: `${teacher.tchCode} - ${teacher.fName} ${teacher.lName}`
+                label: `${teacher.fName} ${teacher.lName}`
             })));
             setClassrooms(classroomsList.data.map(classroom => ({
                 value: classroom.classId,

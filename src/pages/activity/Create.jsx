@@ -48,7 +48,7 @@ function CreateActivity() {
             .then(response => {
                 const options = response.data.map(teacher => ({
                     value: teacher.tchId,
-                    label: `${teacher.tchCode} - ${teacher.fName} ${teacher.lName}`
+                    label: `${teacher.fName} ${teacher.lName}`
                 }));
                 setTeachers(options);
             })
