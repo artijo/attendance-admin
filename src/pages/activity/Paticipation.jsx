@@ -1,0 +1,189 @@
+import { HOSTNAME } from "../../config";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { DateTime } from "luxon";
+import { convertNumberToThaiMonth } from "../../helper";
+
+function Participant() {
+    const { id } = useParams();
+    const [activity, setActivity] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('');
+
+    useEffect(() => {
+        const fetchActivity = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${HOSTNAME}/a/activity/${id}`);
+                if (response.status === 200) {
+                    setActivity(response.data);
+                }
+            } catch (err) {
+                setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchActivity();
+    }, [id]);
+
+    useEffect(() => {
+        if (activity) {
+            const startDate = DateTime.fromISO(activity.actDate)
+                .setZone('Asia/Bangkok')
+                .toISODate();
+            setSelectedDate(startDate);
+        }
+    }, [activity]);
+
+    const getDatesBetween = (startDate, endDate) => {
+        const dates = [];
+        let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
+        const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
+        
+        while (current <= end) {
+            dates.push(current.toISODate());
+            current = current.plus({ days: 1 });
+        }
+        return dates;
+    };
+
+    const isRecordMatchingDate = (record) => {
+        if (!selectedDate) return true;
+        const recordDate = DateTime.fromISO(record.joinTimestamp).setZone('Asia/Bangkok');
+        const filterDate = DateTime.fromISO(selectedDate).setZone('Asia/Bangkok');
+        return recordDate.hasSame(filterDate, 'day');
+    };
+
+    const formatThaiDateTime = (dateTime) => {
+        const dt = DateTime.fromISO(dateTime).setZone('Asia/Bangkok');
+        const day = dt.toFormat('d');
+        const month = convertNumberToThaiMonth(dt.month);
+        const year = dt.year + 543;
+        const time = dt.toFormat("HH:mm 'น.'");
+        return `${day} ${month} ${year} ${time}`;
+    };
+
+    const filteredParticipations = activity?.actParticipate.filter(isRecordMatchingDate) || [];
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-xl">กำลังโหลด...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-xl text-red-500">{error}</div>
+            </div>
+        );
+    }
+
+    if (!activity) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-xl">ไม่พบข้อมูลกิจกรรม</div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <div className="mx-auto">
+                <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                            ประวัติการเข้าร่วมกิจกรรม: {activity.actName}
+                        </h1>
+                        <div className="relative mb-6">
+                            <div className="overflow-x-auto pb-2 hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                                <div className="flex gap-2 px-1">
+                                    {activity && getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
+                                        const dateTime = DateTime.fromISO(date).setZone('Asia/Bangkok');
+                                        const isToday = DateTime.now().setZone('Asia/Bangkok').hasSame(dateTime, 'day');
+                                        const thaiMonth = convertNumberToThaiMonth(dateTime.month);
+                                        
+                                        return (
+                                            <button
+                                                key={date}
+                                                onClick={() => setSelectedDate(date)}
+                                                className={`flex-shrink-0 flex flex-col items-center w-24 py-2 rounded-lg transition-all ${
+                                                    selectedDate === date
+                                                        ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                                                        : 'bg-white border hover:bg-gray-50'
+                                                } ${isToday ? 'ring-2 ring-blue-400' : ''}`}
+                                            >
+                                                <span className="text-xs mb-1">
+                                                    {dateTime.toFormat('ccc')}
+                                                </span>
+                                                <span className="text-lg font-semibold">
+                                                    {dateTime.day}
+                                                </span>
+                                                <span className="text-xs">
+                                                    {thaiMonth}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full table-fixed">
+                                <thead>
+                                    <tr className="bg-gray-100">
+                                        <th className="px-6 py-3 text-left w-32">รหัสนักเรียน</th>
+                                        <th className="px-6 py-3 text-left">ชื่อ-นามสกุล</th>
+                                        <th className="px-6 py-3 text-center w-32">สถานะ</th>
+                                        <th className="px-6 py-3 text-left w-64">หมายเหตุ</th>
+                                        <th className="px-6 py-3 text-left w-48">บันทึกโดย</th>
+                                        <th className="px-6 py-3 text-left w-48">วันเวลาที่บันทึก</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {filteredParticipations.map((record) => (
+                                        <tr key={record.actParticipateId} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap">{record.stdId}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {record.student.title === 'BOY' ? 'เด็กชาย' : 'เด็กหญิง'} {record.student.fName} {record.student.lName}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    เข้าร่วม
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {record.note || '-'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {record.operateBy === 'TEACHER' && record.teacher ? (
+                                                    `${record.teacher.tchCode} ${record.teacher.fName}`
+                                                ) : record.operateBy}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {formatThaiDateTime(record.joinTimestamp)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {filteredParticipations.length === 0 && (
+                                <div className="text-center py-8 text-gray-500">
+                                    {selectedDate ? 'ไม่พบข้อมูลการบันทึกในวันที่เลือก' : 'ยังไม่มีประวัติการบันทึก'}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Participant;

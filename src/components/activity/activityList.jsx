@@ -58,7 +58,7 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                             {activity.actStatus}
                                         </td> */}
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                            <Link to={`/activity/${activity.actId}/attendance`}>
+                                            <Link to={`/activity/${activity.actId}/participate`} className="hover:bg-gray-100">
                                                 <span className="underline text-blue-800">การเข้าร่วม</span>
                                             </Link>
                                         </td>
