@@ -97,7 +97,7 @@ function ShowDetail({ activity }) {
                                             <div className="flex w-0 flex-1 items-center">
                                                 <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                     <span className="truncate font-medium">
-                                                        มัธยมศึกษาปีที่ {classroom.classroom.classLevel}/{classroom.classroom.classRoom}
+                                                        มัธยมศึกษาปีที่ {classroom.classroom.classLevel}/{classroom.classroom.classRoom} (ปีการศึกษา {classroom.classroom.term.academicYear + 543})
                                                     </span>
                                                 </div>
                                             </div>
@@ -117,11 +117,11 @@ function ShowDetail({ activity }) {
                                         <div className="flex w-0 flex-1 items-center">
                                             <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                 <span className="truncate font-medium">
-                                                    {teacherObj.teacher.tchCode} - {teacherObj.teacher.fName} {teacherObj.teacher.lName}
+                                                    {teacherObj.teacher.fName} {teacherObj.teacher.lName}
                                                 </span>
-                                                <span className="flex-shrink-0 text-gray-400">
+                                                {/* <span className="flex-shrink-0 text-gray-400">
                                                     {teacherObj.teacher.email}
-                                                </span>
+                                                </span> */}
                                             </div>
                                         </div>
                                     </li>

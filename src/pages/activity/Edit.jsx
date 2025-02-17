@@ -63,7 +63,7 @@ function EditActivity() {
                     joinLimitNumber: activity.joinLimitNumber || "", // Add this
                     teachers: activity.teacher.map(t => ({
                         value: t.teacher.tchId,
-                        label: `${t.teacher.tchCode} - ${t.teacher.fName} ${t.teacher.lName}`
+                        label: `${t.teacher.fName} ${t.teacher.lName}`
                     })),
                     classrooms: activity.classroom ? activity.classroom.map(c => ({
                         value: c.classroom.classId,
@@ -90,7 +90,7 @@ function EditActivity() {
             })));
             setClassrooms(classroomsList.data.map(classroom => ({
                 value: classroom.classId,
-                label: `${classroom.classLevel}/${classroom.classRoom} - ${classroom.classroomType.classTypeNameThai}`
+                label: `${classroom.classLevel}/${classroom.classRoom} - ${classroom.classroomType.classTypeNameThai} (ปีการศึกษา ${classroom.term.academicYear + 543})`
             })));
         }).catch(error => console.error("Error fetching data:", error));
     }, [id, reset]);

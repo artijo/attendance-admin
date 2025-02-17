@@ -59,7 +59,7 @@ function CreateActivity() {
             .then(response => {
                 const options = response.data.map(classroom => ({
                     value: classroom.classId,
-                    label: `${classroom.classLevel}/${classroom.classRoom} - ${classroom.classroomType.classTypeNameThai}`
+                    label: `${classroom.classLevel}/${classroom.classRoom} - ${classroom.classroomType.classTypeNameThai} (ปีการศึกษา ${classroom.term.academicYear + 543})`
                 }));
                 setClassrooms(options);
             })
