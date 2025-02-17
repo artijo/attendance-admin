@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { HOSTNAME } from '../../config';
 export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) => {
-    // console.log(studentList);
+    console.log(studentList);
     const ref = useRef();
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
@@ -15,10 +15,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
     const [classroomInfo, setClassroomInfo] = useState(null);
     const handaleExportExcel = () => {
             if(ref.current) {
-                // console.log(ref.current);
                 const tableList = ref.current;
-            // if(!tableList || tableList[0]) return;
-                // console.log(tableList);
                 AttendanceSummaryByDay(tableList);
             }
             
@@ -28,6 +25,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                 const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`)
                 if(response.status === 200) {
                     setClassroomInfo(response.data);
+                    
                 }
             }catch(error) {
                 console.log(error)
@@ -59,7 +57,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                 studentList.length > 0 && (
                     <div>
                         <div className="grid gap-2 md:grid-cols-1">
-                            <div className="shadow-md border border-gray-200">
+                            <div className="shadow-md border border-gray-200 overflow-x-auto">
                                 <div className="overflow-x-auto">
                                     <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
                                         <thead className="ltr:text-left rtl:text-right">
@@ -72,6 +70,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลา(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">กิจกรรม(ครั้ง)</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เข้าเรียน(ครั้ง)</th>
+                                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">คะแนนจิตวิสัย</th>
                                                 <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ร้อยละการเข้าเรียนทั้งหมดรวมลา</th>
                                                 {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ ไม่มีสิทธ์สอบ</th> */}
                                             </tr>
@@ -88,6 +87,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceLeaveCount}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceActivity}</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendenceCount}</td>
+                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.behaviourScore} คะแนน</td>
                                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.attendencePercent}%</td>
                                                         {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.canExam}</td> */}
                                                     </tr>

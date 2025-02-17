@@ -28,12 +28,13 @@ function ByClassroom(){
                     <TD style={[styles.td, { flex: 2 }]}>ลา(ครั้ง)</TD>
                     <TD style={[styles.td, { flex: 2 }]}>กิจกรรม(ครั้ง)</TD>
                     <TD style={[styles.td, { flex: 2 }]}>เข้าเรียน(ครั้ง)</TD>
+                    <TD style={[styles.td, { flex: 2 }]}>คะแนนจิตวิสัย</TD>
                     <TD style={[styles.td, { flex: 2 }]}>ร้อยละการเข้าเรียน</TD>
                     {/* <TD style={[styles.td, { flex: 2 }]}>สถานะ ไม่มีสิทธ์สอบ</TD> */}
                 </TR>
                 {
-                    studentList.map((student) => ( 
-                        <TR>
+                    studentList.map((student, index) => ( 
+                        <TR key={index}>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdNo}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdId}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.fName}</TD>
@@ -43,7 +44,8 @@ function ByClassroom(){
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceLeaveCount}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceActivity}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.attendenceCount}</TD>
-                            <TD style={[styles.td, { flex: 2 }]}>{student.attendencePercent}</TD>
+                            <TD style={[styles.td, { flex: 2 }]}>{student.behaviourScore} คะแนน</TD>
+                            <TD style={[styles.td, { flex: 2 }]}>{student.attendencePercent}%</TD>
                             {/* <TD style={[styles.td, { flex: 2 }]}>{student.canExam}</TD> */}
                         </TR>
                     ))
