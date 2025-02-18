@@ -21,7 +21,7 @@ axios.interceptors.response.use(
         isRefreshing = true;
         try {
           const refreshToken = localStorage.getItem("refreshToken");
-          await axios.post(
+          const res = await axios.post(
             `${HOSTNAME}/auth/a/refresh`,
             {},
             {
@@ -30,6 +30,8 @@ axios.interceptors.response.use(
               },
             }
           );
+          localStorage.setItem("accessToken", res.data.token);
+          error.config.headers.Authorization = `Bearer ${res.data.token}`;
           isRefreshing = false;
           window.location.reload();
           return;
@@ -77,10 +79,12 @@ function App() {
         {
           headers: {
             Authorization: `Bearer ${refreshToken}`,
-          },
-          withCredentials: true
+          }
         }
       );
+      if (response.status === 200) {
+        localStorage.setItem("accessToken", response.data.token);
+      }
 
       if (response.status !== 200) {
         throw new Error("Cannot refresh token");
@@ -97,7 +101,11 @@ function App() {
 
   const checkAuth = async () => {
     try {
-      const res = await axios.get(HOSTNAME+"/auth/a/check", { withCredentials: true });
+      const res = await axios.get(HOSTNAME+"/auth/a/check", { 
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+       });
       if (res.status !== 200) {
         refreshTokens();
       }

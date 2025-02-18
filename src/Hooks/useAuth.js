@@ -15,6 +15,7 @@ export const useAuth = () => {
             password,
         }, { withCredentials: true });
         setUser(response.data);
+        localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         return response;
         } catch (error) {
@@ -25,6 +26,7 @@ export const useAuth = () => {
 
     const logoutUser =  () => {
         setUser(null);
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
     };
 
