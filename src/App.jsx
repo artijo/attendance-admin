@@ -7,6 +7,7 @@ import Logo from "./assets/nps-logo.webp";
 
 // config axios
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("accessToken")}`;
 
 let isRefreshing = false;
 
