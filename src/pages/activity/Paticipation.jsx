@@ -126,15 +126,14 @@ function Participant() {
         );
     }
 
-    const ExportDataComponent = () => {
-        
+    const ExportDataComponentClassroom = () => {
         const handleExportPdf = () => {
             abstactActivity(activity.actId,selectedClassroom)
         }
         return (
-            <>
+            <div className="flex flex-col items-end">
                 <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
-            </>
+            </div>
         )
     }
 
@@ -198,7 +197,12 @@ function Participant() {
                         </div>
 
                         {/* Existing table */}
-                        <ExportDataComponent/>
+                        {
+                            selectedClassroom != 'all' && (
+                                <ExportDataComponentClassroom/>
+                            )
+                        }
+                        
                         <div className="overflow-x-auto">
                             <table className="min-w-full table-fixed">
                                 <thead>
