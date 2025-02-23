@@ -77,3 +77,20 @@ export async function abstactActivity(activityId, classId) {
     }
     
 }
+
+
+export async function abstactActivityFilterByClassroom(activityId) {
+    let response;
+    try{
+        const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/${activityId}`);
+        if(responsed.status == 200){
+            response = responsed.data;
+            console.log(responsed.data);
+        }else{
+            throw new Error(response.data.message);
+        };
+    }catch(error){
+        console.error(error);
+    };
+    
+}

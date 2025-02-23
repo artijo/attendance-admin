@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { DateTime } from "luxon";
 import { convertNumberToThaiMonth } from "../../helper";
 import ExportExcelButton from "../../components/exportExcelButton";
-import { abstactActivity } from "../../exportExcel";
+import { abstactActivity, abstactActivityFilterByClassroom } from "../../exportExcel";
 
 function Participant() {
     const { id } = useParams();
@@ -131,9 +131,26 @@ function Participant() {
             abstactActivity(activity.actId,selectedClassroom)
         }
         return (
-            <div className="flex flex-col items-end">
-                <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
-            </div>
+            <>
+                <div className="border rounded-lg bg-[#F5F5F5] shadow-sm w-fit p-4">
+                    <label className="text-xs mb-2">สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก</label>
+                    <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
+                </div>
+            </>
+        )
+    }
+    
+    const ExportDataComponentPaticipate = () => {
+        const handleExportPdf = () => {
+            abstactActivityFilterByClassroom(activity.actId)
+        }
+        return (
+            <>
+                <div className="border rounded-lg bg-[#F5F5F5] shadow-sm w-fit p-4">
+                    <label className="text-xs mb-2">สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม</label>
+                    <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
+                </div>
+            </>
         )
     }
 
@@ -197,11 +214,21 @@ function Participant() {
                         </div>
 
                         {/* Existing table */}
-                        {
-                            selectedClassroom != 'all' && (
-                                <ExportDataComponentClassroom/>
-                            )
-                        }
+                        <div className="flex flex-wrap gap-6 mb-6">
+                            <div>
+                                <ExportDataComponentPaticipate/>
+                            </div>
+                            <div>
+                                {
+                                    selectedClassroom != 'all' && (
+                                        <ExportDataComponentClassroom/>
+                                    )
+                                }
+                            </div>
+                           
+                            
+                        </div>
+                        
                         
                         <div className="overflow-x-auto">
                             <table className="min-w-full table-fixed">
