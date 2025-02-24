@@ -71,7 +71,7 @@ export async function abstactActivity(activityId, classId) {
         XLSX.utils.book_append_sheet(workbook, worksheet, dateFormatToThai);
     });
     try{
-        XLSX.writeFile(workbook, "สรุปการเข้ากิจกรรมตามห้องเรียน.xlsx", {compression :true});
+        XLSX.writeFile(workbook, "สรุปการเข้ากิจกรรมตามวันและตามห้องเรียนที่เลือก.xlsx", {compression :true});
     }catch(error){
         console.error(error);
     }
@@ -92,5 +92,26 @@ export async function abstactActivityFilterByClassroom(activityId) {
     }catch(error){
         console.error(error);
     };
-    
+    const keyObject = Object.keys(response);
+    const workbook = XLSX.utils.book_new();
+    keyObject.forEach((key) => {
+        const arrayOfJsonObject = []
+        response[key].forEach((member) => {
+            const newObject = {
+                "รหัสนักเรียน":member.stdId,
+                "คำนำหน้า":member.title,
+                "ชื่อ":member.fName,
+                "นามสกุล":member.lName,
+                "จำนวนการเข้าร่วม": member.participateCount
+            }
+            arrayOfJsonObject.push(newObject);
+        })
+        const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
+        XLSX.utils.book_append_sheet(workbook, worksheet, `ชั้นม.${key.split('/')[0]} ห้อง ${key.split('/')[1]}`);
+    });
+    try{
+        XLSX.writeFile(workbook, "สรุปการเข้ากิจกรรมตามห้องเรียน.xlsx", {compression :true});
+    }catch(error){
+        console.error(error);
+    };
 }
