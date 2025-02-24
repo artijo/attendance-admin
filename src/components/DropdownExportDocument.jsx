@@ -37,7 +37,7 @@ function DropdownExportDocument({children}){
             onClick={handleOnclick}
         >
             <div className="flex justify-between items-center h-[48px] px-3 z-40 ">
-                <p>ดาวน์โหลดเอกสาร</p>
+                <p className="cursor-default">ดาวน์โหลดเอกสาร</p>
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
