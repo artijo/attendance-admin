@@ -145,12 +145,12 @@ function Participant() {
                                 {
                                     selectedClassroom != 'all' &&
                                     <TextDropdownDocument 
-                                        title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก`}
+                                        title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก (EXCEL)`}
                                         actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
                                     />
                                 }
                                 <TextDropdownDocument 
-                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม`}
+                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
                                     actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
                                 />
 
