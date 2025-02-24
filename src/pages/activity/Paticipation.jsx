@@ -6,6 +6,8 @@ import { DateTime } from "luxon";
 import { convertNumberToThaiMonth } from "../../helper";
 import ExportExcelButton from "../../components/exportExcelButton";
 import { abstactActivity, abstactActivityFilterByClassroom } from "../../exportExcel";
+import DropdownExportDocument from "../../components/DropdownExportDocument";
+import TextDropdownDocument from "../../components/TextDropdownDocument";
 
 function Participant() {
     const { id } = useParams();
@@ -126,33 +128,7 @@ function Participant() {
         );
     }
 
-    const ExportDataComponentClassroom = () => {
-        const handleExportPdf = () => {
-            abstactActivity(activity.actId,selectedClassroom)
-        }
-        return (
-            <>
-                <div className="border rounded-lg bg-[#F5F5F5] shadow-sm w-fit p-4">
-                    <label className="text-xs mb-2">สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก</label>
-                    <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
-                </div>
-            </>
-        )
-    }
-    
-    const ExportDataComponentPaticipate = () => {
-        const handleExportPdf = () => {
-            abstactActivityFilterByClassroom(activity.actId)
-        }
-        return (
-            <>
-                <div className="border rounded-lg bg-[#F5F5F5] shadow-sm w-fit p-4">
-                    <label className="text-xs mb-2">สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม</label>
-                    <ExportExcelButton handelOnClickFunction={handleExportPdf}/>
-                </div>
-            </>
-        )
-    }
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -164,7 +140,21 @@ function Participant() {
                         </h1>
                         
                         {/* Add classroom filter dropdown */}
-                        <div className="flex justify-end mb-4">
+                        <div className="flex justify-end gap-4 mb-4">
+                            <DropdownExportDocument>
+                                {
+                                    selectedClassroom != 'all' &&
+                                    <TextDropdownDocument 
+                                        title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก`}
+                                        actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
+                                    />
+                                }
+                                <TextDropdownDocument 
+                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม`}
+                                    actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
+                                />
+
+                            </DropdownExportDocument>
                             <select
                                 value={selectedClassroom}
                                 onChange={(e) => setSelectedClassroom(e.target.value)}
@@ -214,22 +204,6 @@ function Participant() {
                         </div>
 
                         {/* Existing table */}
-                        <div className="flex flex-wrap gap-6 mb-6">
-                            <div>
-                                <ExportDataComponentPaticipate/>
-                            </div>
-                            <div>
-                                {
-                                    selectedClassroom != 'all' && (
-                                        <ExportDataComponentClassroom/>
-                                    )
-                                }
-                            </div>
-                           
-                            
-                        </div>
-                        
-                        
                         <div className="overflow-x-auto">
                             <table className="min-w-full table-fixed">
                                 <thead>

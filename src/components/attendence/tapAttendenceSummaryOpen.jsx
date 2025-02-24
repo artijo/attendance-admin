@@ -1,8 +1,8 @@
 export const TapAttendenceSummaryOpen = ({children, isTabOpen, title, handleIsTabOpen, index}) => {
     return (
         <>
-            <div>
-                <div className="w-full px-9 h-12 mb-2 bg-white border rounded-lg flex justify-between items-center">
+            <div className="relative">
+                <div className="w-full px-9 h-12 bg-white border rounded-lg flex justify-between items-center">
                     <span>{title}</span>
                     <div className={!isTabOpen[index] ? "block" : "hidden"} onClick={
                         () => { handleIsTabOpen(index); }
@@ -33,7 +33,7 @@ export const TapAttendenceSummaryOpen = ({children, isTabOpen, title, handleIsTa
                     </svg>
                     </div>
                 </div>
-                <div className={`bg-white p-4 rounded-lg border ${isTabOpen[index] ? "block" : "hidden"}`}>
+                <div className={`py-2 px-[5px]  ${isTabOpen[index] ? "block" : "hidden"} `}>
                     {children}
                 </div>
             </div>

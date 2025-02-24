@@ -2,6 +2,7 @@ import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect,useState } from "react";
 import { AttendenceBySummaryByClassroomList } from "../../components/attendence/attendenceSummaryByClassroomList";
+import { Link } from "react-router-dom";
 
 function AttendenceSummaryByClassroom({classroomId}){
     const [studentList, setStudentList] = useState([]);
@@ -18,7 +19,21 @@ function AttendenceSummaryByClassroom({classroomId}){
     },[]);
 
     return(
-        <AttendenceBySummaryByClassroomList studentList={studentList} classroomId={classroomId}/>
+        <>
+            <div>
+                <Link
+                    state={{
+                        classroomId: classroomId,
+                        studentList: studentList
+                    }}
+                    to={'/attendances/details/byclassroom'}
+                >
+                    <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700 mx-6">รายละเอียด</button>
+                </Link>
+            </div>
+            
+        </>
+       
     );
 };
 

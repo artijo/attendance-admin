@@ -54,43 +54,9 @@ export const ClassroomAttendenceList = ({ classLevel, academicYearTerm }) => {
                                     </tr>
                                 ))
                             }
-                            {/* {
-                                sliceHolidayList.length > 0 ? 
-                                    (
-                                        sliceHolidayList.map((holiday, index) => (
-                                            <tr key={index}>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{holiday.holidayname}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.startDate)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatDateToThai(holiday.endDate)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatTypeToThai(holiday.type)}</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-red-600 cursor-pointer" onClick={() => handleDeleteHoliday(holiday.id)}>ลบ</td>
-                                                <td className="whitespace-nowrap px-4 py-2 text-yellow-600 cursor-pointer">
-                                                    <Link to={`/holiday/edit/${holiday.id}`}>
-                                                        แก้ไข
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : 
-                                    <tr>
-                                        <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
-                                    </tr>
-                            } */}
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div>
-                {/* {Array.from({ length: page }, (_, i) => (
-                    <button
-                        key={i+1}
-                        className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
-                        onClick={() => setSeletedPage(i+1)}
-                        type="button"
-                    >
-                        {i + 1}
-                    </button>
-                ))} */}
             </div>
         </div> 
     );
