@@ -23,7 +23,7 @@ function StudentList({ students, studentsPerPage }) {
     <div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400t">
+          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th className="px-6 py-3">รหัสนักเรียน</th>
               <th className="px-6 py-3">ชื่อ - สกุล</th>
@@ -31,7 +31,7 @@ function StudentList({ students, studentsPerPage }) {
               <th className="px-6 py-3">เลขโทรศัพท์</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody>
             {currentStudents.map((student) => (
               <tr key={student.stdId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">  
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">

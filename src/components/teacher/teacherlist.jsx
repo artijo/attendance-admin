@@ -20,31 +20,30 @@ function TeacherList({ teachers, teachersPerPage }) {
   };
 
   return (
-    <div className="border border-gray-200">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-          <thead className="ltr:text-left rtl:text-right">
-            <tr className="h-12 text-center shadow-md">
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสครู</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">อีเมล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขโทรศัพท์</th>
+    <div>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400t">
+            <tr>
+              <th className="px-6 py-3">รหัสครู</th>
+              <th className="px-6 py-3">ชื่อ - สกุล</th>
+              <th className="px-6 py-3">อีเมล</th>
+              <th className="px-6 py-3">เลขโทรศัพท์</th>
             </tr>
           </thead>
-
-          <tbody className="divide-y divide-gray-200">
+          <tbody>
             {currentTeachers.map((teacher) => (
-              <tr key={teacher.tchId} className="even:bg-slate-100/70 text-center">
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+              <tr key={teacher.tchId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   <Link to={`/teachers/${teacher.tchId}`} className="hover:bg-gray-100">
                     {teacher.tchCode}
                   </Link>
                 </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                <td className="px-6 py-4">
                   {teacher.fName} {teacher.lName}
                 </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{teacher.email}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{formatPhoneNumber(teacher.tel)}</td>
+                <td className="px-6 py-4">{teacher.email}</td>
+                <td className="px-6 py-4">{formatPhoneNumber(teacher.tel)}</td>
               </tr>
             ))}
           </tbody>

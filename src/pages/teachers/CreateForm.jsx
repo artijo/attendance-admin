@@ -44,74 +44,74 @@ function CreateForm() {
     return (
         <div>
             <h1 className="font-bold text-center">เพิ่มคุณครู</h1>
-            <div className="mt-5 p-4 bg-white shadow  border">
+            <div className="mt-5 p-4 bg-white shadow  border rounded-2xl">
                 {errors.general && <div className="text-red-500 mb-4">{errors.general}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
-                        <label htmlFor="TeacherCode" className="block text-xs font-medium text-gray-700">รหัสครู</label>
+                        <label htmlFor="TeacherCode" className="block text-sm font-medium text-gray-700">รหัสครู</label>
                         <input
                             type="text"
                             id="TeacherCode"
                             placeholder="TCHxxxx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("tchCode")}
                         />
                         {errors.tchCode && <p className="text-red-500 text-xs mt-1">{errors.tchCode}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="Firstname" className="block text-xs font-medium text-gray-700">ชื่อ</label>
+                        <label htmlFor="Firstname" className="block text-sm font-medium text-gray-700">ชื่อ</label>
                         <input
                             type="text"
                             id="Firstname"
                             placeholder="ชื่อ"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("fName")}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="Lastname" className="block text-xs font-medium text-gray-700">นามสกุล</label>
+                        <label htmlFor="Lastname" className="block text-sm font-medium text-gray-700">นามสกุล</label>
                         <input
                             type="text"
                             id="Lastname"
                             placeholder="นามสกุล"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("lName")}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="Email" className="block text-xs font-medium text-gray-700">อีเมล</label>
+                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700">อีเมล</label>
                         <input
                             type="email"
                             id="Email"
                             placeholder="example@nps.ac.th"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("email")}
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="Tel" className="block text-xs font-medium text-gray-700">เบอร์โทรศัพท์</label>
+                        <label htmlFor="Tel" className="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
                         <input
                             type="tel"
                             id="Tel"
                             placeholder="0xx-xxx-xxxx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("tel")}
                         />
                         {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="Password" className="block text-xs font-medium text-gray-700">รหัสผ่าน</label>
+                        <label htmlFor="Password" className="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
                         <input
                             type="password"
                             id="Password"
                             placeholder="••••••••"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("password", {
                                 required: "กรุณากรอกรหัสผ่าน",
                                 minLength: {
@@ -126,12 +126,12 @@ function CreateForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="ConfirmPassword" className="block text-xs font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
+                        <label htmlFor="ConfirmPassword" className="block text-sm font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
                         <input
                             type="password"
                             id="ConfirmPassword"
                             placeholder="••••••••"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("confirmPassword", {
                                 required: "กรุณายืนยันรหัสผ่าน",
                                 validate: value => 
@@ -142,10 +142,9 @@ function CreateForm() {
                             <span className="text-red-500 text-xs">{formErrors.confirmPassword.message}</span>
                         )}
                     </div>
-
                     <button 
                         type="submit" 
-                        className="inline-flex w-fit justify-center ml-auto items-center px-5 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="sm:col-span-2 inline-flex sm:w-fit justify-center sm:ml-auto items-center px-5 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
