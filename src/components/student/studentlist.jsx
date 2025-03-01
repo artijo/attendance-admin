@@ -20,27 +20,26 @@ function StudentList({ students, studentsPerPage }) {
   };
 
   return (
-    <div className="border border-gray-200">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-          <thead className="ltr:text-left rtl:text-right">
-            <tr className="text-center h-12 shadow-md">
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักเรียน</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">อีเมล</th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขโทรศัพท์</th>
+    <div>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400t">
+            <tr>
+              <th className="px-6 py-3">รหัสนักเรียน</th>
+              <th className="px-6 py-3">ชื่อ - สกุล</th>
+              <th className="px-6 py-3">อีเมล</th>
+              <th className="px-6 py-3">เลขโทรศัพท์</th>
             </tr>
           </thead>
-
           <tbody className="divide-y divide-gray-200">
             {currentStudents.map((student) => (
-              <tr key={student.stdId} className="even:bg-slate-100/70 text-center">
-                
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/students/${student.stdId}`} className="hover:bg-gray-100">{student.stdId}</Link></td>
-                
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.email? student.email: "ไม่มีอีเมล"}</td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td>
+              <tr key={student.stdId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">  
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <Link to={`/students/${student.stdId}`} className="hover:bg-gray-100">{student.stdId}</Link>
+                </td>
+                <td className="px-6 py-4">{student.fName} {student.lName}</td>
+                <td className="px-6 py-4">{student.email? student.email: "ไม่มีอีเมล"}</td>
+                <td className="px-6 py-4">{student.tel? formatPhoneNumber(student.tel) : "ไม่มีหมายเลขโทรศัพท์"}</td>
               </tr>
             ))}
           </tbody>

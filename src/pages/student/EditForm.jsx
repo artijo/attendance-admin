@@ -64,28 +64,28 @@ function EditForm() {
                         <p className="mt-2 text-gray-500">{errors.general}</p>
                     </div>
                 ) : (
-                    <div className="bg-white shadow sm:rounded-lg p-6">
+                    <div className="bg-white shadow sm:rounded-2xl p-6">
                         <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                             <div>
-                                <label htmlFor="StudentId" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="StudentId" className="block text-sm font-medium text-gray-700">
                                     รหัสนักเรียน
                                 </label>
                                 <input
                                     type="text"
                                     id="StudentId"
                                     placeholder="xxxxxx"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("stdId")}
                                     disabled
                                 />
                             </div>
                             <div>
-                                <label htmlFor="Title" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="Title" className="block text-sm font-medium text-gray-700">
                                     คำนำหน้า
                                 </label>
                                 <select
                                     id="Title"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("title")}
                                 >
                                     <option value="BOY">เด็กชาย</option>
@@ -95,51 +95,51 @@ function EditForm() {
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="Firstname" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="Firstname" className="block text-sm font-medium text-gray-700">
                                     ชื่อ
                                 </label>
                                 <input
                                     type="text"
                                     id="Firstname"
                                     placeholder="ชื่อ"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("fName")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="Lastname" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="Lastname" className="block text-sm font-medium text-gray-700">
                                     นามสกุล
                                 </label>
                                 <input
                                     type="text"
                                     id="Lastname"
                                     placeholder="นามสกุล"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("lName")}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="Email" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="Email" className="block text-sm font-medium text-gray-700">
                                     อีเมล
                                 </label>
                                 <input
                                     type="text"
                                     id="Email"
                                     placeholder="user@nps.ac.th"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("email")}
                                 />
                                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                             </div>
                             <div>
-                                <label htmlFor="Tel" className="block text-xs font-medium text-gray-700">
+                                <label htmlFor="Tel" className="block text-sm font-medium text-gray-700">
                                     เบอร์โทรศัพท์
                                 </label>
                                 <input
                                     type="text"
                                     id="Tel"
                                     placeholder="000-000-0000"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("tel")}
                                 />
                                 {errors.tel && <p className="text-red-500 text-xs mt-1">{errors.tel}</p>}

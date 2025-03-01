@@ -44,7 +44,7 @@ function StudentDetail() {
         </Link>
       </div>
       {student ? (
-        <div className="mt-5 bg-white shadow sm:rounded-lg">
+        <div className="mt-5 bg-white shadow sm:rounded-2xl">
           <ShowDetail student={student} />
         </div>
       ) : (
