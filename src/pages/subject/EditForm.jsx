@@ -109,53 +109,53 @@ function EditForm() {
                         <p className="mt-2 text-gray-500">{error}</p>
                     </div>
                 ) : (
-                    <div className="bg-white shadow sm:rounded-lg p-6">
+                    <div className="bg-white shadow sm:rounded-2xl p-6">
                         <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                             <div>
-                                <label htmlFor="subCode" className="block text-xs font-medium text-gray-700">รหัสวิชา</label>
+                                <label htmlFor="subCode" className="block text-sm font-medium text-gray-700">รหัสวิชา</label>
                                 <input
                                     type="text"
                                     id="subCode"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("subCode", { required: true })}
                                 />
                             </div>
                             
                             <div>
-                                <label htmlFor="subCredit" className="block text-xs font-medium text-gray-700">หน่วยกิต</label>
+                                <label htmlFor="subCredit" className="block text-sm font-medium text-gray-700">หน่วยกิต</label>
                                 <input
                                     type="number"
                                     id="subCredit"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("subCredit", { required: true })}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="subNameThai" className="block text-xs font-medium text-gray-700">ชื่อวิชาภาษาไทย</label>
+                                <label htmlFor="subNameThai" className="block text-sm font-medium text-gray-700">ชื่อวิชาภาษาไทย</label>
                                 <input
                                     type="text"
                                     id="subNameThai"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("subNameThai", { required: true })}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="subNameEng" className="block text-xs font-medium text-gray-700">ชื่อวิชาภาษาอังกฤษ</label>
+                                <label htmlFor="subNameEng" className="block text-sm font-medium text-gray-700">ชื่อวิชาภาษาอังกฤษ</label>
                                 <input
                                     type="text"
                                     id="subNameEng"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("subNameEng", { required: true })}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="subTypeId" className="block text-xs font-medium text-gray-700">กลุ่มสาระการเรียนรู้</label>
+                                <label htmlFor="subTypeId" className="block text-sm font-medium text-gray-700">กลุ่มสาระการเรียนรู้</label>
                                 <select
                                     id="subTypeId"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("subTypeId", { required: true })}
                                 >
                                     {subjectTypes.map((type) => (
@@ -167,7 +167,7 @@ function EditForm() {
                             </div>
 
                             <div>
-                                <label htmlFor="tchId" className="block text-xs font-medium text-gray-700">ครูผู้สอน</label>
+                                <label htmlFor="tchId" className="block text-sm font-medium text-gray-700">ครูผู้สอน</label>
                                 <Select
                                     id="tchId"
                                     options={teachers}
@@ -182,7 +182,7 @@ function EditForm() {
 
                             <button 
                                 type="submit"
-                                className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="md:col-span-2 md:ml-auto md:w-fit inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
                                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

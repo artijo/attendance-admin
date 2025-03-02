@@ -15,38 +15,38 @@ function SubjectList({ subjects, subjectsPerPage }) {
   };
 
   return (
-    <div className="shadow-md border border-gray-200">
-      <div className="overflow-x-auto rounded-t-lg">
-        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-          <thead className="ltr:text-left rtl:text-right">
-            <tr className="h-12 shadow-md">
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+    <div>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr >
+              <th className="px-6 py-3">
                 รหัสวิชา
               </th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+              <th className="px-6 py-3">
                 ชื่อวิชา
               </th>
-              <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+              <th className="px-6 py-3">
                 หน่วยกิต
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-200">
+          <tbody >
             {currentSubjects.map((subject, index) => (
-              <tr key={index} className="even:bg-slate-100/70 text-center">
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+              <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   <Link
                     to={`/subjects/${subject.subId}`}
-                    className="hover:underline"
+                    className="hover:bg-gray-100"
                   >
                     {subject.subCode}
                   </Link>
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                </th>
+                <td className="px-6 py-3">
                   {subject.subNameThai} ({subject.subNameEng})
                 </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                <td className="px-6 py-3">
                   {subject.subCredit}
                 </td>
               </tr>
