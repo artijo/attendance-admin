@@ -27,9 +27,9 @@ function Calendar(){
 
     return(
         <div className="container mx-auto">
-            <h1>ปฎิทินการเรียน</h1>
+            <h1 className="text-center font-bold">ปฎิทินการเรียน</h1>
             <div>
-                <div className="mt-2 mb-2 flex justify-between items-end">
+                <div className="mt-2 mb-2 flex flex-col   md:flex-row  md:justify-between md:items-end">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="text-xs block font-medium text-gray-700">
@@ -70,15 +70,13 @@ function Calendar(){
                     </div>
                     
                     <Link to="/calendar/create">
-                        <div  className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <div  className="inline-flex justify-center items-center px-4 py-2 mt-5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                             เพิ่มปฎิทินการเรียน
                         </div>
                     </Link>
-                    
-                   
                 </div>
                 <div id="classroomList">
                         {

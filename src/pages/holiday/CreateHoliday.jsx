@@ -138,7 +138,7 @@ function CreateHoliday(){
         <div className="mx-auto containers">
         
             <div>
-                <h1 className="font-medium mb-4">ฟอร์มสร้างวันหยุด</h1>
+                <h1 className="text-center font-bold">ฟอร์มสร้างวันหยุด</h1>
                 <div className="mb-2"  onClick={() => {
                     setError(false)
                     setSuccess(false)

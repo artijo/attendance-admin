@@ -62,7 +62,7 @@ function Holiday(){
 
     return(
         <div className="container mx-auto">
-            <h1 className="mb-4">รายการวันหยุด</h1>
+            <h1 className="text-center font-bold">รายการวันหยุด</h1>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-1">
                 <div className="flex justify-between items-center gap-2">   
                     <div>

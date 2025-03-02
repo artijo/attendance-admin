@@ -96,7 +96,7 @@ function CreateCalendar(){
         <div className="container mx-auto">
             
             <div className="mx-auto container">
-                <h1 className="font-medium mb-4">สร้างปฏิทินการเรียน</h1>
+                <h1 className="text-center font-bold">สร้างปฏิทินการเรียน</h1>
                 <div className="mb-2"  onClick={() => {
                     setError(false)
                     setSuccess(false)

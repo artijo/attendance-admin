@@ -59,7 +59,7 @@ function EditHoliday() {
     return (
         <div className='container mx-auto' >
             
-            <h1 className="mb-4 font-medium">ฟอร์มแก้ไขวันหยุด</h1>
+            <h1 className="text-center font-bold">ฟอร์มแก้ไขวันหยุด</h1>
             <div className="mb-2"  onClick={() => {
                     setError(false)
                     setSuccess(false)
@@ -73,11 +73,11 @@ function EditHoliday() {
                     }
             </div>
             <form
-                className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2"
+                className="border p-4 rounded-2xl bg-white grid grid-cols-1 gap-2"
                 onSubmit={(e) => onSubmitEdit(e)}
             >
                 <div>
-                    <label className="block text-xs font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700">
                         ชื่อวันหยุด
                     </label>
                     <input
@@ -90,7 +90,7 @@ function EditHoliday() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700">
                         วันและเวลาที่เริ่มหยุด
                     </label>
                     <input
@@ -103,7 +103,7 @@ function EditHoliday() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700">
                         ประเภทวันหยุด
                     </label>
                     <select name="holidayType" 
@@ -119,9 +119,12 @@ function EditHoliday() {
 
                 <button
                     type="submit"   
-                    className="block w-fit ml-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                    className="md:w-fit md:ml-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                    แก้ไขวันหยุด
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    บันทึกการแก้ไข
                 </button>
             </form>
         </div>
