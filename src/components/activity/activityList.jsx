@@ -17,20 +17,20 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
     const ActivityTable = ({ activities, title }) => (
         <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">{title}</h2>
-            <div className="shadow-md border border-gray-200">
-                <div className="overflow-x-auto rounded-t-lg">
-                    <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                        <thead className="ltr:text-left rtl:text-right">
-                            <tr className="text-center h-12 shadow-md">
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อกิจกรรม</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วันที่</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เวลา</th>
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานที่</th>
+            <div>
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th className="px-6 py-3">ชื่อกิจกรรม</th>
+                                <th className="px-6 py-3">วันที่</th>
+                                <th className="px-6 py-3">เวลา</th>
+                                <th className="px-6 py-3">สถานที่</th>
                                 {/* <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">สถานะ</th> */}
-                                <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">การเข้าร่วม</th>
+                                <th className="px-6 py-3">การเข้าร่วม</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody >
                             {activities.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="px-4 py-4 text-center text-gray-500">
@@ -39,27 +39,28 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                 </tr>
                             ) : (
                                 activities.map((activity) => (
-                                    <tr key={activity.actId} className="even:bg-slate-100/70 text-center">
-                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                    <tr key={activity.actId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             <Link to={`/activity/${activity.actId}`} className="hover:bg-gray-100">
                                                 {activity.actName}
                                             </Link>
                                         </td>
-                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                        <td className="px-6 py-4">
                                             {formatDate(activity.actDate)}
                                         </td>
-                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                        <td className="px-6 py-4">
                                             {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
                                         </td>
-                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                                        <td className="px-6 py-4">
                                             {activity.actLocation}
                                         </td>
                                         {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             {activity.actStatus}
                                         </td> */}
-                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                                            <Link to={`/activity/${activity.actId}/participate`} className="hover:bg-gray-100">
-                                                <span className="underline text-blue-800">การเข้าร่วม</span>
+                                        <td className="px-6 py-4">
+                                            
+                                            <Link to={`/activity/${activity.actId}/participate`}>
+                                                <span className="px-2 py-[1px] rounded-md text-white bg-blue-600 hover:bg-blue-500 ">การเข้าร่วม</span>
                                             </Link>
                                         </td>
                                     </tr>
