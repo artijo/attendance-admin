@@ -152,14 +152,14 @@ function EditClassroom() {
     return (
         <div>
             <h1 className="font-bold text-center">แก้ไขข้อมูลห้องเรียน</h1>
-            <div className="mt-5 p-4 bg-white shadow sm:rounded-lg">
+            <div className="mt-5 p-4 bg-white shadow sm:rounded-2xl">
                 {error && <div className="text-red-500 mb-4">{error}</div>}
                 <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
                     <div>
-                        <label htmlFor="ClassName" className="block text-xs font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
+                        <label htmlFor="ClassName" className="block text-sm font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
                         <select
                             id="ClassName"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("classLevel")}
                         >
                             <option value={1}>ม.1</option>
@@ -172,17 +172,17 @@ function EditClassroom() {
                     </div>
                     
                     <div>
-                        <label htmlFor="ClassRoom" className="block text-xs font-medium text-gray-700"> ห้อง</label>
+                        <label htmlFor="ClassRoom" className="block text-sm font-medium text-gray-700"> ห้อง</label>
                         <input
                             type="text"
                             id="ClassRoom"
                             placeholder="xx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register("classRoom")}
                         />
                     </div>
                     <div>
-                        <label htmlFor="ClassType" className="block text-xs font-medium text-gray-700"> ประเภทห้องเรียน</label>
+                        <label htmlFor="ClassType" className="block text-sm font-medium text-gray-700"> ประเภทห้องเรียน</label>
                         <Select
                             id="ClassType"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -198,7 +198,7 @@ function EditClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="AcademicTerm" className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                        <label htmlFor="AcademicTerm" className="block text-sm font-medium text-gray-700">ภาคการศึกษา</label>
                         <Select
                             id="AcademicTerm"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -228,7 +228,7 @@ function EditClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="ClassTeacher" className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
+                        <label htmlFor="ClassTeacher" className="block text-sm font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                         <Select
                             id="ClassTeacher"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -242,7 +242,7 @@ function EditClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="Leader" className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
+                        <label htmlFor="Leader" className="block text-sm font-medium text-gray-700">หัวหน้าห้อง</label>
                         <Select
                             id="Leader"
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -254,7 +254,7 @@ function EditClassroom() {
                     </div>
                     <button 
                         type="submit"
-                        className="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="md:col-span-2 md:w-fit w-full md:ml-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

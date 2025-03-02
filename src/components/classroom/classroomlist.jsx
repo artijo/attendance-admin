@@ -1,34 +1,34 @@
 import { Link } from "react-router-dom";
 function ClassroomList({classrooms}) {
   return (
-    <div className="border border-gray-200">
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-        <thead className="ltr:text-left rtl:text-right">
-          <tr className="shadow-md h-12 text-center">
-            <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ห้องเรียน</th>
-            <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">แผนการเรียน</th>
-            <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ปีการศึกษา</th>
-            <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เทอม</th>
-            <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ตารางเรียน</th>
+    <div>
+    <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr >
+            <th className="px-6 py-3">ห้องเรียน</th>
+            <th className="px-6 py-3">แผนการเรียน</th>
+            <th className="px-6 py-3">ปีการศึกษา</th>
+            <th className="px-6 py-3">เทอม</th>
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-200">
+        <tbody>
           {classrooms.map((classroom) => (
-            <tr key={classroom.classId} className="even:bg-slate-100/70 text-center">
+            <tr key={classroom.classId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
               
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></td>
+              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></th>
               
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.classroomType.classTypeNameThai}</td>
+              <td className="px-6 py-4">{classroom.classroomType.classTypeNameThai}</td>
 
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.term.academicYear+543}</td>
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">{classroom.term.semester}</td>
+              <td className="px-6 py-4">{classroom.term.academicYear+543}</td>
+              <td className="px-6 py-4">{classroom.term.semester}</td>
               
-              <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+              <td className="px-6 py-4">
                   <Link 
                     to={`/timetable/${classroom.classId}`}
-                    className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700"
+                    // className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700"
+                    className="text-blue-600 hover:text-blue-500 hover:underline"
                   >
                     ตารางเรียน
                   </Link>

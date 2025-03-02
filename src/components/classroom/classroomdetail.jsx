@@ -155,44 +155,44 @@ function ShowDetail({ classroom }) {
 
   return (
     <>
-    <div className="flow-root bg-white rounded-lg border border-gray-100 py-3 shadow-sm">
+    <div className="flow-root bg-white rounded-2xl border border-gray-100 py-3 shadow-sm">
       <dl className="-my-3 divide-y divide-gray-100 text-sm">
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">ห้องเรียน</dt>
-          <dd className="text-gray-700 sm:col-span-2">{classroom.classLevel}/{classroom.classRoom}</dd>
+          <dt className="py-2 text-sm text-gray-800 uppercase">ห้องเรียน</dt>
+          <dd className="py-2 text-sm uppercase">{classroom.classLevel}/{classroom.classRoom}</dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">รายละเอียด</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">รายละเอียด</dt>
+          <dd className="py-2 text-sm uppercase">
            {classroom.classroomType.classTypeNameThai} ({classroom.classroomType.classTypeNameEng})
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">จำนวนนักเรียน</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">จำนวนนักเรียน</dt>
+          <dd className="py-2 text-sm uppercase">
             {classroom.classroomMembers? classroom.classroomMembers.length : 0} คน
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">ปีการศึกษา</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">ปีการศึกษา</dt>
+          <dd className="py-2 text-sm uppercase">
             {classroom.term.academicYear+543}
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">เทอม</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">เทอม</dt>
+          <dd className="py-2 text-sm uppercase">
             {classroom.term.semester}
           </dd>
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">ครูที่ปรึกษาห้องเรียน</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">ครูที่ปรึกษาห้องเรียน</dt>
+          <dd className="py-2 text-sm uppercase">
             {classroom.teacher.length > 0 ? (
                 classroom.teacher.map((teacher) => (
                     <span key={teacher.tchId}>{teacher.title} {teacher.fName} {teacher.lName} </span>
@@ -204,8 +204,8 @@ function ShowDetail({ classroom }) {
         </div>
 
         <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="font-bold text-gray-900">วิชาที่เรียน</dt>
-          <dd className="text-gray-700 sm:col-span-2">
+          <dt className="py-2 text-sm text-gray-800 uppercase">วิชาที่เรียน</dt>
+          <dd className="py-2 text-sm uppercase">
             {
                 classroom.timetable.length >0 ? (
                     classroom.timetable.map((timetable) => (
@@ -282,25 +282,25 @@ function ShowDetail({ classroom }) {
       classroom.classroomMembers.length > 0 && (
         <div className="mt-5">
           <h2 className="text-lg font-semibold text-gray-900">รายชื่อนักเรียนในห้องเรียน</h2>
-          <div className="overflow-x-auto mt-3">
-            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-              <thead className="ltr:text-left rtl:text-right">
+          <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักเรียน</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขที่</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ - สกุล</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">คะแนนความประพฤติ</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">จัดการ</th>
+                  <th className="px-6 py-3">รหัสนักเรียน</th>
+                  <th className="px-6 py-3">เลขที่</th>
+                  <th className="px-6 py-3">ชื่อ - สกุล</th>
+                  <th className="px-6 py-3">คะแนนความประพฤติ</th>
+                  <th className="px-6 py-3">จัดการ</th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-200">
+              <tbody>
                 {classroom.classroomMembers
                   .sort((a, b) => parseInt(a.stdNo) - parseInt(b.stdNo))
                   .map((student) => (
-                    <tr key={student.classRoomMemeberId}>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.student.stdId}</td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    <tr key={student.classRoomMemeberId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                      <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{student.student.stdId}</th>
+                      <td className="px-6 py-4">
                         {editingStudent?.classRoomMemeberId === student.classRoomMemeberId ? (
                           <div className="flex flex-col gap-1">
                             <input
@@ -323,13 +323,13 @@ function ShowDetail({ classroom }) {
                           student.stdNo
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      <td className="px-6 py-4">
                         {student.student.title == "MR" ? "นาย" : 
                          student.student.title == "MS" ? "นางสาว" : 
                          student.student.title == "BOY" ? "เด็กชาย" : "เด็กหญิง"} 
                         {student.student.fName} {student.student.lName}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      <td className="px-6 py-4">
                         {editingStudent?.classRoomMemeberId === student.classRoomMemeberId ? (
                           <input
                             type="number"
@@ -341,7 +341,7 @@ function ShowDetail({ classroom }) {
                           `${student.behaviourScore} คะแนน`
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      <td className="px-6 py-4">
                         <span className="inline-flex overflow-hidden rounded-md border bg-white shadow-sm">
                           {editingStudent?.classRoomMemeberId === student.classRoomMemeberId ? (
                             <>
@@ -365,7 +365,7 @@ function ShowDetail({ classroom }) {
                           ) : (
                             <>
                               <button
-                                className="inline-block p-3 text-blue-700 hover:bg-gray-50 focus:relative"
+                                className="inline-block p-3 text-blue-600 hover:bg-gray-50 focus:relative"
                                 onClick={() => handleEditClick(student)}
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -373,7 +373,7 @@ function ShowDetail({ classroom }) {
                                 </svg>
                               </button>
                               <button
-                                className="inline-block p-3 text-gray-700 hover:bg-gray-50 focus:relative"
+                                className="inline-block p-3 text-red-600 hover:bg-gray-50 focus:relative"
                                 onClick={() => handleDeleteClick(student.classRoomMemeberId)}
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

@@ -150,10 +150,10 @@ function CreateClassroom() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* Existing form fields with modified register names */}
                     <div>
-                        <label htmlFor={`ClassName_${index}`} className="block text-xs font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
+                        <label htmlFor={`ClassName_${index}`} className="block text-sm font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
                         <select
                             id={`ClassName_${index}`}
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register(`classroom_${index}.classLevel`)}
                         >
                             <option value={1}>ม.1</option>
@@ -166,21 +166,21 @@ function CreateClassroom() {
                     </div>
                     
                     <div>
-                        <label htmlFor={`ClassRoom_${index}`} className="block text-xs font-medium text-gray-700">ห้อง</label>
+                        <label htmlFor={`ClassRoom_${index}`} className="block text-sm font-medium text-gray-700">ห้อง</label>
                         <input
                             type="text"
                             id={`ClassRoom_${index}`}
                             placeholder="xx"
-                            className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                             {...register(`classroom_${index}.classRoom`)}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor={`ClassType_${index}`} className="block text-xs font-medium text-gray-700"> ประเภทห้องเรียน</label>
+                        <label htmlFor={`ClassType_${index}`} className="block text-sm font-medium text-gray-700"> ประเภทห้องเรียน</label>
                         <Select
                             id={`ClassType_${index}`}
-                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
                             options={classroomType?.map(ct => ({ value: ct.classTypeId, label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` })) || []}
                             {...register(`classroom_${index}.classTypeId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.classTypeId`, selectedOption ? selectedOption.value : null)}
@@ -188,10 +188,10 @@ function CreateClassroom() {
                         />
                     </div>
                     <div>
-                        <label htmlFor={`AcademicTerm_${index}`} className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                        <label htmlFor={`AcademicTerm_${index}`} className="block text-sm font-medium text-gray-700">ภาคการศึกษา</label>
                         <Select
                             id={`AcademicTerm_${index}`}
-                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
                             options={academicterms?.map(term => ({
                                 value: term.termId,
                                 label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
@@ -209,7 +209,7 @@ function CreateClassroom() {
                     </div>
 
                     <div>
-                        <label htmlFor={`ClassTeacher_${index}`} className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
+                        <label htmlFor={`ClassTeacher_${index}`} className="block text-sm font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                         <Select
                             id={`ClassTeacher_${index}`}
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -244,7 +244,7 @@ function CreateClassroom() {
     return (
         <div>
             <h1 className="font-bold text-center">เพิ่มห้องเรียน</h1>
-            <div className="mt-5 p-4 bg-white border shadow-sm sm:rounded-sm">
+            <div className="mt-5 p-4 bg-white  border shadow-sm sm:rounded-2xl ">
                 {error && <div className="text-red-500 mb-4">{error}</div>}
                 
                 <div className="mb-4">
@@ -295,10 +295,10 @@ function CreateClassroom() {
                     ) : (
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label htmlFor="ClassName" className="block text-xs font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
+                                <label htmlFor="ClassName" className="block text-sm font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
                                 <select
                                     id="ClassName"
-                                    className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                    className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                     {...register("classLevel")}
                                 >
                                     <option value={1}>ม.1</option>
@@ -312,21 +312,21 @@ function CreateClassroom() {
                             
                             <div className="flex gap-4">
                                 <div className="flex-1">
-                                    <label htmlFor="ClassRoom" className="block text-xs font-medium text-gray-700">
+                                    <label htmlFor="ClassRoom" className="block  text-sm font-medium text-gray-700">
                                         ห้อง
                                     </label>
                                     <input
                                         type="text"
                                         id="ClassRoom"
                                         placeholder="xx"
-                                        className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                        className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
                                         {...register("classRoom")}
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="ClassType" className="block text-xs font-medium text-gray-700"> ประเภทห้องเรียน</label>
+                                <label htmlFor="ClassType" className="block  text-sm font-medium text-gray-700"> ประเภทห้องเรียน</label>
                                 <Select
                                     id="ClassType"
                                     className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -337,7 +337,7 @@ function CreateClassroom() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="AcademicTerm" className="block text-xs font-medium text-gray-700">ภาคการศึกษา</label>
+                                <label htmlFor="AcademicTerm" className="block  text-sm font-medium text-gray-700">ภาคการศึกษา</label>
                                 <Select
                                     id="AcademicTerm"
                                     className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -357,7 +357,7 @@ function CreateClassroom() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="ClassTeacher" className="block text-xs font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
+                                <label htmlFor="ClassTeacher" className="block  text-sm font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                                 <Select
                                     id="ClassTeacher"
                                     className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -375,7 +375,7 @@ function CreateClassroom() {
                             </div>
                             
                             <div>
-                                <label htmlFor="Leader" className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
+                                <label htmlFor="Leader" className="block  text-sm font-medium text-gray-700">หัวหน้าห้อง</label>
                                 <Select
                                     id="Leader"
                                     className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
@@ -390,7 +390,7 @@ function CreateClassroom() {
                     
                     <button 
                         type="submit"
-                        className="flex mt-5 justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="flex mt-5 justify-center w-full md:ml-auto md:w-fit   items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
