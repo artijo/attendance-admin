@@ -73,7 +73,7 @@ export const CreateCalendarClassroomTable = ({ academicYearTermId, setSelectedCl
                             <tr key={level}>
                                 <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700">{level}</td>
                                 <td className="whitespace-nowrap text-center px-4 py-2 grid grid-cols-1">
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-wrap gap-4 items-center justify-start">
                                         {classrooms[level].map((classroom, index) => (
                                             <button 
                                                 type="button"
@@ -84,8 +84,6 @@ export const CreateCalendarClassroomTable = ({ academicYearTermId, setSelectedCl
                                             >
                                                 ห้อง{classroom.classRoom}
                                             </button>
-                                            
-                                            
                                         ))}
                                     </div>
                                     

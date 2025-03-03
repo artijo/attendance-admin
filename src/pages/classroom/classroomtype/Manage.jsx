@@ -138,7 +138,6 @@ const ClassroomTypeManage = () => {
                         </button>
                       </span>
                     </td>
-                   
                   </tr>
                 ))}
               </tbody>

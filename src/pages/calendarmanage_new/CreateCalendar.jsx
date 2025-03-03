@@ -94,7 +94,7 @@ function CreateCalendar(){
 
     return (
         <div className="container mx-auto">
-            
+            <div className="mx-auto container"></div>
             <div className="mx-auto container">
                 <h1 className="text-center font-bold">สร้างปฏิทินการเรียน</h1>
                 <div className="mb-2"  onClick={() => {
@@ -109,38 +109,38 @@ function CreateCalendar(){
                         success && <AlertSuccess title="สำเร็จ" message={msg}/>
                     }
                 </div>
-                <form className=" border bg-white p-4 grid-cols-1 rounded-lg mb-4 grid md:grid-cols-1 gap-4" onSubmit={(e) => handleOnSubmit(e)}>
-                    <div className="grid gap-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
                         <label className="block text-xs font-medium text-gray-700">
-                            ปีการศึกษาและเทอม <span className="ml-2 text-blue-600 underline"> <Link to="/terms/create">เพิ่มปีการศึกษา</Link> </span>
+                            วันหยุดในเทอมนั้นและปีการศึกษานั้น <span> <Link to="/holiday/create" className="ml-2 text-blue-600 underline">เพิ่มวันหยุด</Link> </span>
                         </label>
-                        <select name="academicyear_semester" onChange={(e)=> setAcademicYearSemester(e.target.value)} className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border">
-                            {
-                                academicYearTermList.length > 0 ? 
-                                    academicYearTermList.map((academicYearTermList) => {
-                                        return (
-                                            <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543} เทอม {academicYearTermList.semester} 
-                                            
-                                                    (วันที่เริ่มเปิดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termStart))} 
-                                                    วันสิ้นสุดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termEnd))})
-                                                
-                                            </option>
-                                        );
-                                    })
-                                :
-                                    <option value={""}>
-                                        ไม่มีปีการศึกษา
-                                    </option>
-                            }
-                        </select>
-                        
+                        <HolidayListable holidayList={holidayList} fectHolidayList={fetchHolidayList} />
                     </div>
-                    <div className="grid md:grid-cols-2 gap-2">
-                        <div>
+                    <form className=" border bg-white p-4 grid-cols-1 rounded-2xl mb-4 grid md:grid-cols-1 gap-4" onSubmit={(e) => handleOnSubmit(e)}>
+                        <div className="grid gap-1">
                             <label className="block text-xs font-medium text-gray-700">
-                                วันหยุดในเทอมนั้นและปีการศึกษานั้น <span> <Link to="/holiday/create" className="ml-2 text-blue-600 underline">เพิ่มวันหยุด</Link> </span>
+                                ปีการศึกษาและเทอม <span className="ml-2 text-blue-600 underline"> <Link to="/terms/create">เพิ่มปีการศึกษา</Link> </span>
                             </label>
-                            <HolidayListable holidayList={holidayList} fectHolidayList={fetchHolidayList} />
+                            <select name="academicyear_semester" onChange={(e)=> setAcademicYearSemester(e.target.value)} className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border">
+                                {
+                                    academicYearTermList.length > 0 ? 
+                                        academicYearTermList.map((academicYearTermList) => {
+                                            return (
+                                                <option  key={academicYearTermList.termId} value={academicYearTermList.termId}>ปีการศึกษา {academicYearTermList.academicYear + 543} เทอม {academicYearTermList.semester} 
+                                                
+                                                        (วันที่เริ่มเปิดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termStart))} 
+                                                        วันสิ้นสุดเทอม {formatDateToThai(formatDateTimeISOToDate(academicYearTermList.termEnd))})
+                                                    
+                                                </option>
+                                            );
+                                        })
+                                    :
+                                        <option value={""}>
+                                            ไม่มีปีการศึกษา
+                                        </option>
+                                }
+                            </select>
+                            
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700">
@@ -151,14 +151,14 @@ function CreateCalendar(){
                                 <CreateCalendarClassroomTable academicYearTermId={academicYearSemester} setSelectedClassrooms={setSelectedClassrooms} selectedClassrooms={selectedClassrooms}/>
                             }
                         </div>
-                    </div>
-                    <button type="submit" 
-                           className="inline-flex w-fit ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            
-                    >
-                            เพิ่มปฎิทินการเรียน
-                    </button>
-                </form>          
+                        <button type="submit" 
+                            className="inline-flex w-full md:w-fit ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                
+                        >
+                                เพิ่มปฎิทินการเรียน
+                        </button>
+                    </form>
+                </div>    
             </div>
         </div>
         
