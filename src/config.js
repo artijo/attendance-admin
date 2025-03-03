@@ -1,1 +1,1 @@
-export const HOSTNAME = "https://att-api.art-ohm.space";
+export const HOSTNAME = "https://studentattendanceapi-production.up.railway.app";
