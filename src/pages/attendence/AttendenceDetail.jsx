@@ -48,7 +48,7 @@ function AttendanceDetail() {
             {
                 isTabOpen != null &&
                 <div className="mx-auto container">
-                    {classroomInfo != null && <h5 className="text-xl mb-5"><span className="font-medium">รายละเอียดการเข้าเรียน</span> ห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}</h5>}
+                    {classroomInfo != null && <h1 className="text-center font-bold mb-4">รายละเอียดการเข้าเรียนห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom} เทอม {classroomInfo.term.semester}  ปีการศึกษา {classroomInfo.term.academicYear+543}</h1>}
                     <div className="grid grid-cols-1 gap-2">
                         <TapAttendenceSummaryOpen 
                             isTabOpen={isTabOpen} 

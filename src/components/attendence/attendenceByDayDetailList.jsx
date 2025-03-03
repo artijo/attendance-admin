@@ -121,70 +121,70 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                     <Noanything title={"ไม่มีการเรียนในวันนี้"} description={"ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฎิทินการเรียน"}/>
                 )
             }
-            {studentList.length > 0 && <div className="grid gap-2 md:grid-cols-1">
-                <div className="shadow-md border border-gray-200">
-                    <div className="overflow-x-auto">
-                        <table ref={ref} className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                            <thead className="ltr:text-left rtl:text-right">
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>คาบที่</td>
+            {studentList.length > 0 && <div>
+                <div>
+                    <div className="relative border overflow-x-auto shadow-md sm:rounded-2xl">
+                        <table ref={ref} className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th className="px-6 py-4 border-r border-b" colSpan={3}>คาบที่</th>
                                     {
                                         Array.from({ length: studentList[0].attendance.length }, (_, index) => (
-                                            <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" key={index}>{index + 1}</td>
+                                            <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}</th>
                                         ))
                                     }
                                 </tr>
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>รหัสวิชา</td>
+                                <tr >
+                                    <th className="px-6 py-4 border-r border-b" colSpan={3}>รหัสวิชา</th>
                                     {
                                         studentList[0].attendance.map((attendance, index) => (
-                                            <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" key={index}>{attendance.subjectCode}</td>
+                                            <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectCode}</th>
                                         ))
                                     }
                                 </tr>
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900">เลขที่</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900">รหัสนักศึกษา</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900">ชื่อ-นามสกุล</td>
+                                <tr >
+                                    <th className="px-6 py-4 border-r border-b">เลขที่</th>
+                                    <th className="px-6 py-4 border-r border-b">รหัสนักศึกษา</th>
+                                    <th className="px-6 py-4 border-r border-b">ชื่อ-นามสกุล</th>
                                     {
                                         studentList[0].attendance.map((attendance, index) => (
-                                            <td className=" border whitespace-nowrap px-4 py-2 font-bold text-gray-900" key={index}>{attendance.subjectName}</td>
+                                            <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectName}</th>
                                         ))
                                     }
                                 </tr>
                             </thead>
-                            <tbody className=" divide-y divide-gray-200">
+                            <tbody>
                                 {
                                     studentList.map((student, index) => (
-                                        <tr key={index} className="border">
-                                            <td className="border whitespace-nowrap px-4 py-2 text-gray-700">{student.stdNo}</td>      
-                                            <td className="border whitespace-nowrap px-4 py-2 text-gray-700">{student.stdId}</td>      
-                                            <td className="border whitespace-nowrap px-4 py-2 text-gray-700">{student.fName} {student.lName}</td>      
+                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                            <td className="px-6 py-4 border-r border-b">{student.stdNo}</td>      
+                                            <td className="px-6 py-4 border-r border-b">{student.stdId}</td>      
+                                            <td className="px-6 py-4 border-r border-b">{student.fName} {student.lName}</td>      
                                             {
                                                 student.attendance.map((attendance, index) => (
-                                                    <td className=" border whitespace-nowrap px-4 py-2 text-gray-700" key={index}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
+                                                    <td className="px-6 py-4 border-r border-b" key={index}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
                                                 ))
                                             }
                                         </tr>
                                     ))
                                 }
                             </tbody>
-                            <tfoot className=" divide-y divide-gray-200">
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>มาเรียน</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={studentList[0].attendance.length}>{totalStatus.present}</td>
+                            <tfoot>
+                                <tr>
+                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>มาเรียน</td>
+                                    <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.present}</td>
                                 </tr>
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>ขาดเรียน</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900"  colSpan={studentList[0].attendance.length}>{totalStatus.absent}</td>
+                                <tr >
+                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>ขาดเรียน</td>
+                                    <td className="px-6 py-4 border-r border-b"  colSpan={studentList[0].attendance.length}>{totalStatus.absent}</td>
                                 </tr>
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>ลา</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900"  colSpan={studentList[0].attendance.length}>{totalStatus.leave}</td>
+                                <tr>
+                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>ลา</td>
+                                    <td className="px-6 py-4 border-r border-b"  colSpan={studentList[0].attendance.length}>{totalStatus.leave}</td>
                                 </tr>
-                                <tr className="border">
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900" colSpan={3}>กิจกรรม</td>
-                                    <td className="border whitespace-nowrap px-4 py-2 font-bold text-gray-900"  colSpan={studentList[0].attendance.length}>{totalStatus.activity}</td>
+                                <tr>
+                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>กิจกรรม</td>
+                                    <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.activity}</td>
                                 </tr>
                             </tfoot>
                         </table>

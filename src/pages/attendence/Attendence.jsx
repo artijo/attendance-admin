@@ -28,7 +28,7 @@ function Attendence() {
 
     return (
         <div className="mx-auto container">
-            <h1 className="mb-4">การเข้าเรียน</h1>
+            <h1 className="text-center font-bold mb-4">การเข้าเรียน</h1>
             <div className="mb-4 flex gap-4">
                 <div>
                     <label className="block text-xs font-medium text-gray-700">ปีการศึกษาเทอม</label>

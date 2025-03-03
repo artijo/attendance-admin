@@ -21,19 +21,22 @@ function AttendenceSummaryByClassroom({classroomId}){
     return(
         <>
             <div>
-                <Link
-                    state={{
-                        classroomId: classroomId,
-                        studentList: studentList
-                    }}
-                    to={'/attendances/details/byclassroom'}
-                >
-                    <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700 mx-6">รายละเอียด</button>
-                </Link>
+                <span className='inline-flex overflow-hidden rounded-md border bg-white shadow-sm'>
+                    <Link state={{ classroomId: classroomId, studentList: studentList }} to={'/attendances/details/byclassroom'}>
+                        <button 
+                            
+                            className="inline-block p-3 text-blue-600 hover:bg-gray-50 focus:relative"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                            </svg>
+                            รายละเอียด
+                        </button>
+                    </Link>
+                </span>
+                
             </div>
-            
         </>
-       
     );
 };
 
