@@ -6,8 +6,8 @@ import ExportPdfButton from '../exportPdfButton';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { HOSTNAME } from '../../config';
-export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) => {
-    console.log(studentList);
+export const    AttendenceBySummaryByClassroomList = ({studentList,classroomId}) => {
+    // console.log(studentList);
     const ref = useRef();
     const page = Math.ceil(studentList.length/10);
     const [seletedPage, setSeletedPage] = useState(1);
@@ -88,7 +88,7 @@ export const AttendenceBySummaryByClassroomList = ({studentList,classroomId}) =>
                                                         <td className="px-6 py-4">{student.attendenceActivity}</td>
                                                         <td className="px-6 py-4">{student.attendenceCount}</td>
                                                         <td className="px-6 py-4">{student.behaviourScore} คะแนน</td>
-                                                        <td className="px-6 py-4">{student.attendencePercent}%</td>
+                                                        <td className="px-6 py-4">{isNaN(student.attendencePercent ) ? 0 : student.attendencePercent}%</td>
                                                         {/* <td className="whitespace-nowrap px-4 py-2 text-gray-700">{student.canExam}</td> */}
                                                     </tr>
                                                 ))
