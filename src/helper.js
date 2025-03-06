@@ -134,3 +134,9 @@ export function convertNumberToThaiMonth(monthNumber) {
     return "เลขเดือนไม่ถูกต้อง";
   }
 }
+
+export function dateTimeFormat(dateTime){
+  const dateTimeFormat = formatDateTimeISOToDate(dateTime);
+  const dateSplit = dateTimeFormat.split('-');
+  return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
+}

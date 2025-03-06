@@ -1,4 +1,4 @@
-import {PropTypes} from "prop-types";
+import {object, PropTypes} from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
@@ -7,11 +7,15 @@ import ExportPdfButton from "../exportPdfButton";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
+import { dateTimeFormat, formatDateTimeISOToDate } from "../../helper";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);
     const location = useLocation();
     const [totalStatus, setTotalStatus] = useState(null);
     const [classroomInfo, setClassroomInfo] = useState(null);
+
+    console.log(studentList);
+
     const setuptotalstatus = () => {
         const updatedTotalStatus = {
             present: 0,
@@ -88,6 +92,8 @@ export const AttendanceByDayDetailList = ({studentList}) => {
         }
     }
 
+
+
     useEffect(() => {
         fetchClassroomInfo();
     },[])
@@ -129,9 +135,12 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                                 <tr>
                                     <th className="px-6 py-4 border-r border-b" colSpan={3}>คาบที่</th>
                                     {
-                                        Array.from({ length: studentList[0].attendance.length }, (_, index) => (
-                                            <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}</th>
+                                        studentList[0].attendance.map((attendance, index) => (
+                                            <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}({dateTimeFormat(attendance.studingTimeDate)})</th>
                                         ))
+                                        // Array.from({ length: studentList[0].attendance.length }, (object, index) => (
+                                        //     <th className="px-6 py-4 border-r border-b" key={index}>{index + 1} {object.studingTimeDate}</th>
+                                        // ))
                                     }
                                 </tr>
                                 <tr >

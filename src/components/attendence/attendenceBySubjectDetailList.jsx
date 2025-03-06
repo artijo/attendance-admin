@@ -7,7 +7,7 @@ import { Link, useLocation,Navigate, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import axios from "axios";
 import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
-import { convertNumberToThaiMonth } from "../../helper";
+import { convertNumberToThaiMonth, dateTimeFormat } from "../../helper";
 import { tabletojson }from "tabletojson";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
     const location = useLocation();
@@ -41,9 +41,11 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                 <th className="px-2 py-4" >ชื่อ-นามสกุล</th>
                 {
                     studentList.data[0].attendance.map((attendance, index) => (
+                        
                     attendance.month === month && (
                         <th key={index} className="px-2 py-4">
-                            คาบที่ {++indexReal}
+                            คาบที่ {++indexReal}<br/>
+                            ({dateTimeFormat(attendance.studingTimeDate)})
                         </th>
                     )
                     ))
