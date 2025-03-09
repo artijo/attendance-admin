@@ -16,7 +16,6 @@ function CreateCalendar(){
     const [holidayList, setHolidayList] = useState([]);
     // input
     const [academicYearSemester, setAcademicYearSemester] = useState("");
-    const [selectedClassrooms, setSelectedClassrooms] = useState([]);
     // responed from server 
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
@@ -24,15 +23,9 @@ function CreateCalendar(){
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
-        if(selectedClassrooms.length === 0) {
-            setError(true);
-            setMsg("กรุณาเลือกห้องเรียน");
-            return;  
-        };
         const data = {
             holidayList: holidayList,
             termId: academicYearSemester,
-            classroomids: selectedClassrooms
         }
         try{
             const response = await axios.post(`${HOSTNAME}/a/studingtime`,data);
@@ -142,17 +135,8 @@ function CreateCalendar(){
                             </select>
                             
                         </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700">
-                                ห้องเรียน
-                            </label>
-                            {
-                                academicYearSemester !== "" &&
-                                <CreateCalendarClassroomTable academicYearTermId={academicYearSemester} setSelectedClassrooms={setSelectedClassrooms} selectedClassrooms={selectedClassrooms}/>
-                            }
-                        </div>
                         <button type="submit" 
-                            className="inline-flex w-full md:w-fit ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            className="inline-flex w-full h-fit md:w-fit ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 
                         >
                                 เพิ่มปฎิทินการเรียน
