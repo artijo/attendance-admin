@@ -2,10 +2,8 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
 export default function ExportPdfButton({PDFComponent, fileName}) {
-
-
     return (
-        <PDFDownloadLink document={PDFComponent } fileName={fileName}>
+        <PDFDownloadLink document={PDFComponent} fileName={fileName}>
             <div 
             className="cursor-pointer flex items-center gap-2 w-fit text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 dark:border-red-700"
             >

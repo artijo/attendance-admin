@@ -15,8 +15,6 @@ Font.register({
         },
     ]
 })
-
-
 export const styles = StyleSheet.create({
     page: {
         backgroundColor: "#fff",

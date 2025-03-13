@@ -1,21 +1,21 @@
-import {object, PropTypes} from "prop-types";
+import {PropTypes} from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import { Link, useLocation } from "react-router-dom";
+import {useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { dateTimeFormat, formatDateTimeISOToDate } from "../../helper";
+import { dateTimeFormat} from "../../helper";
+import ByDay from "./exportPdf/byday.jsx";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);
     const location = useLocation();
+    const date = location.state.date;
     const [totalStatus, setTotalStatus] = useState(null);
     const [classroomInfo, setClassroomInfo] = useState(null);
-
-    console.log(studentList);
-
     const setuptotalstatus = () => {
         const updatedTotalStatus = {
             present: 0,
@@ -91,9 +91,25 @@ export const AttendanceByDayDetailList = ({studentList}) => {
             console.log(error)
         }
     }
+    const handlePdfComponent = () => {
+        // console.log("FROM pad compontent: "  + String(classroomInfo));
+        if(studentList.length > 0 && totalStatus != null && classroomInfo != null ){
+            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo}/>
+        }
+        return null
+    }
 
-
-
+    const ExportPdfButtonKK = () => {
+         const handelExportPdfCheck = handlePdfComponent();
+            if(handelExportPdfCheck === null) {
+                return <p>Loading....</p>
+            }else{
+                return (
+                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการเข้าเรียนตามรายวัน`}/>
+            );
+        }
+    }
+  
     useEffect(() => {
         fetchClassroomInfo();
     },[])
@@ -101,26 +117,19 @@ export const AttendanceByDayDetailList = ({studentList}) => {
     return (
         <>
             {
-                studentList.length > 0 &&
-                <ul className="flex flex-row-reverse">
-                    <li>
-                        <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
-                    </li>
-                    <li>
-                        <Link to="/att/byday/pdf" state={
-                            { 
-                                studentList: studentList , 
-                                date: location.state.date,
-                                total: totalStatus,
-                                classroomInfo : classroomInfo
-                            }
-                        }>
-                            <ExportPdfButton/>
-                        </Link>
+                studentList.length > 0 && totalStatus != null && classroomInfo != null && (
+                    <ul className="flex flex-row-reverse">
+                        <li>
+                            <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
+                        </li>
+                        <li>
+                            <ExportPdfButtonKK/>
+                        </li>
                         
-                    </li>
-                     
-                </ul>
+                    </ul>
+                )
+                
+                
             }
             {
                 studentList.length === 0 && (
