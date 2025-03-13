@@ -10,6 +10,7 @@ function ClassroomList({classrooms}) {
             <th className="px-6 py-3">แผนการเรียน</th>
             <th className="px-6 py-3">ปีการศึกษา</th>
             <th className="px-6 py-3">เทอม</th>
+            <th className="px-6 py-3">จัดการ</th>
           </tr>
         </thead>
 
