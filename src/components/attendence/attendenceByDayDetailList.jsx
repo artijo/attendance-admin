@@ -7,7 +7,7 @@ import ExportPdfButton from "../exportPdfButton";
 import {useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { dateTimeFormat} from "../../helper";
+import { dateTimeFormat, formatDateToThai} from "../../helper";
 import ByDay from "./exportPdf/byday.jsx";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 export const AttendanceByDayDetailList = ({studentList}) => {
@@ -105,7 +105,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                 return <p>Loading....</p>
             }else{
                 return (
-                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการเข้าเรียนตามรายวัน`}/>
+                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการเข้าเรียนตามรายวันที่ ${formatDateToThai(date)}  ชั้นมัธยม ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}/>
             );
         }
     }

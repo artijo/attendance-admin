@@ -34,7 +34,7 @@ function ByDay({studentList,totalStatus,date,classroomInfo}) {
     <Document pageMode="fullScreen">
       <Page size="A4" style={styles.page} orientation="landscape">
         <View style={styles.headerDisplay}>
-          <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {date}</Text>
+          <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {formatDateToThai(date)}</Text>
           <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
         </View>
         {/* ตาราง */}

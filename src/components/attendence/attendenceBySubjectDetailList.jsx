@@ -92,7 +92,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                     <div>
                         <div className="relative border overflow-x-auto shadow-md sm:rounded-2xl">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <TableHeader month={month}/>
                                 </thead>
                                 <tbody>
@@ -152,7 +152,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
             return <p>Loading....</p>
         }else{
             return (
-                <ExportPdfButton PDFComponent={handelExportPdf(index, month)} fileName={`สรุปการเข้าเรียนวิชา ${subject.subNameThai}`}/>
+                <ExportPdfButton PDFComponent={handelExportPdf(index, month)} fileName={`สรุปการเข้าเรียนวิชา ${subject.subNameThai} เดือน ${convertNumberToThaiMonth(month)} ชั้นมัธยม ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}/>
             );
         }
     }

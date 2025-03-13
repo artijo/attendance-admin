@@ -2,13 +2,11 @@ import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
-function BySubejctCanExamPDF(){
-    const location = useLocation();
-    const classroomInfo = location.state.classroomInfo;
-    const studentList = location.state.studentList;
-    const subject = location.state.subject;
-    // console.log(studentList);
-
+function BySubejctCanExamPDF({
+  classroomInfo,
+  studentList,
+  subject
+}){
     const BySubejctCanExamPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
@@ -34,8 +32,8 @@ function BySubejctCanExamPDF(){
                     <TD style={[styles.td, { flex: 2 }]}>สถานะ ไม่มีสิทธ์สอบ</TD>
                 </TR>
                 {
-                    studentList.map((student) => ( 
-                        <TR>
+                    studentList.map((student, index) => ( 
+                        <TR key={index}>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdNo}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdId}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.fName}</TD>
@@ -56,13 +54,7 @@ function BySubejctCanExamPDF(){
         </Document>
       );
     return (
-        <div className="container mx-auto">
-          <div className="w-full h-[750px]">
-            <PDFViewer width="100%" height="100%">
-              <BySubejctCanExamPDF />
-            </PDFViewer>
-          </div>
-        </div>
+        <BySubejctCanExamPDF/>
       );
 };
 export default BySubejctCanExamPDF;

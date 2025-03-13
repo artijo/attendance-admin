@@ -141,7 +141,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
         {/* <Route path="att/byday/pdf" element={<ByDay/>} />  export pdf by day page */}
         {/* <Route path="att/bysubject/pdf" element={<BySubject/>} />  export pdf by subject page */}
-        <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  {/*export pdf by classroom page*/}
+        {/* <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  export pdf by classroom page */}
         <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
       </Route>
       <Route path="*" element={<NotFound />} />

@@ -5,6 +5,7 @@ import { HOSTNAME } from "../../config";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
+import BySubejctCanExamPDF from "./exportPdf/bysubjectCanExam";
 
 export const AttendanceBySubjectCanExam = () => {
     const location = useLocation();
@@ -62,75 +63,75 @@ export const AttendanceBySubjectCanExam = () => {
 
     const Table = () => {
         return (
-        <div className="grid gap-2 md:grid-cols-1">
-            <div className="shadow-md border border-gray-200">
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm" ref={ref}>
-                <thead className="ltr:text-left rtl:text-right">
-                    <tr className="shadow-md text-center h-12">
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+        <div>
+            <div >
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" ref={ref}>
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                    <th className="px-6 py-3">
                         เลขที่
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         รหัสนักเรียน
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         ชื่อ-สกุล
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         ขาดเรียน(ครั้ง)
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         เข้าสาย(ครั้ง)
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         ลา(ครั้ง)
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         กิจกรรม(ครั้ง)
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         เข้าเรียน(ครั้ง)
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         ร้อยละการเข้าเรียนรวมลา
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">
+                    <th className="px-6 py-3">
                         สถานไม่มีสิทธิ์สอบ
                     </th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 text-center">
+                <tbody>
                     {studentList.map((student, index) => (
-                    <tr key={index}>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                        <td className="px-6 py-4">
                         {student.stdNo}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.stdId}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {`${student.fName} ${student.lName}`}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendenceAbsentCount}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendenceLateCount}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendenceLeaveCount}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendenceActivity}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendenceCount}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.attendencePercent}%
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                        <td className="px-6 py-4">
                         {student.canExam}
                         </td>
                     </tr>
@@ -163,7 +164,23 @@ export const AttendanceBySubjectCanExam = () => {
             )
     }
 
+    const handelExportPdf = () => {
+        if(subject != null && classroomInfo != null && studentList.length > 0){
+            return <BySubejctCanExamPDF classroomInfo={classroomInfo} studentList={studentList} subject={subject}/>
+        }
+        return null;
+    }
 
+    const ExportPdfButtonKK = () => {
+        const handelExportPdfCheck = handelExportPdf();
+        if(handelExportPdfCheck === null) {
+            return <p>Loading....</p>
+        }else{
+            return (
+                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการมิสิทธ์สอบวิชา ${subject.subNameThai} ชั้นมัธยมปีที่ ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}/>
+            );
+        }
+    }
 
     return (
         <div className="mx-auto container">
@@ -173,9 +190,7 @@ export const AttendanceBySubjectCanExam = () => {
             </div>
             <div className="body">
                 <div className="flex gap-2 w-fit ml-auto">
-                    <div onClick={handleExportPDF}>
-                        <ExportPdfButton/>
-                    </div>
+                    <ExportPdfButtonKK/>
                     <ExportExcelButton handelOnClickFunction={handleExportExcel}/>
                 </div>
                 
@@ -183,4 +198,4 @@ export const AttendanceBySubjectCanExam = () => {
             </div>
         </div>
     );
-    };
+};
