@@ -104,6 +104,10 @@ function Participant() {
 
     const filteredParticipations = activity?.actParticipate.filter(isRecordMatchingFilters) || [];
 
+    const TextDropdownDocumentForPDFFilterByClassroom = () => {
+
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -142,6 +146,10 @@ function Participant() {
                         {/* Add classroom filter dropdown */}
                         <div className="flex justify-end gap-4 mb-4">
                             <DropdownExportDocument>
+                                <TextDropdownDocument 
+                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
+                                    actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
+                                />
                                 {
                                     selectedClassroom != 'all' &&
                                     <TextDropdownDocument 
@@ -149,10 +157,7 @@ function Participant() {
                                         actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
                                     />
                                 }
-                                <TextDropdownDocument 
-                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
-                                    actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
-                                />
+                                
 
                             </DropdownExportDocument>
                             <select

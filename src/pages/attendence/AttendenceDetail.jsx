@@ -36,7 +36,7 @@ function AttendanceDetail() {
         let newIsTabOpen = isTabOpen.slice();
         newIsTabOpen[index] = !newIsTabOpen[index];
         setIsTabOpen(newIsTabOpen)
-        console.log(newIsTabOpen);
+        // console.log(newIsTabOpen);
         sessionStorage.setItem("savedIsTapOpenArray",[...newIsTabOpen]);
         
     }
