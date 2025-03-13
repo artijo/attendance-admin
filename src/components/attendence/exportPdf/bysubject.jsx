@@ -1,16 +1,20 @@
 import { styles } from "./byday";
-import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
+import { Page, Text, View, Document, PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
 import { DateTime } from "luxon";
-function BySubject(){
-    const location = useLocation();
-    const subject = location.state.subject;
-    const classroomInfo =  location.state.classroomInfo;
-    const month = location.state.month;
-    const json = location.state.tableJson;
+function BySubject({
+  subject,
+  classroomInfo,
+  month,
+  tableJson
+}){
+    // const location = useLocation();
+    // const subject = location.state.subject;
+    // const classroomInfo =  location.state.classroomInfo;
+    // const month = location.state.month;
+    const json = tableJson;
     const rowRange = Object.keys(json[0][0]).length - 3;
-    
     const objectKeys = Object.keys(json[0][0]).filter((item) => {
         const filterKey = ["เลขที่","รหัสนักเรียน","ชื่อ-นามสกุล"];
         return !filterKey.includes(item);
@@ -22,7 +26,7 @@ function BySubject(){
     // console.log(rowRange);
     const dtNow = DateTime.now();
     const BySubjectPDF = () => (
-        <Document>
+        <Document pageMode="fullScreen">
           <Page size="A4" style={styles.page} orientation="landscape">
             <View style={styles.headerDisplay}>
               <Text style={styles.textHeader}>แบบสรุปการเรียนตามรายวิชาของวิชา {subject.subNameThai}({`${subject.subCode} - ${subject.subNameEng}`}) เดือน {month} {dtNow.year +543}</Text>
@@ -36,7 +40,7 @@ function BySubject(){
                     <TD style={[styles.td,{flex:2}]}>รหัสนักเรียน</TD>
                     {
                         Array(rowRange).fill("rows").map((_, index) => (
-                          <TD key={index} style={[styles.td,{flex:2}]}>คาบที่ {objectKeys[index]}</TD>
+                          <TD key={index} style={[styles.td,{flex:2}]}>{objectKeys[index]}</TD>
                         ))
                     }
                 </TH>
@@ -61,13 +65,14 @@ function BySubject(){
         </Document>
       );
     return (
-        <div className="container mx-auto">
-          <div className="w-full h-[750px]">
-            <PDFViewer width="100%" height="100%">
-              <BySubjectPDF />
-            </PDFViewer>
-          </div>
-        </div>
-      );
+        // <div className="container mx-auto">
+        //    <PDFDownloadLink document={<BySubjectPDF />} fileName="somename.pdf">
+        //       {({ blob, url, loading, error }) =>
+        //         loading ? 'Loading document...' : 'Download now!'
+        //       }
+        //     </PDFDownloadLink>
+        // </div>
+        <BySubjectPDF/>
+    );
 };
 export default BySubject;

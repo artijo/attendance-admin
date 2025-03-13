@@ -9,7 +9,9 @@ import axios from "axios";
 import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
 import { convertNumberToThaiMonth, dateTimeFormat } from "../../helper";
 import { tabletojson }from "tabletojson";
+import BySubject from "./exportPdf/bysubject";
 export const AttendenceBySubjectDetailList = ({studentList}) => {
+    const navigate = useNavigate();
     const location = useLocation();
     const subject = location.state.subject;
     const classroomId = location.state.classroomId;
@@ -129,37 +131,38 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         setIsTabOpen(arrayState);
     }
 
+    const handelExportExcel = (index) => {
+        if(ref.current[index]){
+            AttendanceSummaryByDay(ref.current[index]);
+        }
+    }
+
+    const handelExportPdf = (index, month) => {
+        const tableElement = ref.current[index];
+        if(tableElement != null){
+            const tableJson = tabletojson.convert(tableElement.outerHTML);
+            return <BySubject subject={subject} classroomInfo={classroomInfo} month={convertNumberToThaiMonth(month)} tableJson={tableJson}/> //by subject pdf
+        }
+        return null;
+    }
+
+    const ExportPdfButtonKK = ({index , month}) => {
+        const handelExportPdfCheck = handelExportPdf(index, month);
+        if(handelExportPdfCheck === null) {
+            return <p>Loading....</p>
+        }else{
+            return (
+                <ExportPdfButton PDFComponent={handelExportPdf(index, month)} fileName={`สรุปการเข้าเรียนวิชา ${subject.subNameThai}`}/>
+            );
+        }
+    }
+
     useEffect(() => {
         fetchClassroomInfo();
         if(studentList != null){
             makeValueIsOpen();
         }
     },[studentList])
-
-    const handelExportExcel = (index) => {
-        if(ref.current[index]){
-            AttendanceSummaryByDay(ref.current[index]);
-        }
-    }
-    // const [jsonElement, setJsonElement] = useState([]);
-    const navigate = useNavigate();
-    const handelExportPdf = (index, month) => {
-        const tableElement = ref.current[index];
-        if (tableElement) {
-            const tableJson = tabletojson.convert(tableElement.outerHTML);
-            navigate('/att/bysubject/pdf', { state: { tableJson: tableJson, classroomInfo:classroomInfo,  subject:subject, month: convertNumberToThaiMonth(month)} });
-        }
-    }
-
-    const ExportPdfButtonKK = ({ index , month}) => {
-        return (
-            <>
-                <div onClick={() => handelExportPdf(index, month)}>
-                    <ExportPdfButton />
-                </div>
-            </>
-        );
-    }
 
     const IsCanExamButton = () => {
         const handleNavigateOnClick = () => {
