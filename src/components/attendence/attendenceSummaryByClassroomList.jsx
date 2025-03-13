@@ -6,6 +6,7 @@ import ExportPdfButton from '../exportPdfButton';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { HOSTNAME } from '../../config';
+import ByClassroom from './exportPdf/byclassroom';
 export const    AttendenceBySummaryByClassroomList = ({studentList,classroomId}) => {
     // console.log(studentList);
     const ref = useRef();
@@ -14,45 +15,56 @@ export const    AttendenceBySummaryByClassroomList = ({studentList,classroomId})
     const sliceStudentList = studentList.slice((seletedPage - 1) * 10, seletedPage * 10);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const handaleExportExcel = () => {
-            if(ref.current) {
-                const tableList = ref.current;
-                AttendanceSummaryByDay(tableList);
-            }
-            
+        if(ref.current) {
+            const tableList = ref.current;
+            AttendanceSummaryByDay(tableList);
+        };
+    };
+    const fetchClassroomInfo = async () => {
+        try{
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
+            if(response.status === 200) {
+                setClassroomInfo(response.data);    
+            };
+        }catch(error) {
+            console.log(error);
+        };
+    };
+    const handlePdfComponent = () => {
+        if(classroomInfo != null && classroomInfo != undefined && studentList.length > 0) {
+            return <ByClassroom classroomInfo={classroomInfo} studentList={studentList}/>
         }
-        const fetchClassroomInfo = async () => {
-            try{
-                const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`)
-                if(response.status === 200) {
-                    setClassroomInfo(response.data);
-                    
-                }
-            }catch(error) {
-                console.log(error)
-            }
-        }
-    
-        useEffect(() => {
-            fetchClassroomInfo();
-        },[])
-    
-    return (
+        return null;
+    };
+
+    const ExportPdfButtonKK = () => {
+        const handaleExportPdfCheck = handlePdfComponent();
+        if(handaleExportPdfCheck === null) {
+            return <p>Loading...</p>
+        }else{
+            return <ExportPdfButton PDFComponent={handaleExportPdfCheck} fileName={"สรุปการเข้าเรียนตามห้อง"}/>
+        };
+    };
+    useEffect(() => {
+        fetchClassroomInfo();
+    },[])
+    return ( 
         <>
             {studentList.length === 0 && <div>ไม่พบข้อมูล</div>}
              {
-                                        studentList.length > 0 &&
-                                        <ul className="flex flex-row-reverse">
-                                            <li>
-                                                <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
-                                            </li>
-                                            <li>
-                                                <Link to="/att/byclassroom/pdf" state={{ studentList: studentList, classroomInfo:classroomInfo}}>
-                                                    <ExportPdfButton/>
-                                                </Link>
-                                            </li>
-                                             
-                                        </ul>
-                        }
+                studentList.length > 0 &&
+                    <ul className="flex flex-row-reverse">
+                        <li>
+                            <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
+                        </li>
+                        <li>
+                            {/* <Link to="/att/byclassroom/pdf" state={{ studentList: studentList, classroomInfo:classroomInfo}}>
+                                <ExportPdfButton/>
+                            </Link> */}
+                            <ExportPdfButtonKK/>
+                        </li>                    
+                    </ul>
+            }
             {
                 studentList.length > 0 && (
                     <div>

@@ -2,11 +2,13 @@ import { styles } from "./byday";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
-function ByClassroom(){
-    const location = useLocation();
-    const classroomInfo = location.state.classroomInfo;
-    const studentList = location.state.studentList;
-   
+function ByClassroom({
+  classroomInfo,
+  studentList
+}){
+    // const location = useLocation();
+    // const classroomInfo = location.state.classroomInfo;
+    // const studentList = location.state.studentList;
     const ByClassroomPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
@@ -56,13 +58,7 @@ function ByClassroom(){
         </Document>
       );
     return (
-        <div className="container mx-auto">
-          <div className="w-full h-[750px]">
-            <PDFViewer width="100%" height="100%">
-              <ByClassroomPDF />
-            </PDFViewer>
-          </div>
-        </div>
-      );
+        <ByClassroomPDF/>
+    );
 };
 export default ByClassroom;
