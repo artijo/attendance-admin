@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
         padding: "30px 50px",
     },
     textHeader: {
-        fontSize: 10,
+        fontSize: 16 ,
         fontWeight: "bold",
         textAlign: "left",
         marginBottom: 10,

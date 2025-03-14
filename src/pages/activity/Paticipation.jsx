@@ -1,13 +1,14 @@
 import { HOSTNAME } from "../../config";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { all } from "axios";
 import { useParams } from "react-router-dom";
 import { DateTime } from "luxon";
 import { convertNumberToThaiMonth } from "../../helper";
-import ExportExcelButton from "../../components/exportExcelButton";
+// import ExportExcelButton from "../../components/exportExcelButton";
 import { abstactActivity, abstactActivityFilterByClassroom } from "../../exportExcel";
 import DropdownExportDocument from "../../components/DropdownExportDocument";
 import TextDropdownDocument from "../../components/TextDropdownDocument";
+import FilterByClassroom from "../../components/activity/exportPDF/FilterByClassroom";
 
 function Participant() {
     const { id } = useParams();
@@ -104,10 +105,6 @@ function Participant() {
 
     const filteredParticipations = activity?.actParticipate.filter(isRecordMatchingFilters) || [];
 
-    const TextDropdownDocumentForPDFFilterByClassroom = () => {
-
-    }
-
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -157,8 +154,12 @@ function Participant() {
                                         actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
                                     />
                                 }
+                                {
+                                    selectedClassroom != 'all' &&(
+                                        <FilterByClassroom activityId={activity.actId} classId={selectedClassroom}/>
+                                    )
+                                }
                                 
-
                             </DropdownExportDocument>
                             <select
                                 value={selectedClassroom}
