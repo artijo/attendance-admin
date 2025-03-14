@@ -10,26 +10,23 @@ import PropTypes from "prop-types";
 import { DateTime } from "luxon";
 import React from "react";
 
-// ErrorBoundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
   }
-
   static getDerivedStateFromError(error) {
-    // Update state so the next render shows the fallback UI.
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log the error details for debugging.
+   
     console.error("ErrorBoundary caught an error", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      // Render fallback UI when an error is caught.
+     
       return <p>เกิดข้อผิดพลาดในขณะประมวลผลไฟล์ PDF Document.</p>;
     }
     return this.props.children;
