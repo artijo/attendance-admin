@@ -11,17 +11,18 @@ import TextDropdownDocument from "../../components/TextDropdownDocument";
 import FilterByClassroom from "../../components/activity/exportPDF/FilterByClassroom";
 // import TextDropdownDocumentPDF from "../../components/TextDropdownDocumentPDF";
 import TextDropdownDocumentPDFDropDown from "../../components/TextDropdownDocumentPDFDropDown";
+import FilterByRoomJoin from "../../components/activity/exportPDF/FilterByRoomJoin";
 
 function Participant() {
     const { id } = useParams();
     const [activity, setActivity] = useState(null);
     const [isPopUpPDF, setIsPopUpPDF] = useState(false);
+    const [isPopUpPDFRoomJoin, setIsPopUpPDFRoomJoin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedClassroom, setSelectedClassroom] = useState('all');
     
-
     useEffect(() => {
         const fetchActivity = async () => {
             try {
@@ -109,6 +110,10 @@ function Participant() {
 
     const handlePopUpPDF = () => {
         setIsPopUpPDF((prevState) => !prevState);
+    }
+
+    const handlePopUpPDFRoomJoin = () => {
+        setIsPopUpPDFRoomJoin((prevState) => !prevState);
     }
  
     if (loading) {
@@ -215,6 +220,65 @@ function Participant() {
                     )}
                 </div>
             )}
+            {isPopUpPDFRoomJoin && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    {getUniqueClassrooms().length === 0 && (
+                        <div className="relative inline-flex justify-center items-center bg-white md:w-[300px] md:h-[150px] rounded-2xl">
+                            <button
+                                className="absolute top-2 right-2 text-gray-600 hover:text-red-500 p-2"
+                                onClick={() => handlePopUpPDFRoomJoin()}
+                                aria-label="Close"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <div className="py-5 px-5">
+                                <span className="flex flex-col items-center justify-center text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
+                                    </svg>
+                                    ไม่มีห้องเรียนที่เข้าร่วมกิจกรรม
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                    {getUniqueClassrooms().length > 0 && (
+                        <div className="relative flex justify-start bg-white rounded-2xl w-[400px] h-fit">
+                             <button
+                                className="absolute top-2 right-2 text-gray-600 hover:text-red-500 p-2"
+                                onClick={() => handlePopUpPDFRoomJoin()}
+                                aria-label="Close"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <div className="py-10 w-full overflow-x-auto overflow-y-auto">
+                                <h4 className="text-xl font-bold text-gray-800 px-5 pb-2">การเข้าดาวน์โหลดเอกสารการเข้าร่วมกิจกรรมโดยแบ่งตามห้องเรียนที่เข้าร่วม</h4>
+                                <div className="px-5">
+                                    <FilterByRoomJoin activityId={activity.actId}/>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
             
             <div className="min-h-screen bg-gray-50">
                 <div className="mx-auto">
@@ -239,9 +303,14 @@ function Participant() {
                                         />
                                     }
                                     <TextDropdownDocument
-                                        title={`สรุปการเข้าร่วมกิจกรรมตามห้องเรียน (PDF)`}
+                                        title={`สรุปการเข้าร่วมกิจกรรมว่าแต่วันมีใครเข้าบ้าง (PDF)`}
                                         actionFunction={() => handlePopUpPDF()}
                                     />
+                                    <TextDropdownDocument
+                                        title={`สรุปการเข้าร่วมกิจกรรมโดยแบ่งตามห้องเรียนที่เข้าร่วม (PDF)`}
+                                        actionFunction={() => handlePopUpPDFRoomJoin()}
+                                    />
+                                    {/* <FilterByRoomJoin activityId={activity.actId} title={`สรุปการเข้าร่วมกิจกรรมตามห้องเรียนที่เข้าร่วม (PDF)`}/> */}
                                 </DropdownExportDocument>
                                 <select
                                     value={selectedClassroom}

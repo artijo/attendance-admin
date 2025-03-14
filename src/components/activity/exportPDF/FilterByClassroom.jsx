@@ -66,19 +66,17 @@ function FilterByClassroom({ activityId, classId, className }) {
   };
 
   const MyPDFDocument = () => (
-    <Document>
+    <Document pageMode="fullScreen">
       {Object.keys(participate).length > 0 ? (
         Object.keys(participate).map((key, keyIndex) => (
           <Page size="A4" orientation="portrait" style={styles.page} key={keyIndex}>
             <Text style={styles.textHeader}>{dateFormatToThai(key)}</Text>
-            <Table>
-              <TR>
-                <TH style={styles.tableHeader}>
-                  <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
-                  <TD style={[styles.td, { flex: 1 }]}>เวลาที่ลงชื่อ</TD>
-                  <TD style={[styles.td, { flex: 1 }]}>สถานะการเข้าร่วม</TD>
-                </TH>
-              </TR>
+            <Table style={styles.table}>
+              <TH style={styles.tableHeader}>
+                <TD style={[styles.td,{flex:1}]}>รหัสนักเรียน</TD>
+                <TD  style={[styles.td,{flex:1}]}>เวลาที่ลงชื่อ</TD>
+                <TD style={[styles.td,{flex:1}]}>สถานะการเข้าร่วม</TD>
+              </TH>
               {participate[key].map((pati, patiIndex) => (
                 <TR key={patiIndex}>
                   <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>

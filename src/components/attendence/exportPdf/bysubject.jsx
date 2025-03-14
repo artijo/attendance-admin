@@ -9,21 +9,13 @@ function BySubject({
   month,
   tableJson
 }){
-    // const location = useLocation();
-    // const subject = location.state.subject;
-    // const classroomInfo =  location.state.classroomInfo;
-    // const month = location.state.month;
     const json = tableJson;
     const rowRange = Object.keys(json[0][0]).length - 3;
     const objectKeys = Object.keys(json[0][0]).filter((item) => {
         const filterKey = ["เลขที่","รหัสนักเรียน","ชื่อ-นามสกุล"];
         return !filterKey.includes(item);
-        // console.log(filterKey[0]);
-        // console.log(item.toString());
       }
     );
-    // console.log(objectKeys.length);
-    // console.log(rowRange);
     const dtNow = DateTime.now();
     const BySubjectPDF = () => (
         <Document pageMode="fullScreen">
