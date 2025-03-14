@@ -9,6 +9,8 @@ import { abstactActivity, abstactActivityFilterByClassroom } from "../../exportE
 import DropdownExportDocument from "../../components/DropdownExportDocument";
 import TextDropdownDocument from "../../components/TextDropdownDocument";
 import FilterByClassroom from "../../components/activity/exportPDF/FilterByClassroom";
+// import TextDropdownDocumentPDF from "../../components/TextDropdownDocumentPDF";
+import TextDropdownDocumentPDFDropDown from "../../components/TextDropdownDocumentPDFDropDown";
 
 function Participant() {
     const { id } = useParams();
@@ -83,13 +85,11 @@ function Participant() {
         const classrooms = activity.actParticipate.map(record => {
             const classroomMember = record.student.classroomMembers[0]; // Get first classroom membership
             if (!classroomMember) return null;
-            
             return {
                 classId: classroomMember.classroom.classId,
                 className: `ม.${classroomMember.classroom.classLevel}/${classroomMember.classroom.classRoom}`
             };
         }).filter(Boolean); // Remove null values
-        
         return [...new Map(classrooms.map(item => [item.classId, item])).values()]
             .sort((a, b) => a.className.localeCompare(b.className));
     };
@@ -146,7 +146,7 @@ function Participant() {
                                 <TextDropdownDocument 
                                     title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
                                     actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
-                                />
+                                /> 
                                 {
                                     selectedClassroom != 'all' &&
                                     <TextDropdownDocument 
@@ -154,11 +154,15 @@ function Participant() {
                                         actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
                                     />
                                 }
-                                {
-                                    selectedClassroom != 'all' &&(
-                                        <FilterByClassroom activityId={activity.actId} classId={selectedClassroom}/>
-                                    )
-                                }
+                                <TextDropdownDocumentPDFDropDown 
+                                    title={`สรุปการเข้าเข้ากิจกรรมของห้องเรียนที่เลือก (PDF)`}
+                                >
+                                    {
+                                        getUniqueClassrooms().map((classroom, index) => (
+                                            <FilterByClassroom activityId={activity.actId} classId={classroom.classId} title={classroom.className} key={index}/>
+                                        ))
+                                    }
+                                </TextDropdownDocumentPDFDropDown>
                                 
                             </DropdownExportDocument>
                             <select
