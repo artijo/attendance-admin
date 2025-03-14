@@ -15,10 +15,12 @@ import TextDropdownDocumentPDFDropDown from "../../components/TextDropdownDocume
 function Participant() {
     const { id } = useParams();
     const [activity, setActivity] = useState(null);
+    const [isPopUpPDF, setIsPopUpPDF] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedClassroom, setSelectedClassroom] = useState('all');
+    
 
     useEffect(() => {
         const fetchActivity = async () => {
@@ -105,6 +107,10 @@ function Participant() {
 
     const filteredParticipations = activity?.actParticipate.filter(isRecordMatchingFilters) || [];
 
+    const handlePopUpPDF = () => {
+        setIsPopUpPDF((prevState) => !prevState);
+    }
+ 
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -132,137 +138,211 @@ function Participant() {
 
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="mx-auto">
-                <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                            ประวัติการเข้าร่วมกิจกรรม: {activity.actName}
-                        </h1>
-                        
-                        {/* Add classroom filter dropdown */}
-                        <div className="flex justify-end gap-4 mb-4">
-                            <DropdownExportDocument>
-                                <TextDropdownDocument 
-                                    title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
-                                    actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
-                                /> 
-                                {
-                                    selectedClassroom != 'all' &&
-                                    <TextDropdownDocument 
-                                        title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก (EXCEL)`}
-                                        actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
-                                    />
-                                }
-                                <TextDropdownDocumentPDFDropDown 
-                                    title={`สรุปการเข้าเข้ากิจกรรมของห้องเรียนที่เลือก (PDF)`}
-                                >
-                                    {
-                                        getUniqueClassrooms().map((classroom, index) => (
-                                            <FilterByClassroom activityId={activity.actId} classId={classroom.classId} title={classroom.className} key={index}/>
-                                        ))
-                                    }
-                                </TextDropdownDocumentPDFDropDown>
-                                
-                            </DropdownExportDocument>
-                            <select
-                                value={selectedClassroom}
-                                onChange={(e) => setSelectedClassroom(e.target.value)}
-                                className="block w-48 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        <div>
+            {/* Pop List PDF filter by classroom */}
+            {isPopUpPDF && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    {getUniqueClassrooms().length === 0 && (
+                        <div className="relative inline-flex justify-center items-center bg-white md:w-[300px] md:h-[150px] rounded-2xl">
+                            <button
+                                className="absolute top-2 right-2 text-gray-600 hover:text-red-500 p-2"
+                                onClick={() => handlePopUpPDF()}
+                                aria-label="Close"
                             >
-                                <option value="all">ทุกห้องเรียน</option>
-                                {getUniqueClassrooms().map((classroom) => (
-                                    <option key={classroom.classId} value={classroom.classId}>
-                                        {classroom.className}
-                                    </option>
-                                ))}
-                            </select>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <div className="py-5 px-5">
+                                <span className="flex flex-col items-center justify-center text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
+                                    </svg>
+                                    ไม่มีห้องเรียนที่เข้าร่วมกิจกรรม
+                                </span>
+                            </div>
                         </div>
-
-                        {/* Existing date selector */}
-                        <div className="relative mb-6">
-                            <div className="overflow-x-auto pb-2 hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
-                                <div className="flex gap-2 px-1">
-                                    {activity && getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
-                                        const dateTime = DateTime.fromISO(date).setZone('Asia/Bangkok');
-                                        const isToday = DateTime.now().setZone('Asia/Bangkok').hasSame(dateTime, 'day');
-                                        const thaiMonth = convertNumberToThaiMonth(dateTime.month);  
-                                        return (
-                                            <button
-                                                key={date}
-                                                onClick={() => setSelectedDate(date)}
-                                                className={`flex-shrink-0 flex flex-col items-center w-24 py-2 rounded-lg transition-all ${
-                                                    selectedDate === date
-                                                        ? 'bg-blue-600 text-white shadow-lg transform scale-105'
-                                                        : 'bg-white border hover:bg-gray-50'
-                                                } ${isToday ? 'ring-2 ring-blue-400' : ''}`}
-                                            >
-                                                <span className="text-xs mb-1">
-                                                    {dateTime.toFormat('ccc')}
-                                                </span>
-                                                <span className="text-lg font-semibold">
-                                                    {dateTime.day}
-                                                </span>
-                                                <span className="text-xs">
-                                                    {thaiMonth}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
+                    )}
+                    {getUniqueClassrooms().length > 0 && (
+                        <div className="relative inline-flex justify-start bg-white rounded-2xl w-[400px] h-[500px] md:w-[600px] md:h-[800px]">
+                             <button
+                                className="absolute top-2 right-2 text-gray-600 hover:text-red-500 p-2"
+                                onClick={() => handlePopUpPDF()}
+                                aria-label="Close"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <div className="py-10 w-full overflow-x-auto overflow-y-auto">
+                                <h4 className="text-xl font-bold text-gray-800 px-5 pb-2">การเข้าดาวน์โหลดเอกสารการเข้าร่วมกิจกรรมตามห้องเรียน</h4>
+                                <h4 className="text-sm font-bold text-gray-800 px-5 pb-2">รายการห้องเรียน</h4>
+                                <div className="relative overflow-x-auto sm:rounded-lg">
+                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border">
+                                            <tr>
+                                                <th scope="col" className="px-6 py-3">
+                                                    ห้องที่เข้าร่วม
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {getUniqueClassrooms().map((classroom, index) => (
+                                                <FilterByClassroom 
+                                                    activityId={activity.actId} classId={classroom.classId}
+                                                    className={classroom.className} key={classroom.classId + "key: " + index}
+                                                />
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Existing table */}
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full table-fixed">
-                                <thead>
-                                    <tr className="bg-gray-100">
-                                        <th className="px-6 py-3 text-left w-32">รหัสนักเรียน</th>
-                                        <th className="px-6 py-3 text-left">ชื่อ-นามสกุล</th>
-                                        <th className="px-6 py-3 text-center w-32">สถานะ</th>
-                                        <th className="px-6 py-3 text-left w-64">หมายเหตุ</th>
-                                        <th className="px-6 py-3 text-left w-48">บันทึกโดย</th>
-                                        <th className="px-6 py-3 text-left w-48">วันเวลาที่บันทึก</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {filteredParticipations.map((record) => (
-                                        <tr key={record.actParticipateId} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap">{record.stdId}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {record.student.title === 'BOY' ? 'เด็กชาย' : 'เด็กหญิง'} {record.student.fName} {record.student.lName}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    เข้าร่วม
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {record.note || '-'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {record.operateBy === 'TEACHER' && record.teacher ? (
-                                                    `${record.teacher.tchCode} ${record.teacher.fName}`
-                                                ) : record.operateBy}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {formatThaiDateTime(record.joinTimestamp)}
-                                            </td>
-                                        </tr>
+                    )}
+                </div>
+            )}
+            
+            <div className="min-h-screen bg-gray-50">
+                <div className="mx-auto">
+                    <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                                ประวัติการเข้าร่วมกิจกรรม: {activity.actName}
+                            </h1>
+                            
+                            {/* Add classroom filter dropdown */}
+                            <div className="flex justify-end gap-4 mb-4">
+                                <DropdownExportDocument>
+                                    <TextDropdownDocument 
+                                        title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
+                                        actionFunction={() => abstactActivityFilterByClassroom(activity.actId)}
+                                    /> 
+                                    {
+                                        selectedClassroom != 'all' &&
+                                        <TextDropdownDocument 
+                                            title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก (EXCEL)`}
+                                            actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
+                                        />
+                                    }
+                                    <TextDropdownDocument
+                                        title={`สรุปการเข้าร่วมกิจกรรมตามห้องเรียน (PDF)`}
+                                        actionFunction={() => handlePopUpPDF()}
+                                    />
+                                </DropdownExportDocument>
+                                <select
+                                    value={selectedClassroom}
+                                    onChange={(e) => setSelectedClassroom(e.target.value)}
+                                    className="block w-48 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="all">ทุกห้องเรียน</option>
+                                    {getUniqueClassrooms().map((classroom) => (
+                                        <option key={classroom.classId} value={classroom.classId}>
+                                            {classroom.className}
+                                        </option>
                                     ))}
-                                </tbody>
-                            </table>
-                            {filteredParticipations.length === 0 && (
-                                <div className="text-center py-8 text-gray-500">
-                                    {selectedDate ? 'ไม่พบข้อมูลการบันทึกในวันที่เลือก' : 'ยังไม่มีประวัติการบันทึก'}
+                                </select>
+                            </div>
+
+                            {/* Existing date selector */}
+                            <div className="relative mb-6">
+                                <div className="overflow-x-auto pb-2 hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                                    <div className="flex gap-2 px-1">
+                                        {activity && getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
+                                            const dateTime = DateTime.fromISO(date).setZone('Asia/Bangkok');
+                                            const isToday = DateTime.now().setZone('Asia/Bangkok').hasSame(dateTime, 'day');
+                                            const thaiMonth = convertNumberToThaiMonth(dateTime.month);  
+                                            return (
+                                                <button
+                                                    key={date}
+                                                    onClick={() => setSelectedDate(date)}
+                                                    className={`flex-shrink-0 flex flex-col items-center w-24 py-2 rounded-lg transition-all ${
+                                                        selectedDate === date
+                                                            ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                                                            : 'bg-white border hover:bg-gray-50'
+                                                    } ${isToday ? 'ring-2 ring-blue-400' : ''}`}
+                                                >
+                                                    <span className="text-xs mb-1">
+                                                        {dateTime.toFormat('ccc')}
+                                                    </span>
+                                                    <span className="text-lg font-semibold">
+                                                        {dateTime.day}
+                                                    </span>
+                                                    <span className="text-xs">
+                                                        {thaiMonth}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            )}
+                            </div>
+
+                            {/* Existing table */}
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full table-fixed">
+                                    <thead>
+                                        <tr className="bg-gray-100">
+                                            <th className="px-6 py-3 text-left w-32">รหัสนักเรียน</th>
+                                            <th className="px-6 py-3 text-left">ชื่อ-นามสกุล</th>
+                                            <th className="px-6 py-3 text-center w-32">สถานะ</th>
+                                            <th className="px-6 py-3 text-left w-64">หมายเหตุ</th>
+                                            <th className="px-6 py-3 text-left w-48">บันทึกโดย</th>
+                                            <th className="px-6 py-3 text-left w-48">วันเวลาที่บันทึก</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {filteredParticipations.map((record) => (
+                                            <tr key={record.actParticipateId} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap">{record.stdId}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {record.student.title === 'BOY' ? 'เด็กชาย' : 'เด็กหญิง'} {record.student.fName} {record.student.lName}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        เข้าร่วม
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {record.note || '-'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {record.operateBy === 'TEACHER' && record.teacher ? (
+                                                        `${record.teacher.tchCode} ${record.teacher.fName}`
+                                                    ) : record.operateBy}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {formatThaiDateTime(record.joinTimestamp)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {filteredParticipations.length === 0 && (
+                                    <div className="text-center py-8 text-gray-500">
+                                        {selectedDate ? 'ไม่พบข้อมูลการบันทึกในวันที่เลือก' : 'ยังไม่มีประวัติการบันทึก'}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
     );
 }
 
