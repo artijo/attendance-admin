@@ -3,7 +3,7 @@ import { Page, Text, Document, PDFDownloadLink } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 // @ts-ignore
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HOSTNAME } from "../../../config.js";
 import { convertNumberToThaiMonth } from "../../../helper.js";
 import PropTypes from "prop-types";
@@ -35,7 +35,8 @@ class ErrorBoundary extends React.Component {
 
 function FilterByClassroom({ activityId, classId, className }) {
   const [participate, setParticipate] = useState({});
-
+  const [isDownloadClick, setIsDownloadClick] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
   const getParticipateList = async () => {
     try {
       const response = await axios.get(
@@ -50,6 +51,23 @@ function FilterByClassroom({ activityId, classId, className }) {
       console.error(error);
     }
   };
+
+  const handleDownloadButton = () => {
+    setIsDownloadClick((prevState) => !prevState);
+    getParticipateList();
+  }
+
+  const autoClickDownload = (url, fileName) => {
+    if(url === null) {
+      return;
+    }else{
+      let alink = document.createElement("a");
+      alink.href = url;
+      alink.download = fileName;
+      alink.click();
+      alink.remove();
+    }
+  }
 
   const dateFormatToThai = (date) => {
     const dateSplit = date.split("-");
@@ -98,11 +116,6 @@ function FilterByClassroom({ activityId, classId, className }) {
       )}
     </Document>
   );
-
-  useEffect(() => {
-    getParticipateList();
-  }, [activityId, classId]);
-
   return (
     <>
       <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -113,20 +126,36 @@ function FilterByClassroom({ activityId, classId, className }) {
           {className}
         </th>
         <td className="px-6 py-4">
-          {Object.keys(participate).length > 0 ? (
+          {!isDownloadClick && (
+            <button 
+              className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500"
+              onClick={() => handleDownloadButton()}
+            >
+              ดาวน์โหลด    
+            </button>
+          )}
+          {Object.keys(participate).length > 0 && (
             <ErrorBoundary>
               <PDFDownloadLink
                 document={<MyPDFDocument />}
                 fileName={`สรุปการเข้าร่วมกิจกรรมตามห้องเรียน_${className}.pdf`}
-                className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500"
               >
-                {({ loading }) =>
-                  loading ? "กำลังเตรียมเอกสาร PDF..." : "ดาวน์โหลด"
-                }
+                {({ blob, url, loading, error }) => {
+                  useEffect(() => {
+                    if(!loading) {
+                      autoClickDownload(url, `สรุปการเข้าร่วมกิจกรรมตามห้องเรียน_${className}.pdf`);
+                    }
+                  },[loading,url])
+                  return (
+                    <button
+                      className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500"
+                    >
+                      {loading ? "กำลังเตรียมเอกสาร PDF..." : "ดาวน์โหลด"}
+                    </button>
+                  ) ;
+                }}
               </PDFDownloadLink>
             </ErrorBoundary>
-          ) : (
-            "Loading data..."
           )}
         </td>
       </tr>

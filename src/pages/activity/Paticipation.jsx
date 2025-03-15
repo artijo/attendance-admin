@@ -176,7 +176,7 @@ function Participant() {
                         </div>
                     )}
                     {getUniqueClassrooms().length > 0 && (
-                        <div className="relative inline-flex justify-start bg-white rounded-2xl w-[400px] h-[500px] md:w-[600px] md:h-[800px]">
+                        <div className="relative inline-flex justify-start bg-white w-[300px] h-[200px] md:w-[350px] md:h-[400px]">
                              <button
                                 className="absolute top-2 right-2 text-gray-600 hover:text-red-500 p-2"
                                 onClick={() => handlePopUpPDF()}
