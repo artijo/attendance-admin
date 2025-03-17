@@ -36,12 +36,20 @@ export const styles = StyleSheet.create({
         textAlign:'left',
         marginTop: 0,
         marginBottom:5
-    },  
+    },
+    textSpan: {
+        fontSize:10,
+        fontWeight:'light',
+        textAlign:'left',
+        marginBottom:5
+    },
     table: {
         width: "100%",
         borderWidth: 1,
         borderColor: "#000",
         fontSize: 10,
+        marginTop:10,
+        marginBottom:10,
     },
     tableHeader: {
         backgroundColor: "#e5e5e5",

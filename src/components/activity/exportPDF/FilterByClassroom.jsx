@@ -10,19 +10,44 @@ import { useLocation } from "react-router-dom";
 
 function FilterByClassroom() {
   const location = useLocation();
-  const { activityId, classId, className, filtersDate, activity } = location.state;
-  const [participate, setParticipate] = useState([]);
+  const { activityId, classId, className, startDate, endDate , activity } = location.state;
+  const [keyFilter, setKeyFilter] = useState([]);
+  const [participate, setParticipate] = useState({});
   // console.log(location.state.activity);
+
+  const getDatesBetween = (startDate, endDate) => {
+    const dates = [];
+    let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
+    const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
+    
+    while (current <= end) {
+        dates.push(current.toISODate());
+        current = current.plus({ days: 1 });
+    }
+    return dates;
+  };
+
+  const filterParticipate = (participate) => {
+    const date = getDatesBetween(startDate, endDate);
+    const objectKeys = Object.keys(participate).filter((dateKey) => {
+      if(date.includes(dateKey)) {
+        return dateKey
+      }
+    });
+    console.log(objectKeys);
+    setKeyFilter(objectKeys);
+  };
+
   const getParticipateList = async () => {
     try {
       const response = await axios.get(
         `${HOSTNAME}/a/activity/abstact/byclassroom/${activityId}/${classId}`
       );
       if (response.status === 200) {
-        setParticipate(response.data[filtersDate]);
+        setParticipate(response.data);
+        filterParticipate(response.data);
         // console.log(response.data[filtersDate]);
         // console.log(response.data);
-
       } else {
         throw new Error(response.data.message);
       }
@@ -52,9 +77,11 @@ function FilterByClassroom() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">เอกสาร PDF การเข้าร่วมกิจกรรม {activity.actName} วันที่ {dateFormatToThai(filtersDate)} ห้อง{className}</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-2">เอกสาร PDF การเข้าร่วมกิจกรรม {activity.actName} ห้อง{className}</h1>
+      <p className="text-xl font-light text-gray-600">ระหว่างวันที่ {dateFormatToThai(startDate)} ถึง {dateFormatToThai(endDate)}</p>
+      
       <div className="w-full h-[560px] rounded-2xl shadow-lg">
-        {participate.length > 0 ? (
+        {Object.keys(participate).length > 0 && keyFilter.length > 0 ? (
           <PDFViewer
           width={"100%"}
           height={"100%"}
@@ -62,30 +89,34 @@ function FilterByClassroom() {
           >
             <Document 
               pageMode="fullScreen"
-              title={`เอกสารการเข้าร่วมกิจกรรมวันที่ ${dateFormatToThai(filtersDate)} ห้อง ${className}`}
+              title={`เอกสารการเข้าร่วมกิจกรรม ${activity.actName} ห้อง ${className}`}
             >
               <Page size="A4" style={styles.page}  orientation="portrait">
                     <Image src={`/Logo_NPS.png`} style={styles.logoSize}/>
-                    <Text style={styles.textHeader}>การเข้าร่วมกิจกรรม {activity.actName} ประจำวันที่ {dateFormatToThai(filtersDate)} ห้อง {className}</Text>
+                    <Text style={styles.textHeader}>การเข้าร่วมกิจกรรม {activity.actName} ระหว่างวันที่ {dateFormatToThai(startDate)} ถึง {dateFormatToThai(endDate)} ห้อง {className}</Text>
                     <Text style={styles.textParagraph}>
                       สถานที {activity.actLocation} เริ่ม {activity.actStartTime} สิ้นสุด {activity.actEndTime}
                     </Text>
-                    <Table style={styles.table}>
-                      <TH style={styles.tableHeader}>
-                        <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
-                        <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
-                        <TD style={[styles.td, { flex: 1 }]}>เวลาที่ลงชื่อ</TD>
-                        <TD style={[styles.td, { flex: 1 }]}>สถานะการเข้าร่วม</TD>
-                      </TH>
-                      {participate.map((pati, patiIndex) => (
-                        <TR key={patiIndex}>
-                          <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
-                          <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</TD>
-                          <TD style={[styles.td, { flex: 1 }]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</TD>
-                          <TD style={[styles.td, { flex: 1 }]}> {pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}</TD>
-                        </TR>
-                      ))}
-                    </Table>
+                    {keyFilter.map((key) => (
+                      <Table style={styles.table} key={key}>
+                        <Text style={styles.textSpan}>{dateFormatToThai(key)}</Text>
+                        <TH style={styles.tableHeader}>
+                          <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
+                          <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
+                          <TD style={[styles.td, { flex: 1 }]}>เวลาที่ลงชื่อ</TD>
+                          <TD style={[styles.td, { flex: 1 }]}>สถานะการเข้าร่วม</TD>
+                        </TH>
+                        {participate[key].map((pati, patiIndex) => (
+                          <TR key={patiIndex}>
+                            <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
+                            <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</TD>
+                            <TD style={[styles.td, { flex: 1 }]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</TD>
+                            <TD style={[styles.td, { flex: 1 }]}> {pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}</TD>
+                          </TR>
+                        ))}
+                      </Table>
+                    ))}
+                    
                   </Page>
             </Document>
           </PDFViewer>) : (

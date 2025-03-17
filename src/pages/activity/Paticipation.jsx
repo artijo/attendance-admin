@@ -178,13 +178,6 @@ function Participant() {
                                         title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
                                         actionFunction={() => handleNavigateExcelFilterByRoom()}
                                     /> 
-                                    {/* {
-                                        selectedClassroom != 'all' &&
-                                        <TextDropdownDocument 
-                                            title={`สรุปการเข้ากิจกรรมของห้องเรียนที่เลือก (EXCEL)`}
-                                            actionFunction={() => abstactActivity(activity.actId,selectedClassroom)}
-                                        />
-                                    } */}
                                     <TextDropdownDocument
                                         title={`สรุปการเข้าร่วมกิจกรรมว่าแต่วันมีใครเข้าบ้าง (PDF)`}
                                         actionFunction={() => handleNaviatePDFFilterByRoom()}
