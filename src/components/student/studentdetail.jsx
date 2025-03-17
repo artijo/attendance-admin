@@ -67,7 +67,7 @@ function ShowDetail({ student }) {
           <dt className="py-2 text-sm text-gray-800 uppercase">คะแนนความประพฤติ</dt>
           <dd className="py-2 text-sm uppercase">
             {
-              `${student.classroomMembers[0]?.behaviourScore} คะแนน` || "ไม่มีข้อมูล"
+              student.classroomMembers[0]?.behaviourScore? student.classroomMembers[0]?.behaviourScore + " คะแนน" : "ไม่มีข้อมูล"
             }
           </dd>
         </div>
