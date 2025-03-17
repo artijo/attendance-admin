@@ -35,6 +35,21 @@ export function convertSecondsToTime(seconds) {
 }
 
 
+export const formatTitle = (title) => {
+  switch (title) {
+      case 'BOY':
+          return 'เด็กชาย';
+      case 'GIRL':
+          return 'เด็กหญิง';
+      case 'MR':
+          return 'นาย';
+      case 'MS':
+          return 'นางสาว';
+      default:
+          return title;
+  }
+}
+
 export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
   const timeSplit = time.split(':');
   return (parseInt(timeSplit[0])*3600)+(parseInt(timeSplit[1])*60);

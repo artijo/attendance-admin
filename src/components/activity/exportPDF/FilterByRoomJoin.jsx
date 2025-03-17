@@ -1,111 +1,79 @@
 import { useEffect, useState } from "react";
 import { styles } from "./style.js";
-import { Page, Text, Document, PDFDownloadLink } from "@react-pdf/renderer";
+import { Page, Text, Document, Image, PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
-import React from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../../config.js";
+import { useLocation } from "react-router-dom";
+import { formatTitle } from "../../../helper.js";
 
+function FilterByRoomJoin() {
+  const [participate, setParticipate] = useState([]);
+  const location = useLocation();
+  const { activityId, className, filterRoom, activity } = location.state;
+  // console.log(filterRoom);
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
+  const getParticipateList = async () => {
+    try {
+      const response = await axios.get(`${HOSTNAME}/a/activity/abstact/${activityId}`);
+      if (response.status == 200) {
+        setParticipate(response.data[filterRoom]);
+        // console.log(response.data[filterRoom]);
+      } else {
+        throw new Error(response.data.message);
+      };
+    } catch (error) {
+      console.error(error);
+    };
   }
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
 
-  componentDidCatch(error, errorInfo) {
-   
-    console.error("ErrorBoundary caught an error", error, errorInfo);
-  }
+  useEffect(() => {
+    getParticipateList();
+  }, []);
 
-  render() {
-    if (this.state.hasError) {
-     
-      return <p>เกิดข้อผิดพลาดในขณะประมวลผลไฟล์ PDF Document.</p>;
-    }
-    return this.props.children;
-  }
-}
-
-function FilterByRoomJoin({activityId}) {
-    const [participate, setParticipate] = useState([]);
-    
-    const getParticipateList = async () => {
-        try{
-            const response = await axios.get(`${HOSTNAME}/a/activity/abstact/${activityId}`);
-            if(response.status == 200){
-                setParticipate(response.data);
-                // console.log(response.data);
-            }else{
-                throw new Error(response.data.message);
-            };
-        }catch(error){
-            console.error(error);
-        };
-    }
-
-    useEffect(() => {
-        getParticipateList();
-    },[activityId]);
-
-    const MyPDFDocument = () => (
-        <Document pageMode="fullScreen">
-          {Object.keys(participate).length > 0 ? (
-            Object.keys(participate).map((key, keyIndex) => (
-              <Page size="A4" orientation="portrait" style={styles.page} key={keyIndex}>
-                <Text style={styles.textHeader}>ห้อง {key}</Text>
+  return (
+    <div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-2">เอกสาร PDF การเข้าร่วมกิจกรรม {activity.actName} ห้อง {className}</h1>
+      <div className="w-full h-[560px] rounded-2xl shadow-lg">
+        {participate.length > 0 ? (
+          <PDFViewer
+            width={"100%"}
+            height={"100%"}
+            style={{ borderRadius: "1rem" }}
+          >
+            <Document
+              pageMode="fullScreen"
+              title={`เอกสารการเข้าร่วมกิจกรรม ${activity.actName }วันที่ ห้อง ${className}`}
+            >
+              <Page size="A4" style={styles.page} orientation="portrait">
+                <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
+                <Text style={styles.textHeader}>สรุปการเข้าร่วมกิจกรรม {activity.actName} ห้อง {className}</Text>
+                <Text style={styles.textParagraph}>
+                  สถานที {activity.actLocation} เริ่ม {activity.actStartTime} สิ้นสุด {activity.actEndTime}
+                </Text>
                 <Table style={styles.table}>
                   <TH style={styles.tableHeader}>
-                    <TD style={[styles.td,{flex:1}]}>รหัสนักเรียน</TD>
-                    <TD  style={[styles.td,{flex:1}]}>คำนำหน้า</TD>
-                    <TD style={[styles.td,{flex:1}]}>ชื่อ</TD>
-                    <TD style={[styles.td,{flex:1}]}>นามสกุล</TD>
-                    <TD style={[styles.td,{flex:1}]}>จำนวนการเข้าร่วม</TD>
+                    <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
+                    <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
+                    <TD style={[styles.td, { flex: 1 }]}>จำนวนการเข้าร่วม</TD>
                   </TH>
-                  {participate[key].map((pati, patiIndex) => (
+                  {participate.map((pati, patiIndex) => (
                     <TR key={patiIndex}>
                       <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
-                      <TD style={[styles.td, { flex: 1 }]}>{pati.title}</TD>
-                      <TD style={[styles.td, { flex: 1 }]}>{pati.fName}</TD>
-                      <TD style={[styles.td, { flex: 1 }]}>{pati.lName}</TD>
-                      <TD style={[styles.td, { flex: 1 }]}>{pati.participateCount}</TD>
+                      <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.title)} {pati.fName} {pati.lName}</TD>
+                      <TD style={[styles.td, { flex: 1 }]}> {pati.participateCount}</TD>
                     </TR>
                   ))}
                 </Table>
               </Page>
-            ))
-          ) : (
-            <Page size="A4" orientation="portrait" style={styles.page}>
-              <Text style={styles.textHeader}>ไม่มีข้อมูลการเข้าร่วม</Text>
-            </Page>
-          )}
-        </Document>
+            </Document>
+          </PDFViewer>) : (
+          <div>กำลังโหลด....</div>
+        )}
+      </div>
+    </div>
 
-    );
-    return (
-        <>
-            {Object.keys(participate).length > 0 ? (
-                <ErrorBoundary>
-                    <PDFDownloadLink 
-                        document={<MyPDFDocument/>} 
-                        fileName={`เอกสารการเข้าร่วมกิจกรรมโดยแบ่งตามห้องเรียนที่เข้าร่วม`}
-                        className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500 text-ce"
-                    >
-                        {({ loading }) =>
-                            loading ? "กำลังเตรียมเอกสาร PDF..." : "ดาวน์โหลด"
-                        }
-                    </PDFDownloadLink>
-                </ErrorBoundary>
-            )
-            :(<p>Loading...</p>
-
-            )}
-        </>
-        
-    );
+  );
 }
 
 export default FilterByRoomJoin;

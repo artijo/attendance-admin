@@ -1,49 +1,28 @@
-import { styles } from "./style.js";
-import { Page, Text, Document, PDFDownloadLink } from "@react-pdf/renderer";
+import { useEffect, useState } from "react";
+import { Page, Text, Document, Image , PDFViewer } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
-// @ts-ignore
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
 import { HOSTNAME } from "../../../config.js";
-import { convertNumberToThaiMonth } from "../../../helper.js";
-import PropTypes from "prop-types";
+import { convertNumberToThaiMonth, formatTitle } from "../../../helper.js";
 import { DateTime } from "luxon";
-import React from "react";
+import {styles} from "./style.js";
+import { useLocation } from "react-router-dom";
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-   
-    console.error("ErrorBoundary caught an error", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-     
-      return <p>เกิดข้อผิดพลาดในขณะประมวลผลไฟล์ PDF Document.</p>;
-    }
-    return this.props.children;
-  }
-}
-
-function FilterByClassroom({ activityId, classId, className }) {
-  const [participate, setParticipate] = useState({});
-  const [isDownloadClick, setIsDownloadClick] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
+function FilterByClassroom() {
+  const location = useLocation();
+  const { activityId, classId, className, filtersDate, activity } = location.state;
+  const [participate, setParticipate] = useState([]);
+  // console.log(location.state.activity);
   const getParticipateList = async () => {
     try {
       const response = await axios.get(
         `${HOSTNAME}/a/activity/abstact/byclassroom/${activityId}/${classId}`
       );
       if (response.status === 200) {
-        setParticipate(response.data);
+        setParticipate(response.data[filtersDate]);
+        // console.log(response.data[filtersDate]);
+        // console.log(response.data);
+
       } else {
         throw new Error(response.data.message);
       }
@@ -51,23 +30,6 @@ function FilterByClassroom({ activityId, classId, className }) {
       console.error(error);
     }
   };
-
-  const handleDownloadButton = () => {
-    setIsDownloadClick((prevState) => !prevState);
-    getParticipateList();
-  }
-
-  const autoClickDownload = (url, fileName) => {
-    if(url === null) {
-      return;
-    }else{
-      let alink = document.createElement("a");
-      alink.href = url;
-      alink.download = fileName;
-      alink.click();
-      alink.remove();
-    }
-  }
 
   const dateFormatToThai = (date) => {
     const dateSplit = date.split("-");
@@ -82,84 +44,58 @@ function FilterByClassroom({ activityId, classId, className }) {
       dateTime.toFormat(" HH:mm น.")
     );
   };
+  
 
-  const MyPDFDocument = () => (
-    <Document pageMode="fullScreen">
-      {Object.keys(participate).length > 0 ? (
-        Object.keys(participate).map((key, keyIndex) => (
-          <Page size="A4" orientation="portrait" style={styles.page} key={keyIndex}>
-            <Text style={styles.textHeader}>{dateFormatToThai(key)}</Text>
-            <Table style={styles.table}>
-              <TH style={styles.tableHeader}>
-                <TD style={[styles.td,{flex:1}]}>รหัสนักเรียน</TD>
-                <TD  style={[styles.td,{flex:1}]}>เวลาที่ลงชื่อ</TD>
-                <TD style={[styles.td,{flex:1}]}>สถานะการเข้าร่วม</TD>
-              </TH>
-              {participate[key].map((pati, patiIndex) => (
-                <TR key={patiIndex}>
-                  <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
-                  <TD style={[styles.td, { flex: 1 }]}>
-                    {pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}
-                  </TD>
-                  <TD style={[styles.td, { flex: 1 }]}>
-                    {pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}
-                  </TD>
-                </TR>
-              ))}
-            </Table>
-          </Page>
-        ))
-      ) : (
-        <Page size="A4" orientation="portrait" style={styles.page}>
-          <Text style={styles.textHeader}>ไม่มีข้อมูลการเข้าร่วม</Text>
-        </Page>
-      )}
-    </Document>
-  );
+  useEffect(() => {
+    getParticipateList();
+  },[])
+
   return (
-    <>
-      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-        <th
-          scope="row"
-          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-        >
-          {className}
-        </th>
-        <td className="px-6 py-4">
-          {!isDownloadClick && (
-            <button 
-              className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500"
-              onClick={() => handleDownloadButton()}
+    <div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-2">เอกสาร PDF การเข้าร่วมกิจกรรม {activity.actName} วันที่ {dateFormatToThai(filtersDate)} ห้อง{className}</h1>
+      <div className="w-full h-[560px] rounded-2xl shadow-lg">
+        {participate.length > 0 ? (
+          <PDFViewer
+          width={"100%"}
+          height={"100%"}
+          style={{borderRadius: "1rem"}}
+          >
+            <Document 
+              pageMode="fullScreen"
+              title={`เอกสารการเข้าร่วมกิจกรรมวันที่ ${dateFormatToThai(filtersDate)} ห้อง ${className}`}
             >
-              ดาวน์โหลด    
-            </button>
-          )}
-          {Object.keys(participate).length > 0 && (
-            <ErrorBoundary>
-              <PDFDownloadLink
-                document={<MyPDFDocument />}
-                fileName={`สรุปการเข้าร่วมกิจกรรมตามห้องเรียน_${className}.pdf`}
-              >
-                {({ blob, url, loading, error }) => {
-                  useEffect(() => {
-                    if(!loading) {
-                      autoClickDownload(url, `สรุปการเข้าร่วมกิจกรรมตามห้องเรียน_${className}.pdf`);
-                    }
-                  },[loading,url])
-                  return (
-                    <button
-                      className="px-4 py-1 text-xs bg-blue-600 text-white cursor-pointer rounded-full hover:bg-blue-500"
-                    >
-                      {loading ? "กำลังเตรียมเอกสาร PDF..." : "ดาวน์โหลด"}
-                    </button>
-                  ) ;
-                }}
-              </PDFDownloadLink>
-            </ErrorBoundary>
-          )}
-        </td>
-      </tr>
-    </>
+              <Page size="A4" style={styles.page}  orientation="portrait">
+                    <Image src={`/Logo_NPS.png`} style={styles.logoSize}/>
+                    <Text style={styles.textHeader}>การเข้าร่วมกิจกรรม {activity.actName} ประจำวันที่ {dateFormatToThai(filtersDate)} ห้อง {className}</Text>
+                    <Text style={styles.textParagraph}>
+                      สถานที {activity.actLocation} เริ่ม {activity.actStartTime} สิ้นสุด {activity.actEndTime}
+                    </Text>
+                    <Table style={styles.table}>
+                      <TH style={styles.tableHeader}>
+                        <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
+                        <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
+                        <TD style={[styles.td, { flex: 1 }]}>เวลาที่ลงชื่อ</TD>
+                        <TD style={[styles.td, { flex: 1 }]}>สถานะการเข้าร่วม</TD>
+                      </TH>
+                      {participate.map((pati, patiIndex) => (
+                        <TR key={patiIndex}>
+                          <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
+                          <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</TD>
+                          <TD style={[styles.td, { flex: 1 }]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</TD>
+                          <TD style={[styles.td, { flex: 1 }]}> {pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}</TD>
+                        </TR>
+                      ))}
+                    </Table>
+                  </Page>
+            </Document>
+          </PDFViewer>) : (
+            <div>กำลังโหลด....</div>
+          )
+        }
+        
+      </div>
+    </div>
+    
   );
 }
 

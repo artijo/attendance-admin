@@ -3,7 +3,7 @@ import { func } from 'prop-types';
 import * as XLSX from 'xlsx';
 import { HOSTNAME } from './config';
 import { DateTime, Zone } from 'luxon';
-import { convertNumberToThaiMonth } from './helper';
+import { convertNumberToThaiMonth, formatTitle } from './helper';
 const formatAttStatus = (status) => {
     switch (status) {
         case 'present':
@@ -28,50 +28,76 @@ export function AttendanceSummaryByDay(table){
     XLSX.writeFile(workbook, "Sheets.xlsx", {compression :true});
 }
 
-export async function abstactActivity(activityId, classId) {
+export async function abstactActivity(activityId, classId, filterDate, className, activityName) {
     let response;
     try{
         const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/byclassroom/${activityId}/${classId}`);
         if(responsed.status == 200){
-            response = responsed.data;
-            console.log(responsed.data);
+            response = responsed.data[filterDate];
+            // console.log(responsed.data);
         }else{
             throw new Error(response.data.message);
         };
     }catch(error){
         console.error(error);
     };
-    const keyObject = Object.keys(response);
-    const workbook = XLSX.utils.book_new();
-    keyObject.forEach((key) => {
-        const arrayOfJsonObject = []
-        const dateSplit = key.split('-');
-        const dateFormatToThai = `${dateSplit[2]} ${convertNumberToThaiMonth(parseInt(dateSplit[1]))} ${parseInt(dateSplit[0]) + 543}`
-        response[key].forEach((parcitpate) => {
-            if(parcitpate.isJoin){
-                const dateTime = DateTime.fromISO(parcitpate.joinTimestamp).setZone("Asia/Bangkok");
-                const thaiDateTime = dateTime.setLocale("th").toFormat("d LLLL ") + (dateTime.year + 543) + dateTime.toFormat(" HH:mm น.");
-                const formatObject = {
-                    'รหัสนักเรียน' : parcitpate.stdId,
-                    'เวลาที่ลงชื่อ' : thaiDateTime,
-                    'สถานะการเข้าร่วม': "เข้าร่วม"
-                }
-                arrayOfJsonObject.push(formatObject)
-            }else{
-                const formatObject = {
-                    'รหัสนักเรียน' : parcitpate.stdId,
-                    'เวลาที่ลงชื่อ' : "-",
-                    'สถานะการเข้าร่วม': "ไม่เข้าร่วม"
-                }
-                arrayOfJsonObject.push(formatObject)
+
+    const arrayOfJsonObject = [];
+    const dateSplit = filterDate.split('-');
+    const dateFormatToThai = `${dateSplit[2]} ${convertNumberToThaiMonth(parseInt(dateSplit[1]))} ${parseInt(dateSplit[0]) + 543}`
+    response.forEach((pati) => {
+        if(pati.isJoin) {
+            const dateTime = DateTime.fromISO(pati.joinTimestamp).setZone("Asia/Bangkok");
+            const thaiDateTime = dateTime.setLocale("th").toFormat("d LLLL ") + (dateTime.year + 543) + dateTime.toFormat(" HH:mm น.");
+            const formatObject = {
+                'รหัสนักเรียน' : pati.stdId,
+                'ชื่อ-นามสกุล' : `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
+                'เวลาที่ลงชื่อ' : thaiDateTime,
+                'สถานะการเข้าร่วม' : "เข้าร่วม"
             }
-        })
-        // console.log(arrayOfJsonObject);
-        const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
-        XLSX.utils.book_append_sheet(workbook, worksheet, dateFormatToThai);
+            arrayOfJsonObject.push(formatObject);
+        }else{
+            const formatObject = {
+                'รหัสนักเรียน' : pati.stdId,
+                'ชื่อ-นามสกุล' : `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
+                'เวลาที่ลงชื่อ' : "-",
+                'สถานะการเข้าร่วม' : "ไม่ข้าร่วม"
+            }
+            arrayOfJsonObject.push(formatObject);
+        }
     });
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
+    XLSX.utils.book_append_sheet(workbook,worksheet, dateFormatToThai)
+    // keyObject.forEach((key) => {
+    //     const arrayOfJsonObject = []
+    //     const dateSplit = key.split('-');
+    //     const dateFormatToThai = `${dateSplit[2]} ${convertNumberToThaiMonth(parseInt(dateSplit[1]))} ${parseInt(dateSplit[0]) + 543}`
+    //     response[key].forEach((parcitpate) => {
+    //         if(parcitpate.isJoin){
+    //             const dateTime = DateTime.fromISO(parcitpate.joinTimestamp).setZone("Asia/Bangkok");
+    //             const thaiDateTime = dateTime.setLocale("th").toFormat("d LLLL ") + (dateTime.year + 543) + dateTime.toFormat(" HH:mm น.");
+    //             const formatObject = {
+    //                 'รหัสนักเรียน' : parcitpate.stdId,
+    //                 'เวลาที่ลงชื่อ' : thaiDateTime,
+    //                 'สถานะการเข้าร่วม': "เข้าร่วม"
+    //             }
+    //             arrayOfJsonObject.push(formatObject)
+    //         }else{
+    //             const formatObject = {
+    //                 'รหัสนักเรียน' : parcitpate.stdId,
+    //                 'เวลาที่ลงชื่อ' : "-",
+    //                 'สถานะการเข้าร่วม': "ไม่เข้าร่วม"
+    //             }
+    //             arrayOfJsonObject.push(formatObject)
+    //         }
+    //     })
+    //     // console.log(arrayOfJsonObject);
+    //     const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, dateFormatToThai);
+    // });
     try{
-        XLSX.writeFile(workbook, "สรุปการเข้ากิจกรรมตามวันและตามห้องเรียนที่เลือก.xlsx", {compression :true});
+        XLSX.writeFile(workbook, `สรุปการเข้ากิจกรรม ${activityName} ห้อง ${className} วันที่ ${filterDate}.xlsx`, {compression :true});
     }catch(error){
         console.error(error);
     }

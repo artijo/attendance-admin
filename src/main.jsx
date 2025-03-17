@@ -72,6 +72,11 @@ import ByClassroom from "./components/attendence/exportPdf/byclassroom.jsx";
 import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
 import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
 import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
+import FilterClassroomPage from "./pages/activity/pdfmanagedownload/FilterClassroomPage.jsx";
+import FilterByClassroom from "./components/activity/exportPDF/FilterByClassroom.jsx";
+import FilterByRoomJoin from "./components/activity/exportPDF/FilterByRoomJoin.jsx";
+import FilterByClassroomJoinPage from "./pages/activity/pdfmanagedownload/FilterByClassroomJoinPage.jsx";
+import ExcelByFilterRoom from "./pages/activity/excelmanagedownload/ExcelByRoomJoin.jsx";
 
 createRoot(document.getElementById("root")).render(
   
@@ -132,6 +137,11 @@ createRoot(document.getElementById("root")).render(
         <Route path="activity/:id" element={<ActivityDetail />} />
         <Route path="activity/edit/:id" element={<EditActivity />} />
         <Route path="activity/:id/participate" element={<Participant />} />
+        <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
+        <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
+        <Route path="activity/participate/filterbyclassroom/pdfpage" element={<FilterByClassroom />} />
+        <Route path="activity/participate/filterbyclassroomjoin" element={<FilterByClassroomJoinPage />} />
+        <Route path="activity/participate/filterbyclassroomjoin/pdfpage" element={<FilterByRoomJoin />} />
         {/* Attendance */}
         <Route path="attendances" element={<Attendence/>} />
         <Route path="attendances/details/:id" element={<AttendanceDetail/>} />
@@ -139,6 +149,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
         <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
         <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
+
         {/* <Route path="att/byday/pdf" element={<ByDay/>} />  export pdf by day page */}
         {/* <Route path="att/bysubject/pdf" element={<BySubject/>} />  export pdf by subject page */}
         {/* <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  export pdf by classroom page */}
