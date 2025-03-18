@@ -138,6 +138,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="activity/:id" element={<ActivityDetail />} />
         <Route path="activity/edit/:id" element={<EditActivity />} />
         <Route path="activity/:id/participate" element={<Participant />} />
+        {/* By Ohm Section */}
         <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
         <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
         <Route path="activity/participate/filterbyclassroom/pdfpage" element={<FilterByClassroom />} />

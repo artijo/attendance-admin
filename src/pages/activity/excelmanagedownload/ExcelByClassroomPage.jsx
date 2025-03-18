@@ -13,7 +13,8 @@ function FilterExcelPage() {
         <div>
             <div className="w-full h-fit">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                    ดาวน์โหลดเอกสารการเข้าร่วมกิจกรรม {activity.actName} โดยแบ่งตามห้องและแต่ละวันมีใครเข้าร่วมบ้าง
+                    {/* ดาวน์โหลดเอกสารจำนวนการเข้ากิจกรรม {activity.actName} ของนักเรียนแบ่งตามห้องเรียนที่ความเข้าร่วม */}
+                    ดาวน์โหลดเอกสารสรุปการเข้าร่วมกิจกรรม {activity.actName} โดยแบ่งตามห้องและแต่ละวันนั้นมีใครเข้าร่วมบ้าง
                 </h1>
                 {classrooms.length > 0 && (
                     <>

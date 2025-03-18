@@ -6,7 +6,7 @@ function FilterByClassroomJoinPage() {
         <div>
             <div className="w-full h-fit">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                    ดาวน์โหลดเอกสารการเข้าร่วมกิจกรรม {activity.actName} โดยแบ่งตามห้องเรียนที่เข้าร่วม
+                    ดาวน์โหลดเอกสารสรุปจำนวนการเข้ากิจกรรม {activity.actName} ของนักเรียนแบ่งตามห้องเรียนที่ความเข้าร่วม
                 </h1>
                 {classrooms.length > 0 && (
                     <>
