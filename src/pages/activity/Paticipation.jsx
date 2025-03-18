@@ -135,6 +135,17 @@ function Participant() {
             {state:{classrooms: classrooms, activityId: activityId, activity: activity}}
         );
     }
+
+    const handleNavigateExcelFilterPage = () => {
+        const classrooms = getUniqueClassrooms();
+        const activityId = activity.actId;
+        nevigate(
+            `/activity/participate/filterbyclassroomjoin/excel`,
+            {state:{classrooms: classrooms, activityId: activityId, activity: activity}}
+        );
+    }
+
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -175,8 +186,12 @@ function Participant() {
                             <div className="flex justify-end gap-4 mb-4">
                                 <DropdownExportDocument>
                                     <TextDropdownDocument 
-                                        title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
+                                        title={`สรุปการเข้าร่วมกิจกรรมว่าแต่วันมีใครเข้าบ้าง (EXCEL)`}
                                         actionFunction={() => handleNavigateExcelFilterByRoom()}
+                                    />
+                                    <TextDropdownDocument 
+                                        title={`สรุปการเข้ากิจกรรมโดยแบ่งตามห้องเรียนที่ความเข้าร่วม (EXCEL)`}
+                                        actionFunction={() => handleNavigateExcelFilterPage()}
                                     /> 
                                     <TextDropdownDocument
                                         title={`สรุปการเข้าร่วมกิจกรรมว่าแต่วันมีใครเข้าบ้าง (PDF)`}

@@ -62,13 +62,12 @@ function ExcelByFilterRoom() {
                 </h1>
                 {classrooms.length > 0 && (
                     <>
-                        <div id="select-date-range">
-                            <div className="mt-2">
+                        <div id="select-date-range" className="flex flex-col md:flex-row justify-start  items-center gap-2">
+                            <div className="w-full md:w-fit">
                                 <label htmlFor="startDate" className="block mb-2 text-sm font-medium text-gray-900">วันที่เริ่ม</label>
                                 <select 
-                                    id="startDate" 
-                                    name="startDate" 
-                                    className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    id="startDate" name="startDate" 
+                                    className="block w-full  p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                     onChange={(e) => handleStartDate(e.target.value)}
                                 >
                                     {activity && getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
@@ -77,16 +76,15 @@ function ExcelByFilterRoom() {
                                             <option value={date} key={date}>
                                                 {dateTimeFormat}
                                             </option>
-                                        );
+                                        )
                                     })}
                                 </select>
                             </div>
-                            <div>
+                            <div className="w-full md:w-fit">
                                 <label htmlFor="endDate" className="block mb-2 text-sm font-medium text-gray-900">วันที่สิ้นสุด</label>
                                 <select 
-                                    id="endDate" 
-                                    name="endDate" 
-                                    className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    id="endDate" name="endDate" 
+                                    className="block w-full  p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                     onChange={(e) => handleEndDate(e.target.value)}
                                 >
                                     {activity && getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
@@ -95,7 +93,7 @@ function ExcelByFilterRoom() {
                                             <option value={date} key={date}>
                                                 {dateTimeFormat}
                                             </option>
-                                        );
+                                        )
                                     })}
                                 </select>
                             </div>

@@ -59,8 +59,8 @@ function FilterClassroomPage() {
                 </h1>
                 {classrooms.length > 0 && (
                     <>
-                        <div id="select-date-range">
-                            <div className="mt-2">
+                        <div id="select-date-range" className="flex flex-col md:flex-row justify-start  items-center gap-2">
+                            <div className="w-full md:w-fit">
                                 <label htmlFor="startDate" className="block mb-2 text-sm font-medium text-gray-900">วันที่เริ่ม</label>
                                 <select 
                                     id="startDate" name="startDate" 
@@ -77,7 +77,7 @@ function FilterClassroomPage() {
                                     })}
                                 </select>
                             </div>
-                            <div>
+                            <div className="w-full md:w-fit">
                                 <label htmlFor="endDate" className="block mb-2 text-sm font-medium text-gray-900">วันที่สิ้นสุด</label>
                                 <select 
                                     id="endDate" name="endDate" 

@@ -77,6 +77,7 @@ import FilterByClassroom from "./components/activity/exportPDF/FilterByClassroom
 import FilterByRoomJoin from "./components/activity/exportPDF/FilterByRoomJoin.jsx";
 import FilterByClassroomJoinPage from "./pages/activity/pdfmanagedownload/FilterByClassroomJoinPage.jsx";
 import ExcelByFilterRoom from "./pages/activity/excelmanagedownload/ExcelByRoomJoin.jsx";
+import FilterExcelPage from "./pages/activity/excelmanagedownload/ExcelByClassroomPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   
@@ -140,6 +141,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
         <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
         <Route path="activity/participate/filterbyclassroom/pdfpage" element={<FilterByClassroom />} />
+        <Route path="activity/participate/filterbyclassroomjoin/excel" element={<FilterExcelPage/>} />
         <Route path="activity/participate/filterbyclassroomjoin" element={<FilterByClassroomJoinPage />} />
         <Route path="activity/participate/filterbyclassroomjoin/pdfpage" element={<FilterByRoomJoin />} />
         {/* Attendance */}

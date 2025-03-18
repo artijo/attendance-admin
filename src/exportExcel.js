@@ -98,38 +98,35 @@ export async function abstactActivity(activityId, classId, startDate, endDate, c
     }    
 }
 
-export async function abstactActivityFilterByClassroom(activityId) {
+export async function abstactActivityFilterByClassroom(activityId, filterRoom, activity) {
     let response;
     try{
         const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/${activityId}`);
         if(responsed.status == 200){
-            response = responsed.data;
-            console.log(responsed.data);
+            response = responsed.data[filterRoom];
+            console.log(responsed.data[filterRoom]);
         }else{
             throw new Error(response.data.message);
         };
     }catch(error){
         console.error(error);
     };
-    const keyObject = Object.keys(response);
-    const workbook = XLSX.utils.book_new();
-    keyObject.forEach((key) => {
-        const arrayOfJsonObject = []
-        response[key].forEach((member) => {
-            const newObject = {
-                "รหัสนักเรียน":member.stdId,
-                "คำนำหน้า":member.title,
-                "ชื่อ":member.fName,
-                "นามสกุล":member.lName,
-                "จำนวนการเข้าร่วม": member.participateCount
-            }
-            arrayOfJsonObject.push(newObject);
-        })
-        const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
-        XLSX.utils.book_append_sheet(workbook, worksheet, `ชั้นม.${key.split('/')[0]} ห้อง ${key.split('/')[1]}`);
+
+    const arrayOfJsonObject = [];
+    response.forEach((member) => {
+        const newObject = {
+            "รหัสนักเรียน":member.stdId,
+            "ชื่อ":`${formatTitle(member.title)} ${member.fName} ${member.lName}`,
+            "จำนวนการเข้าร่วม": member.participateCount
+        }
+        arrayOfJsonObject.push(newObject);
     });
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
+    const nameSplit = filterRoom.split('/');
+    XLSX.utils.book_append_sheet(workbook, worksheet, `ห้อง${nameSplit[0]}_${nameSplit[1]}`);
     try{
-        XLSX.writeFile(workbook, "สรุปการเข้ากิจกรรมตามห้องเรียน.xlsx", {compression :true});
+        XLSX.writeFile(workbook, `เอกสารสรุปการเข้าร่วมกิจกรรม ${activity.actName} ห้อง${filterRoom}.xlsx`, {compression :true});
     }catch(error){
         console.error(error);
     };
