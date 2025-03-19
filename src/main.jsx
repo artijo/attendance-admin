@@ -31,14 +31,13 @@ import EditTeacher from "./pages/teachers/EditForm.jsx";
 import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 
 // Timetable
-import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
-import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
+import Timetable from "./pages/new_timetable/new_timetable.jsx";
+import CreateTimetable from "./pages/new_timetable/new_createtimetable.jsx";
 //  Calendar
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
 // Calendar new fix
 import CreateCalendar from "./pages/calendarmanage_new/CreateCalendar.jsx";
-// import { EditHoliday } from "./pages/calendar/EditHoliday.jsx";
 // Holiday Section
 import EditHoliday from "./pages/holiday/EditHoliday.jsx";
 import CreateHoliday from "./pages/holiday/CreateHoliday.jsx";
@@ -62,23 +61,26 @@ import ActivityDetail from "./pages/activity/Detail.jsx";
 import CreateActivity from "./pages/activity/Create.jsx";
 import EditActivity from "./pages/activity/Edit.jsx";
 import Participant from "./pages/activity/Paticipation.jsx";
-
-import Calendar from "./pages/calendarmanage_new/Calendar.jsx";
-import Attendence from "./pages/attendence/Attendence.jsx";
-import AttendanceDetail from "./pages/attendence/AttendenceDetail.jsx";
-import AttendenceSubjectDetail from "./pages/attendence/AttendenceSubjectDetail.jsx";
-import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx";
-import ByClassroom from "./components/attendence/exportPdf/byclassroom.jsx";
-import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
-import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
-import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
+//Activity PDF
 import FilterClassroomPage from "./pages/activity/pdfmanagedownload/FilterClassroomPage.jsx";
 import FilterByClassroom from "./components/activity/exportPDF/FilterByClassroom.jsx";
 import FilterByRoomJoin from "./components/activity/exportPDF/FilterByRoomJoin.jsx";
 import FilterByClassroomJoinPage from "./pages/activity/pdfmanagedownload/FilterByClassroomJoinPage.jsx";
 import ExcelByFilterRoom from "./pages/activity/excelmanagedownload/ExcelByRoomJoin.jsx";
 import FilterExcelPage from "./pages/activity/excelmanagedownload/ExcelByClassroomPage.jsx";
-import Timetable from "./pages/new_timetable/new_timetable.jsx";
+//Calendar
+import Calendar from "./pages/calendarmanage_new/Calendar.jsx";
+//Attendence
+import Attendence from "./pages/attendence/Attendence.jsx";
+import AttendanceDetail from "./pages/attendence/AttendenceDetail.jsx";
+import AttendenceSubjectDetail from "./pages/attendence/AttendenceSubjectDetail.jsx";
+import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx";
+import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
+import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
+import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
+
+
+
 
 createRoot(document.getElementById("root")).render(
   
@@ -109,7 +111,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="teachers/departments" element={<DepartmentManage />} />
         {/* Timetable Section */}
         <Route path="timetable" element={<Timetable/>}/>
-        <Route path="createTimetable" element={<Formtimetable/>}/>
+        <Route path="timetable/create" element={<CreateTimetable/>}/>
         {/* CalendarSchool study Section */}
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
