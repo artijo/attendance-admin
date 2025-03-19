@@ -12,6 +12,7 @@ export const CreateTimetable = () => {
     const fetchData = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
+            console.log(response.data);
             setTimetable(response.data);
         } catch (error) {
             console.error(error);

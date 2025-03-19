@@ -78,6 +78,7 @@ import FilterByRoomJoin from "./components/activity/exportPDF/FilterByRoomJoin.j
 import FilterByClassroomJoinPage from "./pages/activity/pdfmanagedownload/FilterByClassroomJoinPage.jsx";
 import ExcelByFilterRoom from "./pages/activity/excelmanagedownload/ExcelByRoomJoin.jsx";
 import FilterExcelPage from "./pages/activity/excelmanagedownload/ExcelByClassroomPage.jsx";
+import Timetable from "./pages/new_timetable/new_timetable.jsx";
 
 createRoot(document.getElementById("root")).render(
   
@@ -107,7 +108,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="teachers/edit/:id" element={<EditTeacher />} />
         <Route path="teachers/departments" element={<DepartmentManage />} />
         {/* Timetable Section */}
-        <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
+        <Route path="timetable" element={<Timetable/>}/>
         <Route path="createTimetable" element={<Formtimetable/>}/>
         {/* CalendarSchool study Section */}
         <Route path="calendarstudy" element={<CalendarStudy />}/>

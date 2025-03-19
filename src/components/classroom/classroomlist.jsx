@@ -27,7 +27,10 @@ function ClassroomList({classrooms}) {
               <td className="px-6 py-4">
                 <span className='inline-flex overflow-hidden rounded-md border bg-white shadow-sm'>
                     <Link 
-                      to={`/timetable/${classroom.classId}`}
+                      to={`/timetable`}
+                      state={{
+                        classroom:classroom
+                      }}
                     >
                       <button
                         className=" inline-flex items-center gap-2 p-3 text-blue-600 hover:bg-gray-50 focus:relative"
