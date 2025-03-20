@@ -57,8 +57,7 @@ function EditHoliday() {
     }, []);
     
     return (
-        <div className='container mx-auto' >
-            
+        <div>
             <h1 className="text-center font-bold">ฟอร์มแก้ไขวันหยุด</h1>
             <div className="mb-2"  onClick={() => {
                     setError(false)

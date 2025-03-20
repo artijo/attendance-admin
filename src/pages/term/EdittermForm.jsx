@@ -70,7 +70,7 @@ function EdittermForm(){
         fecthData();
     },[])
     return (
-        <div className="container mx-auto">
+        <div>
             
             <h1 className="font-bold text-center mb-4">ฟอร์มแก้ไขเทอมและการศึกษา</h1>
             <div className="mb-2"  onClick={() => {

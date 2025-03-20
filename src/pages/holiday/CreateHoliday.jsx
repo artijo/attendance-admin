@@ -135,8 +135,7 @@ function CreateHoliday(){
         setHolidayType("RATCHAKHAN");
     }
     return (
-        <div className="mx-auto containers">
-        
+        <div>
             <div>
                 <h1 className="text-center font-bold">ฟอร์มสร้างวันหยุด</h1>
                 <div className="mb-2"  onClick={() => {
@@ -151,13 +150,13 @@ function CreateHoliday(){
                         success && <AlertSuccess title="สำเร็จ" message={msg}/>
                     }
                 </div>
-                <div className="grid gap-2 md:grid-cols-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div className="holiday" id="holiday-box">
                         <Holidaylisttable holidayList={holidayAutoList} setHolidayAutoList={setHolidayAutoList} setHolidayList={setHolidayList} />
                     </div>
                     <div className="grid gap-2 md:grid-cols-1">
                         <form className="border p-4 rounded-lg bg-white grid grid-cols-1 gap-2" onSubmit={(e) => handleAddHoliday(e)}>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid self-center grid-cols-2 gap-2">
                                 <h4 className="font-medium place-self-start">เพิ่มรายการวันหยุด</h4>
                                 <div className="place-self-end">
                                     <label className="relative inline-flex items-center cursor-pointer">

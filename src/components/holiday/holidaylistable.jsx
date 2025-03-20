@@ -182,7 +182,7 @@ export const HolidayListable = ({holidayList,fectHolidayList}) => {
                         </button>
                         </li>
                     </ol>
-                    </div>
+                </div>
             </div>
         </>
         

@@ -42,7 +42,7 @@ function CreatetermForm() {
     }
 
     return( 
-        <div className="container mx-auto">
+        <div>
             <h1 className="font-bold text-center mb-4">ฟอร์มสร้างเทอมและการศึกษาใหม่</h1>
             <div className="mb-2"  onClick={() => {
                 setError(false)

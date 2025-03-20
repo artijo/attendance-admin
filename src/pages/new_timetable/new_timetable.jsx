@@ -89,7 +89,7 @@ function Timetable() {
                     <thead className="text-xs text-center text-gray-700 uppercase">
                         <tr>
                             <th className="px-2">
-                                <div className="w-20">
+                                <div>
                                     <span className="rounded-lg px-2  bg-gray-200/70">วัน/เวลา</span>
                                 </div>
                             </th>
@@ -107,7 +107,7 @@ function Timetable() {
                         {dateKey.length > 0 && dateKey.map((key, keyindex) => (
                             <tr className="bg-white" key={`${key} - ${keyindex}`}>
                                 <th className="text-center text-xs px-2">
-                                    <div className="w-20">
+                                    <div>
                                         <span className="rounded-lg px-2 text-gray-700 font-bold bg-gray-200/70">{formatDayOfWeeks(key)}</span>
                                     </div>
                                 </th>
