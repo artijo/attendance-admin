@@ -9,6 +9,7 @@ export default {
     },
     colors: {
       'primary': 'var(--color-primary)',
+      'accent': 'var(--color-accent)',
       'secondary': 'var(--color-secondary)',
       'text-color': 'var(--color-text)',
       'text-color-alt': 'var(--color-text-alt)',
