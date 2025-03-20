@@ -1,15 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import { convertNumberToThaiMonth, formatDayOfWeeks } from "../../helper";
 
 function Timetable() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { classroom } = location.state;
     const [timetable, setTimetable] = useState(null);
     const dateKey = timetable != null && Object.keys(timetable);
-    console.log(classroom);
+    // console.log(classroom);
 
     const timeStudyList = [
         {
@@ -53,11 +54,19 @@ function Timetable() {
             timetableformate: "14.40 - 15.30",
         },
     ];
+
+    const handleEditTimetable = (timetable,time,day) => {
+        navigate('edit',{state: {time:time, day:day, classroom:classroom ,timetable:timetable},replace:true})
+    }
+
+    const handleAddTimetable = (time,day) => {
+        navigate('create',{state: {time:time, day:day, classroom:classroom}, replace:true})
+    }
     
     const fetchTimetable = async (classroomId) => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
-            console.log(response.data);
+            // console.log(response.data);
             setTimetable(response.data);
         } catch (error) {
             console.error(error);
@@ -75,20 +84,9 @@ function Timetable() {
     return (
         <div className="w-full h-fit">
             <h1 className="text-center font-bold">ตารางเรียนห้องม.{classroom.classLevel}/{classroom.classRoom} ปีการศึกษา {classroom.term.academicYear} เทอม {classroom.term.semester}</h1>
-            <div className="w-fit ml-auto">
-                <Link
-                    to={'create'} 
-                    className="inline-flex mb-2 justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    จัดการตารางเรียน
-                </Link>
-            </div>
-            <div className="relative border overflow-x-scroll overflow-y-hidden shadow-lg sm:rounded-2xl">
+            <div className="relative p-1 bg-white border overflow-x-scroll overflow-y-hidden shadow-lg sm:rounded-2xl">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-xs text-center text-gray-700 uppercase">
                         <tr>
                             <th className="px-2">
                                 <div className="w-20">
@@ -104,6 +102,7 @@ function Timetable() {
                             ))}
                         </tr>
                     </thead>
+                    
                     <tbody>
                         {dateKey.length > 0 && dateKey.map((key, keyindex) => (
                             <tr className="bg-white" key={`${key} - ${keyindex}`}>
@@ -125,15 +124,23 @@ function Timetable() {
                                     }else if(timetablethistime === undefined){
                                         return(
                                             <td key={`${time} period ${period+1}`} className="p-1">
-                                                <div className="card w-40 h-20 bg-gray-200 rounded-lg">
-                                                    
+                                                <div 
+                                                    onClick={() => handleAddTimetable(time,key)}
+                                                    className="card cursor-pointer flex justify-center items-center w-40 h-20 bg-gray-200 rounded-lg"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                    </svg>
                                                 </div>
                                             </td>
                                         );
                                     }else{
                                         return (
                                             <td key={`${time} period ${period+1}`} className="p-1">
-                                                <div className="card grid grid-cols-1 gap-1 w-40 h-20 bg-background-alt rounded-lg p-2 text-white">
+                                                <div 
+                                                    onClick={() => handleEditTimetable(timetablethistime,time,key)}
+                                                    className="cursor-pointer card grid grid-cols-1 gap-1 w-40 h-20 bg-background-alt rounded-lg p-2 text-white"
+                                                >
                                                     <h5 className="text-sm">
                                                         {timetablethistime.subject.subNameThai}
                                                     </h5>

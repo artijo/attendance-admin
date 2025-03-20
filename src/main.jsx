@@ -33,6 +33,7 @@ import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 // Timetable
 import Timetable from "./pages/new_timetable/new_timetable.jsx";
 import CreateTimetable from "./pages/new_timetable/new_createtimetable.jsx";
+import EditTimetable from "./pages/new_timetable/new_edittimetable.jsx";
 //  Calendar
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
@@ -80,8 +81,6 @@ import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanE
 import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
 
 
-
-
 createRoot(document.getElementById("root")).render(
   
   // <StrictMode>
@@ -112,6 +111,7 @@ createRoot(document.getElementById("root")).render(
         {/* Timetable Section */}
         <Route path="timetable" element={<Timetable/>}/>
         <Route path="timetable/create" element={<CreateTimetable/>}/>
+        <Route path="timetable/edit" element={<EditTimetable/>}/>
         {/* CalendarSchool study Section */}
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
