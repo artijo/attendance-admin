@@ -18,7 +18,6 @@ function CreatetermForm() {
     const sentFormData =  async(data) => {
         try {
             const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
-
             if (response.status === 200) {
                 setMsg(response.data.message);
                 setSuccess(true);

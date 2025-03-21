@@ -13,10 +13,11 @@ export const Termlistable = () => {
     const [error, setError] = useState(false);
     const [success,setSuccess] = useState(false);
     function datetimeFormat(value) {
-        const datetime = DateTime.fromISO(value,{zone:'UTC'})
+        const datetime = DateTime.fromISO(value).setZone('Asia/Bangkok');
         let datetimeString = formatDateToThai(datetime.toFormat('yyyy-MM-dd'));
         return datetimeString;
     };
+
     const fecthData =  async () => {
         const response = await axios.get(`${HOSTNAME}/a/academicterms`);
         // console.log(response.data)

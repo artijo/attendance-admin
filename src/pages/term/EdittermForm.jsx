@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config";
 import { useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
+import { DateTime } from "luxon";
 function EdittermForm(){
     const location = useLocation();
     const [termId, setTermId] = useState("");
@@ -25,11 +26,13 @@ function EdittermForm(){
         try{
             const response = await axios.get(`${HOSTNAME}/a/academicterms/${location.state.termId}`);
             if(response.status === 200){
+                const termStartFormat = DateTime.fromISO(response.data.termStart).setZone('Asia/Bangkok');
+                const termEndFormat = DateTime.fromISO(response.data.termEnd).setZone('Asia/Bangkok');
                 setTermId(response.data.termId)
                 setAcademicYear(response.data.academicYear + 543);
                 setSemester(response.data.semester);
-                setTermStart(spiltUtcTime(response.data.termStart));
-                setTermEnd(spiltUtcTime(response.data.termEnd));
+                setTermStart(spiltUtcTime(termStartFormat.toString()));
+                setTermEnd(spiltUtcTime(termEndFormat.toString()));
             };
         }catch(error){
             console.error(error);
@@ -40,10 +43,10 @@ function EdittermForm(){
         try{
             const response = await axios.put(`${HOSTNAME}/a/academicterms`,data);
             if (response.status === 200) {
-                let countdownTime = 1000;
+                // let countdownTime = 1000;
                 setMsg(response.data.message);
                 setSuccess(true);
-                setTimeout(() => {window.location.href = "/terms"}, countdownTime);
+                // setTimeout(() => {window.location.href = "/terms"}, countdownTime);
             } else {
                 throw new Error(response.data.message);
             }
@@ -108,22 +111,25 @@ function EdittermForm(){
                             วันเริ่มต้นเทอม(เดือน-วัน-ปี)
                         </label>
                         <input 
+                            disabled={true}
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                            type="date" name="termStart" value={termStart} onChange={(e) => setTermStart(e.target.value)} required={true}/>
+                            type="date" name="termStart" value={termStart} onChange={(e) => setTermStart(e.target.value)} required={true}
+                        />
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-700">
                             วันสิ้นสุดเทอม(เดือน-วัน-ปี)
                         </label>
                         <input 
+                            disabled={true}
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
                             type="date" name="termEnd" value={termEnd} onChange={(e) => setTermEnd(e.target.value)} min={termStart}/>
                     </div>
                 </div>
                 <button 
-                        type="submit"
-                        className="sm:col-span-2 sm:w-fit sm:ml-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
+                    type="submit"
+                    className="sm:col-span-2 sm:w-fit sm:ml-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
