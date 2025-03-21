@@ -111,7 +111,6 @@ function EdittermForm(){
                             วันเริ่มต้นเทอม(เดือน-วัน-ปี)
                         </label>
                         <input 
-                            disabled={true}
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
                             type="date" name="termStart" value={termStart} onChange={(e) => setTermStart(e.target.value)} required={true}
                         />
@@ -120,10 +119,10 @@ function EdittermForm(){
                         <label className="block text-xs font-medium text-gray-700">
                             วันสิ้นสุดเทอม(เดือน-วัน-ปี)
                         </label>
-                        <input 
-                            disabled={true}
+                        <input
                             className="mt-1 w-full h-8 rounded-md border-gray-200 shadow-sm sm:text-sm border"
-                            type="date" name="termEnd" value={termEnd} onChange={(e) => setTermEnd(e.target.value)} min={termStart}/>
+                            type="date" name="termEnd" value={termEnd} onChange={(e) => setTermEnd(e.target.value)} min={termStart}
+                        />
                     </div>
                 </div>
                 <button 
