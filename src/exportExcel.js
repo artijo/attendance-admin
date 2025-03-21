@@ -21,11 +21,11 @@ const formatAttStatus = (status) => {
     }
 };
 
-export function AttendanceSummaryByDay(table){
+export function AttendanceSummaryByDay(table, fileName){
     const worksheet = XLSX.utils.table_to_sheet(table);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "SheetDay");
-    XLSX.writeFile(workbook, "Sheets.xlsx", {compression :true});
+    XLSX.utils.book_append_sheet(workbook, worksheet, "sheet 1");
+    XLSX.writeFile(workbook, `${fileName}.xlsx`, {compression :true});
 }
 
 export async function abstactActivity(activityId, classId, startDate, endDate, className, activityName) {

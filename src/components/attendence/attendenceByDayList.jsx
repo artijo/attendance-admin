@@ -4,7 +4,7 @@ import { HOSTNAME } from "../../config";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
-import { formatDateToThai } from "../../helper";
+import { formatDateToThai, formatDayOfWeeks } from "../../helper";
 
 export const AttendenceByDayList = ({termId,classroomId}) => {
     const [dayList, setDayList] = useState([]);
@@ -18,8 +18,8 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
     function daybetween(Start, End) {
         const dates = [];
         if (Start !== "" && End !== "") {
-            const startDate = DateTime.fromISO(Start);
-            const endDate = DateTime.fromISO(End);
+            const startDate = DateTime.fromISO(Start).setZone('Asia/Bangkok');
+            const endDate = DateTime.fromISO(End).setZone('Asia/Bangkok');
             let currentDate = startDate;
             while (currentDate <= endDate) {
                 dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
@@ -33,10 +33,10 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
 
     function getDay(value){
         const holidayList = value.holiday.map((holiday) => holiday.startHolidayDate.split("T")[0]);
-        const dateTimeStart = value.termStart.split("T")[0]; //ex. ['2025-05-15','00:00:00.000Z']
-        const dateTimeEnd = value.termEnd.split("T")[0]; //ex. ['2025-09-09','00:00:00.000Z']
+        const dateTimeStart = DateTime.fromISO(value.termStart).setZone('Asia/Bangkok').toString().split("T")[0]; //ex. ['2025-05-15','00:00:00.000Z']
+        const dateTimeEnd = DateTime.fromISO(value.termEnd).setZone('Asia/Bangkok').toString().split("T")[0]; //ex. ['2025-09-09','00:00:00.000Z']
         const datebetween = daybetween(dateTimeStart, dateTimeEnd).filter((date) => {
-            const weekday = DateTime.fromISO(`${date}`, { zone: 'UTC' }).weekday; // filter เพื่อตัดวันที่เป้นเสาร์ อาทิตย์ออก
+            const weekday = DateTime.fromISO(`${date}`).weekday; // filter เพื่อตัดวันที่เป้นเสาร์ อาทิตย์ออก
             return weekday !== 6 && weekday !== 7;
         }).filter((date) => !holidayList.includes(date));
         setDayList(datebetween);
@@ -68,6 +68,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                 <tr>
                                     <th className="px-6 py-3">ลำดับ</th>
                                     <th className="px-6 py-3">วัน</th>
+                                    <th className="px-6 py-3">วันที่</th>
                                     <th className="px-6 py-3">การเข้าเรียน</th>
                                 </tr>
                             </thead>
@@ -80,6 +81,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                                     {
                                                         <td className="px-6 py-4">{((currentPage - 1)*10)+(index+1) }</td>
                                                     }
+                                                    <td className="px-6 py-4">{formatDayOfWeeks(DateTime.fromISO(`${day}T17:00:00`).setZone('Asia/Bangkok').weekday)}</td>
                                                     <td className="px-6 py-4">{formatDateToThai(day)}</td>
                                                     <td className="px-6 py-4">
                                                         <span className="inline-flex overflow-hidden rounded-md border bg-white shadow-sm'">
@@ -90,7 +92,6 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                                                     </svg>
-
                                                                     การเข้าเรียน
                                                                 </button>
                                                             </Link>

@@ -37,8 +37,6 @@ import EditTimetable from "./pages/new_timetable/new_edittimetable.jsx";
 //  Calendar
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
-// Calendar new fix
-import CreateCalendar from "./pages/calendarmanage_new/CreateCalendar.jsx";
 // Holiday Section
 import EditHoliday from "./pages/holiday/EditHoliday.jsx";
 import CreateHoliday from "./pages/holiday/CreateHoliday.jsx";
@@ -116,15 +114,10 @@ createRoot(document.getElementById("root")).render(
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         <Route path="calendar" element={<Calendar/>}/>
-        <Route path="calendar/create" element={<CreateCalendar/>}/> 
         {/* Holiday Section */}
         <Route path="holiday" element={<Holiday/>}/>
         <Route path="holiday/edit/:id" element={<EditHoliday/>}/>
         <Route path="holiday/create" element={<CreateHoliday/>}/>
-        
-        {/* <Route path="calendarmanage" element={<ManageCalendar  />}/>
-        <Route path="createholiday" element={<AddHoliday/>}/> */}
-        {/* <Route path="calendaredit" element={<EditHoliday/>}/> */}
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />
@@ -155,10 +148,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
         <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
         <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
-
-        {/* <Route path="att/byday/pdf" element={<ByDay/>} />  export pdf by day page */}
-        {/* <Route path="att/bysubject/pdf" element={<BySubject/>} />  export pdf by subject page */}
-        {/* <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  export pdf by classroom page */}
         <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
       </Route>
       <Route path="*" element={<NotFound />} />

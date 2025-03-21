@@ -7,9 +7,10 @@ import ExportPdfButton from "../exportPdfButton";
 import {useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { dateTimeFormat, formatDateToThai} from "../../helper";
+import { dateTimeFormat, formatDateToThai, formatDayOfWeeks} from "../../helper";
 import ByDay from "./exportPdf/byday.jsx";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { DateTime } from "luxon";
 export const AttendanceByDayDetailList = ({studentList}) => {
     const ref = useRef(null);
     const location = useLocation();
@@ -75,9 +76,10 @@ export const AttendanceByDayDetailList = ({studentList}) => {
 
     const handaleExportExcel = () => {
         if(ref.current) {
+            const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
+
             const tableList = ref.current;
-            // console.log(tableList);
-            AttendanceSummaryByDay(tableList);
+            AttendanceSummaryByDay(tableList, `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน ${formatDayOfWeeks(dateformat.weekday)} วันที่ ${formatDateToThai(dateformat.toString())}`);
         }
     }
 
@@ -147,9 +149,6 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                                         studentList[0].attendance.map((attendance, index) => (
                                             <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}({dateTimeFormat(attendance.studingTimeDate)})</th>
                                         ))
-                                        // Array.from({ length: studentList[0].attendance.length }, (object, index) => (
-                                        //     <th className="px-6 py-4 border-r border-b" key={index}>{index + 1} {object.studingTimeDate}</th>
-                                        // ))
                                     }
                                 </tr>
                                 <tr >
@@ -209,8 +208,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                     </div>
                 </div>
             </div>}
-        </>
-       
+        </> 
     );
 };
 

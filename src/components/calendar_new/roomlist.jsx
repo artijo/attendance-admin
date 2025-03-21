@@ -27,22 +27,6 @@ export const RoomList = ({ academicYearTermId, selectedClassLevel }) => {
         }
     };
 
-    const handleDeleteStudyingTime = async (classroomId) => {
-        try {
-            const text = "คุณต้องการจะลบปฎิทินหรือไม่";
-            if (!confirm(text)) return;
-
-            const response = await axios.delete(
-                `${HOSTNAME}/a/studingtime/${classroomId}`
-            );
-            if (response.status === 200) {
-                fetchClassrooms();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     useEffect(() => {
         if (academicYearTermId) {
             fetchClassrooms();
@@ -78,7 +62,7 @@ export const RoomList = ({ academicYearTermId, selectedClassLevel }) => {
                                 state={{
                                     classroom:classroom
                                 }}
-                            >
+                            >   
                                 <span
                                     className="inline-flex text-sm px-4 py-1 rounded-full font-bold text-white bg-violet-600 hover:text-gray-50 hover:bg-violet-500 hover:shadow-md"
                                 >

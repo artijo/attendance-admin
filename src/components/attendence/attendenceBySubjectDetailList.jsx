@@ -14,7 +14,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const subject = location.state.subject;
-    const classroomId = location.state.classroomId;
+    // const classroomId = location.state.classroomId;
     const ref = useRef([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState([]);
@@ -131,9 +131,10 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
         setIsTabOpen(arrayState);
     }
 
-    const handelExportExcel = (index) => {
+    const handelExportExcel = (index, month) => {
+        const fileName = `สรุปการเข้าเรียนตามวิชา ${subject.subNameThai} ห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} เดือน ${convertNumberToThaiMonth(month)}`
         if(ref.current[index]){
-            AttendanceSummaryByDay(ref.current[index]);
+            AttendanceSummaryByDay(ref.current[index],fileName);
         }
     }
 
@@ -216,7 +217,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
                                         month={month} 
                                         index={index} 
                                         exportPdf={<ExportPdfButtonKK index={index} month={month}/>}
-                                        exportExcel={ <ExportExcelButton handelOnClickFunction={() => handelExportExcel(index)}/>}
+                                        exportExcel={ <ExportExcelButton handelOnClickFunction={() => handelExportExcel(index, month)}/>}
                                     />
                                 </TapAttendenceSummaryOpen>
                             </div>

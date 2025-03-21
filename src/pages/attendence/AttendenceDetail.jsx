@@ -75,18 +75,6 @@ function AttendanceDetail() {
                                 />
                             }
                         </TapAttendenceSummaryOpen>
-                        <TapAttendenceSummaryOpen 
-                            isTabOpen={isTabOpen} 
-                            title={"แบบสรุปเวลาเรียนตามห้องเรียน"}
-                            handleIsTabOpen={handleIsTabOpen}
-                            index={2}
-                        > 
-                            {classroomInfo != null && 
-                                <AttendenceSummaryByClassroom 
-                                    classroomId={classroomInfo != null && classroomInfo.classId}
-                                />
-                            }
-                        </TapAttendenceSummaryOpen>
                     </div>
                 </div>
             }
