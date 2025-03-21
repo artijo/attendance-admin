@@ -21,7 +21,7 @@ function EditHoliday() {
         try {
             const response = await axios.put(`${HOSTNAME}/a/holiday/${params.id}`, {
                 holidayName: holidayName,
-                startHolidayDate: DateTime.fromISO(dateStartDateEndDate+"T00:00:00Z", { zone: "UTC" }),
+                startHolidayDate: dateStartDateEndDate,
                 type: holidayType,
             });
             if (response.status === 200) {

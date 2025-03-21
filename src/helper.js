@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export function formatPhoneNumber(phoneNumber) {
     // ลบตัวอักษรที่ไม่ใช่ตัวเลขออก
     const cleaned = phoneNumber.replace(/\D/g, '');
@@ -71,7 +73,8 @@ export function formatDate(date){
 }
 
 export function formatDateTimeISOToDate(dateTimeIso){
-  const dateSpilt = dateTimeIso.split('T');
+  const utctobangkok = DateTime.fromISO(dateTimeIso).setZone('Asia/Bangkok');
+  const dateSpilt = utctobangkok.toString().split('T');
   return dateSpilt[0];
 }
 
