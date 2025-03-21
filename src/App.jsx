@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";  // Add this import at the top with
 import axios from "axios";
 import { HOSTNAME } from "./config";
 import Logo from "./assets/nps-logo.webp";
+import { useAuthStore } from "./store";
 
 // config axios
 axios.defaults.withCredentials = true;
@@ -49,7 +50,7 @@ axios.interceptors.response.use(
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+  const User = useAuthStore((state) => state.user);
   const navLinks = [
     { name: "แดชบอร์ด", path: "/dashboard", icon:"home.svg" },
     { name: "นักเรียน", path: "/students", icon:"student.svg" },
@@ -138,127 +139,141 @@ function Logout() {
 
   return (
     <>
-      <header className="font-heading bg-accent text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-screen flex flex-col z-[999]">
-        <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
-          <div
-            id="toggle"
-            className="sm:hidden flex items-center rounded-md border-2 my-2 p-2"
-            onClick={openMenu}
-          >
-            {!isMenuOpen ? (
-              <svg
-                width={25}
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 6H20M4 12H20M4 18H20"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            ) : (
-              <svg
-                width={25}
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 6L18 18M6 18L18 6"
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </div>
-          {/* Logo */}
-          <div className="hidden md:block">
-            <img
-              src={Logo}
-              alt="Logo"
-              className="w-10 h-10 md:w-12 md:h-12 mx-auto"
-            />
-          </div>
-          <h1 className="md:hidden text-center text-xl md:text-left">
-            ระบบบันทึกการเข้าเรียนและกิจกรรม
-          </h1>
-          <div className="sm:hidden">
+    <header className="font-heading bg-primary text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-screen flex flex-col">
+      <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
+        <div
+          id="toggle"
+          className="sm:hidden flex items-center rounded-md border-2 my-2 p-2 hover:bg-accent transition-colors duration-300"
+          onClick={openMenu}
+        >
+          {!isMenuOpen ? (
             <svg
               width={25}
-              fill="#ffffff"
               viewBox="0 0 24 24"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              stroke="#ffffff"
             >
-              <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
+              <path
+                d="M4 6H20M4 12H20M4 18H20"
+                stroke="#ffffff"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path d="M4,12a1,1,0,0,0,1,1h7.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4a1,1,0,0,0,.21-.33,1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4a1,1,0,1,0-1.42,1.42L12.59,11H5A1,1,0,0,0,4,12ZM17,2H7A3,3,0,0,0,4,5V8A1,1,0,0,0,6,8V5A1,1,0,0,1,7,4H17a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V16a1,1,0,0,0-2,0v3a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V5A3,3,0,0,0,17,2Z"></path>
-              </g>
+              />
             </svg>
-          </div>
+          ) : (
+            <svg
+              width={25}
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 6L18 18M6 18L18 6"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
         </div>
-        <nav className="overflow-y-auto flex-1 md:max-h-[calc(100vh-180px)]
-  [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-gray-100
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
-          <ul className="grid grid-cols-5 md:block">
-            {navLinks.map((link, index) => (
-              <li key={index}>
-                <NavLink
-                  to={link.path}
-                  className={({ isActive }) =>
-                    `h-full flex flex-col md:flex-row items-center content-center gap-2 border-t-[3px] px-4 py-3 md:border-s-[3px] md:border-t-0 ${
-                      isActive
-                        ? "border-blue-500 bg-primary text-white"
-                        : "border-transparent text-white hover:border-gray-100 hover:bg-primary hover:text-white"
-                    }`
-                  }
-                  onClick={closeMenu}
-                >
-                  <img
-                    src={`/ico/${link.icon}`}
-                    alt={link.name}
-                    className="w-6 h-6 md:w-8 md:h-8 nav-icon"
-                  />
+        {/* Logo */}
+        <div className="hidden md:flex md:justify-center md:items-center md:mb-4">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-10 h-10 md:w-16 md:h-16 mx-auto"
+          />
+        </div>
+        <h1 className="md:hidden text-center text-xl md:text-left font-bold">
+          ระบบบันทึกการเข้าเรียนและกิจกรรม
+        </h1>
+        <div className="sm:hidden">
+          <svg
+            width={25}
+            fill="#ffffff"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            stroke="#ffffff"
+          >
+            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M4,12a1,1,0,0,0,1,1h7.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4a1,1,0,0,0,.21-.33,1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4a1,1,0,1,0-1.42,1.42L12.59,11H5A1,1,0,0,0,4,12ZM17,2H7A3,3,0,0,0,4,5V8A1,1,0,0,0,6,8V5A1,1,0,0,1,7,4H17a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V16a1,1,0,0,0-2,0v3a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V5A3,3,0,0,0,17,2Z"></path>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div className="hidden md:block text-center mt-2 mb-6">
+        <h2 className="text-xl font-bold">{User? `${User.name}` : "ไม่มีชื่อ"}</h2>
+        <div className="mt-2 h-1 w-16 bg-secondary mx-auto rounded-full"></div>
+      </div>
+      <nav className="overflow-y-auto flex-1 md:max-h-[calc(100vh-260px)]
+        [&::-webkit-scrollbar]:w-2
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:bg-primary/60
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-white/30
+        dark:[&::-webkit-scrollbar-track]:bg-primary/60
+        dark:[&::-webkit-scrollbar-thumb]:bg-white/30">
+        <ul className="grid grid-cols-5 md:block">
+          {navLinks.map((link, index) => (
+            <li key={index} className="md:mb-2 md:px-3">
+              <NavLink
+                to={link.path}
+                className={({ isActive }) =>
+                  `h-full flex flex-col md:flex-row items-center content-center gap-2 border-t-[3px] px-4 py-3 md:rounded-lg md:border-0 ${
+                    isActive
+                      ? "border-secondary md:bg-secondary text-white"
+                      : "border-transparent text-white hover:bg-accent/50 hover:text-white transition-colors duration-300"
+                  }`
+                }
+                onClick={closeMenu}
+              >
+                <img
+                  src={`/ico/${link.icon}`}
+                  alt={link.name}
+                  className="w-6 h-6 md:w-6 md:h-6 nav-icon"
+                />
 
-                  <span className="text-sm text-center font-medium">
-                    {link.name}
-                  </span>
-                </NavLink>
-              </li>
-            ))}
-           
-          </ul>
-        </nav>
-        <div className="hidden mt-10 ml-4 md:flex items-center">
-        <svg viewBox="0 0 24 24" width={25} fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path fillRule="evenodd" clipRule="evenodd" d="M21.593 10.943c.584.585.584 1.53 0 2.116L18.71 15.95c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41 9.552 9.552 0 0 1 1.689-1.345l.387-.242-.207-.206a10 10 0 0 1-2.24.254H8.998a1 1 0 1 1 0-2h7.921a10 10 0 0 1 2.24.254l.207-.206-.386-.241a9.562 9.562 0 0 1-1.69-1.348.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0l2.883 2.893zM14 16a1 1 0 0 0-1 1v1.5a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1.505a1 1 0 1 0 2 0V5.5A2.5 2.5 0 0 0 12.5 3h-7A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h7a2.5 2.5 0 0 0 2.5-2.5V17a1 1 0 0 0-1-1z" fill="#ffffff"></path></g></svg>
-          <button className="p-2 md:p-3" onClick={Logout}>ออกจากระบบ</button>
-        </div>
-      </header>
-      <main className="md:ml-56 min-h-dvh">
-            <div className="hidden md:block sticky top-0 z-10 mt-0 ml-0 mr-0 mb-4 bg-accent p-4 shadow-sm">
-              <h1 className="text-2xl font-bold text-white">ระบบบันทึกการเข้าเรียนและกิจกรรม</h1>
-            </div>
-            <div className="p-4">
-              <Outlet />
-            </div>
-      </main>
-    </>
+                <span className="text-sm text-center md:text-left font-medium">
+                  {link.name}
+                </span>
+              </NavLink>
+            </li>
+          ))}
+         
+        </ul>
+      </nav>
+      <div className="hidden mt-auto mx-3 mb-6 md:block">
+        <button 
+          onClick={Logout}
+          className="w-full py-2.5 px-4 text-sm font-medium text-white bg-accent/80 hover:bg-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 flex items-center justify-center"
+        >
+          <svg viewBox="0 0 24 24" width={20} className="mr-2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M21.593 10.943c.584.585.584 1.53 0 2.116L18.71 15.95c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41 9.552 9.552 0 0 1 1.689-1.345l.387-.242-.207-.206a10 10 0 0 1-2.24.254H8.998a1 1 0 1 1 0-2h7.921a10 10 0 0 1 2.24.254l.207-.206-.386-.241a9.562 9.562 0 0 1-1.69-1.348.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0l2.883 2.893zM14 16a1 1 0 0 0-1 1v1.5a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1.505a1 1 0 1 0 2 0V5.5A2.5 2.5 0 0 0 12.5 3h-7A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h7a2.5 2.5 0 0 0 2.5-2.5V17a1 1 0 0 0-1-1z" fill="#ffffff"></path>
+          </svg>
+          ออกจากระบบ
+        </button>
+      </div>
+      <div className="hidden md:block text-center text-xs text-white/70 mb-3 font-body">
+        © {new Date().getFullYear()} โรงเรียนน้ำพองศึกษา
+      </div>
+    </header>
+    <main className="md:ml-56 min-h-dvh bg-background font-body">
+      <div className="hidden md:block sticky top-0 z-10 mt-0 ml-0 mr-0 mb-6 bg-white p-4 shadow-sm border-b border-line">
+        <h1 className="text-2xl font-bold text-primary font-heading">ระบบบันทึกและติดตามการเข้าเรียนและกิจกรรมของนักเรียน สำหรับผู้ดูแลระบบ</h1>
+      </div>
+      <div className="p-4 md:p-6">
+        <Outlet />
+      </div>
+    </main>
+  </>
   );
 }
 

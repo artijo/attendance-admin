@@ -14,7 +14,7 @@ export const useAuth = () => {
             username,
             password,
         }, { withCredentials: true });
-        setUser(response.data);
+        setUser(response.data.user);
         localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         return response;
