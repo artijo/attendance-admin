@@ -37,7 +37,7 @@ export const AttendenceBySubjectDetailList = ({studentList}) => {
     };
     const TableHeader = ({month}) => {
         return (
-            <tr className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <th className="px-2 py-4" >เลขที่</th>
                 <th className="px-2 py-4" >รหัสนักเรียน</th>
                 <th className="px-2 py-4" >ชื่อ-นามสกุล</th>
