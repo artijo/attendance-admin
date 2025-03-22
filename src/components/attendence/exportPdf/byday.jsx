@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { styles } from "./byday";
-import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
+import { Page, Text, View, Document, PDFViewer,Image } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { formatDateToThai } from "../../../helper";
 function ByDay({studentList,totalStatus,date,classroomInfo}) {
@@ -33,10 +33,9 @@ function ByDay({studentList,totalStatus,date,classroomInfo}) {
   const ByDayPDF = () => (
     <Document pageMode="fullScreen">
       <Page size="A4" style={styles.page} orientation="landscape">
-        <View style={styles.headerDisplay}>
-          <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {formatDateToThai(date)}</Text>
-          <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
-        </View>
+        <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
+        <Text style={styles.textHeader}>แบบสรุปการเรียนตามวันที่เรียนประจำวันที่ {formatDateToThai(date)}</Text>
+        <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
         {/* ตาราง */}
         <Table style={styles.table}>
           {/* แถวที่ 1: คาบที่ */}
