@@ -5,13 +5,16 @@ import timegridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const CalendarDetatils = () => {
     const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+
+    console.log(holidayList);
     
     const fetchHolidayList = async () => {
         try {
@@ -48,7 +51,7 @@ export const CalendarDetatils = () => {
             tooltip.classList.add('calendar-tooltip');
             tooltip.innerHTML = `
                 <strong>${info.event.title}</strong><br>
-                ประเภท: ${info.event.backgroundColor === '#EF4444' ? 'วันหยุดราชการ' : 'วันหยุดโรงเรียน'}<br>
+                ประเภท: ${info.event.backgroundColor === 'red' ? 'วันหยุดราชการ' : 'วันหยุดโรงเรียน'}<br>
             `;
             
             info.el.addEventListener('mouseover', () => {
