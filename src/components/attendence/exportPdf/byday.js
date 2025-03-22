@@ -18,17 +18,38 @@ export const styles = StyleSheet.create({
         fontFamily: "TH Sarabun New",
         padding: "30px 50px",
     },
+    logoSize: {
+        width:"32px",
+        height:"32px",
+        alignSelf:'center',
+        marginBottom: 5
+    },  
     textHeader: {
-        fontSize: 10,
+        fontSize: 14 ,
         fontWeight: "bold",
         textAlign: "left",
-        marginBottom: 10,
+        marginBottom: 0
+    },
+    textParagraph: {
+        fontSize: 12,
+        fontWeight:'light',
+        textAlign:'left',
+        marginTop: 0,
+        marginBottom:5
+    },
+    textSpan: {
+        fontSize:10,
+        fontWeight:'light',
+        textAlign:'left',
+        marginBottom:5
     },
     table: {
         width: "100%",
         borderWidth: 1,
         borderColor: "#000",
         fontSize: 10,
+        marginTop:10,
+        marginBottom:10,
     },
     tableHeader: {
         backgroundColor: "#e5e5e5",

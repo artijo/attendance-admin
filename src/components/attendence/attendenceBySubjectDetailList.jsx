@@ -46,7 +46,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     .map((attendance, index) => (
                         <th key={index} className="px-4 py-3 text-center whitespace-nowrap">
                             <div className="font-medium">คาบที่ {++indexReal}</div>
-                            <div className="text-xs mt-1 text-gray-500 font-normal">{dateTimeFormat(attendance.studingTimeDate)}</div>
+                            <div className="text-xs mt-1 text-gray-500 font-normal">({dateTimeFormat(attendance.studingTimeDate)})</div>
                         </th>
                     ))}
             </tr>
