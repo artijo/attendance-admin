@@ -45,9 +45,7 @@ export const AttendanceByDayDetailList = ({studentList}) => {
         setTotalStatus(updatedTotalStatus);
     }
 
-    useEffect(()=> {
-        setuptotalstatus();
-    },[studentList]);
+   
 
     const formatAttStatus = (status) => {
         
@@ -114,7 +112,12 @@ export const AttendanceByDayDetailList = ({studentList}) => {
   
     useEffect(() => {
         fetchClassroomInfo();
+        
     },[])
+
+    useEffect(()=> {
+        setuptotalstatus();
+    },[studentList]);
 
     return (
         <>
@@ -138,76 +141,78 @@ export const AttendanceByDayDetailList = ({studentList}) => {
                     <Noanything title={"ไม่มีการเรียนในวันนี้"} description={"ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฎิทินการเรียน"}/>
                 )
             }
-            {studentList.length > 0 && <div>
+            {studentList.length > 0 && 
                 <div>
-                    <div className="relative border overflow-x-auto shadow-md sm:rounded-2xl">
-                        <table ref={ref} className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th className="px-6 py-4 border-r border-b" colSpan={3}>คาบที่</th>
+                    <div>
+                        <div className="relative border overflow-x-auto shadow-md sm:rounded-2xl">
+                            <table ref={ref} className="w-full border-collapse text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th className="px-6 py-4 border-r border-b" colSpan={3}>คาบที่</th>
+                                        {
+                                            studentList[0].attendance.map((attendance, index) => (
+                                                <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}({dateTimeFormat(attendance.studingTimeDate)})</th>
+                                            ))
+                                        }
+                                    </tr>
+                                    <tr >
+                                        <th className="px-6 py-4 border-r border-b" colSpan={3}>รหัสวิชา</th>
+                                        {
+                                            studentList[0].attendance.map((attendance, index) => (
+                                                <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectCode}</th>
+                                            ))
+                                        }
+                                    </tr>
+                                    <tr >
+                                        <th className="px-6 py-4 border-r border-b">เลขที่</th>
+                                        <th className="px-6 py-4 border-r border-b">รหัสนักศึกษา</th>
+                                        <th className="px-6 py-4 border-r border-b">ชื่อ-นามสกุล</th>
+                                        {
+                                            studentList[0].attendance.map((attendance, index) => (
+                                                <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectName}</th>
+                                            ))
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
                                     {
-                                        studentList[0].attendance.map((attendance, index) => (
-                                            <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}({dateTimeFormat(attendance.studingTimeDate)})</th>
+                                        studentList.map((student, index) => (
+                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                                <td className="px-6 py-4 border-r border-b">{student.stdNo}</td>
+                                                <td className="px-6 py-4 border-r border-b">{student.stdId}</td>
+                                                <td className="px-6 py-4 border-r border-b">{student.fName} {student.lName}</td>
+                                                {
+                                                    student.attendance.map((attendance, index) => (
+                                                        <td className="px-6 py-4 border-r border-b" key={index}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
+                                                    ))
+                                                }
+                                            </tr>
                                         ))
                                     }
-                                </tr>
-                                <tr >
-                                    <th className="px-6 py-4 border-r border-b" colSpan={3}>รหัสวิชา</th>
-                                    {
-                                        studentList[0].attendance.map((attendance, index) => (
-                                            <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectCode}</th>
-                                        ))
-                                    }
-                                </tr>
-                                <tr >
-                                    <th className="px-6 py-4 border-r border-b">เลขที่</th>
-                                    <th className="px-6 py-4 border-r border-b">รหัสนักศึกษา</th>
-                                    <th className="px-6 py-4 border-r border-b">ชื่อ-นามสกุล</th>
-                                    {
-                                        studentList[0].attendance.map((attendance, index) => (
-                                            <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectName}</th>
-                                        ))
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    studentList.map((student, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                            <td className="px-6 py-4 border-r border-b">{student.stdNo}</td>      
-                                            <td className="px-6 py-4 border-r border-b">{student.stdId}</td>      
-                                            <td className="px-6 py-4 border-r border-b">{student.fName} {student.lName}</td>      
-                                            {
-                                                student.attendance.map((attendance, index) => (
-                                                    <td className="px-6 py-4 border-r border-b" key={index}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
-                                                ))
-                                            }
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>มาเรียน</td>
-                                    <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.present}</td>
-                                </tr>
-                                <tr >
-                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>ขาดเรียน</td>
-                                    <td className="px-6 py-4 border-r border-b"  colSpan={studentList[0].attendance.length}>{totalStatus.absent}</td>
-                                </tr>
-                                <tr>
-                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>ลา</td>
-                                    <td className="px-6 py-4 border-r border-b"  colSpan={studentList[0].attendance.length}>{totalStatus.leave}</td>
-                                </tr>
-                                <tr>
-                                    <td className="px-6 py-4 border-r border-b" colSpan={3}>กิจกรรม</td>
-                                    <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.activity}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>มาเรียน</td>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.present}</td>
+                                    </tr>
+                                    <tr >
+                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>ขาดเรียน</td>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.absent}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>ลา</td>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.leave}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>กิจกรรม</td>
+                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.activity}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>}
+            }
         </> 
     );
 };
