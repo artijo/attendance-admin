@@ -189,6 +189,16 @@ function UploadWithFile() {
     return allStudents.some(student => student.stdId === studentId);
   };
 
+  // Function to check if a student record has all required fields
+  const hasRequiredFields = (student) => {
+    const requiredFields = ['studentId', 'firstName', 'lastName', 'class', 'room'];
+    return requiredFields.every(field => 
+      student[field] !== undefined && 
+      student[field] !== null && 
+      student[field] !== ''
+    );
+  };
+
   const handleSaveToServer = async () => {
     try {
       setIsSaving(true);
@@ -197,9 +207,10 @@ function UploadWithFile() {
       // Prepare only new students data from all sheets
       const newStudentsToSave = {};
       Object.keys(sheetsData).forEach(sheetName => {
-        // Filter only new students (those that don't exist)
+        // Filter only new students (those that don't exist) and have all required fields
         const newStudents = sheetsData[sheetName].filter(student => 
-          !checkStudentExists(student.studentId)
+          !checkStudentExists(student.studentId) && 
+          hasRequiredFields(student)
         ).map(student => ({
           ...student,
           isModified: Boolean(modifiedData[sheetName]?.[student.id])
@@ -259,9 +270,14 @@ function UploadWithFile() {
           <tbody className="bg-white divide-y divide-gray-200">
             {data.map((row) => (
               <tr key={`${sheetName}-${row.id}`} 
-                  className={modifiedData[sheetName]?.[row.id] ? 'bg-yellow-50' : ''}>
+                  className={modifiedData[sheetName]?.[row.id] ? 'bg-yellow-50' : 
+                  !hasRequiredFields(row) ? 'bg-red-50' : ''}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {checkStudentExists(row.studentId) ? (
+                  {!hasRequiredFields(row) ? (
+                    <span className="text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs">
+                      ข้อมูลไม่ครบ - จะข้าม
+                    </span>
+                  ) : checkStudentExists(row.studentId) ? (
                     <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full text-xs">
                       Exists - Will Skip
                     </span>
@@ -491,9 +507,17 @@ function UploadWithFile() {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {sheetsData[selectedSheet].map((row) => (
                       <tr key={`${selectedSheet}-${row.id}`} 
-                          className={modifiedData[selectedSheet]?.[row.id] ? 'bg-yellow-50' : ''}>
+                          className={!hasRequiredFields(row) ? 'bg-red-50' : 
+                          modifiedData[selectedSheet]?.[row.id] ? 'bg-yellow-50' : ''}>
                         <td className="px-4 py-3 whitespace-nowrap">
-                          {checkStudentExists(row.studentId) ? (
+                          {!hasRequiredFields(row) ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                              ข้อมูลไม่ครบ
+                            </span>
+                          ) : checkStudentExists(row.studentId) ? (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
