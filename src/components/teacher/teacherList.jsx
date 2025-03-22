@@ -21,101 +21,166 @@ function TeacherList({ teachers, teachersPerPage }) {
 
   return (
     <div>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400t">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-text-color-alt font-medium uppercase tracking-wider bg-gray-50 border-b border-line">
             <tr>
-              <th className="px-6 py-3">รหัสครู</th>
-              <th className="px-6 py-3">ชื่อ - สกุล</th>
-              <th className="px-6 py-3">อีเมล</th>
-              <th className="px-6 py-3">เลขโทรศัพท์</th>
+              <th className="px-4 py-3.5">รหัสครู</th>
+              <th className="px-4 py-3.5">ชื่อ - สกุล</th>
+              <th className="px-4 py-3.5">อีเมล</th>
+              <th className="px-4 py-3.5">เลขโทรศัพท์</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {currentTeachers.map((teacher) => (
-              <tr key={teacher.tchId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <Link to={`/teachers/${teacher.tchId}`} className="hover:bg-gray-100">
-                    {teacher.tchCode}
+              <tr 
+                key={teacher.tchId} 
+                className="hover:bg-gray-50 transition-colors duration-150"
+              >
+                <td className="px-4 py-3.5 font-medium text-primary">
+                  <Link 
+                    to={`/teachers/${teacher.tchId}`} 
+                    className="hover:text-accent transition-colors duration-200 flex items-center"
+                  >
+                    <span className="inline-block bg-primary/10 text-primary rounded-md px-2.5 py-1 text-sm font-medium">
+                      {teacher.tchCode}
+                    </span>
                   </Link>
                 </td>
-                <td className="px-6 py-4">
-                  {teacher.fName} {teacher.lName}
+                <td className="px-4 py-3.5 font-body text-text-color">
+                  {teacher.title === "MR" ? "นาย" : 
+                  teacher.title === "MRS" ? "นาง" : "นางสาว"} {teacher.fName} {teacher.lName}
                 </td>
-                <td className="px-6 py-4">{teacher.email}</td>
-                <td className="px-6 py-4">{formatPhoneNumber(teacher.tel)}</td>
+                <td className="px-4 py-3.5 font-body text-text-color">
+                  {teacher.email ? (
+                    <a 
+                      href={`mailto:${teacher.email}`} 
+                      className="text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {teacher.email}
+                    </a>
+                  ) : (
+                    <span className="text-text-color-alt italic">ไม่มีอีเมล</span>
+                  )}
+                </td>
+                <td className="px-4 py-3.5 font-body text-text-color">
+                  {teacher.tel ? (
+                    <span className="font-medium">{formatPhoneNumber(teacher.tel)}</span>
+                  ) : (
+                    <span className="text-text-color-alt italic">ไม่มีหมายเลขโทรศัพท์</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="rounded-b-lg border-t border-gray-200 px-4 py-2">
-        <ol className="flex flex-wrap justify-end gap-1 text-xs font-medium">
-          <li>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              className={`inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 ${
-                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={currentPage === 1}
-            >
-              <span className="sr-only">Prev Page</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="size-3"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </li>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <li key={page}>
+      {totalPages > 1 && (
+        <div className="border-t border-gray-100 px-4 py-3 sm:px-6 bg-gray-50 rounded-b-lg">
+          <div className="flex items-center justify-between">
+            <div className="hidden sm:block">
+              <p className="text-sm text-text-color-alt">
+                แสดงรายการ <span className="font-medium text-text-color">{startIndex + 1}</span> ถึง <span className="font-medium text-text-color">{Math.min(startIndex + teachersPerPage, teachers.length)}</span> จากทั้งหมด <span className="font-medium text-text-color">{teachers.length}</span> รายการ
+              </p>
+            </div>
+            
+            <nav className="flex justify-center items-center space-x-1">
               <button
-                onClick={() => handlePageChange(page)}
-                className={`block size-8 rounded border ${
-                  currentPage === page
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-gray-100 bg-white text-gray-900"
-                } text-center leading-8`}
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+                className={`p-2 rounded-md ${currentPage === 1 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30'}`}
               >
-                {page}
+                <span className="sr-only">หน้าแรก</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
               </button>
-            </li>
-          ))}
-
-          <li>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              className={`inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 ${
-                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={currentPage === totalPages}
-            >
-              <span className="sr-only">Next Page</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="size-3"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+              
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`p-2 rounded-md ${currentPage === 1 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30'}`}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </li>
-        </ol>
-      </div>
+                <span className="sr-only">ก่อนหน้า</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+
+              <div className="hidden md:flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Show pages around the current page
+                  let pageToShow;
+                  if (totalPages <= 5) {
+                    // If total pages <= 5, show all pages
+                    pageToShow = i + 1;
+                  } else if (currentPage <= 3) {
+                    // If near the start, show first 5 pages
+                    pageToShow = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    // If near the end, show last 5 pages
+                    pageToShow = totalPages - 4 + i;
+                  } else {
+                    // Otherwise, show 2 pages before and after current
+                    pageToShow = currentPage - 2 + i;
+                  }
+                
+                  return (
+                    <button
+                      key={pageToShow}
+                      onClick={() => handlePageChange(pageToShow)}
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                        currentPage === pageToShow
+                          ? 'bg-primary text-white'
+                          : 'text-text-color hover:bg-gray-100 hover:text-primary'
+                      }`}
+                    >
+                      {pageToShow}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex md:hidden">
+                <span className="px-3 py-1.5 text-sm text-text-color font-medium">
+                  {currentPage} / {totalPages}
+                </span>
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded-md ${currentPage === totalPages 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30'}`}
+              >
+                <span className="sr-only">ถัดไป</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a 1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              <button
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded-md ${currentPage === totalPages 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30'}`}
+              >
+                <span className="sr-only">หน้าสุดท้าย</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 6.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0zm6 0a1 1 0 010-1.414L14.586 10l-4.293-3.293a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
