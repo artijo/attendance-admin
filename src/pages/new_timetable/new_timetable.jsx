@@ -63,6 +63,12 @@ function Timetable() {
             timetableformate: "14.40 - 15.30",
             period: 7
         },
+        {
+            startDatabaseFormat: "15:30:00",
+            endDatabaseFormat: "16:20:00",
+            timetableformate: "15.30 - 16.20",
+            period: 8
+        }
     ];
 
     const handleEditTimetable = (timetable, time, day) => {
