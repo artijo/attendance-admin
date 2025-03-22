@@ -153,8 +153,8 @@ export function convertNumberToThaiMonth(monthNumber) {
   }
 }
 
-export function dateTimeFormat(dateTime){
-  const dateTimeFormat = formatDateTimeISOToDate(dateTime);
-  const dateSplit = dateTimeFormat.split('-');
-  return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
-}
+  export function dateTimeFormat(dateTime){
+    const dateTimeFormat = formatDateTimeISOToDate(dateTime);
+    const dateSplit = dateTimeFormat.split('-');
+    return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
+  }

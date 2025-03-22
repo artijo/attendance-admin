@@ -15,47 +15,19 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-    function daybetween(Start, End) {
-        const dates = [];
-        if (Start !== "" && End !== "") {
-            const startDate = DateTime.fromISO(Start).setZone('Asia/Bangkok');
-            const endDate = DateTime.fromISO(End).setZone('Asia/Bangkok');
-            let currentDate = startDate;
-            while (currentDate <= endDate) {
-                dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
-                currentDate = currentDate.plus({ days: 1 }); // เพิ่มวันทีละ 1
-            }
-        } else {
-            console.error("termStart or termEnd is not set!");
-        }
-        return dates;
-    }
-
-    function getDay(value){
-        const holidayList = value.holiday.map((holiday) => holiday.startHolidayDate.split("T")[0]);
-        const dateTimeStart = DateTime.fromISO(value.termStart).setZone('Asia/Bangkok').toString().split("T")[0]; //ex. ['2025-05-15','00:00:00.000Z']
-        const dateTimeEnd = DateTime.fromISO(value.termEnd).setZone('Asia/Bangkok').toString().split("T")[0]; //ex. ['2025-09-09','00:00:00.000Z']
-        const datebetween = daybetween(dateTimeStart, dateTimeEnd).filter((date) => {
-            const weekday = DateTime.fromISO(`${date}`).weekday; // filter เพื่อตัดวันที่เป้นเสาร์ อาทิตย์ออก
-            return weekday !== 6 && weekday !== 7;
-        }).filter((date) => !holidayList.includes(date));
-        setDayList(datebetween);
-    }
-
-    const fetchTermInfo = async () => {
+    
+    const getTermBetween = async () => {
         try{
-            const response = await axios.get(`${HOSTNAME}/a/academicterms/${termId}`);
-            getDay(response.data);
+            const response = await axios.get(`${HOSTNAME}/a/term/${termId}`)
+            setDayList(response.data);
         }catch(err){
             console.error(err);
         };
     };
-    
+
     useEffect(() => {
-        if(termId !== null){
-            fetchTermInfo();
-        }
-    },[termId]);
+        getTermBetween();
+    },[]);
 
     return (
         <>
@@ -66,10 +38,11 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th className="px-6 py-3">ลำดับ</th>
-                                    <th className="px-6 py-3">วัน</th>
                                     <th className="px-6 py-3">วันที่</th>
-                                    <th className="px-6 py-3">การเข้าเรียน</th>
+                                    <th className="px-6 py-3">วัน</th>
+                                    <th className="px-6 py-3">
+                                        <span className="sr-only">การเข้าเรียน</span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,11 +51,8 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                         (
                                             sliceDayList.map((day, index) => (
                                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                    {
-                                                        <td className="px-6 py-4">{((currentPage - 1)*10)+(index+1) }</td>
-                                                    }
-                                                    <td className="px-6 py-4">{formatDayOfWeeks(DateTime.fromISO(`${day}T17:00:00`).setZone('Asia/Bangkok').weekday)}</td>
                                                     <td className="px-6 py-4">{formatDateToThai(day)}</td>
+                                                    <td className="px-6 py-4">{formatDayOfWeeks(DateTime.fromISO(`${day}T17:00:00`).setZone('Asia/Bangkok').weekday)}</td>
                                                     <td className="px-6 py-4">
                                                         <span className="inline-flex overflow-hidden rounded-md border bg-white shadow-sm'">
                                                             <Link to={`/attendances/details/byday`} state={{ classroomId: classroomId, date: day }} >
@@ -95,8 +65,7 @@ export const AttendenceByDayList = ({termId,classroomId}) => {
                                                                     การเข้าเรียน
                                                                 </button>
                                                             </Link>
-                                                        </span>
-                                                        
+                                                        </span> 
                                                     </td>
                                                 </tr>
                                             ))
