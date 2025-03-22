@@ -1,34 +1,71 @@
 import { Link } from "react-router-dom";
-function ClassroomList({classrooms}) {
+
+function ClassroomList({ classrooms }) {
   return (
-    <div>
-    <div className="relative overflow-x-auto shadow-md sm:rounded-2xl">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr >
-            <th className="px-6 py-3">ห้องเรียน</th>
-            <th className="px-6 py-3">แผนการเรียน</th>
-            <th className="px-6 py-3">ปีการศึกษา</th>
-            <th className="px-6 py-3">เทอม</th>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm text-left">
+        <thead className="text-xs text-text-color-alt font-medium uppercase tracking-wider bg-gray-50 border-b border-line">
+          <tr>
+            <th className="px-4 py-3.5">ห้องเรียน</th>
+            <th className="px-4 py-3.5">แผนการเรียน</th>
+            <th className="px-4 py-3.5">ปีการศึกษา</th>
+            <th className="px-4 py-3.5">เทอม</th>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {classrooms.map((classroom) => (
-            <tr key={classroom.classId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <tr 
+              key={classroom.classId} 
+              className="hover:bg-gray-50 transition-colors duration-150"
+            >
+              <td className="px-4 py-3.5 font-medium text-primary">
+                <Link 
+                  to={`/classroom/${classroom.classId}`} 
+                  className="hover:text-accent transition-colors duration-200 flex items-center"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block bg-primary/10 text-primary rounded-md px-2.5 py-1 text-sm font-medium">
+                      ม.{classroom.classLevel}/{classroom.classRoom}
+                    </span>
+                    {classroom.classroomMembers && (
+                      <span className="text-xs text-text-color-alt bg-gray-100 px-2 py-0.5 rounded-full">
+                        {classroom.classroomMembers.length} คน
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </td>
               
-              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"><Link to={`/classroom/${classroom.classId}`} className="hover:bg-gray-100">{classroom.classLevel}/{classroom.classRoom}</Link></th>
-              
-              <td className="px-6 py-4">{classroom.classroomType.classTypeNameThai}</td>
+              <td className="px-4 py-3.5 font-body text-text-color">
+                {classroom.classroomType ? (
+                  <div className="flex flex-col">
+                    <span className="font-medium">{classroom.classroomType.classTypeNameThai}</span>
+                    <span className="text-xs text-text-color-alt">{classroom.classroomType.classTypeNameEng}</span>
+                  </div>
+                ) : (
+                  <span className="text-text-color-alt italic">ไม่ระบุ</span>
+                )}
+              </td>
 
-              <td className="px-6 py-4">{classroom.term.academicYear+543}</td>
-              <td className="px-6 py-4">{classroom.term.semester}</td>
+              <td className="px-4 py-3.5 font-body text-text-color">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-600">
+                  {classroom.term ? classroom.term.academicYear + 543 : "-"}
+                </span>
+              </td>
+              
+              <td className="px-4 py-3.5 font-body text-text-color">
+                {classroom.term ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-50 text-green-600">
+                    {classroom.term.semester}
+                  </span>
+                ) : "-"}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  </div>
   );
 }
 
