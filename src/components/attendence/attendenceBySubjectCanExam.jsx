@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
@@ -9,20 +9,32 @@ import BySubejctCanExamPDF from "./exportPdf/bysubjectCanExam";
 
 export const AttendanceBySubjectCanExam = () => {
     const location = useLocation();
-    const { subject, classroomInfo } = location.state;
+    const { subject, classroomInfo } = location.state || {};
     const [studentList, setStudentList] = useState([]);
-    const nevigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
     const ref = useRef();
 
-
     const abstractCanExam = async () => {
+        if (!subject?.subId || !classroomInfo?.classId) {
+            setError("ข้อมูลไม่ครบถ้วน กรุณาเลือกห้องเรียนและรายวิชาอีกครั้ง");
+            setIsLoading(false);
+            return;
+        }
+
         try {
-        const response = await axios.get(
-            `${HOSTNAME}/a/atttendence/abstract/${classroomInfo.classId}/${subject.subId}`
-        );
-        setStudentList(response.data);
+            setIsLoading(true);
+            const response = await axios.get(
+                `${HOSTNAME}/a/atttendence/abstract/${classroomInfo.classId}/${subject.subId}`
+            );
+            setStudentList(response.data || []);
+            setError(null);
         } catch (error) {
-        console.error(error);
+            console.error(error);
+            setError("ไม่สามารถโหลดข้อมูลสรุปการมีสิทธิ์สอบได้");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -30,173 +42,258 @@ export const AttendanceBySubjectCanExam = () => {
         abstractCanExam();
     }, []);
 
-    const HeaderTitle = () => {
-        return (
-        <>
-            {subject && (
-            <h3>
-                แบบสรุปการมีสิทธิ์สอบตามวิชา {subject.subNameThai} (
-                {subject.subCode}-{subject.subNameEng})
-            </h3>
-            )}
-        </>
-        );
-    };
-
-    const HeaderDescription = () => {
-        return (
-        <>
-            {classroomInfo && (
-            <p className="inline-flex gap-2">
-                <span>
-                ห้อง {classroomInfo.classLevel}/{classroomInfo.classRoom}
-                </span>
-                <span>
-                ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม{" "}
-                {classroomInfo.term.semester}
-                </span>
-            </p>
-            )}
-        </>
-        );
-    };
-
-    const Table = () => {
-        return (
-        <div>
-            <div className="mt-4" >
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" ref={ref}>
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th className="px-6 py-3">
-                                    เลขที่
-                                </th>
-                                <th className="px-6 py-3">
-                                    รหัสนักเรียน
-                                </th>
-                                <th className="px-6 py-3">
-                                    ชื่อ-สกุล
-                                </th>
-                                <th className="px-6 py-3">
-                                    ขาดเรียน(ครั้ง)
-                                </th>
-                                <th className="px-6 py-3">
-                                    เข้าสาย(ครั้ง)
-                                </th>
-                                <th className="px-6 py-3">
-                                    ลา(ครั้ง)
-                                </th>
-                                <th className="px-6 py-3">
-                                    กิจกรรม(ครั้ง)
-                                </th>
-                                <th className="px-6 py-3">
-                                    เข้าเรียน(ครั้ง)
-                                </th>
-                                <th className="px-6 py-3">
-                                    ร้อยละการเข้าเรียนรวมลา
-                                </th>
-                                <th className="px-6 py-3">
-                                    สถานไม่มีสิทธิ์สอบ
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {studentList.map((student, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                <td className="px-6 py-4">
-                                {student.stdNo}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.stdId}
-                                </td>
-                                <td className="px-6 py-4">
-                                {`${student.fName} ${student.lName}`}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendenceAbsentCount}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendenceLateCount}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendenceLeaveCount}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendenceActivity}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendenceCount}
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.attendencePercent}%
-                                </td>
-                                <td className="px-6 py-4">
-                                {student.canExam}
-                                </td>
-                            </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                {studentList.length === 0 &&(
-                    <div className="mt-4">
-                        <span className="flex flex-col items-center justify-center gap-2 py-3 border rounded-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
-                            </svg>
-                            ไม่พบสรุปหรือยังไม่มีข้อมูลการเข้าเรียน
-                        </span>
-                    </div>
-                )}
-            </div>
-        </div>
-        );
-    };
-
     const handleExportExcel = () => {
-        if(ref.current) {
-            console.log(ref.current);
-            AttendanceSummaryByDay(ref.current);
+        if (ref.current) {
+            const fileName = `สรุปการมีสิทธ์สอบวิชา_${subject.subNameThai}_ชั้นม.${classroomInfo.classLevel}/${classroomInfo.classRoom}`;
+            AttendanceSummaryByDay(ref.current, fileName);
         }
-        
-    }
+    };
 
-    const handelExportPdf = () => {
-        if(subject != null && classroomInfo != null && studentList.length > 0){
-            return <BySubejctCanExamPDF classroomInfo={classroomInfo} studentList={studentList} subject={subject}/>
+    const handleExportPdf = () => {
+        if (subject && classroomInfo && studentList.length > 0) {
+            return <BySubejctCanExamPDF classroomInfo={classroomInfo} studentList={studentList} subject={subject} />;
         }
         return null;
-    }
+    };
 
-    const ExportPdfButtonKK = () => {
-        const handelExportPdfCheck = handelExportPdf();
-        if(handelExportPdfCheck === null) {
-            return <p>Loading....</p>
-        }else{
+    const ExportPdfButtonComponent = () => {
+        const pdfComponent = handleExportPdf();
+        
+        if (!pdfComponent) {
             return (
-                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการมิสิทธ์สอบวิชา ${subject.subNameThai} ชั้นมัธยมปีที่ ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}/>
+                <button 
+                    disabled 
+                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
+                >
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    กำลังโหลด...
+                </button>
             );
         }
+        
+        return (
+            <ExportPdfButton 
+                PDFComponent={pdfComponent} 
+                fileName={`สรุปการมีสิทธิ์สอบวิชา_${subject.subNameThai}_ชั้นม.${classroomInfo.classLevel}_${classroomInfo.classRoom}`}
+            />
+        );
+    };
+
+    if (!subject || !classroomInfo) {
+        return (
+            <div className="min-h-screen">
+                <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
+                    <div className="flex justify-center mb-4 text-text-color-alt">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">ข้อมูลไม่ครบถ้วน</h2>
+                    <p className="text-text-color-alt font-body mb-6">กรุณาเลือกห้องเรียนและรายวิชาเพื่อดูรายละเอียดการมีสิทธิ์สอบ</p>
+                    <Link 
+                        to="/attendances" 
+                        className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        กลับไปหน้าการเข้าเรียน
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="mx-auto container">
-            <div className="header">
-                <HeaderTitle />
-                <HeaderDescription />
+        <div className="min-h-screen">
+            <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">แบบสรุปการมีสิทธิ์สอบ</h1>
+                <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            <div className="body">
-                <div className="flex gap-2 w-fit ml-auto">
-                    {studentList.length > 0 && Object.keys(studentList.length) > 0 &&
-                        <>
-                            <ExportPdfButtonKK/>
-                            <ExportExcelButton handelOnClickFunction={handleExportExcel}/>
-                        </>
-                    }
+            
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-start gap-3">
+                    <div className="bg-primary/10 text-primary rounded-full p-2 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-medium text-text-color font-heading">
+                            {subject.subNameThai}
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {subject.subCode}
+                            </span>
+                        </h2>
+                        <p className="text-sm text-text-color-alt font-body mt-1">
+                            {subject.subNameEng}
+                        </p>
+                        <div className="mt-3 flex items-center gap-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
+                            </span>
+                            <span className="text-sm text-text-color-alt">
+                                ปีการศึกษา {classroomInfo.term?.academicYear + 543} เทอม {classroomInfo.term?.semester}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <Table />
+                
+                <Link 
+                    to="/attendances"
+                    className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    ย้อนกลับ
+                </Link>
             </div>
+
+            <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+                <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-medium text-text-color font-heading flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            สรุปการมีสิทธิ์สอบ
+                        </h3>
+                        
+                        {studentList.length > 0 && (
+                            <div className="flex gap-3">
+                                <ExportPdfButtonComponent />
+                                <ExportExcelButton handelOnClickFunction={handleExportExcel} />
+                            </div>
+                        )}
+                    </div>
+                    
+                    {isLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                        </div>
+                    ) : error ? (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                            <div className="flex">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                </svg>
+                                <div>{error}</div>
+                            </div>
+                        </div>
+                    ) : studentList.length === 0 ? (
+                        <div className="bg-white rounded-lg border border-line p-8 text-center">
+                            <div className="flex justify-center mb-4 text-text-color-alt">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-medium text-text-color mb-1">ไม่พบข้อมูลสรุป</h3>
+                            <p className="text-text-color-alt">ยังไม่มีข้อมูลการเข้าเรียนในรายวิชานี้</p>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm" ref={ref}>
+                                <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-y border-line">
+                                    <tr>
+                                        <th className="px-4 py-3.5 text-left">เลขที่</th>
+                                        <th className="px-4 py-3.5 text-left">รหัสนักเรียน</th>
+                                        <th className="px-4 py-3.5 text-left">ชื่อ-สกุล</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ขาดเรียน<br/>(ครั้ง)</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าสาย<br/>(ครั้ง)</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ลา<br/>(ครั้ง)</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">กิจกรรม<br/>(ครั้ง)</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าเรียน<br/>(ครั้ง)</th>
+                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ร้อยละ<br/>การเข้าเรียนรวมลา</th>
+                                        <th className="px-4 py-3.5 text-center">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {studentList.map((student, index) => (
+                                        <tr 
+                                            key={index} 
+                                            className={`hover:bg-gray-50 transition-colors duration-150 ${
+                                                student.canExam === "ไม่มีสิทธิ์สอบ" 
+                                                    ? "bg-red-50" 
+                                                    : "bg-white"
+                                            }`}
+                                        >
+                                            <td className="px-4 py-3 font-medium text-text-color text-center">{student.stdNo}</td>
+                                            <td className="px-4 py-3">{student.stdId}</td>
+                                            <td className="px-4 py-3 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
+                                            <td className={`px-4 py-3 text-center ${student.attendenceAbsentCount > 0 ? 'text-red-600 font-medium' : ''}`}>
+                                                {student.attendenceAbsentCount}
+                                            </td>
+                                            <td className={`px-4 py-3 text-center ${student.attendenceLateCount > 0 ? 'text-orange-500 font-medium' : ''}`}>
+                                                {student.attendenceLateCount}
+                                            </td>
+                                            <td className={`px-4 py-3 text-center ${student.attendenceLeaveCount > 0 ? 'text-purple-600 font-medium' : ''}`}>
+                                                {student.attendenceLeaveCount}
+                                            </td>
+                                            <td className={`px-4 py-3 text-center ${student.attendenceActivity > 0 ? 'text-blue-600 font-medium' : ''}`}>
+                                                {student.attendenceActivity}
+                                            </td>
+                                            <td className={`px-4 py-3 text-center ${student.attendenceCount > 0 ? 'text-green-600 font-medium' : ''}`}>
+                                                {student.attendenceCount}
+                                            </td>
+                                            <td className={`px-4 py-3 text-center font-medium ${
+                                                student.attendencePercent < 80 
+                                                    ? 'text-red-600' 
+                                                    : student.attendencePercent >= 90
+                                                        ? 'text-green-600'
+                                                        : 'text-yellow-600'
+                                            }`}>
+                                                {student.attendencePercent}%
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {student.canExam === "ไม่มีสิทธิ์สอบ" ? (
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        ไม่มีสิทธิ์สอบ
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        มีสิทธิ์สอบ
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot className="bg-gray-50">
+                                    <tr>
+                                        <td colSpan="10" className="px-4 py-3 text-text-color-alt">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs">
+                                                    รายงานนี้ไม่เป็นทางการ กรุณาตรวจสอบกับครูผู้สอนก่อนการประกาศอย่างเป็นทางการ
+                                                </span>
+                                                <span className="text-xs">
+                                                    นักเรียนทั้งหมด: {studentList.length} คน
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </div>
+            
+            {studentList.length > 0 && (
+                <div className="mt-6 flex justify-end">
+                    <Link 
+                        to="/attendances"
+                        className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        กลับไปหน้าการเข้าเรียน
+                    </Link>
+                </div>
+            )}
         </div>
     );
 };

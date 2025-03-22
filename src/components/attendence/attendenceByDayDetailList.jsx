@@ -1,23 +1,28 @@
-import {PropTypes} from "prop-types";
+import { PropTypes } from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import Noanything from "../../pages/Noanything";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import {useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { dateTimeFormat, formatDateToThai, formatDayOfWeeks} from "../../helper";
+import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper";
 import ByDay from "./exportPdf/byday.jsx";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import { DateTime } from "luxon";
-export const AttendanceByDayDetailList = ({studentList}) => {
+
+export const AttendanceByDayDetailList = ({ studentList }) => {
     const ref = useRef(null);
     const location = useLocation();
-    const date = location.state.date;
+    const date = location.state?.date;
     const [totalStatus, setTotalStatus] = useState(null);
     const [classroomInfo, setClassroomInfo] = useState(null);
-    const setuptotalstatus = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [exportLoading, setExportLoading] = useState({ excel: false, pdf: false });
+    const [error, setError] = useState(null);
+
+    const setupTotalStatus = () => {
+        if (!studentList || !studentList.length) return;
+
         const updatedTotalStatus = {
             present: 0,
             late: 0,
@@ -25,195 +30,294 @@ export const AttendanceByDayDetailList = ({studentList}) => {
             activity: 0,
             leave: 0
         };
+        
         studentList.forEach((student) => {
             student.attendance.forEach((attendance) => {
-                if(attendance.attStatus !== null){
-                    if (attendance.attStatus.toLowerCase() === 'present') {
-                        updatedTotalStatus.present++;
-                    } else if (attendance.attStatus.toLowerCase() === 'late') {
-                        updatedTotalStatus.late++;
-                    } else if (attendance.attStatus.toLowerCase() === 'absent') {
-                        updatedTotalStatus.absent++;
-                    } else if (attendance.attStatus.toLowerCase() === 'activity') {
-                        updatedTotalStatus.activity++;
-                    } else if (attendance.attStatus.toLowerCase() === 'leave') {
-                        updatedTotalStatus.leave++;
+                if (attendance.attStatus !== null) {
+                    const status = attendance.attStatus.toLowerCase();
+                    if (updatedTotalStatus.hasOwnProperty(status)) {
+                        updatedTotalStatus[status]++;
                     }
-                };
+                }
             });
-        })
+        });
+        
         setTotalStatus(updatedTotalStatus);
-    }
-
-   
+    };
 
     const formatAttStatus = (status) => {
+        const statusMap = {
+            'present': 'เข้าเรียน',
+            'absent': 'ไม่เข้าเรียน',
+            'late': 'มาสาย',
+            'activity': 'เข้าร่วมกิจกรรม',
+            'leave': 'ลา'
+        };
         
-        switch (status) {
-            case 'present': {
-                return 'เข้าเรียน';
-            }
-            case 'absent': {
-                return 'ไม่เข้าเรียน';
-            }
-            case 'late': {
-                return 'มาสาย';
-            }
-            case 'activity': {
-                
-                return 'เข้าเรียนกิจกรรม';
-            }
-            case 'leave': {
+        return statusMap[status] || status;
+    };
+
+    const getAttStatusClassName = (status) => {
+        if (!status) return "text-gray-400";
         
-                return 'ลา';
+        const statusClasses = {
+            'present': 'text-green-600 font-medium',
+            'absent': 'text-red-600 font-medium',
+            'late': 'text-orange-500 font-medium',
+            'activity': 'text-blue-600 font-medium',
+            'leave': 'text-purple-600 font-medium'
+        };
+        
+        return statusClasses[status.toLowerCase()] || "";
+    };
+
+    const handleExportExcel = () => {
+        if (ref.current) {
+            setExportLoading(prev => ({ ...prev, excel: true }));
+            
+            try {
+                const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
+                const fileName = `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน${formatDayOfWeeks(dateformat.weekday)} วันที่${formatDateToThai(dateformat.toString())}`;
+                AttendanceSummaryByDay(ref.current, fileName);
+            } catch (error) {
+                console.error("Export Excel error:", error);
+            } finally {
+                setExportLoading(prev => ({ ...prev, excel: false }));
             }
-            default:
-                return status;
         }
     };
 
-    const handaleExportExcel = () => {
-        if(ref.current) {
-            const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
-
-            const tableList = ref.current;
-            AttendanceSummaryByDay(tableList, `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน ${formatDayOfWeeks(dateformat.weekday)} วันที่ ${formatDateToThai(dateformat.toString())}`);
-        }
-    }
-
     const fetchClassroomInfo = async () => {
-        try{
-            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`)
-            if(response.status === 200) {
+        if (!location.state?.classroomId) return;
+        
+        try {
+            setIsLoading(true);
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
+            if (response.status === 200) {
                 setClassroomInfo(response.data);
+                setError(null);
             }
-        }catch(error) {
-            console.log(error)
+        } catch (error) {
+            console.log(error);
+            setError("ไม่สามารถโหลดข้อมูลห้องเรียนได้");
+        } finally {
+            setIsLoading(false);
         }
-    }
-    const handlePdfComponent = () => {
-        // console.log("FROM pad compontent: "  + String(classroomInfo));
-        if(studentList.length > 0 && totalStatus != null && classroomInfo != null ){
-            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo}/>
-        }
-        return null
-    }
+    };
 
-    const ExportPdfButtonKK = () => {
-         const handelExportPdfCheck = handlePdfComponent();
-            if(handelExportPdfCheck === null) {
-                return <p>Loading....</p>
-            }else{
-                return (
-                <ExportPdfButton PDFComponent={handelExportPdfCheck} fileName={`สรุปการเข้าเรียนตามรายวันที่ ${formatDateToThai(date)}  ชั้นมัธยม ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}/>
+    const handlePdfComponent = () => {
+        if (studentList.length > 0 && totalStatus && classroomInfo) {
+            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo} />;
+        }
+        return null;
+    };
+
+    const ExportPdfButtonComponent = () => {
+        const pdfComponent = handlePdfComponent();
+        
+        if (!pdfComponent) {
+            return (
+                <button 
+                    disabled 
+                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
+                >
+                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    กำลังโหลด...
+                </button>
             );
         }
-    }
+        
+        return (
+            <ExportPdfButton 
+                PDFComponent={pdfComponent} 
+                fileName={`สรุปการเข้าเรียนตามรายวันที่ ${formatDateToThai(date)} ชั้นมัธยม ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}
+            />
+        );
+    };
   
     useEffect(() => {
         fetchClassroomInfo();
-        
-    },[])
+    }, []);
 
-    useEffect(()=> {
-        setuptotalstatus();
-    },[studentList]);
+    useEffect(() => {
+        setupTotalStatus();
+    }, [studentList]);
+
+    if (studentList.length === 0) {
+        return (
+            <div className="bg-white rounded-lg border border-line p-8 text-center">
+                <div className="flex justify-center mb-4 text-text-color-alt">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 className="text-lg font-medium text-text-color mb-1">ไม่มีการเรียนในวันนี้</h3>
+                <p className="text-text-color-alt">ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฏิทินการเรียน</p>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <div>{error}</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <>
-            {
-                studentList.length > 0 && totalStatus != null && classroomInfo != null && (
-                    <ul className="flex flex-row-reverse">
-                        <li>
-                            <ExportExcelButton handelOnClickFunction={handaleExportExcel}/>
-                        </li>
-                        <li>
-                            <ExportPdfButtonKK/>
-                        </li>
-                        
-                    </ul>
-                )
+        <div>
+            {studentList.length > 0 && totalStatus && classroomInfo && (
+                <div className="flex justify-end items-center space-x-2 mb-4">
+                    <ExportPdfButtonComponent />
+                    <ExportExcelButton 
+                        handelOnClickFunction={handleExportExcel}
+                        isLoading={exportLoading.excel} 
+                    />
+                </div>
+            )}
+            
+            <div>
+                <div className="overflow-x-auto">
+                    <table 
+                        ref={ref} 
+                        className="w-full border-collapse text-sm bg-white rounded-lg overflow-hidden"
+                    >
+                        <thead className="bg-gray-50">
+                            <tr className="border-b border-gray-200">
+                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>คาบที่</th>
+                                {studentList[0].attendance.map((attendance, index) => (
+                                    <th 
+                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
+                                        key={index}
+                                    >
+                                        {index + 1}
+                                        <span className="block text-xs font-normal mt-1 text-gray-500">
+                                            ({dateTimeFormat(attendance.studingTimeDate)})
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                            <tr className="border-b border-gray-200">
+                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>รหัสวิชา</th>
+                                {studentList[0].attendance.map((attendance, index) => (
+                                    <th 
+                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
+                                        key={index}
+                                    >
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            {attendance.subjectCode}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                            <tr className="border-b border-gray-200">
+                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">เลขที่</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">รหัสนักเรียน</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">ชื่อ-นามสกุล</th>
+                                {studentList[0].attendance.map((attendance, index) => (
+                                    <th 
+                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
+                                        key={index}
+                                    >
+                                        <div className="truncate max-w-[150px]">{attendance.subjectName}</div>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {studentList.map((student, index) => (
+                                <tr 
+                                    key={index} 
+                                    className="hover:bg-gray-50 transition-colors duration-150"
+                                >
+                                    <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{student.stdNo}</td>
+                                    <td className="px-6 py-4 border-r border-gray-200 text-text-color">{student.stdId}</td>
+                                    <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
+                                    {student.attendance.map((attendance, idx) => (
+                                        <td 
+                                            key={idx} 
+                                            className={`px-6 py-4 border-r border-gray-200 ${getAttStatusClassName(attendance.attStatus?.toLowerCase())}`}
+                                        >
+                                            {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr className="bg-gray-50">
+                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาเรียน</td>
+                                <td className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium" colSpan={studentList[0].attendance.length}>
+                                    {totalStatus?.present || 0} คาบ
+                                </td>
+                            </tr>
+                            <tr className="bg-gray-50">
+                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ขาดเรียน</td>
+                                <td className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium" colSpan={studentList[0].attendance.length}>
+                                    {totalStatus?.absent || 0} คาบ
+                                </td>
+                            </tr>
+                            <tr className="bg-gray-50">
+                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ลา</td>
+                                <td className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium" colSpan={studentList[0].attendance.length}>
+                                    {totalStatus?.leave || 0} คาบ
+                                </td>
+                            </tr>
+                            <tr className="bg-gray-50">
+                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>กิจกรรม</td>
+                                <td className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium" colSpan={studentList[0].attendance.length}>
+                                    {totalStatus?.activity || 0} คาบ
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
                 
-                
-            }
-            {
-                studentList.length === 0 && (
-                    <Noanything title={"ไม่มีการเรียนในวันนี้"} description={"ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฎิทินการเรียน"}/>
-                )
-            }
-            {studentList.length > 0 && 
-                <div>
-                    <div>
-                        <div className="relative border overflow-x-auto shadow-md sm:rounded-2xl">
-                            <table ref={ref} className="w-full border-collapse text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th className="px-6 py-4 border-r border-b" colSpan={3}>คาบที่</th>
-                                        {
-                                            studentList[0].attendance.map((attendance, index) => (
-                                                <th className="px-6 py-4 border-r border-b" key={index}>{index + 1}({dateTimeFormat(attendance.studingTimeDate)})</th>
-                                            ))
-                                        }
-                                    </tr>
-                                    <tr >
-                                        <th className="px-6 py-4 border-r border-b" colSpan={3}>รหัสวิชา</th>
-                                        {
-                                            studentList[0].attendance.map((attendance, index) => (
-                                                <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectCode}</th>
-                                            ))
-                                        }
-                                    </tr>
-                                    <tr >
-                                        <th className="px-6 py-4 border-r border-b">เลขที่</th>
-                                        <th className="px-6 py-4 border-r border-b">รหัสนักศึกษา</th>
-                                        <th className="px-6 py-4 border-r border-b">ชื่อ-นามสกุล</th>
-                                        {
-                                            studentList[0].attendance.map((attendance, index) => (
-                                                <th className="px-6 py-4 border-r border-b" key={index}>{attendance.subjectName}</th>
-                                            ))
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        studentList.map((student, index) => (
-                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                <td className="px-6 py-4 border-r border-b">{student.stdNo}</td>
-                                                <td className="px-6 py-4 border-r border-b">{student.stdId}</td>
-                                                <td className="px-6 py-4 border-r border-b">{student.fName} {student.lName}</td>
-                                                {
-                                                    student.attendance.map((attendance, index) => (
-                                                        <td className="px-6 py-4 border-r border-b" key={index}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}</td>
-                                                    ))
-                                                }
-                                            </tr>
-                                        ))
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>มาเรียน</td>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.present}</td>
-                                    </tr>
-                                    <tr >
-                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>ขาดเรียน</td>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.absent}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>ลา</td>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.leave}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={3}>กิจกรรม</td>
-                                        <td className="px-6 py-4 border-r border-b" colSpan={studentList[0].attendance.length}>{totalStatus.activity}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                <div className="mt-6">
+                    <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-text-color mb-3">คำอธิบายสถานะ:</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <div className="flex items-center">
+                                <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+                                <span className="text-sm">เข้าเรียน</span>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                                <span className="text-sm">ไม่เข้าเรียน</span>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                                <span className="text-sm">มาสาย</span>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
+                                <span className="text-sm">เข้าร่วมกิจกรรม</span>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="w-3 h-3 bg-purple-600 rounded-full mr-2"></span>
+                                <span className="text-sm">ลา</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            }
-        </> 
+            </div>
+        </div>
     );
 };
 
