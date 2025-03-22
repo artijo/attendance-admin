@@ -252,7 +252,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
             </div>
             
             <div className="space-y-4">
-                {studentList.month.map((month, index) => (
+                {classroomInfo != null && studentList.month.map((month, index) => (
                     <div key={index}>
                         <TapAttendenceSummaryOpen 
                             title={`เดือน${convertNumberToThaiMonth(month)}`} 

@@ -88,7 +88,6 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                                     const formattedDate = formatDateToThai(day);
                                     const dayOfWeek = formatDayOfWeeks(DateTime.fromISO(`${day}T17:00:00`).setZone('Asia/Bangkok').weekday);
                                     const isWeekend = ["เสาร์", "อาทิตย์"].includes(dayOfWeek);
-
                                     return (
                                         <tr key={index} className={`${isWeekend ? 'bg-red-50' : 'bg-white'} hover:bg-gray-50 transition-colors duration-150`}>
                                             <td className="px-6 py-4 font-medium text-text-color">

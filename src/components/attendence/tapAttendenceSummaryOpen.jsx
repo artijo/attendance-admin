@@ -24,11 +24,13 @@ export const TapAttendenceSummaryOpen = ({ children, isTabOpen, title, handleIsT
                 </div>
             </button>
             
-            {isTabOpen[index] && (
-                <div className="p-6 bg-white animate-fadeIn">
-                    {children}
-                </div>
-            )}
+            {/* {isTabOpen[index] && (
+                
+            )} */}
+            <div className={`p-6 bg-white animate-fadeIn ${isTabOpen[index] ? "block" : "hidden"}`} >
+                {children}
+            </div>
+            
         </div>
     );
 };
