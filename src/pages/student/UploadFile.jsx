@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import * as XLSX from 'xlsx';
-import axios from 'axios'; // Add this import
+import axios from 'axios';
 import { HOSTNAME } from "../../config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const StudentColumns = {
   NO: 'No',
@@ -326,107 +326,288 @@ function UploadWithFile() {
   );
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">อัปโหลดไฟล์ข้อมูลนักเรียน</h2>
-      <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center ${
-          isDragging
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-300 hover:border-gray-400"
-        }`}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
-      >
-        <input
-          type="file"
-          onChange={onFileChange}
-          className="hidden"
-          id="fileInput"
-          accept=".xlsx,.xls,.csv"
-        />
-        <label
-          htmlFor="fileInput"
-          className="cursor-pointer flex flex-col items-center"
-        >
-          <svg
-            className="w-12 h-12 text-gray-400 mb-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-            />
-          </svg>
-          <p className="text-gray-600 mb-2">
-            Drag & Drop Excel or CSV files here or click to select
-          </p>
-          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-          {file && (
-            <p className="text-sm text-gray-500">
-              Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
-            </p>
-          )}
-        </label>
+    <div className="min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">อัปโหลดไฟล์ข้อมูลนักเรียน</h1>
+        <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
       </div>
-      {file && (
-        <button
-          onClick={onFileUpload}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+      
+      <div className="mb-6 flex justify-end">
+        <Link 
+          to="/students" 
+          className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
         >
-          อัปโหลดไฟล์
-        </button>
-      )}
-      {sheetList.length > 0 && (
-        <div className="mt-4 mb-4">
-          <select
-            value={selectedSheet}
-            onChange={(e) => setSelectedSheet(e.target.value)}
-            className="px-4 py-2 border rounded-md shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {sheetList.map(sheet => (
-              <option key={sheet} value={sheet}>
-                {sheet}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {selectedSheet && sheetsData[selectedSheet] && (
-        <>
-          <TableForSheet 
-            sheetName={selectedSheet} 
-            data={sheetsData[selectedSheet]} 
-          />
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          กลับไปหน้ารายการนักเรียน
+        </Link>
+      </div>
+      
+      <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden mb-6">
+        <div className="h-2 bg-gradient-to-r from-primary to-secondary"></div>
+        <div className="p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-medium text-text-color font-heading mb-2">อัปโหลดไฟล์ Excel หรือ CSV</h2>
+            <p className="text-text-color-alt font-body mb-4 text-sm">รองรับไฟล์ Excel (.xlsx, .xls) และ CSV สำหรับการนำเข้าข้อมูลนักเรียนหลายรายการพร้อมกัน</p>
+          </div>
           
-          <div className="mt-6 flex items-center justify-between gap-4">
-            <div className="text-sm text-gray-500">
-              Total sheets: {Object.keys(sheetsData).length}
-            </div>
-            <div className="flex items-center gap-4">
-              {saveError && (
-                <p className="text-red-500 text-sm">{saveError}</p>
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
+              isDragging
+                ? "border-primary bg-primary/5"
+                : file 
+                  ? "border-green-500 bg-green-50" 
+                  : "border-gray-300 hover:border-primary/50 hover:bg-gray-50"
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              onChange={onFileChange}
+              className="hidden"
+              id="fileInput"
+              accept=".xlsx,.xls,.csv"
+            />
+            <label
+              htmlFor="fileInput"
+              className="cursor-pointer flex flex-col items-center"
+            >
+              {!file ? (
+                <>
+                  <svg
+                    className="w-16 h-16 text-primary/70 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <p className="text-text-color font-medium font-body mb-2">
+                    ลากไฟล์วางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+                  </p>
+                  <p className="text-sm text-text-color-alt font-body">
+                    รองรับไฟล์ Excel และ CSV เท่านั้น
+                  </p>
+                </>
+              ) : (
+                <>
+                  <svg 
+                    className="w-16 h-16 text-green-500 mb-4" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth="1.5" 
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                    />
+                  </svg>
+                  <p className="text-green-600 font-medium font-body mb-2">
+                    ไฟล์พร้อมอัปโหลด
+                  </p>
+                  <p className="text-sm text-text-color font-body mb-1">
+                    {file.name}
+                  </p>
+                  <p className="text-xs text-text-color-alt font-body">
+                    ({(file.size / 1024).toFixed(2)} KB)
+                  </p>
+                </>
               )}
+              
+              {error && <p className="text-red-500 text-sm mt-4 font-body bg-red-50 p-2 rounded-lg">{error}</p>}
+            </label>
+          </div>
+          
+          {file && (
+            <div className="flex justify-center mt-5">
               <button
-                onClick={handleSaveToServer}
-                disabled={isSaving}
-                className={`px-6 py-2 rounded-md text-white font-medium
-                  ${isSaving 
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
-                  }`}
+                onClick={onFileUpload}
+                className="inline-flex justify-center items-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
               >
-                {isSaving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                อัปโหลดไฟล์
               </button>
             </div>
+          )}
+        </div>
+      </div>
+
+      {sheetList.length > 0 && (
+        <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-medium text-text-color font-heading">ข้อมูลนักเรียนจากไฟล์</h2>
+                <p className="text-sm text-text-color-alt font-body mt-1">เลือกและแก้ไขข้อมูลก่อนนำเข้า</p>
+              </div>
+              
+              {sheetList.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-text-color font-body">เลือกชีท:</label>
+                  <select
+                    value={selectedSheet}
+                    onChange={(e) => setSelectedSheet(e.target.value)}
+                    className="rounded-lg border-gray-300 py-2 px-3 shadow-sm text-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                  >
+                    {sheetList.map(sheet => (
+                      <option key={sheet} value={sheet}>
+                        {sheet}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {selectedSheet && sheetsData[selectedSheet] && (
+              <div className="mb-6 overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 border border-line rounded-lg overflow-hidden">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">สถานะ</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">ลำดับ</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">รหัสนักเรียน</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">คำนำหน้า</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">ชื่อ</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">นามสกุล</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">ชั้น</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">ห้อง</th>
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider font-heading">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {sheetsData[selectedSheet].map((row) => (
+                      <tr key={`${selectedSheet}-${row.id}`} 
+                          className={modifiedData[selectedSheet]?.[row.id] ? 'bg-yellow-50' : ''}>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          {checkStudentExists(row.studentId) ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                              มีในระบบแล้ว
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                              </svg>
+                              เพิ่มใหม่
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-body text-text-color">{row.no}</td>
+                        {/* Cell fields */}
+                        {Object.entries({
+                          studentId: 'รหัสนักเรียน',
+                          title: 'คำนำหน้า',
+                          firstName: 'ชื่อ',
+                          lastName: 'นามสกุล',
+                          class: 'ชั้น',
+                          room: 'ห้อง'
+                        }).map(([field, label]) => (
+                          <td key={field} className="px-4 py-3 whitespace-nowrap text-sm font-body">
+                            {editingCell.sheetName === selectedSheet && 
+                            editingCell.rowId === row.id && 
+                            editingCell.field === field ? (
+                              <input
+                                type="text"
+                                value={editingCell.value}
+                                onChange={(e) => handleChange(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                onBlur={handleSave}
+                                className="w-full border border-primary rounded-md p-1.5 text-sm focus:ring-2 focus:ring-primary/20 focus:outline-none font-body"
+                                autoFocus
+                              />
+                            ) : (
+                              <div 
+                                onClick={() => handleEdit(selectedSheet, row.id, field)}
+                                className="cursor-pointer hover:bg-gray-50 p-1.5 rounded-md transition-colors text-text-color"
+                              >
+                                {row[field]}
+                              </div>
+                            )}
+                          </td>
+                        ))}
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          {editingCell.sheetName === selectedSheet && editingCell.rowId === row.id ? (
+                            <button 
+                              onClick={handleSave} 
+                              className="text-primary hover:text-accent font-medium transition-colors"
+                            >
+                              บันทึก
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => handleEdit(selectedSheet, row.id, 'studentId')}
+                              className="text-primary hover:text-accent font-medium transition-colors"
+                            >
+                              แก้ไข
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between border-t border-gray-200 pt-5 mt-6">
+              <div className="text-sm text-text-color-alt font-body">
+                จำนวนชีททั้งหมด: <span className="font-medium text-text-color">{Object.keys(sheetsData).length}</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                {saveError && (
+                  <div className="text-red-500 text-sm font-body bg-red-50 px-3 py-2 rounded-lg">
+                    {saveError}
+                  </div>
+                )}
+                
+                <button
+                  onClick={handleSaveToServer}
+                  disabled={isSaving}
+                  className={`inline-flex justify-center items-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white transition-colors duration-300
+                    ${isSaving 
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30'
+                    }`}
+                >
+                  {isSaving ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      กำลังบันทึก...
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      บันทึกข้อมูล
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
