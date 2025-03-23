@@ -292,7 +292,7 @@ function CreateForm() {
                                     {errors.tel && <p className="text-red-500 text-xs mt-1 font-body">{errors.tel}</p>}
                                 </div>
 
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <label htmlFor="Password" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -338,7 +338,7 @@ function CreateForm() {
                                     {formErrors.confirmPassword && (
                                         <p className="text-red-500 text-xs mt-1 font-body">{formErrors.confirmPassword.message}</p>
                                     )}
-                                </div>
+                                </div> */}
 
                                 <div className="sm:col-span-2 flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
                                     <Link 

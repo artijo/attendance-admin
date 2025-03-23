@@ -7,45 +7,88 @@ import AlertSuccess from "../../components/alert/success.jsx";
 
 function Teachers() {
   const [teachers, setTeachers] = useState(null);
+  const [allTeachers, setAllTeachers] = useState(null); // Store all teachers for filtering
+  const [departments, setDepartments] = useState([]); // Store departments for filter dropdown
   const [search, setSearch] = useState("");
+  const [selectedDept, setSelectedDept] = useState("all"); // New state for department filter
   const [totalTeachers, setTotalTeachers] = useState(0);
   const location = useLocation();
   const { state } = location;
 
+  // Fetch teachers data
   function fetchTeachers() {
     axios
       .get(HOSTNAME + "/a/teachers")
       .then((response) => {
+        setAllTeachers(response.data); // Store all teachers
         setTeachers(response.data);
-        if (search === "") {
-          setTotalTeachers(response.data.length);
-        }
+        setTotalTeachers(response.data.length);
       })
       .catch((error) => {
         console.error("Error fetching teachers", error);
       });
   }
 
+  // Fetch departments for filter
+  function fetchDepartments() {
+    axios
+      .get(HOSTNAME + "/a/departments")
+      .then((response) => {
+        setDepartments(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching departments", error);
+      });
+  }
+
+  // Initial data fetch
   useEffect(() => {
     fetchTeachers();
+    fetchDepartments();
   }, []);
 
+  // Apply filters when search or department selection changes
   useEffect(() => {
-    if (search !== "" && teachers) {
-      const filteredTeachers = teachers.filter(
+    if (!allTeachers) return;
+    
+    // Start with all teachers
+    let filteredResults = [...allTeachers];
+    
+    // Apply search filter
+    if (search !== "") {
+      filteredResults = filteredResults.filter(
         (teacher) =>
-          teacher.fName.includes(search) ||
-          teacher.lName.includes(search) ||
-          teacher.tchId.includes(search) ||
-          teacher.fName.concat(" ", teacher.lName).includes(search) ||
-          teacher.lName.concat(" ", teacher.fName).includes(search) ||
-          teacher.tel.includes(search)
+          teacher.fName?.toLowerCase().includes(search.toLowerCase()) ||
+          teacher.lName?.toLowerCase().includes(search.toLowerCase()) ||
+          teacher.tchId?.toLowerCase().includes(search.toLowerCase()) ||
+          teacher.fName?.concat(" ", teacher.lName).toLowerCase().includes(search.toLowerCase()) ||
+          teacher.lName?.concat(" ", teacher.fName).toLowerCase().includes(search.toLowerCase()) ||
+          teacher.tel?.includes(search)
       );
-      setTeachers(filteredTeachers);
-    } else {
-      fetchTeachers();
     }
-  }, [search]);
+    
+    // Apply department filter
+    if (selectedDept !== "all") {
+      filteredResults = filteredResults.filter(
+        (teacher) => teacher.department.deptId === selectedDept
+      );
+    }
+    
+    // Update teachers state with filtered results
+    setTeachers(filteredResults);
+  }, [search, selectedDept, allTeachers]);
+
+  // Reset all filters
+  const resetFilters = () => {
+    setSearch("");
+    setSelectedDept("all");
+  };
+
+  // Get department name by ID
+  const getDepartmentName = (deptId) => {
+    const dept = departments.find(d => d.deptId === deptId);
+    return dept ? dept.deptName : "";
+  };
 
   return (
     <div className="min-h-screen">
@@ -63,7 +106,7 @@ function Teachers() {
           <div className="mb-3 sm:mb-0 bg-white rounded-lg px-4 py-2 border border-line shadow-sm">
             <span className="text-text-color-alt font-body">จำนวนครูทั้งหมด:</span>
             <span className="ml-2 font-medium text-primary text-lg font-heading">{teachers.length} คน</span>
-            {teachers.length !== totalTeachers && search === "" && (
+            {teachers.length !== totalTeachers && (
               <span className="ml-2 text-sm text-text-color-alt font-body">
                 (จากทั้งหมด {totalTeachers} คน)
               </span>
@@ -95,40 +138,107 @@ function Teachers() {
       </div>
       
       <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h2 className="text-lg font-medium text-text-color font-heading hidden sm:block">ค้นหาครู</h2>
-          
-          <div className="relative w-full sm:w-72">
-            <label htmlFor="Search" className="sr-only">ค้นหา</label>
-            <input
-              type="text"
-              id="Search"
-              placeholder="ค้นหาชื่อ รหัสครู หรือเบอร์โทร"
-              className="w-full rounded-lg border-gray-300 py-2.5 pl-4 pr-10 shadow-sm sm:text-sm focus:border-primary focus:ring-primary font-body"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <div className="flex flex-col space-y-4">
+          {/* Search and Department Filter */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="relative w-full sm:w-72">
+              <label htmlFor="Search" className="sr-only">ค้นหา</label>
+              <input
+                type="text"
+                id="Search"
+                placeholder="ค้นหาชื่อ รหัสครู หรือเบอร์โทร"
+                className="w-full rounded-lg border-gray-300 py-2.5 pl-4 pr-10 shadow-sm sm:text-sm focus:border-primary focus:ring-primary font-body"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
 
-            <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
-              <button type="button" className="text-gray-600 hover:text-primary">
-                <span className="sr-only">ค้นหา</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                  />
+              <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
+                <button type="button" className="text-gray-600 hover:text-primary">
+                  <span className="sr-only">ค้นหา</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="size-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                    />
+                  </svg>
+                </button>
+              </span>
+            </div>
+            
+            {/* Department Filter */}
+            <div className="w-full sm:w-72">
+              <label htmlFor="departmentFilter" className="text-sm font-medium text-text-color font-body flex items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-              </button>
-            </span>
+                กรองตามกลุ่มสาระ
+              </label>
+              <select
+                id="departmentFilter"
+                className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+              >
+                <option value="all">ทุกกลุ่มสาระ</option>
+                {departments.map((dept) => (
+                  <option key={dept.deptId} value={dept.deptId}>{dept.deptName}</option>
+                ))}
+              </select>
+            </div>
           </div>
+          
+          {/* Active Filters */}
+          {(search !== "" || selectedDept !== "all") && (
+            <div className="flex items-center pt-3 border-t border-gray-100">
+              <div className="text-sm text-text-color font-body mr-2">
+                กำลังกรอง:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {search !== "" && (
+                  <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
+                    ค้นหา: {search}
+                    <button 
+                      onClick={() => setSearch("")}
+                      className="ml-1.5 hover:text-primary/70"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {selectedDept !== "all" && (
+                  <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
+                    กลุ่มสาระ: {getDepartmentName(selectedDept)}
+                    <button 
+                      onClick={() => setSelectedDept("all")}
+                      className="ml-1.5 hover:text-primary/70"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {(search !== "" || selectedDept !== "all") && (
+                  <button
+                    onClick={resetFilters}
+                    className="text-text-color-alt hover:text-primary text-xs font-medium flex items-center"
+                  >
+                    ล้างตัวกรองทั้งหมด
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -144,7 +254,18 @@ function Teachers() {
             </svg>
           </div>
           <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">ไม่พบข้อมูลครู</h2>
-          <p className="text-text-color-alt font-body">ลองค้นหาด้วยคำค้นหาอื่น</p>
+          <p className="text-text-color-alt font-body">ลองค้นหาด้วยคำค้นหาอื่น หรือเปลี่ยนตัวกรอง</p>
+          {(search !== "" || selectedDept !== "all") && (
+            <button 
+              onClick={resetFilters}
+              className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              ล้างตัวกรอง
+            </button>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
