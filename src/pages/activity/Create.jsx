@@ -47,8 +47,7 @@ function CreateActivity() {
             
             setTeachers(teachersList.data.map(teacher => ({
                 value: teacher.tchId,
-                label: `${teacher.title === "MR" ? "นาย" : 
-                        teacher.title === "MRS" ? "นาง" : "นางสาว"} ${teacher.fName} ${teacher.lName}`
+                label: `${teacher.fName} ${teacher.lName}`
             })));
             
             setClassrooms(classroomsList.data.map(classroom => ({
