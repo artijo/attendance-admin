@@ -4,7 +4,6 @@ import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { validateEmail, validatePhoneNumber, validateThaiCharacters } from "../../regx.js";
 
 function CreateForm() {
     const [errors, setErrors] = useState({});
@@ -16,23 +15,6 @@ function CreateForm() {
     } = useForm();
 
     const onSubmit = async function (data) {
-        setErrors({});
-        if (!validateThaiCharacters(data.fName)) {
-            setErrors({ fName: "กรุณากรอกชื่อเป็นภาษาไทยเท่านั้น" });
-            return;
-        }
-        if (!validateThaiCharacters(data.lName)) {
-            setErrors({ lName: "กรุณากรอกนามสกุลเป็นภาษาไทยเท่านั้น" });
-            return;
-        }
-        if (data.email && !validateEmail(data.email)) {
-            setErrors({ email: "รูปแบบอีเมลไม่ถูกต้อง" });
-            return;
-        }
-        if (data.tel && !validatePhoneNumber(data.tel)) {
-            setErrors({ tel: "เบอร์โทรศัพท์ต้องมี 10 หลัก" });
-            return;
-        }
         try {
             const response = await axios.post(`${HOSTNAME}/a/student`, data);
             if (response.status === 200) {
@@ -132,7 +114,6 @@ function CreateForm() {
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("fName", { required: true })}
                                     />
-                                    {errors.fName && <p className="text-red-500 text-xs mt-1 font-body">{errors.fName}</p>}
                                 </div>
 
                                 {/* Lastname field */}
@@ -150,7 +131,6 @@ function CreateForm() {
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
                                     />
-                                    {errors.lName && <p className="text-red-500 text-xs mt-1 font-body">{errors.lName}</p>}
                                 </div>
 
                                 {/* Email field with error handling */}
