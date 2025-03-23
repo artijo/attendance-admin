@@ -139,14 +139,34 @@ function Teachers() {
       
       <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
         <div className="flex flex-col space-y-4">
-          {/* Search and Department Filter */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            {/* Department Filter */}
+            <div className="w-full sm:w-72">
+              <label htmlFor="departmentFilter" className="text-sm font-medium text-text-color font-body flex items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                กรองตามกลุ่มสาระ
+              </label>
+              <select
+                id="departmentFilter"
+                className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+              >
+                <option value="all">ทุกกลุ่มสาระ</option>
+                {departments.map((dept) => (
+                  <option key={dept.deptId} value={dept.deptId}>{dept.deptName}</option>
+                ))}
+              </select>
+            </div>
+          {/* Search and Department Filter */}
             <div className="relative w-full sm:w-72">
               <label htmlFor="Search" className="sr-only">ค้นหา</label>
               <input
                 type="text"
                 id="Search"
-                placeholder="ค้นหาชื่อ รหัสครู หรือเบอร์โทร"
+                placeholder="ค้นหาชื่อ"
                 className="w-full rounded-lg border-gray-300 py-2.5 pl-4 pr-10 shadow-sm sm:text-sm focus:border-primary focus:ring-primary font-body"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -173,26 +193,7 @@ function Teachers() {
               </span>
             </div>
             
-            {/* Department Filter */}
-            <div className="w-full sm:w-72">
-              <label htmlFor="departmentFilter" className="text-sm font-medium text-text-color font-body flex items-center mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                กรองตามกลุ่มสาระ
-              </label>
-              <select
-                id="departmentFilter"
-                className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                value={selectedDept}
-                onChange={(e) => setSelectedDept(e.target.value)}
-              >
-                <option value="all">ทุกกลุ่มสาระ</option>
-                {departments.map((dept) => (
-                  <option key={dept.deptId} value={dept.deptId}>{dept.deptName}</option>
-                ))}
-              </select>
-            </div>
+            
           </div>
           
           {/* Active Filters */}
