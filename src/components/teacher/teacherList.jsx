@@ -27,7 +27,7 @@ function TeacherList({ teachers, teachersPerPage }) {
             <tr>
               <th className="px-4 py-3.5">ชื่อ - สกุล</th>
               <th className="px-4 py-3.5">อีเมล</th>
-              <th className="px-4 py-3.5">เลขโทรศัพท์</th>
+              <th className="px-4 py-3.5">กลุ่มสาระที่สังกัด</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -67,8 +67,8 @@ function TeacherList({ teachers, teachersPerPage }) {
                   )}
                 </td>
                 <td className="px-4 py-3.5 font-body text-text-color">
-                  {teacher.tel ? (
-                    <span className="font-medium">{formatPhoneNumber(teacher.tel)}</span>
+                  {teacher.department ? (
+                    <span className="font-medium">{teacher.department.deptName}</span>
                   ) : (
                     <span className="text-text-color-alt italic">ไม่มีหมายเลขโทรศัพท์</span>
                   )}
