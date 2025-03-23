@@ -181,18 +181,21 @@ function CreateClassroom() {
                         <label htmlFor={`ClassType_${index}`} className="block text-sm font-medium text-gray-700"> ประเภทห้องเรียน</label>
                         <Select
                             id={`ClassType_${index}`}
-                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
+                            className="react-select-container"
+                            classNamePrefix="react-select"
                             options={classroomType?.map(ct => ({ value: ct.classTypeId, label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` })) || []}
-                            {...register(`classroom_${index}.classTypeId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.classTypeId`, selectedOption ? selectedOption.value : null)}
                             isClearable
+                            placeholder="เลือกประเภทห้องเรียน..."
+                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
                     <div>
                         <label htmlFor={`AcademicTerm_${index}`} className="block text-sm font-medium text-gray-700">ภาคการศึกษา</label>
                         <Select
                             id={`AcademicTerm_${index}`}
-                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
+                            className="react-select-container"
+                            classNamePrefix="react-select"
                             options={academicterms?.map(term => ({
                                 value: term.termId,
                                 label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
@@ -206,6 +209,8 @@ function CreateClassroom() {
                                 }
                             }}
                             isClearable
+                            placeholder="เลือกภาคการศึกษา..."
+                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
 
@@ -213,7 +218,8 @@ function CreateClassroom() {
                         <label htmlFor={`ClassTeacher_${index}`} className="block text-sm font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                         <Select
                             id={`ClassTeacher_${index}`}
-                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="react-select-container"
+                            classNamePrefix="react-select"
                             options={teacherOptions?.filter(teacher => 
                                 !selectedTeachers.has(teacher.value) || currentTeacherIds.includes(teacher.value)
                             )}
@@ -223,6 +229,8 @@ function CreateClassroom() {
                             onChange={(selectedOptions) => handleTeacherChange(selectedOptions, index)}
                             isClearable
                             isMulti
+                            placeholder="เลือกครูที่ปรึกษา..."
+                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
                     
@@ -230,11 +238,23 @@ function CreateClassroom() {
                         <label htmlFor={`Leader_${index}`} className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
                         <Select
                             id={`Leader_${index}`}
-                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            className="react-select-container"
+                            classNamePrefix="react-select"
                             options={leaderOptions}
-                            {...register(`classroom_${index}.leaderId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
                             isClearable
+                            placeholder="เลือกหัวหน้าห้อง..."
+                            noOptionsMessage={() => "ไม่พบข้อมูล"}
+                            styles={{
+                                menuList: (baseStyles) => ({
+                                    ...baseStyles,
+                                    maxHeight: '250px',
+                                }),
+                                menu: (baseStyles) => ({
+                                    ...baseStyles,
+                                    zIndex: 50,
+                                }),
+                            }}
                         />
                     </div>
                 </div>
@@ -376,6 +396,16 @@ function CreateClassroom() {
                                                     isClearable
                                                     placeholder="เลือกประเภทห้องเรียน..."
                                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                    styles={{
+                                                        menuList: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            maxHeight: '250px',
+                                                        }),
+                                                        menu: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            zIndex: 50,
+                                                        }),
+                                                    }}
                                                 />
                                             </div>
                                             
@@ -405,6 +435,16 @@ function CreateClassroom() {
                                                     isClearable
                                                     placeholder="เลือกภาคการศึกษา..."
                                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                    styles={{
+                                                        menuList: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            maxHeight: '250px',
+                                                        }),
+                                                        menu: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            zIndex: 50,
+                                                        }),
+                                                    }}
                                                 />
                                             </div>
 
@@ -431,6 +471,16 @@ function CreateClassroom() {
                                                     isMulti
                                                     placeholder="เลือกครูที่ปรึกษา..."
                                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                    styles={{
+                                                        menuList: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            maxHeight: '250px',
+                                                        }),
+                                                        menu: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            zIndex: 50,
+                                                        }),
+                                                    }}
                                                 />
                                             </div>
                                             
@@ -450,6 +500,16 @@ function CreateClassroom() {
                                                     isClearable
                                                     placeholder="เลือกหัวหน้าห้อง..."
                                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                    styles={{
+                                                        menuList: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            maxHeight: '250px',
+                                                        }),
+                                                        menu: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            zIndex: 50,
+                                                        }),
+                                                    }}
                                                 />
                                             </div>
                                         </div>
@@ -512,6 +572,16 @@ function CreateClassroom() {
                                         isClearable
                                         placeholder="เลือกประเภทห้องเรียน..."
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                        styles={{
+                                            menuList: (baseStyles) => ({
+                                                ...baseStyles,
+                                                maxHeight: '250px',
+                                            }),
+                                            menu: (baseStyles) => ({
+                                                ...baseStyles,
+                                                zIndex: 50,
+                                            }),
+                                        }}
                                     />
                                 </div>
 
@@ -541,6 +611,16 @@ function CreateClassroom() {
                                         isClearable
                                         placeholder="เลือกภาคการศึกษา..."
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                        styles={{
+                                            menuList: (baseStyles) => ({
+                                                ...baseStyles,
+                                                maxHeight: '250px',
+                                            }),
+                                            menu: (baseStyles) => ({
+                                                ...baseStyles,
+                                                zIndex: 50,
+                                            }),
+                                        }}
                                     />
                                 </div>
 
@@ -567,6 +647,16 @@ function CreateClassroom() {
                                         isMulti
                                         placeholder="เลือกครูที่ปรึกษา..."
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                        styles={{
+                                            menuList: (baseStyles) => ({
+                                                ...baseStyles,
+                                                maxHeight: '250px',
+                                            }),
+                                            menu: (baseStyles) => ({
+                                                ...baseStyles,
+                                                zIndex: 50,
+                                            }),
+                                        }}
                                     />
                                 </div>
                                 
@@ -586,6 +676,16 @@ function CreateClassroom() {
                                         isClearable
                                         placeholder="เลือกหัวหน้าห้อง..."
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                        styles={{
+                                            menuList: (baseStyles) => ({
+                                                ...baseStyles,
+                                                maxHeight: '250px',
+                                            }),
+                                            menu: (baseStyles) => ({
+                                                ...baseStyles,
+                                                zIndex: 50,
+                                            }),
+                                        }}
                                     />
                                 </div>
                             </div>
