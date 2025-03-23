@@ -50,7 +50,7 @@ function TeacherDetail() {
                             <h2 className="text-lg font-medium text-text-color font-heading">
                                 {teacher.fName} {teacher.lName}
                             </h2>
-                            <p className="text-sm text-text-color-alt font-body">รหัสครู: {teacher.tchCode}</p>
+                            <p className="text-sm text-text-color-alt font-body">กลุ่มสาระที่สังกัด: {teacher.department? teacher.department.deptName : "ไม่มีกลุ่มสาระที่สังกัด"}</p>
                         </div>
                     </div>
                 )}

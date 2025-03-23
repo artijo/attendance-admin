@@ -1,23 +1,44 @@
-import { useForm } from "react-hook-form"
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, Link } from "react-router-dom";
+import Select from "react-select";
 
 function CreateForm() {
     const [errors, setErrors] = useState({});
+    const [department, setDepartment] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Fetch departments when component mounts
+    useEffect(() => {
+        setIsLoading(true);
+        axios.get(HOSTNAME + "/a/departments")
+            .then((response) => {
+                setDepartment(response.data);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error fetching department", error);
+                setIsLoading(false);
+            });
+    }, []);
+
     const redirect = useNavigate();
     const {
         register,
         handleSubmit,
         watch,
+        control, // Add control for React Hook Form Controller
         formState: { errors: formErrors },
     } = useForm();
 
     const password = watch("password");
 
     const onSubmit = async function (data) {
+        // Form data will now properly include deptId from the Controller
         const { confirmPassword, ...submitData } = data;
+        
         try {
             const response = await axios.post(`${HOSTNAME}/a/teacher`, submitData);
             if (response.status === 200) {
@@ -64,7 +85,7 @@ function CreateForm() {
                         <div className="h-2 bg-gradient-to-r from-primary to-secondary"></div>
                         <div className="p-6">
                             <form className="grid grid-cols-1 gap-6 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <label htmlFor="TeacherCode" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
@@ -79,9 +100,9 @@ function CreateForm() {
                                         {...register("tchCode", { required: true })}
                                     />
                                     {errors.tchCode && <p className="text-red-500 text-xs mt-1 font-body">{errors.tchCode}</p>}
-                                </div>
+                                </div> */}
 
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <label htmlFor="Title" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -97,7 +118,7 @@ function CreateForm() {
                                         <option value="MRS">นาง</option>
                                         <option value="MISS">นางสาว</option>
                                     </select>
-                                </div>
+                                </div> */}
 
                                 <div className="space-y-2">
                                     <label htmlFor="Firstname" className="text-sm font-medium text-text-color font-body flex items-center">
@@ -129,6 +150,112 @@ function CreateForm() {
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label htmlFor="Department" className="text-sm font-medium text-text-color font-body flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                        กลุ่มสาระที่สังกัด <span className="text-red-500">*</span>
+                                    </label>
+                                    
+                                    {/* Replace the Select with Controller component */}
+                                    <Controller
+                                        name="deptId"
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <Select
+                                                {...field}
+                                                id="Department"
+                                                options={department.map((dept) => ({ 
+                                                    value: dept.deptId, 
+                                                    label: dept.deptName 
+                                                }))}
+                                                isDisabled={isLoading}
+                                                classNamePrefix="react-select"
+                                                placeholder="เลือกกลุ่มสาระ..."
+                                                noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                styles={{
+                                                    control: (baseStyles, state) => ({
+                                                        ...baseStyles,
+                                                        borderRadius: '0.5rem',
+                                                        borderColor: formErrors.deptId 
+                                                            ? '#EF4444' 
+                                                            : state.isFocused 
+                                                                ? '#4F46E5' 
+                                                                : '#D1D5DB',
+                                                        boxShadow: state.isFocused ? '0 0 0 1px #4F46E5' : 'none',
+                                                        padding: '0.25rem 0.5rem',
+                                                        '&:hover': {
+                                                            borderColor: formErrors.deptId ? '#EF4444' : '#4F46E5'
+                                                        }
+                                                    }),
+                                                    // ...existing styles...
+                                                    option: (baseStyles, state) => ({
+                                                        ...baseStyles,
+                                                        backgroundColor: state.isSelected 
+                                                            ? '#4F46E5' 
+                                                            : state.isFocused 
+                                                                ? '#EEF2FF' 
+                                                                : 'white',
+                                                        color: state.isSelected ? 'white' : '#334155',
+                                                        padding: '0.75rem 1rem',
+                                                        '&:active': {
+                                                            backgroundColor: state.isSelected ? '#4338CA' : '#EEF2FF'
+                                                        },
+                                                        fontFamily: 'var(--font-body)'
+                                                    }),
+                                                    menu: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        borderRadius: '0.5rem',
+                                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                                                        border: '1px solid #E2E8F0'
+                                                    }),
+                                                    valueContainer: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        fontFamily: 'var(--font-body)',
+                                                        fontSize: '0.875rem'
+                                                    }),
+                                                    placeholder: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        color: '#94A3B8',
+                                                        fontFamily: 'var(--font-body)'
+                                                    }),
+                                                    singleValue: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        color: '#334155',
+                                                        fontFamily: 'var(--font-body)'
+                                                    }),
+                                                    indicatorSeparator: () => ({
+                                                        display: 'none'
+                                                    }),
+                                                    dropdownIndicator: (baseStyles, state) => ({
+                                                        ...baseStyles,
+                                                        color: state.isFocused ? '#4F46E5' : '#94A3B8',
+                                                        '&:hover': {
+                                                            color: '#4F46E5'
+                                                        },
+                                                        padding: '0.25rem'
+                                                    })
+                                                }}
+                                                onChange={(option) => field.onChange(option.value)}
+                                                // We need to transform the value for react-select
+                                                value={department.find(dept => dept.deptId === field.value)
+                                                    ? { 
+                                                        value: field.value, 
+                                                        label: department.find(dept => dept.deptId === field.value).deptName 
+                                                    }
+                                                    : null
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    
+                                    {formErrors.deptId && (
+                                        <p className="text-red-500 text-xs mt-1 font-body">กรุณาเลือกกลุ่มสาระ</p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
