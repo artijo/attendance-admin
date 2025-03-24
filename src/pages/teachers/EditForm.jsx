@@ -217,64 +217,8 @@ function EditForm() {
                                                 classNamePrefix="react-select"
                                                 placeholder="เลือกกลุ่มสาระ..."
                                                 noOptionsMessage={() => "ไม่พบข้อมูล"}
-                                                styles={{
-                                                    control: (baseStyles, state) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '0.5rem',
-                                                        borderColor: state.isFocused ? '#4F46E5' : '#D1D5DB',
-                                                        boxShadow: state.isFocused ? '0 0 0 1px #4F46E5' : 'none',
-                                                        padding: '0.25rem 0.5rem',
-                                                        '&:hover': {
-                                                            borderColor: '#4F46E5'
-                                                        }
-                                                    }),
-                                                    option: (baseStyles, state) => ({
-                                                        ...baseStyles,
-                                                        backgroundColor: state.isSelected 
-                                                            ? '#4F46E5' 
-                                                            : state.isFocused 
-                                                                ? '#EEF2FF' 
-                                                                : 'white',
-                                                        color: state.isSelected ? 'white' : '#334155',
-                                                        padding: '0.75rem 1rem',
-                                                        '&:active': {
-                                                            backgroundColor: state.isSelected ? '#4338CA' : '#EEF2FF'
-                                                        },
-                                                        fontFamily: 'var(--font-body)'
-                                                    }),
-                                                    menu: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '0.5rem',
-                                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                                                        border: '1px solid #E2E8F0'
-                                                    }),
-                                                    valueContainer: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        fontFamily: 'var(--font-body)',
-                                                        fontSize: '0.875rem'
-                                                    }),
-                                                    placeholder: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        color: '#94A3B8',
-                                                        fontFamily: 'var(--font-body)'
-                                                    }),
-                                                    singleValue: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        color: '#334155',
-                                                        fontFamily: 'var(--font-body)'
-                                                    }),
-                                                    indicatorSeparator: () => ({
-                                                        display: 'none'
-                                                    }),
-                                                    dropdownIndicator: (baseStyles, state) => ({
-                                                        ...baseStyles,
-                                                        color: state.isFocused ? '#4F46E5' : '#94A3B8',
-                                                        '&:hover': {
-                                                            color: '#4F46E5'
-                                                        },
-                                                        padding: '0.25rem'
-                                                    })
-                                                }}
+                                                 menuPortalTarget={document.body}
+                                                menuPosition="fixed"
                                             />
                                         )}
                                     />

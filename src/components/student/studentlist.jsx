@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { formatPhoneNumber } from "../../helper";
 import { Link } from "react-router-dom";
 
 function StudentList({ students, studentsPerPage }) {
@@ -19,6 +18,19 @@ function StudentList({ students, studentsPerPage }) {
     }
   };
 
+  // Helper function to format classroom display
+  const formatClassroom = (classroom) => {
+    if (!classroom) return <span className="text-text-color-alt italic">ไม่มีห้องเรียน</span>;
+    
+    return (
+      <div className="flex items-center">
+        <span className="inline-block bg-secondary/10 text-secondary rounded-md px-2 py-1 text-sm">
+          ม.{classroom.classLevel}/{classroom.classRoom}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -27,8 +39,7 @@ function StudentList({ students, studentsPerPage }) {
             <tr>
               <th className="px-4 py-3.5">รหัสนักเรียน</th>
               <th className="px-4 py-3.5">ชื่อ - สกุล</th>
-              <th className="px-4 py-3.5">อีเมล</th>
-              <th className="px-4 py-3.5">เลขโทรศัพท์</th>
+              <th className="px-4 py-3.5">ห้องเรียน</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -53,22 +64,8 @@ function StudentList({ students, studentsPerPage }) {
                    student.title === "BOY" ? "เด็กชาย" : "เด็กหญิง"} {student.fName} {student.lName}
                 </td>
                 <td className="px-4 py-3.5 font-body text-text-color">
-                  {student.email ? (
-                    <a 
-                      href={`mailto:${student.email}`} 
-                      className="text-blue-600 hover:text-blue-800 hover:underline"
-                    >
-                      {student.email}
-                    </a>
-                  ) : (
-                    <span className="text-text-color-alt italic">ไม่มีอีเมล</span>
-                  )}
-                </td>
-                <td className="px-4 py-3.5 font-body text-text-color">
-                  {student.tel ? (
-                    <span className="font-medium">{formatPhoneNumber(student.tel)}</span>
-                  ) : (
-                    <span className="text-text-color-alt italic">ไม่มีหมายเลขโทรศัพท์</span>
+                  {student.classroomMembers ? formatClassroom(student.classroomMembers[0].classroom) : (
+                    <span className="text-text-color-alt italic">ไม่มีห้องเรียน</span>
                   )}
                 </td>
               </tr>
