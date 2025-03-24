@@ -19,8 +19,14 @@ function EditForm() {
         register,
         handleSubmit,
         formState: { errors },
-        reset
+        reset,
+        watch
     } = useForm();
+    
+    // Current subject code from the form
+    const currentSubCode = watch("subCode");
+    // Original subject code from backend (to be populated in useEffect)
+    const [originalSubCode, setOriginalSubCode] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -45,6 +51,9 @@ function EditForm() {
             const currentTeacher = teacherOptions.find(t => t.value === subjectRes.data.tchId);
             setSelectedTeacher(currentTeacher);
 
+            // Store the original subject code for comparison
+            setOriginalSubCode(subjectRes.data.subCode);
+
             // Pre-fill form with existing subject data
             reset({
                 subCode: subjectRes.data.subCode,
@@ -65,10 +74,13 @@ function EditForm() {
     }, [id, reset]);
 
     const onSubmit = async function (data) {
-        const existingSubject = subjects.find(subject => subject.subCode === data.subCode && subject.subId !== parseInt(id));
-        if (existingSubject) {
-            setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
-            return;
+        // Only check for duplicate if the subject code was changed
+        if (data.subCode !== originalSubCode) {
+            const existingSubject = subjects.find(subject => subject.subCode === data.subCode && subject.subId !== id);
+            if (existingSubject) {
+                setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
+                return;
+            }
         }
         
         try {
