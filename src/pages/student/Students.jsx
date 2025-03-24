@@ -43,7 +43,7 @@ function Students() {
       });
 
     // Fetch classrooms for filter dropdown
-    axios.get(HOSTNAME + "/a/classrooms")
+    axios.get(HOSTNAME + "/a/classrooms?noMembers=true")
       .then((response) => {
         setClassrooms(response.data);
       })
