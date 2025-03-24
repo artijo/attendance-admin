@@ -75,13 +75,13 @@ function EditForm() {
 
     const onSubmit = async function (data) {
         // Only check for duplicate if the subject code was changed
-        if (data.subCode !== originalSubCode) {
-            const existingSubject = subjects.find(subject => subject.subCode === data.subCode && subject.subId !== id);
-            if (existingSubject) {
-                setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
-                return;
-            }
-        }
+        // if (data.subCode !== originalSubCode) {
+        //     const existingSubject = subjects.find(subject => subject.subCode === data.subCode && subject.subId !== id);
+        //     if (existingSubject) {
+        //         setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
+        //         return;
+        //     }
+        // }
         
         try {
             const formData = {

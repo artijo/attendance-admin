@@ -48,11 +48,11 @@ function CreateForm() {
 
     const onSubmit = async function (data) {
         // Check if subject code already exists
-        const existingSubject = subjects.find(subject => subject.subCode === data.subCode);
-        if (existingSubject) {
-            setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
-            return;
-        }
+        // const existingSubject = subjects.find(subject => subject.subCode === data.subCode);
+        // if (existingSubject) {
+        //     setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
+        //     return;
+        // }
 
         try {
             const formData = {
