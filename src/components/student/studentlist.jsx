@@ -64,7 +64,7 @@ function StudentList({ students, studentsPerPage }) {
                    student.title === "BOY" ? "เด็กชาย" : "เด็กหญิง"} {student.fName} {student.lName}
                 </td>
                 <td className="px-4 py-3.5 font-body text-text-color">
-                  {student.classroomMembers ? formatClassroom(student.classroomMembers[0].classroom) : (
+                  {student.classroomMembers[0]?.classroom? formatClassroom(student.classroomMembers[0].classroom) : (
                     <span className="text-text-color-alt italic">ไม่มีห้องเรียน</span>
                   )}
                 </td>
