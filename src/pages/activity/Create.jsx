@@ -11,8 +11,9 @@ function CreateActivity() {
     const [teachers, setTeachers] = useState([]);
     const [classrooms, setClassrooms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [allTeachersSelected, setAllTeachersSelected] = useState(false);
     
-    const { register, handleSubmit, control, watch } = useForm({
+    const { register, handleSubmit, control, watch, setValue } = useForm({
         defaultValues: {
             actName: "",
             actDate: "",
@@ -61,6 +62,18 @@ function CreateActivity() {
         });
     }, []);
 
+    // Add a function to handle "select all teachers" checkbox
+    const handleSelectAllTeachers = (e) => {
+        if (e.target.checked) {
+            // Select all teachers
+            setAllTeachersSelected(true);
+        } else {
+            // Deselect all teachers
+            setValue("teachers", []);
+            setAllTeachersSelected(false);
+        }
+    };
+
     const onSubmit = (data) => {
         const activityData = {
             actName: data.actName,
@@ -74,7 +87,10 @@ function CreateActivity() {
             joinLimit: data.joinLimit,
             joinLimitType: data.joinLimitType,
             joinLimitNumber: data.joinLimitType === 'number' ? parseInt(data.joinLimitNumber) : null,
-            teacher: data.teachers.map(t => ({ tchId: t.value })),
+            teacher: allTeachersSelected 
+                ? teachers.map(t => ({ tchId: t.value })) 
+                : data.teachers.map(t => ({ tchId: t.value })),
+            teacherAll: allTeachersSelected,
             actParticipate: data.joinLimit && data.joinLimitType === 'classroom' ? data.classrooms.map(c => ({ classId: c.value })) : []
         };
 
@@ -294,27 +310,51 @@ function CreateActivity() {
                                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                     {/* Teachers Multi-Select */}
                                     <div className="sm:col-span-2 space-y-2">
-                                        <label className="text-sm font-medium text-text-color font-body flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            ครูผู้ดูแลกิจกรรม <span className="text-red-500">*</span>
-                                        </label>
-                                        <Controller
-                                            name="teachers"
-                                            control={control}
-                                            rules={{ required: true }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    isMulti
-                                                    options={teachers}
-                                                    styles={customSelectStyles}
-                                                    placeholder="เลือกครูผู้ดูแล"
-                                                    className="font-body"
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="text-sm font-medium text-text-color font-body flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                </svg>
+                                                ครูผู้ดูแลกิจกรรม <span className="text-red-500">*</span>
+                                            </label>
+
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={allTeachersSelected}
+                                                    onChange={handleSelectAllTeachers}
+                                                    className="sr-only peer"
                                                 />
-                                            )}
-                                        />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                                                <span className="ml-3 text-sm font-medium text-text-color font-body">
+                                                    เลือกครูทั้งหมด
+                                                </span>
+                                            </label>
+                                        </div>
+
+                                        {!allTeachersSelected && (
+                                            <Controller
+                                                name="teachers"
+                                                control={control}
+                                                rules={{ required: !allTeachersSelected }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        isMulti
+                                                        options={teachers}
+                                                        styles={customSelectStyles}
+                                                        placeholder="เลือกครูผู้ดูแล"
+                                                        className="font-body"
+                                                        isDisabled={allTeachersSelected}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                        {allTeachersSelected && (
+                                            <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-color font-body">
+                                                ครูทุกคนสามารถดูแลกิจกรรมนี้ได้
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Join Limit Toggle Switch */}
