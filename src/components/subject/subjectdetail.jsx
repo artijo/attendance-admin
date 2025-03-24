@@ -92,8 +92,7 @@ function ShowDetail({ subject }) {
                     {subject.teacher.fName.charAt(0)}
                   </span>
                   <span>
-                    {subject.teacher.title === "MR" ? "นาย" : 
-                     subject.teacher.title === "MRS" ? "นาง" : "นางสาว"} {subject.teacher.fName} {subject.teacher.lName}
+                    {subject.teacher.fName} {subject.teacher.lName}
                   </span>
                 </div>
               ) : (
