@@ -240,8 +240,7 @@ function ShowDetail({ classroom }) {
                         key={teacher.tchId} 
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors duration-200"
                       >
-                        {teacher.title === "MR" ? "นาย" : 
-                         teacher.title === "MRS" ? "นาง" : "นางสาว"} {teacher.fName} {teacher.lName}
+                        {teacher.fName} {teacher.lName}
                       </Link>
                     ))}
                   </div>
