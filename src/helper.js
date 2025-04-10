@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export function formatPhoneNumber(phoneNumber) {
     // ลบตัวอักษรที่ไม่ใช่ตัวเลขออก
     const cleaned = phoneNumber.replace(/\D/g, '');
@@ -35,6 +37,21 @@ export function convertSecondsToTime(seconds) {
 }
 
 
+export const formatTitle = (title) => {
+  switch (title) {
+      case 'BOY':
+          return 'เด็กชาย';
+      case 'GIRL':
+          return 'เด็กหญิง';
+      case 'MR':
+          return 'นาย';
+      case 'MS':
+          return 'นางสาว';
+      default:
+          return title;
+  }
+}
+
 export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
   const timeSplit = time.split(':');
   return (parseInt(timeSplit[0])*3600)+(parseInt(timeSplit[1])*60);
@@ -56,7 +73,8 @@ export function formatDate(date){
 }
 
 export function formatDateTimeISOToDate(dateTimeIso){
-  const dateSpilt = dateTimeIso.split('T');
+  const utctobangkok = DateTime.fromISO(dateTimeIso).setZone('Asia/Bangkok');
+  const dateSpilt = utctobangkok.toString().split('T');
   return dateSpilt[0];
 }
 
@@ -112,7 +130,6 @@ export function formatDateYYYYMMDD(date) {
   return `${parseInt(year)}-${month}-${day}`;
 }
 
-
 export function convertNumberToThaiMonth(monthNumber) {
   const thaiMonths = [
     "มกราคม",   // เดือนที่ 1
@@ -135,3 +152,9 @@ export function convertNumberToThaiMonth(monthNumber) {
     return "เลขเดือนไม่ถูกต้อง";
   }
 }
+
+  export function dateTimeFormat(dateTime){
+    const dateTimeFormat = formatDateTimeISOToDate(dateTime);
+    const dateSplit = dateTimeFormat.split('-');
+    return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
+  }

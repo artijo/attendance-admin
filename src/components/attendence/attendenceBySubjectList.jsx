@@ -1,87 +1,207 @@
 import { PropTypes } from "prop-types";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-export const AttendenceBySubjectList = ({classroomId}) => {
-    const [subjectList, setSubjectList] = useState([]);
-    const page = Math.ceil(subjectList.length/5);
-    const [seletedPage, setSeletedPage] = useState(1);
-    const sliceSubjectList = subjectList.slice((seletedPage - 1) * 5, seletedPage * 5);
 
+export const AttendenceBySubjectList = ({ classroomId }) => {
+    const [subjectList, setSubjectList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
+    const totalPages = Math.ceil(subjectList.length / itemsPerPage);
+    const sliceSubjectList = subjectList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`${HOSTNAME}/a/subjectTimetable/${classroomId}`);  
+            setIsLoading(true);
+            const response = await axios.get(`${HOSTNAME}/a/subjectTimetable/${classroomId}`);
             setSubjectList(response.data);
-            // (console.log(response.data));
+            setError(null);
         } catch (error) {
             console.error(error);
+            setError("ไม่สามารถโหลดข้อมูลรายวิชาได้");
+        } finally {
+            setIsLoading(false);
         }
     };
+
     useEffect(() => {
-        if(classroomId == null) return;
-        fetchData();
+        if (classroomId) {
+            fetchData();
+        }
     }, [classroomId]);
-    return (
-        <>
-            <span className="text-xs text-gray-500">จำนวนวิชามีอยู่ {subjectList.length} วิชา</span>
-            <div className="grid gap-2 md:grid-cols-1">
-                <div className="border shadow-md border-gray-200">
-                    <div className="overflow-x-auto ">
-                        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                            <thead className="ltr:text-left rtl:text-right">
-                                <tr className="h-12 shadow-md">
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ลำดับ</th>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">วิชา</th>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">ผู้สอน</th>
-                                    <th className="whitespace-nowrap px-4 py-2 font-bold text-gray-900">รายละเอียด</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {
-                                    sliceSubjectList.length > 0 ? 
-                                        (
-                                            sliceSubjectList.map((subject, index) => (
-                                                <tr key={index} className="even:bg-slate-100/70 text-center">
-                                                    {
-                                                        <td className="whitespace-nowrap px-4 py-2 text-gray-700">{((seletedPage - 1)*5)+(index+1) }</td>
-                                                    }
-                                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`(${subject.subCode})${subject.subNameThai} - ${subject.subNameEng}`}</td>
-                                                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{`คุณครู ${subject.teacher.fName} ${subject.teacher.lName}`}</td>
-                                                    <td className="whitespace-nowrap px-4 py-2 text-blue-700 cursor-pointer">
-                                                        <Link to={`/attendances/details/bysubject`} state={{subject:subject,classroomId:classroomId}}>
-                                                        <button className="cursor-pointer bg-blue-300/60 text-blue-500 px-5 py-[2px] rounded-sm hover:bg-blue-300/100 hover:text-blue-700">รายละเอียด</button>
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : 
-                                        <tr>
-                                            <td className="whitespace-nowrap text-center px-4 py-2 text-gray-700" colSpan={4}>ไม่มีข้อมูล</td>
-                                        </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div>
-                    {Array.from({ length: page }, (_, i) => (
-                        <button
-                            key={i+1}
-                            className={`px-4 py-2 ${seletedPage === i+1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setSeletedPage(i+1)}
-                            type="button"
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <div>{error}</div>
                 </div>
             </div>
-        </>
-       
-    )
-}
+        );
+    }
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-4">
+                <div className="inline-flex items-center px-2.5 py-1 bg-gray-100 rounded-lg text-sm font-medium text-text-color">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    จำนวนวิชาทั้งหมด: <span className="text-primary ml-1 font-semibold">{subjectList.length} วิชา</span>
+                </div>
+            </div>
+            
+            <div className="bg-white rounded-lg border border-line overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-b border-line">
+                            <tr>
+                                <th className="px-6 py-3" width="60">ลำดับ</th>
+                                <th className="px-6 py-3">รหัสวิชา</th>
+                                <th className="px-6 py-3">วิชา</th>
+                                <th className="px-6 py-3">ผู้สอน</th>
+                                <th className="px-6 py-3 text-right">การเข้าเรียน</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody className="divide-y divide-gray-200">
+                            {sliceSubjectList.length > 0 ? (
+                                sliceSubjectList.map((subject, index) => (
+                                    <tr key={index} className="bg-white hover:bg-gray-50 transition-colors duration-150">
+                                        <td className="px-6 py-4 font-medium text-text-color text-center">
+                                            {(currentPage - 1) * itemsPerPage + index + 1}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                                                {subject.subCode}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div>
+                                                <div className="font-medium text-text-color">{subject.subNameThai}</div>
+                                                <div className="text-xs text-text-color-alt">{subject.subNameEng}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center">
+                                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium mr-2">
+                                                    {subject.teacher?.fName?.charAt(0)}
+                                                </div>
+                                                <span>
+                                                    คุณครู {subject.teacher?.fName} {subject.teacher?.lName}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Link 
+                                                to="/attendances/details/bysubject" 
+                                                state={{ subject: subject, classroomId: classroomId }}
+                                                className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors duration-300"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                ดูการเข้าเรียน
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-10 text-center">
+                                        <div className="flex flex-col items-center justify-center">
+                                            <div className="bg-gray-100 text-gray-500 rounded-full p-3 mb-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="font-medium text-text-color mb-1">ไม่พบข้อมูลรายวิชา</h3>
+                                            <p className="text-sm text-text-color-alt">ห้องเรียนนี้ยังไม่มีรายวิชาที่กำหนด</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {subjectList.length > 0 && (
+                    <div className="border-t border-line px-6 py-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-text-color-alt">
+                                แสดง <span className="font-medium text-text-color">{sliceSubjectList.length}</span> จาก <span className="font-medium text-text-color">{subjectList.length}</span> รายการ
+                            </p>
+                            
+                            <div className="flex items-center justify-end gap-1">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={`flex items-center justify-center px-3 py-1 rounded border ${
+                                        currentPage === 1 
+                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        : 'border-gray-200 bg-white text-text-color hover:bg-gray-50 transition-colors'
+                                    }`}
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => handlePageChange(page)}
+                                        className={`px-3 py-1 rounded ${
+                                            currentPage === page 
+                                            ? 'bg-primary text-white' 
+                                            : 'bg-white text-text-color hover:bg-gray-50 border border-gray-200 transition-colors'
+                                        }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={`flex items-center justify-center px-3 py-1 rounded border ${
+                                        currentPage === totalPages 
+                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        : 'border-gray-200 bg-white text-text-color hover:bg-gray-50 transition-colors'
+                                    }`}
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 AttendenceBySubjectList.propTypes = {
     classroomId: PropTypes.string.isRequired

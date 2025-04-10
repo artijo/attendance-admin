@@ -1,24 +1,19 @@
 import { styles } from "./byday";
-import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
+import { Page, Text, View, Document, PDFViewer, Image } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
-function BySubejctCanExamPDF(){
-    const location = useLocation();
-    const classroomInfo = location.state.classroomInfo;
-    const studentList = location.state.studentList;
-    const subject = location.state.subject;
-    // console.log(studentList);
-
+function BySubejctCanExamPDF({
+  classroomInfo,
+  studentList,
+  subject
+}){
     const BySubejctCanExamPDF = () => (
         <Document>
           <Page size="A4" style={styles.page} orientation="landscape">
-            <View style={styles.headerDisplay}>
-              <View>
-                <Text style={styles.textHeader}>แบบสรุปการเรียนตามวิชา {subject.subNameThai}({subject.subCode}-{subject.subNameEng})</Text>
-                <Text style={styles.textHeader}>**ร้อยละการเข้าเรียนเป็นการรวมการลาเข้าไปด้วย</Text>
-              </View>
-              <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
-            </View>
+            <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
+            <Text style={styles.textHeader}>แบบสรุปการเรียนตามวิชา {subject.subNameThai}({subject.subCode}-{subject.subNameEng})</Text>
+            <Text style={styles.textHeader}>**ร้อยละการเข้าเรียนเป็นการรวมการลาเข้าไปด้วย</Text>
+            <Text style={styles.textHeader}>ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน {classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
             <Table style={styles.table}>
                 <TR style={styles.tableHeader}>
                     <TD style={[styles.td, { flex: 2 }]}>เลขที่</TD>
@@ -34,8 +29,8 @@ function BySubejctCanExamPDF(){
                     <TD style={[styles.td, { flex: 2 }]}>สถานะ ไม่มีสิทธ์สอบ</TD>
                 </TR>
                 {
-                    studentList.map((student) => ( 
-                        <TR>
+                    studentList.map((student, index) => ( 
+                        <TR key={index}>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdNo}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.stdId}</TD>
                             <TD style={[styles.td, { flex: 2 }]}>{student.fName}</TD>
@@ -56,13 +51,7 @@ function BySubejctCanExamPDF(){
         </Document>
       );
     return (
-        <div className="container mx-auto">
-          <div className="w-full h-[750px]">
-            <PDFViewer width="100%" height="100%">
-              <BySubejctCanExamPDF />
-            </PDFViewer>
-          </div>
-        </div>
+        <BySubejctCanExamPDF/>
       );
 };
 export default BySubejctCanExamPDF;

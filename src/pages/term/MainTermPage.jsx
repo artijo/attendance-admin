@@ -1,17 +1,60 @@
 import { Termlistable } from "../../components/term/termlistable";
 import { Link } from "react-router-dom";
+
 function MainTermPage() {
     return (
-        <div className="container mx-auto">
-            <h1 className="mb-4">รายการเทอมและปีการศึกษา</h1>
-            <div>
-                <Link type="button" to="/terms/create"  className="flex ml-auto justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-fit">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <div className="min-h-screen">
+            <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">จัดการเทอมและปีการศึกษา</h1>
+                <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+            </div>
+            
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 text-primary rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-medium text-text-color font-heading">
+                            รายการเทอมในระบบ
+                        </h2>
+                        <p className="text-sm text-text-color-alt font-body">จัดการเทอมการศึกษาและกำหนดช่วงเวลา</p>
+                    </div>
+                </div>
+                
+                <Link 
+                    to="/terms/create" 
+                    className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    <span>สร้างปีการศึกษาและเทอม</span>
+                    เพิ่มปีการศึกษาและเทอม
                 </Link>
-                <Termlistable/>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+                <div className="p-6">
+                    <div className="mb-4">
+                        <div className="bg-gray-50 border border-line rounded-lg p-4">
+                            <div className="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <div>
+                                    <h3 className="font-medium text-text-color font-heading">คำแนะนำ</h3>
+                                    <p className="text-sm text-text-color-alt font-body mt-1">
+                                        เทอมการศึกษาจะใช้เพื่อกำหนดช่วงเวลาของปีการศึกษาและเทอม สำหรับกำหนดการเรียนการสอนและกิจกรรมต่างๆ
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <Termlistable />
+                </div>
             </div>
         </div>
     );

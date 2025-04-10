@@ -31,14 +31,12 @@ import EditTeacher from "./pages/teachers/EditForm.jsx";
 import DepartmentManage from "./pages/teachers/department/Manage.jsx";
 
 // Timetable
-import { CreateTimetable }  from "./pages/timetable/CreateTimetable.jsx";
-import  { Formtimetable }  from "./pages/timetable/Formtimetable.jsx";
+import Timetable from "./pages/new_timetable/new_timetable.jsx";
+import CreateTimetable from "./pages/new_timetable/new_createtimetable.jsx";
+import EditTimetable from "./pages/new_timetable/new_edittimetable.jsx";
 //  Calendar
 import { CalendarStudy } from "./pages/calendar/CalendarStudy.jsx";
 import { CalendarHoliday } from "./pages/calendar/CalendarHoliday.jsx";
-// Calendar new fix
-import CreateCalendar from "./pages/calendarmanage_new/CreateCalendar.jsx";
-// import { EditHoliday } from "./pages/calendar/EditHoliday.jsx";
 // Holiday Section
 import EditHoliday from "./pages/holiday/EditHoliday.jsx";
 import CreateHoliday from "./pages/holiday/CreateHoliday.jsx";
@@ -62,17 +60,24 @@ import ActivityDetail from "./pages/activity/Detail.jsx";
 import CreateActivity from "./pages/activity/Create.jsx";
 import EditActivity from "./pages/activity/Edit.jsx";
 import Participant from "./pages/activity/Paticipation.jsx";
-
+//Activity PDF
+import FilterClassroomPage from "./pages/activity/pdfmanagedownload/FilterClassroomPage.jsx";
+import FilterByClassroom from "./components/activity/exportPDF/FilterByClassroom.jsx";
+import FilterByRoomJoin from "./components/activity/exportPDF/FilterByRoomJoin.jsx";
+import FilterByClassroomJoinPage from "./pages/activity/pdfmanagedownload/FilterByClassroomJoinPage.jsx";
+import ExcelByFilterRoom from "./pages/activity/excelmanagedownload/ExcelByRoomJoin.jsx";
+import FilterExcelPage from "./pages/activity/excelmanagedownload/ExcelByClassroomPage.jsx";
+//Calendar
 import Calendar from "./pages/calendarmanage_new/Calendar.jsx";
+//Attendence
 import Attendence from "./pages/attendence/Attendence.jsx";
 import AttendanceDetail from "./pages/attendence/AttendenceDetail.jsx";
 import AttendenceSubjectDetail from "./pages/attendence/AttendenceSubjectDetail.jsx";
 import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx";
-import ByDay from "./components/attendence/exportPdf/byday.jsx";
-import BySubject from "./components/attendence/exportPdf/bysubject.jsx";
-import ByClassroom from "./components/attendence/exportPdf/byclassroom.jsx";
 import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
 import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
+import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   
@@ -102,21 +107,17 @@ createRoot(document.getElementById("root")).render(
         <Route path="teachers/edit/:id" element={<EditTeacher />} />
         <Route path="teachers/departments" element={<DepartmentManage />} />
         {/* Timetable Section */}
-        <Route path="timetable/:classroomId" element={<CreateTimetable/>}/>
-        <Route path="createTimetable" element={<Formtimetable/>}/>
+        <Route path="timetable" element={<Timetable/>}/>
+        <Route path="timetable/create" element={<CreateTimetable/>}/>
+        <Route path="timetable/edit" element={<EditTimetable/>}/>
         {/* CalendarSchool study Section */}
         <Route path="calendarstudy" element={<CalendarStudy />}/>
         <Route path="calendarholiday" element={<CalendarHoliday />}/>
         <Route path="calendar" element={<Calendar/>}/>
-        <Route path="calendar/create" element={<CreateCalendar/>}/> 
         {/* Holiday Section */}
         <Route path="holiday" element={<Holiday/>}/>
         <Route path="holiday/edit/:id" element={<EditHoliday/>}/>
         <Route path="holiday/create" element={<CreateHoliday/>}/>
-        
-        {/* <Route path="calendarmanage" element={<ManageCalendar  />}/>
-        <Route path="createholiday" element={<AddHoliday/>}/> */}
-        {/* <Route path="calendaredit" element={<EditHoliday/>}/> */}
         {/* Subject Section */}
         <Route path="subjects" element={<Subjects />} />
         <Route path="subjects/:subjectId" element={<SubjectDetail />} />
@@ -133,15 +134,20 @@ createRoot(document.getElementById("root")).render(
         <Route path="activity/:id" element={<ActivityDetail />} />
         <Route path="activity/edit/:id" element={<EditActivity />} />
         <Route path="activity/:id/participate" element={<Participant />} />
+        {/* By Ohm Section */}
+        <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
+        <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
+        <Route path="activity/participate/filterbyclassroom/pdfpage" element={<FilterByClassroom />} />
+        <Route path="activity/participate/filterbyclassroomjoin/excel" element={<FilterExcelPage/>} />
+        <Route path="activity/participate/filterbyclassroomjoin" element={<FilterByClassroomJoinPage />} />
+        <Route path="activity/participate/filterbyclassroomjoin/pdfpage" element={<FilterByRoomJoin />} />
         {/* Attendance */}
         <Route path="attendances" element={<Attendence/>} />
         <Route path="attendances/details/:id" element={<AttendanceDetail/>} />
         <Route path="attendances/details/bysubject" element={<AttendenceSubjectDetail/>} />
         <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
         <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
-        <Route path="att/byday/pdf" element={<ByDay/>} />  {/*export pdf by day page*/}
-        <Route path="att/bysubject/pdf" element={<BySubject/>} />  {/*export pdf by subject page*/}
-        <Route path="att/byclassroom/pdf" element={<ByClassroom/>} />  {/*export pdf by classroom page*/}
+        <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
         <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
       </Route>
       <Route path="*" element={<NotFound />} />
