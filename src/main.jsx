@@ -77,6 +77,7 @@ import AttendenceByDayDetail from "./pages/attendence/AttendenceByDayDetail.jsx"
 import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBySubjectCanExam.jsx";
 import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
 import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
+import CreateTimetableDragAndDrop from "./pages/new_timetable/CreateTimetable.jsx";
 
 
 createRoot(document.getElementById("root")).render(
@@ -108,6 +109,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="teachers/departments" element={<DepartmentManage />} />
         {/* Timetable Section */}
         <Route path="timetable" element={<Timetable/>}/>
+        <Route path="testtimetable" element={<CreateTimetableDragAndDrop/>}/>
         <Route path="timetable/create" element={<CreateTimetable/>}/>
         <Route path="timetable/edit" element={<EditTimetable/>}/>
         {/* CalendarSchool study Section */}
