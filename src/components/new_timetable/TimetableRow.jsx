@@ -5,7 +5,7 @@ import { TimetableHasObjectDropArea } from "./TimetableHasObjectDropArea";
 export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop }) => {
     return (
         <tr>
-            <th className="px-4 py-2 border bg-gray-50 text-center">
+            <th className="px-4 py-2 border bg-gray-50 text-center w-10">
                 <div className="text-sm font-medium text-text-color font-heading">
                     {formatDayOfWeeks(date)}
                 </div>
@@ -14,7 +14,7 @@ export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCa
                 const timetablethistime = scheduleWeekDay.find((tt) => tt.timeStart === schedule.startDatabaseFormat);
                 if (schedule.startDatabaseFormat === "12:00:00") {
                     return (
-                        <td key={index} className="border border-gray-100 p-0">
+                        <td key={index} className="border border-gray-100 p-0 ">
                             <div className="flex flex-col justify-center items-center h-28 bg-amber-100 p-2 text-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -36,7 +36,7 @@ export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCa
                     )
                 } else {
                     return (
-                        <td key={index} className="border border-gray-100 p-0">
+                        <td key={index} className="border border-gray-100 p-0 ">
                             <TimetableHasObjectDropArea
                                 timetablethistime={timetablethistime}
                                 setActiveCard={setActiveCard}
