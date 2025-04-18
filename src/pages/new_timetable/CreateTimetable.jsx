@@ -203,7 +203,7 @@ function CreateTimetableDragAndDrop() {
     }, [classroom]);
 
     return (
-        <div className="border grid grid-cols-[auto,400px] content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
+        <div className="border grid grid-cols-[auto_400px] content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
             <div>
                 <div className="p-5">
                     <div className="mb-6">
