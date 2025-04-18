@@ -75,8 +75,48 @@ function CreateTimetableDragAndDrop() {
     const [activeCard, setActiveCard] = useState(null); // วิชาที่เลือก
     const [subjectActiveCard, setSubjectActiveCard] = useState(null) // วิชาที่เลือกจะใส่ในตาราง
 
-    const [showDropdown, setShowDropdown] = useState(false);
 
+     //fetch timetable 
+     const fetchTimetable = async (classroomId) => {
+        try {
+            // setIsLoading(true);
+            // setError(null);
+            const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
+            if (response.status === 200) {
+                setTimetable(response.data);
+                // setOldTimetable(JSON.parse(JSON.stringify(response.data)));
+            } else {
+                throw new Error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            // setError("ไม่สามารถโหลดข้อมูลตารางเรียนได้");
+        } finally {
+            // setIsLoading(false);
+        }
+    };
+
+
+    const callDeleteTimetableApi = async (timetablethistime,schedule) => {
+        // timetableformate: "13.50 - 14.40",
+        // period: 6
+        try{
+            const text = `คุณต้องการที่จะลบวิชา ${timetablethistime.subject.subNameThai} ในคาบ ${schedule.period} เวลา ${schedule.timetableformate}`
+            if(confirm(text) === true) {
+                const response = await axios.delete(`${HOSTNAME}/a/timetable/${timetablethistime.timetableId}`)
+                if(response.status === 200) {
+                    // console.log('delete sucessful');
+                    fetchTimetable(classroom.classId);
+                }else{
+                    throw new Error(response.data.message);
+                }
+            }else{
+                return;
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
 
     const callCreateTimetableBySubject = async (classroom, timetable, schedule) => {
         try {
@@ -97,12 +137,13 @@ function CreateTimetableDragAndDrop() {
         }
     }
 
-    const callSwitchTimetableSubjectPeriod = async (timetable, classroom, schedule) => {
+    const callSwitchTimetableSubjectPeriod = async (timetable, classroom, schedule, weekday) => {
         try {
             const data = {
                 timetable: timetable,
                 classroom: classroom,
-                schedule: schedule
+                schedule: schedule,
+                weekday:weekday
             }
             const response = await axios.post(`${HOSTNAME}/a/timetable/byswitchperiod`, data);
             if (response.status === 200) {
@@ -163,7 +204,7 @@ function CreateTimetableDragAndDrop() {
                 dayOfWeek: Number(weekday),
                 subject: subjectActiveCard
             }
-            callSwitchTimetableSubjectPeriod(timetableObject, classroom, schedule);
+            callSwitchTimetableSubjectPeriod(timetableObject, classroom, schedule, weekday);
             return;
         }
 
@@ -174,26 +215,7 @@ function CreateTimetableDragAndDrop() {
 
     }
 
-    //fetch timetable 
-    const fetchTimetable = async (classroomId) => {
-        try {
-            // setIsLoading(true);
-            // setError(null);
-            const response = await axios.get(`${HOSTNAME}/a/timetableR?classroomid=${classroomId}`);
-            if (response.status === 200) {
-                setTimetable(response.data);
-                // setOldTimetable(JSON.parse(JSON.stringify(response.data)));
-            } else {
-                throw new Error(response.data.message);
-            }
-        } catch (error) {
-            console.error(error);
-            // setError("ไม่สามารถโหลดข้อมูลตารางเรียนได้");
-        } finally {
-            // setIsLoading(false);
-        }
-    };
-
+   
 
     useEffect(() => {
         if (classroom) {
@@ -253,6 +275,7 @@ function CreateTimetableDragAndDrop() {
                                                 date={date}
                                                 setActiveCard={setActiveCard}
                                                 onDrop={onDrop}
+                                                callDeleteTimetableApi={callDeleteTimetableApi}
                                             />
                                         </React.Fragment>
 
