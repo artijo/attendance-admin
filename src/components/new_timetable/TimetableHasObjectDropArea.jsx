@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { HOSTNAME } from "../../config";
-import DeleteDialog from "../dialog/DeleteDialog";
+// import DeleteDialog from "../dialog/DeleteDialog";
 
 export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, onDrop, schedule, weekday, callDeleteTimetableApi }) => {
     const [deleteDiologShow, setDeleteDiologShow] = useState(false);
