@@ -15,6 +15,7 @@ function Participant() {
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedClassroom, setSelectedClassroom] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     
     useEffect(() => {
         const fetchActivity = async () => {
@@ -73,7 +74,14 @@ function Participant() {
         const matchesDate = isRecordMatchingDate(record);
         const matchesClassroom = selectedClassroom === 'all' || 
             (record.student.classroomMembers[0]?.classroom.classId === selectedClassroom);
-        return matchesDate && matchesClassroom;
+        
+        // Add search functionality
+        const matchesSearch = searchQuery === '' || 
+            record.stdId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            `${record.student.fName} ${record.student.lName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (record.student.stdNo && record.student.stdNo.toString().includes(searchQuery));
+        
+        return matchesDate && matchesClassroom && matchesSearch;
     };
 
     const getUniqueClassrooms = () => {
@@ -137,6 +145,35 @@ function Participant() {
         );
     }
 
+    // Create summary by classroom
+    const getClassroomSummary = () => {
+        if (!activity?.actParticipate) return [];
+        
+        const summary = {};
+        
+        // Group by classroom
+        filteredParticipations.forEach(record => {
+            const classroom = record.student.classroomMembers[0]?.classroom;
+            if (!classroom) return;
+            
+            const classroomKey = `ม.${classroom.classLevel}/${classroom.classRoom}`;
+            if (!summary[classroomKey]) {
+                summary[classroomKey] = {
+                    count: 0,
+                    classId: classroom.classId,
+                    className: classroomKey
+                };
+            }
+            summary[classroomKey].count++;
+        });
+        
+        // Convert to array and sort
+        return Object.values(summary).sort((a, b) => a.className.localeCompare(b.className));
+    };
+
+    const classroomSummary = getClassroomSummary();
+    const totalParticipants = filteredParticipations.length;
+
     return (
         <div className="min-h-screen">
             <div className="mb-6">
@@ -152,7 +189,7 @@ function Participant() {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
                     <div className="flex">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293-1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                         </svg>
                         <div>{error}</div>
                     </div>
@@ -256,6 +293,55 @@ function Participant() {
                             </div>
                         </div>
                         
+                        {/* Summary section - Added */}
+                        <div className="bg-gray-50 border border-line rounded-lg p-4 mb-6">
+                            <h3 className="text-sm font-medium text-text-color-alt font-body mb-3 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                สรุปจำนวนการเข้าร่วม
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-white p-4 rounded-lg border border-line shadow-sm">
+                                    <h4 className="text-sm font-medium text-text-color-alt mb-2">จำนวนผู้เข้าร่วมทั้งหมด</h4>
+                                    <p className="text-2xl font-semibold text-primary">{totalParticipants} คน</p>
+                                </div>
+                                
+                                <div className="bg-white p-4 rounded-lg border border-line shadow-sm">
+                                    <h4 className="text-sm font-medium text-text-color-alt mb-2">แบ่งตามห้องเรียน</h4>
+                                    {classroomSummary.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            {classroomSummary.map((item) => (
+                                                <div key={item.classId} className="flex items-center bg-blue-50 text-blue-700 px-2 py-1 rounded-lg">
+                                                    <span className="font-medium mr-1">{item.className}</span>
+                                                    <span className="text-xs bg-blue-100 px-1.5 py-0.5 rounded-full">{item.count}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-text-color-alt">ไม่มีข้อมูล</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Search input - Added */}
+                        <div className="relative mb-6">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-text-color-alt" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="ค้นหาด้วยชื่อ เลขที่ หรือรหัสนักเรียน"
+                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary font-body text-text-color"
+                            />
+                        </div>
+                        
                         {/* Participation records table */}
                         <div className="overflow-x-auto">
                             <table className="w-full border-collapse">
@@ -322,10 +408,12 @@ function Participant() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
                                     <p className="text-text-color-alt font-body">
-                                        {selectedDate ? 'ไม่พบข้อมูลการบันทึกในวันที่เลือก' : 'ยังไม่มีประวัติการบันทึก'}
+                                        {searchQuery ? 'ไม่พบข้อมูลที่ตรงกับคำค้นหา' : 
+                                         selectedDate ? 'ไม่พบข้อมูลการบันทึกในวันที่เลือก' : 
+                                         'ยังไม่มีประวัติการบันทึก'}
                                     </p>
                                     <p className="text-sm text-text-color-alt font-body mt-1">
-                                        ลองเปลี่ยนวันที่หรือตัวกรองห้องเรียนใหม่
+                                        ลองเปลี่ยนคำค้นหา วันที่ หรือตัวกรองห้องเรียนใหม่
                                     </p>
                                 </div>
                             )}
