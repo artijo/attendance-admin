@@ -70,11 +70,29 @@ function CreateTimetableDragAndDrop() {
     const [timetable, setTimetable] = useState(null);
     // const [oldTimetable, setOldTimetable] = useState(null);
     const dateKey = timetable != null && Object.keys(timetable);
+    //edit late time
+    const [editForm, setEditFrom] = useState(false);
+    const [timetableEditNow, setTimetableEditNow] = useState(null);
+    const [lateTime, setLateTime] = useState(0);
     // const [isDisable, setIsDisable] = useState(true);
     //drag and drop
     const [activeCard, setActiveCard] = useState(null); // วิชาที่เลือก
     const [subjectActiveCard, setSubjectActiveCard] = useState(null) // วิชาที่เลือกจะใส่ในตาราง
 
+    const handleFormEnable = (timetablethistime, schedule) => {
+        const timeStartActiveCard = DateTime.fromISO(timetablethistime.timeStart);
+        const timeLateActiveCard = DateTime.fromISO(timetablethistime.timeLate);
+        const diffLateTime = timeLateActiveCard.diff(timeStartActiveCard, ["minutes"]);
+        setLateTime(diffLateTime.minutes);
+        setEditFrom(true);
+        setTimetableEditNow({...timetablethistime, schedule});
+        
+    };
+
+    const handleFormDisable = () => {
+        setEditFrom(false);
+        setTimetableEditNow(null);
+    };
 
      //fetch timetable 
      const fetchTimetable = async (classroomId) => {
@@ -94,6 +112,31 @@ function CreateTimetableDragAndDrop() {
         } finally {
             // setIsLoading(false);
         }
+    };
+
+    const onEditLateTimeSubmit = async (e) => {
+        e.preventDefault();
+        const lateTimePlus = DateTime.fromISO(timetableEditNow.timeStart).plus({ minutes: lateTime }).toFormat('HH:mm:ss');
+        try{
+            const response = await axios.put(`${HOSTNAME}/a/timetable/editlatetime`, {timetable: timetableEditNow, lateTime: lateTimePlus});
+            if(response.status === 200) {
+                fetchTimetable(classroom.classId);
+                handleFormDisable();
+            }else{
+                throw new Error(response.data.message);
+            };
+        }catch(error){
+            console.error(error);
+        };
+    }
+
+    const handleOnChangeNumberLateTime = (value) => {
+        let lateTimeClone = value;
+        if(lateTimeClone < 0) {
+            setLateTime(0);
+        }else{
+            setLateTime(value);
+        };
     };
 
 
@@ -215,14 +258,16 @@ function CreateTimetableDragAndDrop() {
 
     }
 
-   
-
     useEffect(() => {
         if (classroom) {
             fetchTimetable(classroom.classId);
         };
-        console.log(classroom);
+        // console.log(classroom);
     }, [classroom]);
+
+    // useEffect(() => {
+    //     console.log(timetableEditNow);
+    // }, [timetableEditNow])
 
     return (
         <div className="border grid grid-cols-[auto_400px] content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
@@ -276,9 +321,9 @@ function CreateTimetableDragAndDrop() {
                                                 setActiveCard={setActiveCard}
                                                 onDrop={onDrop}
                                                 callDeleteTimetableApi={callDeleteTimetableApi}
+                                                handleFormEnable={handleFormEnable}
                                             />
                                         </React.Fragment>
-
                                     ))
                                 )}
                             </tbody>
@@ -287,6 +332,65 @@ function CreateTimetableDragAndDrop() {
                 </div>
             </div>
             <Searchpanel setSubjectActiveCard={setSubjectActiveCard} />
+            {editForm && (
+                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/5 z-40">
+                    <div className="">
+                        <form className="bg-white w-[400px] p-6 rounded-xl shadow" onSubmit={(e) => onEditLateTimeSubmit(e)}>
+                            <div className="mb-2">
+                                <h1 className="text-lg font-bold text-primary font-heading">แก้ไขเวลาการเข้าสาย</h1>
+                                <div className="flex gap-2 bg-gray-100/70 p-2 rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                    <div className="text-xs">
+                                        <p>
+                                            คาบที่ {timetableEditNow.schedule.period} เวลา {timetableEditNow.schedule.timetableformate} 
+                                        </p>
+                                        <p>
+                                            วิชา {timetableEditNow.subject.subNameThai}
+                                        </p>
+                                    </div>
+                                    
+                                </div>
+                                <div className="mt-2 h-1 w-20 bg-secondary rounded-full"></div>
+                            </div>
+                            <div className="grid">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    เวลาการเข้าเรียนสาย (นาที)
+                                </label>
+                                <input
+                                    className="mt-1 w-full rounded-md px-1.5 py-1  border-gray-200 shadow-sm sm:text-sm"
+                                    value={lateTime}
+                                    type="number"
+                                    onChange={(e) => handleOnChangeNumberLateTime(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex gap-2 w-fit mt-2 ml-auto">
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-xs font-medium rounded-lg text-text-color bg-white hover:bg-gray-100 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                    onClick={() => handleFormDisable()}
+                                >
+                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+
+                                    ยกเลิก
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-xs font-medium rounded-lg text-white bg-primary hover:cursor-pointer hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    บันทึกการแก้ไข
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

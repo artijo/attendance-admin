@@ -2,7 +2,7 @@ import { formatDayOfWeeks } from "../../helper";
 import { TimetableDropArea } from "./TimetableDropArea";
 import { TimetableHasObjectDropArea } from "./TimetableHasObjectDropArea";
 
-export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop, callDeleteTimetableApi }) => {
+export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop, callDeleteTimetableApi, handleFormEnable}) => {
     return (
         <tr>
             <th className="px-4 py-2 border bg-gray-50 text-center w-10">
@@ -44,6 +44,7 @@ export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCa
                                 weekday={date}
                                 onDrop={onDrop}
                                 callDeleteTimetableApi={callDeleteTimetableApi}
+                                handleFormEnable={handleFormEnable}  
                             />
                         </td>
                     )
