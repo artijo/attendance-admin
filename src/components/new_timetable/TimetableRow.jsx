@@ -5,7 +5,7 @@ import { TimetableHasObjectDropArea } from "./TimetableHasObjectDropArea";
 export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop, callDeleteTimetableApi, handleFormEnable}) => {
     return (
         <tr>
-            <th className="px-4 py-2 border bg-gray-50 text-center w-10">
+            <th className="px-4 py-2 border border-gray-100  text-center w-10">
                 <div className="text-sm font-medium text-text-color font-heading">
                     {formatDayOfWeeks(date)}
                 </div>

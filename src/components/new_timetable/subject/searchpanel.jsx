@@ -47,7 +47,7 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
     }, [])
 
     return (
-        <div className="max-w-[400px] border bg-white overflow-y-scroll overflow-x-hidden">
+        <div className="relative max-w-[400px] rounded-xl shadow scroll-smooth bg-white overflow-y-scroll overflow-x-hidden">
             <div>
                 <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-primary text-white">
                     <h3 className="text-lg font-medium flex items-center">
@@ -80,7 +80,7 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
                 <div className="grid grid-cols-1 gap-4 p-2 ">
                     {filteredSubjects.map((subject) => (
                         <div
-                            key={subject.subId} className="bg-white border rounded-xl p-5 transition-all duration-200 ease-in-out hover:scale-105 hover:cursor-grab"
+                            key={subject.subId} className="bg-white shadow rounded-xl p-5 transition-all duration-200 ease-in-out hover:scale-105 hover:cursor-grab"
                             draggable
                             onDragStart={() => setSubjectActiveCard(subject)}
                             onDragEnd={() => setSubjectActiveCard(null)}

@@ -262,42 +262,39 @@ function CreateTimetableDragAndDrop() {
         if (classroom) {
             fetchTimetable(classroom.classId);
         };
-        // console.log(classroom);
     }, [classroom]);
 
-    // useEffect(() => {
-    //     console.log(timetableEditNow);
-    // }, [timetableEditNow])
-
+  
     return (
-        <div className="border grid grid-cols-[auto_400px] content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
-            <div>
-                <div className="p-5">
-                    <div className="mb-6">
+        <div className="grid grid-cols-[auto_400px] gap-5 p-5 content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
+            <div className="">
+                <div className="rounded-xl bg-white h-full shadow">
+                    <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
                         <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
-                        <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
-                    </div>
-                    <div className="flex items-center gap-2 mb-6">
-                        <div className="bg-primary/10 text-primary rounded-full p-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
+                        <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="bg-primary/10 text-primary rounded-full p-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-bold text-text-color font-heading">
+                                ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
+                            </h3>
                         </div>
-                        <h3 className="text-lg font-bold text-text-color font-heading">
-                            ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
-                        </h3>
                     </div>
-                    <div className="mt-2 relative bg-white rounded-lg">
+                    
+                    <div className="px-5 pb-5 relative">
                         <table className="w-full border-collapse">
                             <thead>
                                 <tr>
-                                    <th className="px-2 py-3 bg-gray-50 border text-center w-10">
+                                    <th className="px-2 py-3 bg-gray-50 border border-gray-100 text-center w-10">
                                         <div className="text-xs font-medium text-text-color-alt tracking-wider uppercase font-heading">
                                             วัน / คาบเรียน
                                         </div>
                                     </th>
                                     {timeStudyList.map((time, index) => (
-                                        <th key={index} className={`w-20 py-3 text-center border ${time.period === 'พักเที่ยง' ? 'bg-amber-50' : 'bg-gray-50'}`}>
+                                        <th key={index} className={`w-20 py-3 text-center border border-gray-100 ${time.period === 'พักเที่ยง' ? 'bg-amber-50' : 'bg-gray-50'}`}>
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-medium text-primary tracking-wider uppercase font-heading">
                                                     {typeof time.period === 'number' ? `คาบที่ ${time.period}` : time.period}
