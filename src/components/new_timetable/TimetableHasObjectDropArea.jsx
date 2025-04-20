@@ -50,7 +50,7 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
 
     return (
         <div
-            className="w-full h-28 text-left transition-transform duration-150 active:opacity-70 active:cursor-grab"
+            className="w-full h-[150px] text-left transition-transform duration-150 active:opacity-70 active:cursor-grab"
             draggable
             onDragStart={() => setActiveCard(timetablethistime)}
             onDragEnd={() => setActiveCard(null)}

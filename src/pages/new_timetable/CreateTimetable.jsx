@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { data, useLocation } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import { TimetableRow } from "../../components/new_timetable/TimetableRow";
 import { formatDayOfWeeks } from "../../helper";
@@ -66,6 +66,7 @@ const timeStudyList = [
 
 function CreateTimetableDragAndDrop() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { classroom } = location.state;
     const [timetable, setTimetable] = useState(null);
     // const [oldTimetable, setOldTimetable] = useState(null);
@@ -172,7 +173,6 @@ function CreateTimetableDragAndDrop() {
             if (response.status === 200) {
                 fetchTimetable(classroom.classId);
             } else {
-                console.log("kuy")
                 throw new Error(response.data.message);
             }
         } catch (error) {
@@ -267,9 +267,22 @@ function CreateTimetableDragAndDrop() {
   
     return (
         <div className="grid grid-cols-[auto_400px] gap-5 p-5 content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
-            <div className="">
-                <div className="rounded-xl bg-white h-full shadow">
+            <div className="overflow-auto h-full">
+                <div className="rounded-xl bg-white shadow">
                     <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
+                        {/* Updated back button with React Router */}
+                        <div className="flex items-center justify-between mb-3">
+                            <button 
+                                onClick={() => navigate(-1)}
+                                className="flex items-center text-primary hover:text-primary-dark transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                </svg>
+                                <span className="text-sm font-medium">ย้อนกลับ</span>
+                            </button>
+                        </div>
+                        
                         <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
                         <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
                         <div className="flex items-center gap-2 mb-6">

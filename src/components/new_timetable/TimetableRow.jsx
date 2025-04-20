@@ -15,7 +15,7 @@ export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCa
                 if (schedule.startDatabaseFormat === "12:00:00") {
                     return (
                         <td key={index} className="border border-gray-100 p-0 ">
-                            <div className="flex flex-col justify-center items-center h-28 bg-amber-100 p-2 text-center">
+                            <div className="flex flex-col justify-center items-center h-[150px] bg-amber-100 p-2 text-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
