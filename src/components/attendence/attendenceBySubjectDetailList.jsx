@@ -20,6 +20,8 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const [isTabOpen, setIsTabOpen] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // console.log(classroomInfo);
     
     // Format attendance status to Thai language
     const formatAttStatus = (status) => {
@@ -244,48 +246,52 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         }
     };
 
+    const navigateToPDF = (subject,classroomInfo, month) => {
+        navigate('/attendances/details/bysubject/pdf', {state: { subject, classroomInfo, month, studentList}});
+    }
+
     // Handle PDF export
-    const handleExportPdf = (index, month) => {
-        const tableElement = ref.current[index];
-        if (tableElement != null) {
-            const tableJson = tabletojson.convert(tableElement.outerHTML);
-            return (
-                <BySubject 
-                    subject={subject} 
-                    classroomInfo={classroomInfo} 
-                    month={convertNumberToThaiMonth(month)} 
-                    tableJson={tableJson}
-                />
-            );
-        }
-        return null;
-    };
+    // const handleExportPdf = (index, month) => {
+    //     const tableElement = ref.current[index];
+    //     if (tableElement != null) {
+    //         const tableJson = tabletojson.convert(tableElement.outerHTML);
+    //         return (
+    //             <BySubject 
+    //                 subject={subject} 
+    //                 classroomInfo={classroomInfo} 
+    //                 month={convertNumberToThaiMonth(month)} 
+    //                 tableJson={tableJson}
+    //             />
+    //         );
+    //     }
+    //     return null;
+    // };
 
     // Export PDF button component
-    const ExportPdfButtonComponent = ({ index, month }) => {
-        const pdfComponent = handleExportPdf(index, month);
+    // const ExportPdfButtonComponent = ({ index, month }) => {
+    //     const pdfComponent = handleExportPdf(index, month);
         
-        if (!pdfComponent) {
-            return (
-                <button 
-                    disabled 
-                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
-                >
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    กำลังโหลด...
-                </button>
-            );
-        }
+    //     if (!pdfComponent) {
+    //         return (
+    //             <button 
+    //                 disabled 
+    //                 className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
+    //             >
+    //                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    //                 </svg>
+    //                 กำลังโหลด...
+    //             </button>
+    //         );
+    //     }
         
-        return (
-            <ExportPdfButton 
-                PDFComponent={pdfComponent} 
-                fileName={`สรุปการเข้าเรียนวิชา_${subject.subNameThai}_เดือน_${convertNumberToThaiMonth(month)}_ชั้นมัธยม${classroomInfo.classLevel}_ห้อง${classroomInfo.classRoom}`}
-            />
-        );
-    };
+    //     return (
+    //         <ExportPdfButton 
+    //             PDFComponent={pdfComponent} 
+    //             fileName={`สรุปการเข้าเรียนวิชา_${subject.subNameThai}_เดือน_${convertNumberToThaiMonth(month)}_ชั้นมัธยม${classroomInfo.classLevel}_ห้อง${classroomInfo.classRoom}`}
+    //         />
+    //     );
+    // };
 
     // Navigate to exam eligibility summary page
     const handleNavigateToExamEligibility = () => {
@@ -359,7 +365,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                             <Table 
                                 month={month} 
                                 index={index} 
-                                exportPdf={<ExportPdfButtonComponent index={index} month={month} />}
+                                exportPdf={<ExportPdfButton onClikFunction={() => navigateToPDF(subject,classroomInfo,month, index)}/>}
                                 exportExcel={<ExportExcelButton handelOnClickFunction={() => handleExportExcel(index, month)} />}
                             />
                         </TapAttendenceSummaryOpen>

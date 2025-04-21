@@ -109,39 +109,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
     const navigatePdfPage = () => {
         navigate("/attendances/details/byday/pdf", {state: { studentList, totalStatus, date, classroomInfo }});
     }
-
-    // const handlePdfComponent = () => {
-    //     if (studentList.length > 0 && totalStatus && classroomInfo) {
-    //         return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo} />;
-    //     }
-    //     return null;
-    // };
-    
-
-    // const ExportPdfButtonComponent = () => {
-    //     const pdfComponent = handlePdfComponent();
-        
-    //     if (!pdfComponent) {
-    //         return (
-    //             <button 
-    //                 disabled 
-    //                 className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
-    //             >
-    //                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    //                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-    //                 </svg>
-    //                 กำลังโหลด...
-    //             </button>
-    //         );
-    //     }
-        
-    //     return (
-    //         <ExportPdfButton 
-    //             PDFComponent={pdfComponent} 
-    //             fileName={`สรุปการเข้าเรียนตามรายวันที่ ${formatDateToThai(date)} ชั้นมัธยม ${classroomInfo.classLevel} ห้อง ${classroomInfo.classRoom}`}
-    //         />
-    //     );
-    // };
   
     useEffect(() => {
         fetchClassroomInfo();

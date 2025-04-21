@@ -68,6 +68,20 @@ export const styles = StyleSheet.create({
         paddingTop: '5px',
         marginLeft: '11px'
     },
+    tableColumn3: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "20%",
+        textAlign: "left",
+        fontSize: "8px",
+        borderLeftWidth: 1,
+        borderLeftColor: '#E4E4E4',
+        // paddingBottom: '5px',
+        // paddingLeft: '11px',
+        // paddingTop: '5px',
+        marginLeft: '11px'
+    },
     tableRow: {
         flexDirection: "row",
         borderWidth: 1,
