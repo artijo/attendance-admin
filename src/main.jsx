@@ -78,6 +78,7 @@ import { AttendanceBySubjectCanExam } from "./components/attendence/attendenceBy
 import BySubejctCanExamPDF from "./components/attendence/exportPdf/bysubjectCanExam.jsx";
 import AttendenceByClassroomDeatail from "./pages/attendence/AttendenceByClassroomDeatail.jsx";
 import CreateTimetableDragAndDrop from "./pages/new_timetable/CreateTimetable.jsx";
+import AttendenceByDayPDF from "./pages/attendence/pdfpage/byday/AttendenceByDayPDF.jsx";
 
 
 createRoot(document.getElementById("root")).render(
@@ -151,6 +152,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
         <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
         <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
+        <Route path="attendances/details/byday/pdf" element={<AttendenceByDayPDF/>} />
+        
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

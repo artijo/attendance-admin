@@ -73,36 +73,4 @@ export const styles = StyleSheet.create({
         borderColor: '#E4E4E4',
         borderTopWidth: 0,
     }
-    // table: {
-    //     display: "table",
-    //     border:1,
-    //     width: "100%",
-    //     fontSize: 10,
-    //     marginTop:2,
-    //     marginBottom:10,
-    //     borderWidth: 1,
-    //     borderColor: '#000',
-    // },
-    // tableHeader: {
-    //     backgroundColor: "#e5e5e5",
-    //     flexDirection: "row",
-    //     border:1,
-    //     borderWidth: 1,
-    //     borderColor: '#000',
-    // },
-    // td: {
-    //     flex: 1,
-    //     padding: 4,
-    //     textAlign: "center",
-    //     fontWeight: "normal",
-    //     fontSize: 8,
-    //     border:1,
-    //     borderWidth: 1,
-    //     borderColor: '#000',
-    // },
-    // headerDisplay: {
-    //     display:'flex',
-    //     flexDirection: 'row',
-    //     justifyContent:'space-between'
-    // }
 });

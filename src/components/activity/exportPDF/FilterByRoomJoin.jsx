@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { styles } from "./style.js";
-import { Page, Text, Document, Image, PDFViewer } from "@react-pdf/renderer";
-import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
+import { Page, Text, Document, Image, PDFViewer, View } from "@react-pdf/renderer";
 import axios from "axios";
 import { HOSTNAME } from "../../../config.js";
 import { useLocation, Link } from "react-router-dom";
@@ -46,7 +45,7 @@ function FilterByRoomJoin() {
         <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">รายงาน PDF สรุปการเข้าร่วมกิจกรรม</h1>
         <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
       </div>
-      
+
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <div className="bg-primary/10 text-primary rounded-full p-2">
@@ -61,10 +60,10 @@ function FilterByRoomJoin() {
             <p className="text-sm text-text-color-alt font-body">ห้อง {className}</p>
           </div>
         </div>
-        
-        <Link 
+
+        <Link
           to={`/activity/participate/filterbyclassroomjoin`}
-          state={{classrooms: location.state.classrooms, activityId: activityId, activity: activity}}
+          state={{ classrooms: location.state.classrooms, activityId: activityId, activity: activity }}
           className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,20 +119,18 @@ function FilterByRoomJoin() {
                       <Text style={styles.textParagraph}>
                         สถานที่ {activity.actLocation} เวลา {activity.actStartTime} - {activity.actEndTime} น.
                       </Text>
-                      <Table style={styles.table}>
-                        <TH style={styles.tableHeader}>
-                          <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
-                          <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
-                          <TD style={[styles.td, { flex: 1 }]}>จำนวนการเข้าร่วม</TD>
-                        </TH>
-                        {participate.map((pati, patiIndex) => (
-                          <TR key={patiIndex}>
-                            <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
-                            <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.title)} {pati.fName} {pati.lName}</TD>
-                            <TD style={[styles.td, { flex: 1 }]}>{pati.participateCount}</TD>
-                          </TR>
-                        ))}
-                      </Table>
+                      <View style={styles.tableHeader}>
+                        <Text style={[styles.tableColumn1, { fontWeight: "bold" }]}>รหัสนักเรียน</Text>
+                        <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>ชื่อ-นามสกุล</Text>
+                        <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>จำนวนการเข้าร่วม</Text>
+                      </View>
+                      {participate.map((pati, patiIndex) => (
+                        <View style={styles.tableRow} key={patiIndex}>
+                          <Text style={[styles.tableColumn1]}>{pati.stdId}</Text>
+                          <Text style={[styles.tableColumn2]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</Text>
+                          <Text style={[styles.tableColumn2]}>{pati.participateCount}</Text>
+                        </View>
+                      ))}
                     </Page>
                   </Document>
                 </PDFViewer>

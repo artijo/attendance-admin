@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Page, Text, Document, Image, PDFViewer } from "@react-pdf/renderer";
+import React, { useEffect, useState } from "react";
+import { Page, Text, Document, Image, PDFViewer, View } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import axios from "axios";
 import { HOSTNAME } from "../../../config.js";
@@ -7,6 +7,7 @@ import { convertNumberToThaiMonth, formatTitle } from "../../../helper.js";
 import { DateTime } from "luxon";
 import { styles } from "./style.js";
 import { useLocation, Link } from "react-router-dom";
+
 
 function FilterByClassroom() {
   const location = useLocation();
@@ -20,10 +21,10 @@ function FilterByClassroom() {
     const dates = [];
     let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
     const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
-    
+
     while (current <= end) {
-        dates.push(current.toISODate());
-        current = current.plus({ days: 1 });
+      dates.push(current.toISODate());
+      current = current.plus({ days: 1 });
     }
     return dates;
   };
@@ -57,6 +58,8 @@ function FilterByClassroom() {
     }
   };
 
+  // console.log(styles.table);
+
   const dateFormatToThai = (date) => {
     const dateSplit = date.split("-");
     return `${dateSplit[2]} ${convertNumberToThaiMonth(parseInt(dateSplit[1]))} ${parseInt(dateSplit[0]) + 543}`;
@@ -70,7 +73,7 @@ function FilterByClassroom() {
       dateTime.toFormat(" HH:mm น.")
     );
   };
-  
+
   useEffect(() => {
     getParticipateList();
   }, []);
@@ -81,7 +84,7 @@ function FilterByClassroom() {
         <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">รายงาน PDF การเข้าร่วมกิจกรรม</h1>
         <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
       </div>
-      
+
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <div className="bg-primary/10 text-primary rounded-full p-2">
@@ -96,10 +99,10 @@ function FilterByClassroom() {
             <p className="text-sm text-text-color-alt font-body">ห้อง {className}</p>
           </div>
         </div>
-        
-        <Link 
+
+        <Link
           to={`/activity/participate/filterbyclassroom`}
-          state={{classrooms: location.state.classrooms, activityId: activityId, activity: activity}}
+          state={{ classrooms: location.state.classrooms, activityId: activityId, activity: activity }}
           className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,34 +162,34 @@ function FilterByClassroom() {
             <div className="w-full h-[700px] rounded-xl overflow-hidden border border-line">
               {Object.keys(participate).length > 0 && keyFilter.length > 0 ? (
                 <PDFViewer width={"100%"} height={"100%"} style={{ borderRadius: "0.5rem" }}>
-                  <Document 
+                  <Document
                     pageMode="fullScreen"
                     title={`เอกสารการเข้าร่วมกิจกรรม ${activity.actName} ห้อง ${className}`}
                   >
                     <Page size="A4" style={styles.page} orientation="portrait">
-                      <Image src={`/Logo_NPS.png`} style={styles.logoSize}/>
+                      <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
                       <Text style={styles.textHeader}>การเข้าร่วมกิจกรรม {activity.actName} ระหว่างวันที่ {dateFormatToThai(startDate)} ถึง {dateFormatToThai(endDate)} ห้อง {className}</Text>
                       <Text style={styles.textParagraph}>
                         สถานที่ {activity.actLocation} เริ่ม {activity.actStartTime} สิ้นสุด {activity.actEndTime}
                       </Text>
                       {keyFilter.map((key) => (
-                        <Table style={styles.table} key={key}>
+                        <React.Fragment key={key}>
                           <Text style={styles.textSpan}>{dateFormatToThai(key)}</Text>
-                          <TH style={styles.tableHeader}>
-                            <TD style={[styles.td, { flex: 1 }]}>รหัสนักเรียน</TD>
-                            <TD style={[styles.td, { flex: 1 }]}>ชื่อ-นามสกุล</TD>
-                            <TD style={[styles.td, { flex: 1 }]}>เวลาที่ลงชื่อ</TD>
-                            <TD style={[styles.td, { flex: 1 }]}>สถานะการเข้าร่วม</TD>
-                          </TH>
+                          <View style={styles.tableHeader}>
+                            <Text style={[styles.tableColumn1, { fontWeight: "bold" }]}>รหัสนักเรียน</Text>
+                            <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>ชื่อ-นามสกุล</Text>
+                            <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>เวลาที่ลงชื่อ</Text>
+                            <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>สถานะการเข้าร่วม</Text>
+                          </View>
                           {participate[key].map((pati, patiIndex) => (
-                            <TR key={patiIndex}>
-                              <TD style={[styles.td, { flex: 1 }]}>{pati.stdId}</TD>
-                              <TD style={[styles.td, { flex: 1 }]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</TD>
-                              <TD style={[styles.td, { flex: 1 }]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</TD>
-                              <TD style={[styles.td, { flex: 1 }]}>{pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}</TD>
-                            </TR>
+                            <View style={styles.tableRow} key={patiIndex}>
+                              <Text style={[styles.tableColumn1]}>{pati.stdId}</Text>
+                              <Text style={[styles.tableColumn2]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</Text>
+                              <Text style={[styles.tableColumn2]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</Text>
+                              <Text style={[styles.tableColumn2]}>{pati.isJoin ? "เข้าร่วม" : "ไม่เข้าร่วม"}</Text>
+                            </View>
                           ))}
-                        </Table>
+                        </React.Fragment>
                       ))}
                     </Page>
                   </Document>
