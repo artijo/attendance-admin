@@ -1,15 +1,41 @@
 import { Link, useLocation } from "react-router-dom";
 import { formatDateToThai, formatTitle } from "../../../../helper";
 import { styles } from "../style.js";
-// import { PDFViewer } from "@react-pdf/renderer";
 import { Page, Text, View, Document, PDFViewer, Image } from "@react-pdf/renderer";
+import { useEffect, useState } from "react";
+
 function AttendenceByDayPDF() {
     const location = useLocation();
     const { studentList, totalStatus, date, classroomInfo } = location.state;
-    console.log(studentList);
-    console.log(totalStatus);
-    console.log(date);
-    console.log(classroomInfo);
+    const [periodStatus, setPeriodStatus] = useState([]);
+
+    // Calculate per-period statistics
+    useEffect(() => {
+        if (!studentList || !studentList.length) return;
+        
+        const periodsCount = studentList[0].attendance.length;
+        const periodStats = Array(periodsCount).fill().map(() => ({
+            present: 0,
+            late: 0,
+            absent: 0,
+            activity: 0,
+            leave: 0
+        }));
+        
+        studentList.forEach((student) => {
+            student.attendance.forEach((attendance, periodIndex) => {
+                if (attendance.attStatus !== null) {
+                    const status = attendance.attStatus.toLowerCase();
+                    if (periodStats[periodIndex].hasOwnProperty(status)) {
+                        periodStats[periodIndex][status]++;
+                    }
+                }
+            });
+        });
+        
+        setPeriodStatus(periodStats);
+    }, [studentList]);
+
     const formatAttStatus = (status) => {
         switch (status) {
             case 'present': {
@@ -57,7 +83,6 @@ function AttendenceByDayPDF() {
 
                 <Link
                     to={`/activity/participate/filterbyclassroomjoin`}
-                    // state={{ classrooms: location.state.classrooms, activityId: activityId, activity: activity }}
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,8 +119,6 @@ function AttendenceByDayPDF() {
                                     <Text style={styles.textHeader}>สรุปการเข้าเรียน | ห้องม.{classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
                                     <View 
                                         style={{
-                                            // borderWidth: ,
-                                            // borderColor: '#EE722A',
                                             width:'20%',
                                             height: '2px',
                                             backgroundColor: '#EE722A',
@@ -104,63 +127,98 @@ function AttendenceByDayPDF() {
                                         }}
                                     ></View>
                                     <Text style={styles.textParagraph}>ประจำวันที่ {formatDateToThai(date)}</Text>
-                                    <View style={styles.tableHeader} >
-                                        <Text style={[styles.tableColumn1,{width:'5%'}]}>คาบที่</Text>
-                                        <Text style={[styles.tableColumn1]}></Text>
-                                        <Text style={[styles.tableColumn1]}></Text>
+                                    
+                                    {/* First row - Period Numbers */}
+                                    <View style={styles.tableHeader}>
+                                        <Text style={[styles.tableColumn1, {width:'5%'}]}>คาบที่</Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}></Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}></Text>
                                         {studentList[0].attendance.map((_, index) => (
-                                            <Text key={index} style={styles.tableColumn2}>{index + 1}</Text>
+                                            <Text key={index} style={[styles.tableColumn2, {textAlign: 'center'}]}>{index + 1}</Text>
                                         ))}
                                     </View>
-                                    <View style={styles.tableRow} >
-                                        <Text style={[styles.tableColumn1,{width:'5%'}]}>รหัสวิชา</Text>
-                                        <Text style={styles.tableColumn1}></Text>
-                                        <Text style={styles.tableColumn1}></Text>
+                                    
+                                    {/* Second row - Subject Codes */}
+                                    <View style={styles.tableRow}>
+                                        <Text style={[styles.tableColumn1, {width:'5%'}]}>รหัสวิชา</Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}></Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}></Text>
                                         {studentList[0].attendance.map((att, index) => (
-                                            <Text key={index} style={[styles.tableColumn2, {paddingLeft:'2px'}]}>{att.subjectCode}</Text>
+                                            <Text key={index} style={[styles.tableColumn2, {textAlign: 'center'}]}>{att.subjectCode}</Text>
                                         ))}
                                     </View>
-                                    <View style={styles.tableRow} >
-                                        <Text style={[styles.tableColumn1,{width:'5%'}]}>เลขที่</Text>
-                                        <Text style={[styles.tableColumn2]}>รหัสนักเรียน</Text>
-                                        <Text style={[styles.tableColumn2]}>ชื่อ-นามสกุล</Text>
+                                    
+                                    {/* Third row - Column Headers */}
+                                    <View style={styles.tableRow}>
+                                        <Text style={[styles.tableColumn1, {width:'5%'}]}>เลขที่</Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}>รหัสนักเรียน</Text>
+                                        <Text style={[styles.tableColumn1, {width:'15%'}]}>ชื่อ-นามสกุล</Text>
                                         {studentList[0].attendance.map((att, index) => (
-                                            <Text key={index} style={[styles.tableColumn2, {paddingLeft:'2px'}]}>{att.subjectName}</Text>
+                                            <Text key={index} style={[styles.tableColumn2, {textAlign: 'center'}]}>{att.subjectName}</Text>
                                         ))}
                                     </View>
+                                    
+                                    {/* Student rows */}
                                     {studentList.map((student, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={[styles.tableColumn1,{width:'5%'}]}>{student.stdNo}</Text>
-                                            <Text style={[styles.tableColumn2]}>{student.stdId}</Text>
-                                            <Text style={[styles.tableColumn2]}>{`${formatTitle(student.title)}${student.fName} ${student.lName}`}</Text>
+                                            <Text style={[styles.tableColumn1, {width:'5%'}]}>{student.stdNo}</Text>
+                                            <Text style={[styles.tableColumn1, {width:'15%'}]}>{student.stdId}</Text>
+                                            <Text style={[styles.tableColumn1, {width:'15%'}]}>{`${formatTitle(student.title)}${student.fName} ${student.lName}`}</Text>
                                             
-                                            {student.attendance.map((attendance, index) => (
-                                                <Text key={index} style={[styles.tableColumn2]}>{attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : "-"}</Text>
+                                            {student.attendance.map((attendance, idx) => (
+                                                <Text key={idx} style={[styles.tableColumn2, {textAlign: 'center'}]}>
+                                                    {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : "-"}
+                                                </Text>
                                             ))}
                                         </View>
                                     ))}
+                                    
+                                    {/* Summary rows */}
                                     <View style={styles.tableRow}>
-                                        <Text style={[styles.tableColumn1]}>มาเรียน</Text>
-                                        <Text style={[styles.tableColumn2]}>{totalStatus.present}</Text>
+                                        <Text style={[styles.tableColumn1, {width:'35%', textAlign: 'left', color: '#22c55e'}]}>มาเรียน</Text>
+                                        {periodStatus.map((period, index) => (
+                                            <Text key={index} style={[styles.tableColumn2, {color: '#22c55e', textAlign: 'center'}]}>
+                                                {period.present || 0} คน
+                                            </Text>
+                                        ))}
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={[styles.tableColumn1]}>ขาดเรียน</Text>
-                                        <Text style={[styles.tableColumn2]}>{totalStatus.absent}</Text>
+                                        <Text style={[styles.tableColumn1, {width:'35%', textAlign: 'left', color: '#f97316'}]}>มาสาย</Text>
+                                        {periodStatus.map((period, index) => (
+                                            <Text key={index} style={[styles.tableColumn2, {color: '#f97316', textAlign: 'center'}]}>
+                                                {period.late || 0} คน
+                                            </Text>
+                                        ))}
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={[styles.tableColumn1]}>ลา</Text>
-                                        <Text style={[styles.tableColumn2]}>{totalStatus.leave}</Text>
+                                        <Text style={[styles.tableColumn1, {width:'35%', textAlign: 'left', color: '#dc2626'}]}>ขาดเรียน</Text>
+                                        {periodStatus.map((period, index) => (
+                                            <Text key={index} style={[styles.tableColumn2, {color: '#dc2626', textAlign: 'center'}]}>
+                                                {period.absent || 0} คน
+                                            </Text>
+                                        ))}
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={[styles.tableColumn1]}>กิจกรรม</Text>
-                                        <Text style={[styles.tableColumn2]}>{totalStatus.activity}</Text>
+                                        <Text style={[styles.tableColumn1, {width:'35%', textAlign: 'left', color: '#9333ea'}]}>ลา</Text>
+                                        {periodStatus.map((period, index) => (
+                                            <Text key={index} style={[styles.tableColumn2, {color: '#9333ea', textAlign: 'center'}]}>
+                                                {period.leave || 0} คน
+                                            </Text>
+                                        ))}
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={[styles.tableColumn1, {width:'35%', textAlign: 'left', color: '#2563eb'}]}>กิจกรรม</Text>
+                                        {periodStatus.map((period, index) => (
+                                            <Text key={index} style={[styles.tableColumn2, {color: '#2563eb', textAlign: 'center'}]}>
+                                                {period.activity || 0} คน
+                                            </Text>
+                                        ))}
                                     </View>
                                 </Page>
                             </Document>
                         </PDFViewer>
                     </div>
                 </div>
-
             </div>
         </div>
     );

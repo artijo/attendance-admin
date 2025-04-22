@@ -13,9 +13,10 @@ import { DateTime } from "luxon";
 export const AttendanceByDayDetailList = ({ studentList }) => {
     const ref = useRef(null);
     const location = useLocation();
-    const navigate = useNavigate();
     const date = location.state?.date;
+    const navigate = useNavigate();
     const [totalStatus, setTotalStatus] = useState(null);
+    const [periodStatus, setPeriodStatus] = useState([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [exportLoading, setExportLoading] = useState({ excel: false, pdf: false });
@@ -32,18 +33,34 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             leave: 0
         };
         
+        // Calculate per-period statistics
+        const periodsCount = studentList[0].attendance.length;
+        const periodStats = Array(periodsCount).fill().map(() => ({
+            present: 0,
+            late: 0,
+            absent: 0,
+            activity: 0,
+            leave: 0
+        }));
+        
         studentList.forEach((student) => {
-            student.attendance.forEach((attendance) => {
+            student.attendance.forEach((attendance, periodIndex) => {
                 if (attendance.attStatus !== null) {
                     const status = attendance.attStatus.toLowerCase();
                     if (updatedTotalStatus.hasOwnProperty(status)) {
                         updatedTotalStatus[status]++;
+                        
+                        // Update per-period statistics
+                        if (periodStats[periodIndex].hasOwnProperty(status)) {
+                            periodStats[periodIndex][status]++;
+                        }
                     }
                 }
             });
         });
         
         setTotalStatus(updatedTotalStatus);
+        setPeriodStatus(periodStats);
     };
 
     const formatAttStatus = (status) => {
@@ -106,6 +123,13 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
         }
     };
 
+    const handlePdfComponent = () => {
+        if (studentList.length > 0 && totalStatus && classroomInfo) {
+            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo} />;
+        }
+        return null;
+    };
+
     const navigatePdfPage = () => {
         navigate("/attendances/details/byday/pdf", {state: { studentList, totalStatus, date, classroomInfo }});
     }
@@ -157,7 +181,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
         <div>
             {studentList.length > 0 && totalStatus && classroomInfo && (
                 <div className="flex justify-end items-center space-x-2 mb-4">
-                    <ExportPdfButton
+                     <ExportPdfButton
                         onClikFunction={navigatePdfPage} 
                     />
                     <ExportExcelButton 
@@ -166,6 +190,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                     />
                 </div>
             )}
+            
             <div>
                 <div className="overflow-x-auto">
                     <table 
@@ -237,27 +262,43 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                         <tfoot>
                             <tr className="bg-gray-50">
                                 <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาเรียน</td>
-                                <td className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium" colSpan={studentList[0].attendance.length}>
-                                    {totalStatus?.present || 0} คาบ
-                                </td>
+                                {periodStatus.map((period, index) => (
+                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium text-center">
+                                        {period.present || 0} คน
+                                    </td>
+                                ))}
+                            </tr>
+                            <tr className="bg-gray-50">
+                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาสาย</td>
+                                {periodStatus.map((period, index) => (
+                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-orange-500 font-medium text-center">
+                                        {period.late || 0} คน
+                                    </td>
+                                ))}
                             </tr>
                             <tr className="bg-gray-50">
                                 <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ขาดเรียน</td>
-                                <td className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium" colSpan={studentList[0].attendance.length}>
-                                    {totalStatus?.absent || 0} คาบ
-                                </td>
+                                {periodStatus.map((period, index) => (
+                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium text-center">
+                                        {period.absent || 0} คน
+                                    </td>
+                                ))}
                             </tr>
                             <tr className="bg-gray-50">
                                 <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ลา</td>
-                                <td className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium" colSpan={studentList[0].attendance.length}>
-                                    {totalStatus?.leave || 0} คาบ
-                                </td>
+                                {periodStatus.map((period, index) => (
+                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium text-center">
+                                        {period.leave || 0} คน
+                                    </td>
+                                ))}
                             </tr>
                             <tr className="bg-gray-50">
                                 <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>กิจกรรม</td>
-                                <td className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium" colSpan={studentList[0].attendance.length}>
-                                    {totalStatus?.activity || 0} คาบ
-                                </td>
+                                {periodStatus.map((period, index) => (
+                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium text-center">
+                                        {period.activity || 0} คน
+                                    </td>
+                                ))}
                             </tr>
                         </tfoot>
                     </table>
