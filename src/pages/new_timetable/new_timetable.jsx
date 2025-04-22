@@ -213,7 +213,6 @@ function Timetable() {
                                                         </th>
                                                         {timeStudyList.map((time, period) => {
                                                             const timetablethistime = timetable[key].find((tt) => tt.timeStart === time.startDatabaseFormat);
-                                                            
                                                             if(time.startDatabaseFormat === "12:00:00" ) {
                                                                 return (
                                                                     <td key={`${time}-period-${period}`} className="border border-gray-100 p-0">

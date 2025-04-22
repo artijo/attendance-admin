@@ -12,10 +12,8 @@ function AttendenceByDayDetail() {
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    
     const classroomId = location.state?.classroomId;
     const date = location.state?.date;
-    
     const formattedDate = date ? formatDateToThai(date) : "";
     const dayOfWeek = date ? 
         formatDayOfWeeks(DateTime.fromISO(`${date}T17:00:00`).setZone('Asia/Bangkok').weekday) : "";

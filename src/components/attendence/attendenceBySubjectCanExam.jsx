@@ -16,6 +16,15 @@ export const AttendanceBySubjectCanExam = () => {
     const navigate = useNavigate();
     const ref = useRef();
 
+    // Summary stats
+    const [summaryStats, setSummaryStats] = useState({
+        total: 0,
+        canExam: 0,
+        cannotExam: 0,
+        percentCanExam: 0,
+        percentCannotExam: 0
+    });
+
     const abstractCanExam = async () => {
         if (!subject?.subId || !classroomInfo?.classId) {
             setError("ข้อมูลไม่ครบถ้วน กรุณาเลือกห้องเรียนและรายวิชาอีกครั้ง");
@@ -28,7 +37,23 @@ export const AttendanceBySubjectCanExam = () => {
             const response = await axios.get(
                 `${HOSTNAME}/a/atttendence/abstract/${classroomInfo.classId}/${subject.subId}`
             );
-            setStudentList(response.data || []);
+            const data = response.data || [];
+            setStudentList(data);
+            
+            // Calculate summary statistics
+            if (data.length > 0) {
+                const cannotExamCount = data.filter(student => student.canExam === "ไม่มีสิทธิ์สอบ").length;
+                const canExamCount = data.length - cannotExamCount;
+                
+                setSummaryStats({
+                    total: data.length,
+                    canExam: canExamCount,
+                    cannotExam: cannotExamCount,
+                    percentCanExam: Math.round((canExamCount / data.length) * 100),
+                    percentCannotExam: Math.round((cannotExamCount / data.length) * 100)
+                });
+            }
+            
             setError(null);
         } catch (error) {
             console.error(error);
@@ -78,6 +103,63 @@ export const AttendanceBySubjectCanExam = () => {
                 PDFComponent={pdfComponent} 
                 fileName={`สรุปการมีสิทธิ์สอบวิชา_${subject.subNameThai}_ชั้นม.${classroomInfo.classLevel}_${classroomInfo.classRoom}`}
             />
+        );
+    };
+
+    // Create a summary component
+    const ExamEligibilitySummary = () => {
+        if (studentList.length === 0) return null;
+        
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h4 className="text-sm text-blue-700 font-medium">นักเรียนทั้งหมด</h4>
+                            <p className="text-2xl font-bold text-blue-800 mt-1">{summaryStats.total} คน</p>
+                        </div>
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="bg-green-50 border border-green-100 rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h4 className="text-sm text-green-700 font-medium">มีสิทธิ์สอบ</h4>
+                            <div className="flex items-baseline mt-1">
+                                <p className="text-2xl font-bold text-green-800">{summaryStats.canExam} คน</p>
+                                <p className="text-sm ml-2 text-green-700">({summaryStats.percentCanExam}%)</p>
+                            </div>
+                        </div>
+                        <div className="bg-green-100 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="bg-red-50 border border-red-100 rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h4 className="text-sm text-red-700 font-medium">ไม่มีสิทธิ์สอบ (มส)</h4>
+                            <div className="flex items-baseline mt-1">
+                                <p className="text-2xl font-bold text-red-800">{summaryStats.cannotExam} คน</p>
+                                <p className="text-sm ml-2 text-red-700">({summaryStats.percentCannotExam}%)</p>
+                            </div>
+                        </div>
+                        <div className="bg-red-100 p-2 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     };
 
@@ -194,89 +276,94 @@ export const AttendanceBySubjectCanExam = () => {
                             <p className="text-text-color-alt">ยังไม่มีข้อมูลการเข้าเรียนในรายวิชานี้</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm" ref={ref}>
-                                <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-y border-line">
-                                    <tr>
-                                        <th className="px-4 py-3.5 text-left">เลขที่</th>
-                                        <th className="px-4 py-3.5 text-left">รหัสนักเรียน</th>
-                                        <th className="px-4 py-3.5 text-left">ชื่อ-สกุล</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ขาดเรียน<br/>(ครั้ง)</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าสาย<br/>(ครั้ง)</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ลา<br/>(ครั้ง)</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">กิจกรรม<br/>(ครั้ง)</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าเรียน<br/>(ครั้ง)</th>
-                                        <th className="px-4 py-3.5 text-center whitespace-nowrap">ร้อยละ<br/>การเข้าเรียนรวมลา</th>
-                                        <th className="px-4 py-3.5 text-center">สถานะ</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {studentList.map((student, index) => (
-                                        <tr 
-                                            key={index} 
-                                            className={`hover:bg-gray-50 transition-colors duration-150 ${
-                                                student.canExam === "ไม่มีสิทธิ์สอบ" 
-                                                    ? "bg-red-50" 
-                                                    : "bg-white"
-                                            }`}
-                                        >
-                                            <td className="px-4 py-3 font-medium text-text-color text-center">{student.stdNo}</td>
-                                            <td className="px-4 py-3">{student.stdId}</td>
-                                            <td className="px-4 py-3 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
-                                            <td className={`px-4 py-3 text-center ${student.attendenceAbsentCount > 0 ? 'text-red-600 font-medium' : ''}`}>
-                                                {student.attendenceAbsentCount}
-                                            </td>
-                                            <td className={`px-4 py-3 text-center ${student.attendenceLateCount > 0 ? 'text-orange-500 font-medium' : ''}`}>
-                                                {student.attendenceLateCount}
-                                            </td>
-                                            <td className={`px-4 py-3 text-center ${student.attendenceLeaveCount > 0 ? 'text-purple-600 font-medium' : ''}`}>
-                                                {student.attendenceLeaveCount}
-                                            </td>
-                                            <td className={`px-4 py-3 text-center ${student.attendenceActivity > 0 ? 'text-blue-600 font-medium' : ''}`}>
-                                                {student.attendenceActivity}
-                                            </td>
-                                            <td className={`px-4 py-3 text-center ${student.attendenceCount > 0 ? 'text-green-600 font-medium' : ''}`}>
-                                                {student.attendenceCount}
-                                            </td>
-                                            <td className={`px-4 py-3 text-center font-medium ${
-                                                student.attendencePercent < 80 
-                                                    ? 'text-red-600' 
-                                                    : student.attendencePercent >= 90
-                                                        ? 'text-green-600'
-                                                        : 'text-yellow-600'
-                                            }`}>
-                                                {student.attendencePercent}%
-                                            </td>
-                                            <td className="px-4 py-3 text-center">
-                                                {student.canExam === "ไม่มีสิทธิ์สอบ" ? (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                        ไม่มีสิทธิ์สอบ
+                        <>
+                            {/* Add the summary component here */}
+                            <ExamEligibilitySummary />
+                            
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm" ref={ref}>
+                                    <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-y border-line">
+                                        <tr>
+                                            <th className="px-4 py-3.5 text-left">เลขที่</th>
+                                            <th className="px-4 py-3.5 text-left">รหัสนักเรียน</th>
+                                            <th className="px-4 py-3.5 text-left">ชื่อ-สกุล</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">ขาดเรียน<br/>(ครั้ง)</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าสาย<br/>(ครั้ง)</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">ลา<br/>(ครั้ง)</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">กิจกรรม<br/>(ครั้ง)</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">เข้าเรียน<br/>(ครั้ง)</th>
+                                            <th className="px-4 py-3.5 text-center whitespace-nowrap">ร้อยละ<br/>การเข้าเรียนรวมลา</th>
+                                            <th className="px-4 py-3.5 text-center">สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {studentList.map((student, index) => (
+                                            <tr 
+                                                key={index} 
+                                                className={`hover:bg-gray-50 transition-colors duration-150 ${
+                                                    student.canExam === "ไม่มีสิทธิ์สอบ" 
+                                                        ? "bg-red-50" 
+                                                        : "bg-white"
+                                                }`}
+                                            >
+                                                <td className="px-4 py-3 font-medium text-text-color text-center">{student.stdNo}</td>
+                                                <td className="px-4 py-3">{student.stdId}</td>
+                                                <td className="px-4 py-3 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
+                                                <td className={`px-4 py-3 text-center ${student.attendenceAbsentCount > 0 ? 'text-red-600 font-medium' : ''}`}>
+                                                    {student.attendenceAbsentCount}
+                                                </td>
+                                                <td className={`px-4 py-3 text-center ${student.attendenceLateCount > 0 ? 'text-orange-500 font-medium' : ''}`}>
+                                                    {student.attendenceLateCount}
+                                                </td>
+                                                <td className={`px-4 py-3 text-center ${student.attendenceLeaveCount > 0 ? 'text-purple-600 font-medium' : ''}`}>
+                                                    {student.attendenceLeaveCount}
+                                                </td>
+                                                <td className={`px-4 py-3 text-center ${student.attendenceActivity > 0 ? 'text-blue-600 font-medium' : ''}`}>
+                                                    {student.attendenceActivity}
+                                                </td>
+                                                <td className={`px-4 py-3 text-center ${student.attendenceCount > 0 ? 'text-green-600 font-medium' : ''}`}>
+                                                    {student.attendenceCount}
+                                                </td>
+                                                <td className={`px-4 py-3 text-center font-medium ${
+                                                    student.attendencePercent < 80 
+                                                        ? 'text-red-600' 
+                                                        : student.attendencePercent >= 90
+                                                            ? 'text-green-600'
+                                                            : 'text-yellow-600'
+                                                }`}>
+                                                    {student.attendencePercent}%
+                                                </td>
+                                                <td className="px-4 py-3 text-center">
+                                                    {student.canExam === "ไม่มีสิทธิ์สอบ" ? (
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                            ไม่มีสิทธิ์สอบ
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                            มีสิทธิ์สอบ
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot className="bg-gray-50">
+                                        <tr>
+                                            <td colSpan="10" className="px-4 py-3 text-text-color-alt">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs">
+                                                        รายงานนี้ไม่เป็นทางการ กรุณาตรวจสอบกับครูผู้สอนก่อนการประกาศอย่างเป็นทางการ
                                                     </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        มีสิทธิ์สอบ
+                                                    <span className="text-xs">
+                                                        นักเรียนทั้งหมด: {studentList.length} คน
                                                     </span>
-                                                )}
+                                                </div>
                                             </td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                                <tfoot className="bg-gray-50">
-                                    <tr>
-                                        <td colSpan="10" className="px-4 py-3 text-text-color-alt">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-xs">
-                                                    รายงานนี้ไม่เป็นทางการ กรุณาตรวจสอบกับครูผู้สอนก่อนการประกาศอย่างเป็นทางการ
-                                                </span>
-                                                <span className="text-xs">
-                                                    นักเรียนทั้งหมด: {studentList.length} คน
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

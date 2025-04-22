@@ -20,6 +20,8 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const [isTabOpen, setIsTabOpen] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // console.log(classroomInfo);
     
     // Format attendance status to Thai language
     const formatAttStatus = (status) => {
@@ -89,6 +91,94 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         );
     };
 
+    // Render table footer with status summary
+    const TableFooter = ({ month }) => {
+        // Get all attendance records for this month
+        const monthAttendance = studentList.data.flatMap(student => 
+            student.attendance.filter(att => att.month === month)
+        );
+        
+        // Group attendance records by period (using their index)
+        const periodStatusCounts = {};
+        
+        monthAttendance.forEach((attendance, index) => {
+            // Get period index (e.g., 1st period, 2nd period)
+            const periodIndex = index % (monthAttendance.length / studentList.data.length);
+            
+            if (!periodStatusCounts[periodIndex]) {
+                periodStatusCounts[periodIndex] = {
+                    present: 0,
+                    absent: 0,
+                    late: 0,
+                    activity: 0,
+                    leave: 0,
+                    null: 0
+                };
+            }
+            
+            const status = attendance.attStatus?.toLowerCase() || 'null';
+            periodStatusCounts[periodIndex][status]++;
+        });
+        
+        const getStatusSummaryStyle = (status) => {
+            const statusStyles = {
+                present: 'bg-green-50 text-green-700',
+                absent: 'bg-red-50 text-red-700',
+                late: 'bg-orange-50 text-orange-700',
+                activity: 'bg-blue-50 text-blue-700',
+                leave: 'bg-purple-50 text-purple-700',
+                null: 'bg-gray-50 text-gray-500'
+            };
+            
+            return statusStyles[status] || 'bg-gray-50 text-gray-500';
+        };
+        
+        const renderStatusSummary = (counts) => {
+            const totalStudents = studentList.data.length;
+            
+            return (
+                <div className="flex flex-col space-y-1 min-w-[100px]">
+                    {Object.entries(counts).map(([status, count]) => {
+                        if (count === 0 || status === 'null') return null;
+                        
+                        const statusLabel = {
+                            present: 'เข้าเรียน',
+                            absent: 'ไม่เข้าเรียน',
+                            late: 'มาสาย',
+                            activity: 'เข้าร่วมกิจกรรม',
+                            leave: 'ลา'
+                        }[status];
+                        
+                        const percentage = Math.round((count / totalStudents) * 100);
+                        
+                        return (
+                            <div 
+                                key={status} 
+                                className={`text-xs px-2 py-1 rounded-md flex justify-between items-center ${getStatusSummaryStyle(status)}`}
+                            >
+                                <span>{statusLabel}</span>
+                                <span className="font-medium">{count} ({percentage}%)</span>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        };
+        
+        return (
+            <tr className="bg-gray-50 border-t-2 border-gray-200">
+                <td colSpan={3} className="px-4 py-3 font-medium text-gray-700">
+                    สรุปจำนวนแต่ละสถานะ
+                </td>
+                {Object.entries(periodStatusCounts).map(([periodIndex, counts]) => (
+                    <td key={periodIndex} className="px-3 py-3">
+                        {renderStatusSummary(counts)}
+                    </td>
+                ))}
+            </tr>
+        );
+    };
+
     // Main table component
     const Table = ({ month, exportPdf, exportExcel, index }) => {
         return (
@@ -106,6 +196,9 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                         <tbody className="divide-y divide-gray-200">
                             <TableBody month={month} />
                         </tbody>
+                        <tfoot>
+                            <TableFooter month={month} />
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -153,48 +246,52 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         }
     };
 
+    const navigateToPDF = (subject,classroomInfo, month) => {
+        navigate('/attendances/details/bysubject/pdf', {state: { subject, classroomInfo, month, studentList}});
+    }
+
     // Handle PDF export
-    const handleExportPdf = (index, month) => {
-        const tableElement = ref.current[index];
-        if (tableElement != null) {
-            const tableJson = tabletojson.convert(tableElement.outerHTML);
-            return (
-                <BySubject 
-                    subject={subject} 
-                    classroomInfo={classroomInfo} 
-                    month={convertNumberToThaiMonth(month)} 
-                    tableJson={tableJson}
-                />
-            );
-        }
-        return null;
-    };
+    // const handleExportPdf = (index, month) => {
+    //     const tableElement = ref.current[index];
+    //     if (tableElement != null) {
+    //         const tableJson = tabletojson.convert(tableElement.outerHTML);
+    //         return (
+    //             <BySubject 
+    //                 subject={subject} 
+    //                 classroomInfo={classroomInfo} 
+    //                 month={convertNumberToThaiMonth(month)} 
+    //                 tableJson={tableJson}
+    //             />
+    //         );
+    //     }
+    //     return null;
+    // };
 
     // Export PDF button component
-    const ExportPdfButtonComponent = ({ index, month }) => {
-        const pdfComponent = handleExportPdf(index, month);
+    // const ExportPdfButtonComponent = ({ index, month }) => {
+    //     const pdfComponent = handleExportPdf(index, month);
         
-        if (!pdfComponent) {
-            return (
-                <button 
-                    disabled 
-                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
-                >
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    กำลังโหลด...
-                </button>
-            );
-        }
+    //     if (!pdfComponent) {
+    //         return (
+    //             <button 
+    //                 disabled 
+    //                 className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
+    //             >
+    //                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    //                 </svg>
+    //                 กำลังโหลด...
+    //             </button>
+    //         );
+    //     }
         
-        return (
-            <ExportPdfButton 
-                PDFComponent={pdfComponent} 
-                fileName={`สรุปการเข้าเรียนวิชา_${subject.subNameThai}_เดือน_${convertNumberToThaiMonth(month)}_ชั้นมัธยม${classroomInfo.classLevel}_ห้อง${classroomInfo.classRoom}`}
-            />
-        );
-    };
+    //     return (
+    //         <ExportPdfButton 
+    //             PDFComponent={pdfComponent} 
+    //             fileName={`สรุปการเข้าเรียนวิชา_${subject.subNameThai}_เดือน_${convertNumberToThaiMonth(month)}_ชั้นมัธยม${classroomInfo.classLevel}_ห้อง${classroomInfo.classRoom}`}
+    //         />
+    //     );
+    // };
 
     // Navigate to exam eligibility summary page
     const handleNavigateToExamEligibility = () => {
@@ -215,7 +312,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 className="inline-flex items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 แบบสรุปการมีสิทธิ์สอบตามรายวิชา
             </button>
@@ -268,7 +365,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                             <Table 
                                 month={month} 
                                 index={index} 
-                                exportPdf={<ExportPdfButtonComponent index={index} month={month} />}
+                                exportPdf={<ExportPdfButton onClikFunction={() => navigateToPDF(subject,classroomInfo,month, index)}/>}
                                 exportExcel={<ExportExcelButton handelOnClickFunction={() => handleExportExcel(index, month)} />}
                             />
                         </TapAttendenceSummaryOpen>

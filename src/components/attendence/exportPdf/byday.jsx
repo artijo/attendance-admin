@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { styles } from "./byday";
-import { Page, Text, View, Document, PDFViewer,Image } from "@react-pdf/renderer";
+import { Page, Text, View, Document, PDFViewer, Image } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import { formatDateToThai } from "../../../helper";
 function ByDay({studentList,totalStatus,date,classroomInfo}) {
