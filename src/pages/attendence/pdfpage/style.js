@@ -16,7 +16,8 @@ export const styles = StyleSheet.create({
     page: {
         backgroundColor: "#fff",
         fontFamily: "TH Sarabun New",
-        padding: "30px 50px",
+        padding: "40px 30px",
+
     },
     logoSize: {
         width:"32px",
@@ -52,9 +53,11 @@ export const styles = StyleSheet.create({
         width: "20%",
         textAlign: "left",
         fontSize: "8px",
-        paddingBottom: '5px',
-        paddingTop: '5px',
-        marginLeft: '11px',
+        paddingLeft: '5px',
+        marginTop: '5px',
+        // paddingBottom: '5px',
+        // paddingTop: '5px',
+        marginLeft: '5px',
         
     },
     tableColumn2: {
@@ -63,10 +66,12 @@ export const styles = StyleSheet.create({
         fontSize: "8px",
         borderLeftWidth: 1,
         borderLeftColor: '#E4E4E4',
-        paddingBottom: '5px',
-        paddingLeft: '11px',
-        paddingTop: '5px',
-        marginLeft: '11px'
+        paddingLeft: '5px',
+        paddingVertical: '5px',
+        // paddingBottom: '5px',
+        // paddingLeft: '11px',
+        // paddingTop: '5px',
+        // marginLeft: '11px'
     },
     tableColumn3: {
         display: "flex",

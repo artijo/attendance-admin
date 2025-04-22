@@ -39,8 +39,7 @@ export const AttendanceBySubjectCanExam = () => {
             );
             const data = response.data || [];
             setStudentList(data);
-            
-            // Calculate summary statistics
+
             if (data.length > 0) {
                 const cannotExamCount = data.filter(student => student.canExam === "ไม่มีสิทธิ์สอบ").length;
                 const canExamCount = data.length - cannotExamCount;
@@ -67,43 +66,17 @@ export const AttendanceBySubjectCanExam = () => {
         abstractCanExam();
     }, []);
 
+    const navigateToPDFpage = () => {
+        navigate("/attendances/details/bysubject/iscanexam/pdfpage", {
+            state: { classroomInfo, studentList, subject }
+        });
+    }
+
     const handleExportExcel = () => {
         if (ref.current) {
             const fileName = `สรุปการมีสิทธ์สอบวิชา_${subject.subNameThai}_ชั้นม.${classroomInfo.classLevel}/${classroomInfo.classRoom}`;
             AttendanceSummaryByDay(ref.current, fileName);
         }
-    };
-
-    const handleExportPdf = () => {
-        if (subject && classroomInfo && studentList.length > 0) {
-            return <BySubejctCanExamPDF classroomInfo={classroomInfo} studentList={studentList} subject={subject} />;
-        }
-        return null;
-    };
-
-    const ExportPdfButtonComponent = () => {
-        const pdfComponent = handleExportPdf();
-        
-        if (!pdfComponent) {
-            return (
-                <button 
-                    disabled 
-                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
-                >
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    กำลังโหลด...
-                </button>
-            );
-        }
-        
-        return (
-            <ExportPdfButton 
-                PDFComponent={pdfComponent} 
-                fileName={`สรุปการมีสิทธิ์สอบวิชา_${subject.subNameThai}_ชั้นม.${classroomInfo.classLevel}_${classroomInfo.classRoom}`}
-            />
-        );
     };
 
     // Create a summary component
@@ -246,7 +219,8 @@ export const AttendanceBySubjectCanExam = () => {
                         
                         {studentList.length > 0 && (
                             <div className="flex gap-3">
-                                <ExportPdfButtonComponent />
+                                <ExportPdfButton onClikFunction={navigateToPDFpage}/>
+                                {/* <ExportPdfButtonComponent /> */}
                                 <ExportExcelButton handelOnClickFunction={handleExportExcel} />
                             </div>
                         )}
@@ -334,7 +308,7 @@ export const AttendanceBySubjectCanExam = () => {
                                                     {student.attendencePercent}%
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    {student.canExam === "ไม่มีสิทธิ์สอบ" ? (
+                                                    {student.canExam === "มส." ? (
                                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                                             ไม่มีสิทธิ์สอบ
                                                         </span>
