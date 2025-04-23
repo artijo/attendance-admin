@@ -2,14 +2,14 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { formatDateToThai } from "../../../helper";
-import { abstactActivity } from "../../../exportExcel";
-import ErrorAlertActivity from "../../../components/alert/activity/error";
+import { abstactActivityByRoomJoin } from "../../../exportExcel";
+// import ErrorAlertActivity from "../../../components/alert/activity/error";
 
 function ExcelByFilterRoom() {
     const location = useLocation();
     const { classrooms, activityId, activity } = location.state;
     const firstDate = DateTime.fromISO(activity.actDate).setZone('Asia/Bangkok').startOf('day').toISODate();
-    
+    // console.log(activity);
     const [alert, setAlert] = useState(false);
     const [startDate, setStartDate] = useState(`${firstDate}`);
     const [endDate, setEndDate] = useState(`${firstDate}`);
@@ -48,7 +48,7 @@ function ExcelByFilterRoom() {
     const handelExportExcel = async (activityId, classId, startDate, endDate, className, activityName) => {
         setProcessingClass(classId);
         try {
-            await abstactActivity(activityId, classId, startDate, endDate, className, activityName);
+            await abstactActivityByRoomJoin(activityId, classId, startDate, endDate, className, activityName, activity);
         } finally {
             setTimeout(() => {
                 setProcessingClass(null);

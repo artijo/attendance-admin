@@ -1,6 +1,6 @@
 import { PropTypes } from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { AttendanceSummaryByDay } from "../../exportExcel";
+import { AttendanceSummaryByDay, summaryAttendeanceByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -96,7 +96,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             try {
                 const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
                 const fileName = `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน${formatDayOfWeeks(dateformat.weekday)} วันที่${formatDateToThai(dateformat.toString())}`;
-                AttendanceSummaryByDay(ref.current, fileName);
+                summaryAttendeanceByDay(studentList, fileName, classroomInfo, dateformat);
             } catch (error) {
                 console.error("Export Excel error:", error);
             } finally {

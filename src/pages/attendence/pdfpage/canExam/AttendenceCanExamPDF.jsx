@@ -119,9 +119,9 @@ function AttendenceCanExamPDF() {
                                     </View>
 
                                     <View style={styles.tableHeader}>
-                                        <Text style={[styles.tableColumn1, { width: '10%', padding: 0 }]}>เลขที่</Text>
-                                        <Text style={[styles.tableColumn2, { width: '15%' }]}>รหัสนักศึกษา</Text>
-                                        <Text style={[styles.tableColumn2, { width: '30%' }]}>ชื่อ-สกุล</Text>
+                                        <Text style={[styles.tableColumn1]}>เลขที่</Text>
+                                        <Text style={[styles.tableColumn2]}>รหัสนักศึกษา</Text>
+                                        <Text style={[styles.tableColumn2]}>ชื่อ-สกุล</Text>
                                         <Text style={styles.tableColumn2}>ขาดเรียน(ครั้ง)</Text>
                                         <Text style={styles.tableColumn2}>เข้าสาย(ครั้ง)</Text>
                                         <Text style={styles.tableColumn2}>ลา(ครั้ง)</Text>
@@ -133,9 +133,9 @@ function AttendenceCanExamPDF() {
                                     {studentList.map((student, index) => {
                                         return (
                                             <View key={index} style={styles.tableRow}>
-                                                <Text style={[styles.tableColumn1, { width: '10%', padding: 0 }]}>{student.stdNo}</Text>
-                                                <Text style={[styles.tableColumn2, { width: '15%' }]}>{student.stdId}</Text>
-                                                <Text style={[styles.tableColumn2, { width: '30%' }]}>{student.fName} {student.lName}</Text>
+                                                <Text style={[styles.tableColumn1]}>{student.stdNo}</Text>
+                                                <Text style={[styles.tableColumn2]}>{student.stdId}</Text>
+                                                <Text style={[styles.tableColumn2]}>{student.fName} {student.lName}</Text>
                                                 <Text style={styles.tableColumn2}>{student.attendenceAbsentCount}</Text>
                                                 <Text style={styles.tableColumn2}>{student.attendenceLateCount}</Text>
                                                 <Text style={styles.tableColumn2}>{student.attendenceLeaveCount}</Text>

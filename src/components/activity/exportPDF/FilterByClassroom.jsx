@@ -174,7 +174,7 @@ function FilterByClassroom() {
                       </Text>
                       {keyFilter.map((key) => (
                         <React.Fragment key={key}>
-                          <Text style={styles.textSpan}>{dateFormatToThai(key)}</Text>
+                          <Text style={[styles.textParagraph,{marginTop:5,paddingTop: 2, paddingLeft: 5,borderLeftWidth:2, borderColor:'#EE722A', borderRadius:1}]}>{dateFormatToThai(key)}</Text>
                           <View style={styles.tableHeader}>
                             <Text style={[styles.tableColumn1, { fontWeight: "bold" }]}>รหัสนักเรียน</Text>
                             <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>ชื่อ-นามสกุล</Text>
@@ -182,7 +182,7 @@ function FilterByClassroom() {
                             <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>สถานะการเข้าร่วม</Text>
                           </View>
                           {participate[key].map((pati, patiIndex) => (
-                            <View style={styles.tableRow} key={patiIndex}>
+                            <View style={[styles.tableRow]} key={patiIndex}>
                               <Text style={[styles.tableColumn1]}>{pati.stdId}</Text>
                               <Text style={[styles.tableColumn2]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</Text>
                               <Text style={[styles.tableColumn2]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</Text>

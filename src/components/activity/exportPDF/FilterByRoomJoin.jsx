@@ -13,6 +13,7 @@ function FilterByRoomJoin() {
   const location = useLocation();
   const { activityId, className, filterRoom, activity } = location.state;
 
+  console.log(participate);
   const getParticipateList = async () => {
     try {
       setIsLoading(true);
@@ -127,7 +128,7 @@ function FilterByRoomJoin() {
                       {participate.map((pati, patiIndex) => (
                         <View style={styles.tableRow} key={patiIndex}>
                           <Text style={[styles.tableColumn1]}>{pati.stdId}</Text>
-                          <Text style={[styles.tableColumn2]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</Text>
+                          <Text style={[styles.tableColumn2]}>{formatTitle(pati.title)} {pati.fName} {pati.lName}</Text>
                           <Text style={[styles.tableColumn2]}>{pati.participateCount}</Text>
                         </View>
                       ))}
