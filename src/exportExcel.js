@@ -29,9 +29,8 @@ export function AttendanceSummaryByDay(table, fileName){
 }
 
 export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileName, classroomInfo, subject){
-    // console.log(objectJson);
-    // console.log(classroomInfo);
     try{
+        let index = 0;
         const sheetData = [
             ['สรุปรายละเอียดการเข้าเรียนตามวิชา'],
             [`วิชา: ${subject.subNameThai} (${subject.subCode})`],
@@ -43,10 +42,10 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
     
     
         //Header 1
-        objectJson.data[0].attendance.forEach((attInfo, index) => {
+        objectJson.data[0].attendance.forEach((attInfo) => {
             if(attInfo.month == month){
-    
-                sheetData[5].push(`${index + 1}\n(${dateTimeFormat(attInfo.studingTimeDate)})`);
+                index++;
+                sheetData[5].push(`${index}\n(${dateTimeFormat(attInfo.studingTimeDate)})`);
             }
         });
     
@@ -91,8 +90,6 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
     }catch(error){
         console.error(error);
     }   
-    
-
 }
 
 export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dateformat){
@@ -173,11 +170,6 @@ export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dat
         worksheet["!merges"] = [
             XLSX.utils.decode_range("A5:C5"),
             XLSX.utils.decode_range("A6:C6"),
-            // XLSX.utils.decode_range("A12:C12"),
-            // XLSX.utils.decode_range("A13:C13"),
-            // XLSX.utils.decode_range("A14:C14"),
-            // XLSX.utils.decode_range("A15:C15"),
-            // XLSX.utils.decode_range("A16:C16"),
         ]
         worksheet["!cols"] =[
             { wch: 10 },
