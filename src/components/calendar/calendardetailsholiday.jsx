@@ -7,19 +7,19 @@ import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export const CalendarDetatils = () => {
-    const location = useLocation();
+export const CalendarDetatils = (classroom) => {
+    // const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
 
-    console.log(holidayList);
+    // console.log(holidayList);
     
     const fetchHolidayList = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/fullcalendarHoliday/${location.state.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/fullcalendarHoliday/${classroom.classId}`);
             setHolidayList(response.data);
             setError(null);
         } catch (err) {

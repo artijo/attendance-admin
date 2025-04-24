@@ -60,7 +60,7 @@ const CalendarStudy = () => {
                         </div>
                     </div>
                     
-                    {/* <CalendarDetatils classroomId={classroomInfo} /> */}
+                    <CalendarDetatils classroom={classroomInfo} />
                 </div>
             </div>
         </div>

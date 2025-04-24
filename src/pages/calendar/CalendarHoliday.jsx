@@ -63,7 +63,7 @@ const CalendarHoliday = () => {
                         </div>
                     </div>
                     
-                    <CalendarDetatils classroomId={location.state.classroomId}/>
+                    <CalendarDetatils classroom={classroomInfo}/>
                 </div>
             </div>
         </div>

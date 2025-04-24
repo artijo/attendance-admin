@@ -14,7 +14,7 @@ export const CalendarDetatils = ({classroom}) => {
     const fectStudyList = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${classroom.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${classroom.classId}`);
             setStudyList(response.data);
             setError(null);
         } catch (err) {
