@@ -7,14 +7,14 @@ import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export const CalendarDetatils = (classroom) => {
+export const CalendarDetatils = ({classroom}) => {
     // const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
 
-    // console.log(holidayList);
+    console.log(classroom);
     
     const fetchHolidayList = async () => {
         try {
