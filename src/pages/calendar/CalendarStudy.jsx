@@ -1,9 +1,10 @@
 import { CalendarDetatils } from "../../components/calendar/calendardetailstudy.jsx";
 import { useLocation, Link } from "react-router-dom";
 
-export const CalendarStudy = () => {
+const CalendarStudy = () => {
     const location = useLocation();
     const classroomInfo = location.state.classroomInfo;
+    console.log(classroomInfo);
 
     return (
         <div className="min-h-screen">
@@ -65,3 +66,5 @@ export const CalendarStudy = () => {
         </div>
     );
 };
+
+export default CalendarStudy;
