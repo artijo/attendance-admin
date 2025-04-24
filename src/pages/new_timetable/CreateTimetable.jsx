@@ -162,12 +162,13 @@ function CreateTimetableDragAndDrop() {
         }
     }
 
-    const callCreateTimetableBySubject = async (classroom, timetable, schedule) => {
+    const callCreateTimetableBySubject = async (classroom, timetable, schedule, weekday) => {
         try {
             const data = {
                 classroom: classroom,
                 timetable: timetable,
-                schedule: schedule
+                schedule: schedule,
+                weekday: weekday
             }
             const response = await axios.post(`${HOSTNAME}/a/timetable/bysubject`, data);
             if (response.status === 200) {
@@ -230,7 +231,7 @@ function CreateTimetableDragAndDrop() {
                 dayOfWeek: weekday,
                 subject: subjectActiveCard
             }
-            callCreateTimetableBySubject(classroom, timetableObject, schedule);
+            callCreateTimetableBySubject(classroom, timetableObject, schedule, weekday);
             return;
         }
 

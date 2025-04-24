@@ -85,7 +85,6 @@ const AttendanceDetail = lazy(() => import("./pages/attendence/AttendenceDetail.
 const AttendenceSubjectDetail = lazy(() => import("./pages/attendence/AttendenceSubjectDetail.jsx"));
 const AttendenceByDayDetail = lazy(() => import("./pages/attendence/AttendenceByDayDetail.jsx"));
 const AttendanceBySubjectCanExam = lazy(() => import("./components/attendence/attendenceBySubjectCanExam.jsx").then(module => ({ default: module.AttendanceBySubjectCanExam })));
-const BySubejctCanExamPDF = lazy(() => import("./components/attendence/exportPdf/bysubjectCanExam.jsx"));
 const AttendenceByClassroomDeatail = lazy(() => import("./pages/attendence/AttendenceByClassroomDeatail.jsx"));
 const CreateTimetableDragAndDrop = lazy(() => import("./pages/new_timetable/CreateTimetable.jsx"));
 const AttendenceByDayPDF = lazy(() => import("./pages/attendence/pdfpage/byday/AttendenceByDayPDF.jsx"));
@@ -163,7 +162,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
           <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
           <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
-          <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
+          {/* <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  export pdf by subjectCanExam page */}
           <Route path="attendances/details/byday/pdf" element={<AttendenceByDayPDF/>} />
           <Route path="attendances/details/bysubject/pdf" element={<AttendenceBySubjectPDF/>} /> {/*export pdf by subject page*/}
           <Route path="attendances/details/bysubject/iscanexam/pdfpage" element={<AttendenceCanExamPDF/>} /> {/*export pdf by subject page*/}

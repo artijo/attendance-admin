@@ -59,7 +59,7 @@ export const CalendarStudy = () => {
                         </div>
                     </div>
                     
-                    <CalendarDetatils classroomId={location} />
+                    {/* <CalendarDetatils classroomId={classroomInfo} /> */}
                 </div>
             </div>
         </div>
