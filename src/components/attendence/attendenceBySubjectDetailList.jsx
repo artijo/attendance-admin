@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { AttendanceSummaryByDay, summaryAttendeanceBySubjectFilterByDay } from "../../exportExcel";
+import { summaryAttendeanceBySubjectFilterByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import axios from "axios";
 import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
 import { convertNumberToThaiMonth, dateTimeFormat } from "../../helper";
-import { tabletojson } from "tabletojson";
-import BySubject from "./exportPdf/bysubject";
 
 export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const navigate = useNavigate();

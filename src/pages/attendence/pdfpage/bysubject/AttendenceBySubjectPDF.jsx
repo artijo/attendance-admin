@@ -163,7 +163,6 @@ function AttendenceBySubjectPDF() {
                         </PDFViewer>
                     </div>
                 </div>
-
             </div>
         </div>
     );

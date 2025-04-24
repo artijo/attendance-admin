@@ -1,13 +1,12 @@
 import { PropTypes } from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { AttendanceSummaryByDay, summaryAttendeanceByDay } from "../../exportExcel";
+import { summaryAttendeanceByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper";
-import ByDay from "./exportPdf/byday.jsx";
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
@@ -123,12 +122,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
         }
     };
 
-    const handlePdfComponent = () => {
-        if (studentList.length > 0 && totalStatus && classroomInfo) {
-            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo} />;
-        }
-        return null;
-    };
 
     const navigatePdfPage = () => {
         navigate("/attendances/details/byday/pdf", {state: { studentList, totalStatus, date, classroomInfo }});

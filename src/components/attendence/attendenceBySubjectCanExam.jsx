@@ -5,7 +5,6 @@ import { HOSTNAME } from "../../config";
 import { AttendanceSummaryByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
-import BySubejctCanExamPDF from "./exportPdf/bysubjectCanExam";
 
 export const AttendanceBySubjectCanExam = () => {
     const location = useLocation();

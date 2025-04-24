@@ -5,7 +5,6 @@ import ExportExcelButton from '../exportExcelButton';
 import ExportPdfButton from '../exportPdfButton';
 import axios from 'axios';
 import { HOSTNAME } from '../../config';
-import ByClassroom from './exportPdf/byclassroom';
 
 export const AttendenceBySummaryByClassroomList = ({ studentList, classroomId }) => {
     const ref = useRef();
@@ -56,41 +55,41 @@ export const AttendenceBySummaryByClassroomList = ({ studentList, classroomId })
         }
     };
 
-    const handlePdfComponent = () => {
-        if (classroomInfo && studentList.length > 0) {
-            return <ByClassroom classroomInfo={classroomInfo} studentList={studentList} />;
-        }
-        return null;
-    };
+    // const handlePdfComponent = () => {
+    //     if (classroomInfo && studentList.length > 0) {
+    //         return <ByClassroom classroomInfo={classroomInfo} studentList={studentList} />;
+    //     }
+    //     return null;
+    // };
 
-    const ExportPdfButtonComponent = () => {
-        const pdfComponent = handlePdfComponent();
+    // const ExportPdfButtonComponent = () => {
+    //     const pdfComponent = handlePdfComponent();
         
-        if (!pdfComponent) {
-            return (
-                <button 
-                    disabled 
-                    className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
-                >
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    กำลังโหลด...
-                </button>
-            );
-        }
+    //     if (!pdfComponent) {
+    //         return (
+    //             <button 
+    //                 disabled 
+    //                 className="px-3 py-1.5 text-sm bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed inline-flex items-center"
+    //             >
+    //                 <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    //                 </svg>
+    //                 กำลังโหลด...
+    //             </button>
+    //         );
+    //     }
         
-        const fileName = classroomInfo 
-            ? `สรุปการเข้าเรียน_ม${classroomInfo.classLevel}_${classroomInfo.classRoom}` 
-            : "สรุปการเข้าเรียนตามห้อง";
+    //     const fileName = classroomInfo 
+    //         ? `สรุปการเข้าเรียน_ม${classroomInfo.classLevel}_${classroomInfo.classRoom}` 
+    //         : "สรุปการเข้าเรียนตามห้อง";
             
-        return (
-            <ExportPdfButton 
-                PDFComponent={pdfComponent} 
-                fileName={fileName}
-            />
-        );
-    };
+    //     return (
+    //         <ExportPdfButton 
+    //             PDFComponent={pdfComponent} 
+    //             fileName={fileName}
+    //         />
+    //     );
+    // };
 
     useEffect(() => {
         fetchClassroomInfo();
@@ -113,7 +112,7 @@ export const AttendenceBySummaryByClassroomList = ({ studentList, classroomId })
     return (
         <div className="space-y-6">
             <div className="flex justify-end gap-3 mb-4">
-                <ExportPdfButtonComponent />
+                {/* <ExportPdfButtonComponent /> */}
                 <ExportExcelButton 
                     handelOnClickFunction={handleExportExcel} 
                     isLoading={exportLoading.excel}
