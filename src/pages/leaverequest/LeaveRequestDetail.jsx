@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
-import { formatTitle, formatThaiDate, formatThaiDateTime, formatTimeThai } from "../../helper";
+import { formatTitle, formatThaiDate, formatThaiDateTime, formatTimeThai, formatPhoneNumber } from "../../helper";
 
 function LeaveRequestDetail() {
     const { id } = useParams();
@@ -171,6 +171,7 @@ function LeaveRequestDetail() {
                         <h2 className="text-lg font-semibold text-text-color font-heading">ข้อมูลนักเรียน</h2>
                     </div>
                     <div className="space-y-3">
+                    
                         <div className="flex flex-col">
                             <span className="text-sm text-text-color-alt font-body">รหัสนักเรียน</span>
                             <span className="font-medium text-text-color">{leaveRequest.student.stdId}</span>
@@ -185,6 +186,10 @@ function LeaveRequestDetail() {
                                 <span className="font-medium text-text-color">มัธยมศึกษาปีที่ {classroom.classLevel} ห้อง {classroom.classRoom}</span>
                             </div>
                         )}
+                        <div className="flex flex-col">
+                            <span className="text-sm text-text-color-alt font-body">หมายเลขโทรศัพท์</span>
+                            <span className="font-medium text-text-color">{leaveRequest.student.tel? formatPhoneNumber(leaveRequest.student.tel) : "-"}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -199,6 +204,10 @@ function LeaveRequestDetail() {
                         <h2 className="text-lg font-semibold text-text-color font-heading">รายละเอียดการลา</h2>
                     </div>
                     <div className="space-y-3">
+                    <div className="flex flex-col">
+                            <span className="text-sm text-text-color-alt font-body">หมายเลขคำร้อง</span>
+                            <span className="font-medium text-text-color">{leaveRequest.leaveId?.substring(0,8) || "-"}</span>
+                        </div>
                         <div className="flex flex-col">
                             <span className="text-sm text-text-color-alt font-body">ประเภทการลา</span>
                             <span className="font-medium text-text-color">{leaveRequest.leaveRequestType?.leaveTypeName || "-"}</span>

@@ -338,7 +338,7 @@ function LeaveRequest() {
                                 <table className="w-full text-sm text-left">
                                     <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-b border-line">
                                         <tr>
-                                            <th className="px-6 py-3" width="60">ลำดับ</th>
+                                            <th className="px-6 py-3" width="60">หมายเลขคำร้อง</th>
                                             <th className="px-6 py-3">รหัสนักเรียน</th>
                                             <th className="px-6 py-3">ชื่อ-นามสกุล</th>
                                             <th className="px-6 py-3">ชั้นเรียน</th>
@@ -360,7 +360,7 @@ function LeaveRequest() {
                                                     className="border-b border-line hover:bg-gray-50 transition-colors duration-150"
                                                 >
                                                     <td className="px-6 py-4 font-medium text-text-color">
-                                                        {index + 1}
+                                                        {leave.leaveId.substring(0,8)}
                                                     </td>
                                                     <td className="px-6 py-4 font-medium text-text-color">
                                                         {leave.student.stdId}
