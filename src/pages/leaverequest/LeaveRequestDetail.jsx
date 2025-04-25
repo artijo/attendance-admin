@@ -258,7 +258,7 @@ function LeaveRequestDetail() {
                                     <p className="text-xs text-text-color-alt">อัพโหลดเมื่อ: {formatThaiDateTime(leaveRequest.createdAt)}</p>
                                 </div>
                                 <a
-                                    href={`${HOSTNAME}/upload/${leaveRequest.LeaveFile.filename}`}
+                                    href={`${leaveRequest.LeaveFile}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="ml-2 p-2 text-primary hover:text-accent"
