@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import Select from "react-select";
-import { DateTime } from "luxon";
+import { formatTitle, formatThaiDate } from "../../helper";
 
 function LeaveRequest() {
     const [leaveRequests, setLeaveRequests] = useState([]);
@@ -169,12 +169,6 @@ function LeaveRequest() {
         
         applyFilters();
     }, [leaveRequests, selectedSubject, selectedTeacher, selectedLeaveType]);
-
-    // Format date to Thai format
-    const formatThaiDate = (dateString) => {
-        const dt = DateTime.fromISO(dateString);
-        return dt.setLocale('th').toFormat('d MMMM yyyy');
-    };
 
     // Get status badge class based on status
     const getStatusBadgeClass = (status) => {
@@ -372,7 +366,7 @@ function LeaveRequest() {
                                                         {leave.student.stdId}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        {leave.student.fName} {leave.student.lName}
+                                                        {formatTitle(leave.student.title)}{leave.student.fName} {leave.student.lName}
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         {classroom ? `ม.${classroom.classLevel}/${classroom.classRoom}` : "-"}

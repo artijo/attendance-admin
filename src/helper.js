@@ -157,3 +157,20 @@ export function convertNumberToThaiMonth(monthNumber) {
     const dateSplit = dateTimeFormat.split('-');
     return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
   }
+
+  export const formatThaiDate = (dateString) => {
+    const dt = DateTime.fromISO(dateString);
+    return dt.setLocale('th').toFormat('d MMMM yyyy');
+};
+
+ export const formatThaiDateTime = (dateString) => {
+        if (!dateString) return "-";
+        const dt = DateTime.fromISO(dateString);
+        return dt.setLocale('th').toFormat('d MMMM yyyy HH:mm น.');
+    };
+
+export const formatTimeThai = (timeString) => {
+      if (!timeString) return "-";
+      const [hours, minutes] = timeString.split(':');
+      return `${hours}:${minutes} น.`;
+  };

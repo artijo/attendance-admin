@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
+import { formatTitle, formatThaiDate, formatThaiDateTime, formatTimeThai } from "../../helper";
 
 function LeaveRequestDetail() {
     const { id } = useParams();
@@ -38,23 +39,6 @@ function LeaveRequestDetail() {
 
         fetchLeaveRequest();
     }, [id]);
-
-    const formatThaiDate = (dateString) => {
-        const dt = DateTime.fromISO(dateString);
-        return dt.setLocale('th').toFormat('d MMMM yyyy');
-    };
-
-    const formatThaiDateTime = (dateString) => {
-        if (!dateString) return "-";
-        const dt = DateTime.fromISO(dateString);
-        return dt.setLocale('th').toFormat('d MMMM yyyy HH:mm น.');
-    };
-
-    const formatTime = (timeString) => {
-        if (!timeString) return "-";
-        const [hours, minutes] = timeString.split(':');
-        return `${hours}:${minutes} น.`;
-    };
 
     const getDayOfWeekThai = (dayOfWeek) => {
         const days = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
@@ -193,7 +177,7 @@ function LeaveRequestDetail() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-sm text-text-color-alt font-body">ชื่อ-นามสกุล</span>
-                            <span className="font-medium text-text-color">{leaveRequest.student.fName} {leaveRequest.student.lName}</span>
+                            <span className="font-medium text-text-color">{formatTitle(leaveRequest.student.title)}{leaveRequest.student.fName} {leaveRequest.student.lName}</span>
                         </div>
                         {classroom && (
                             <div className="flex flex-col">
@@ -319,7 +303,7 @@ function LeaveRequestDetail() {
                                                 {teacher.fName} {teacher.lName}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div>{formatTime(studyTime.studingTime.timetable.timeStart)} - {formatTime(studyTime.studingTime.timetable.timeEnd)}</div>
+                                                <div>{formatTimeThai(studyTime.studingTime.timetable.timeStart)} - {formatTimeThai(studyTime.studingTime.timetable.timeEnd)}</div>
                                                 <div className="text-sm text-text-color-alt">วัน{getDayOfWeekThai(studyTime.studingTime.timetable.dayOfWeek)}</div>
                                             </td>
                                             <td className="px-6 py-4">
