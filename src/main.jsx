@@ -40,6 +40,10 @@ const CreateTeacher = lazy(() => import("./pages/teachers/CreateForm.jsx"));
 const EditTeacher = lazy(() => import("./pages/teachers/EditForm.jsx"));
 const DepartmentManage = lazy(() => import("./pages/teachers/department/Manage.jsx"));
 
+// Leave Request Section
+const LeaveRequest = lazy(() => import("./pages/leaverequest/LeaveRequest.jsx"));
+const LeaveRequestDetail = lazy(() => import("./pages/leaverequest/LeaveRequestDetail.jsx"));
+
 // Timetable
 const Timetable = lazy(() => import("./pages/new_timetable/new_timetable.jsx"));
 const CreateTimetable = lazy(() => import("./pages/new_timetable/new_createtimetable.jsx"));
@@ -119,6 +123,9 @@ createRoot(document.getElementById("root")).render(
           <Route path="teachers/create" element={<CreateTeacher />} />
           <Route path="teachers/edit/:id" element={<EditTeacher />} />
           <Route path="teachers/departments" element={<DepartmentManage />} />
+          {/* Leave Request Section */}
+          <Route path="leavereq" element={<LeaveRequest />} />
+          <Route path="leavereq/:id" element={<LeaveRequestDetail />} />
           {/* Timetable Section */}
           <Route path="timetable" element={<Timetable/>}/>
           <Route path="testtimetable" element={<CreateTimetableDragAndDrop/>}/>
