@@ -10,7 +10,7 @@ function CreateClassroom() {
     const [isMultipleMode, setIsMultipleMode] = useState(false);
     const [numberOfClassrooms, setNumberOfClassrooms] = useState(1);
     const [teacherOptions, setTeacherOptions] = useState(null);
-    const [leaderOptions, setLeaderOptions] = useState(null);
+    const [studentOptions, setStudentOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
     const [selectedTeachers, setSelectedTeachers] = useState(new Set());
     const [academicterms, setAcademicTerms] = useState(null);
@@ -81,20 +81,19 @@ function CreateClassroom() {
             });
     }
 
-    function fetchLeader() {
+    function fetchStudent() {
         axios
-            .get(HOSTNAME + "/a/leaders")
+            .get(HOSTNAME + "/a/students")
             .then((response) => {
-                setLeaderOptions(response.data
-                    // .filter(l => !l.classroom)
-                    .map(l => ({
-                    value: l.ldrId,
-                    label: `${l.fName} ${l.lName}`
+                setStudentOptions(response.data
+                    .map(s => ({
+                    value: s.stdId,
+                    label: `${s.fName} ${s.lName}`
                 })));
                 
             })
             .catch((error) => {
-                console.error("Error fetching leaders", error);
+                console.error("Error fetching students", error);
             });
     }
 
@@ -111,7 +110,7 @@ function CreateClassroom() {
 
     useEffect(() => {
         fetchTeacher();
-        fetchLeader();
+        fetchStudent();
         fetchClassroomType();
         fetchAcademicTerms();
     }
@@ -231,7 +230,7 @@ function CreateClassroom() {
                         <Select
                             id={`Leader_${index}`}
                             className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                            options={leaderOptions}
+                            options={studentOptions}
                             {...register(`classroom_${index}.leaderId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
                             isClearable
@@ -434,7 +433,7 @@ function CreateClassroom() {
                                                 />
                                             </div>
                                             
-                                            {/* <div className="space-y-2">
+                                            <div className="space-y-2">
                                                 <label htmlFor={`Leader_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -445,13 +444,13 @@ function CreateClassroom() {
                                                     id={`Leader_${index}`}
                                                     className="react-select-container"
                                                     classNamePrefix="react-select"
-                                                    options={leaderOptions}
+                                                    options={studentOptions}
                                                     onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
                                                     isClearable
                                                     placeholder="เลือกหัวหน้าห้อง..."
                                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
                                                 />
-                                            </div> */}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -570,7 +569,7 @@ function CreateClassroom() {
                                     />
                                 </div>
                                 
-                                {/* <div className="space-y-2">
+                                <div className="space-y-2">
                                     <label htmlFor="Leader" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -581,13 +580,13 @@ function CreateClassroom() {
                                         id="Leader"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
-                                        options={leaderOptions}
+                                        options={studentOptions}
                                         onChange={(selectedOption) => setValue("leaderId", selectedOption ? selectedOption.value : null)}
                                         isClearable
                                         placeholder="เลือกหัวหน้าห้อง..."
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
                                     />
-                                </div> */}
+                                </div>
                             </div>
                         )}
                         
