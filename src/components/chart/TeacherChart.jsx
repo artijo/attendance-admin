@@ -30,15 +30,33 @@ function TeacherChart({ teachers, departments, initialShowChart = true }) {
     
     // Initialize count for each department
     const teachersByDepartment = {};
+    const teacherNamesListByDept = {};
+    
     departments.forEach(dept => {
       teachersByDepartment[dept.deptName] = 0;
+      teacherNamesListByDept[dept.deptName] = [];
     });
     
-    // Count teachers in each department
+    // Count teachers in each department and store teacher names
     teachers.forEach(teacher => {
       if (teacher.department && teacher.department.deptName) {
-        teachersByDepartment[teacher.department.deptName] = 
-          (teachersByDepartment[teacher.department.deptName] || 0) + 1;
+        const deptName = teacher.department.deptName;
+        
+        // Count teachers
+        teachersByDepartment[deptName] = 
+          (teachersByDepartment[deptName] || 0) + 1;
+        
+        // Store teacher names
+        if (!teacherNamesListByDept[deptName]) {
+          teacherNamesListByDept[deptName] = [];
+        }
+        
+        // Format: "รหัสครู: ชื่อ นามสกุล" (ถ้ามีรหัสครู)
+        const teacherName = teacher.tchId 
+          ? `${teacher.fName} ${teacher.lName}` 
+          : `${teacher.fName} ${teacher.lName}`;
+          
+        teacherNamesListByDept[deptName].push(teacherName);
       }
     });
     
@@ -55,6 +73,7 @@ function TeacherChart({ teachers, departments, initialShowChart = true }) {
           backgroundColor: 'rgba(54, 162, 235, 0.6)',
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1,
+          teachersList: sortedDepartmentNames.map(deptName => teacherNamesListByDept[deptName] || [])
         },
       ],
     });
@@ -81,6 +100,45 @@ function TeacherChart({ teachers, departments, initialShowChart = true }) {
           size: 16,
         }
       },
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            return context[0].label || '';
+          },
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${value} คน`;
+          },
+          afterLabel: function(context) {
+            // Get teachers list from dataset
+            const teachersList = context.dataset.teachersList[context.dataIndex] || [];
+            
+            // If no teachers, return empty
+            if (!teachersList.length) return [];
+            
+            // Return list of teachers with bullet points
+            return [
+              '',
+              'รายชื่อครูในกลุ่มสาระ:',
+              ...teachersList.map(name => `• ${name}`)
+            ];
+          }
+        },
+        padding: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleFont: {
+          family: 'lineseed',
+          size: 14
+        },
+        bodyFont: {
+          family: 'lineseed',
+          size: 13
+        },
+        bodySpacing: 5,
+        boxPadding: 3,
+        displayColors: false
+      }
     },
     scales: {
       y: {
