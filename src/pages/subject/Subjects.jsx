@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config.js";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success.jsx";
+import SubjectChart from "../../components/chart/SubjectChart.jsx";
 
 function Subjects() {
   const [subjects, setSubjects] = useState(null);
@@ -194,9 +195,14 @@ function Subjects() {
           <p className="text-text-color-alt font-body">ลองค้นหาด้วยคำค้นหาอื่นหรือเปลี่ยนกลุ่มสาระการเรียนรู้</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
-          <SubjectList subjects={subjects} subjectsPerPage={50} />
-        </div>
+        <>
+          {/* แผนภูมิจำนวนวิชาตามกลุ่มสาระ */}
+          <SubjectChart subjects={originalSubjects} subjectTypes={subjectTypes} />
+          
+          <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+            <SubjectList subjects={subjects} subjectsPerPage={50} />
+          </div>
+        </>
       )}
     </div>
   );

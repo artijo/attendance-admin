@@ -3,12 +3,18 @@ import { HOSTNAME } from "../config.js";
 import axios from "axios";
 import StudentChart from "../components/chart/StudentChart.jsx";
 import TeacherChart from "../components/chart/TeacherChart.jsx";
+import SubjectChart from "../components/chart/SubjectChart.jsx";
+import ActivityChart from "../components/chart/ActivityChart.jsx";
 
 function Dashboard() {
   const [allStudents, setAllStudents] = useState(null);
   const [allTeachers, setAllTeachers] = useState(null);
   const [classrooms, setClassrooms] = useState(null);
   const [departments, setDepartments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [subjectTypes, setSubjectTypes] = useState([]);
+  const [continuousActivities, setContinuousActivities] = useState([]);
+  const [nonContinuousActivities, setNonContinuousActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch all required data
@@ -46,10 +52,42 @@ function Dashboard() {
     axios.get(HOSTNAME + "/a/departments")
       .then((response) => {
         setDepartments(response.data);
-        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching departments", error);
+      });
+      
+    // Fetch subjects และ subject types
+    Promise.all([
+      axios.get(HOSTNAME + "/a/subjects"),
+      axios.get(HOSTNAME + "/a/subjects/type")
+    ])
+      .then(([subjectsRes, subjectTypesRes]) => {
+        setSubjects(subjectsRes.data);
+        setSubjectTypes(subjectTypesRes.data.map(type => ({
+          value: type.subTypeId,
+          label: type.subTypeNameThai
+        })));
+      })
+      .catch((error) => {
+        console.error("Error fetching subjects data", error);
+      });
+      
+    // Fetch continuous และ non-continuous activities
+    Promise.all([
+      axios.get(HOSTNAME + "/a/activities/1"),
+      axios.get(HOSTNAME + "/a/activities/2")
+    ])
+      .then(([continuousRes, nonContinuousRes]) => {
+        const continuous = continuousRes.data[0]?.activity || [];
+        const nonContinuous = nonContinuousRes.data[0]?.activity || [];
+        
+        setContinuousActivities(continuous);
+        setNonContinuousActivities(nonContinuous);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching activities", error);
         setIsLoading(false);
       });
   }, []);
@@ -81,6 +119,20 @@ function Dashboard() {
             </div>
           )}
 
+          {/* แผนภูมิวิชาเรียน */}
+          {subjects && subjectTypes && (
+            <div>
+              <SubjectChart subjects={subjects} subjectTypes={subjectTypes} />
+            </div>
+          )}
+
+          {/* แผนภูมิกิจกรรม */}
+          {continuousActivities && nonContinuousActivities && (
+            <div>
+              <ActivityChart continuousActivities={continuousActivities} nonContinuousActivities={nonContinuousActivities} />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* พื้นที่สำหรับข้อมูลสรุปอื่นๆ */}
             <div className="bg-white rounded-xl shadow-md p-6 border border-line">
@@ -100,6 +152,20 @@ function Dashboard() {
               </p>
               <p className="text-text-color font-body mt-2">
                 จำนวนกลุ่มสาระ: <span className="font-medium">{departments?.length || 0} กลุ่มสาระ</span>
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md p-6 border border-line">
+              <h3 className="text-lg font-medium text-primary font-heading mb-4">สถิติวชาเรียน</h3>
+              <p className="text-text-color font-body">
+                จำนวนวิชาเรียนทั้งหมด: <span className="font-medium">{subjects?.length || 0} วิชา</span>
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md p-6 border border-line">
+              <h3 className="text-lg font-medium text-primary font-heading mb-4">สถิติกิจกรรม</h3>
+              <p className="text-text-color font-body">
+                จำนวนกิจกรรมทั้งหมด: <span className="font-medium">{continuousActivities.length + nonContinuousActivities.length} กิจกรรม</span>
               </p>
             </div>
           </div>
