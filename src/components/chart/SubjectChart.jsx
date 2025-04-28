@@ -33,15 +33,25 @@ function SubjectChart({ subjects, subjectTypes, initialShowChart = true }) {
     
     // Initialize count for each subject type
     const subjectsByType = {};
+    const subjectNamesListByType = {};
+    
     filteredTypes.forEach(type => {
       subjectsByType[type.label] = 0;
+      subjectNamesListByType[type.label] = [];
     });
     
-    // Count subjects in each type
+    // Count subjects in each type and store subject names
     subjects.forEach(subject => {
       if (subject.subjectType && subject.subjectType.subTypeNameThai) {
-        subjectsByType[subject.subjectType.subTypeNameThai] = 
-          (subjectsByType[subject.subjectType.subTypeNameThai] || 0) + 1;
+        const typeName = subject.subjectType.subTypeNameThai;
+        // Count subjects
+        subjectsByType[typeName] = (subjectsByType[typeName] || 0) + 1;
+        
+        // Store subject names
+        if (!subjectNamesListByType[typeName]) {
+          subjectNamesListByType[typeName] = [];
+        }
+        subjectNamesListByType[typeName].push(`${subject.subCode} ${subject.subNameThai}`);
       }
     });
     
@@ -58,6 +68,7 @@ function SubjectChart({ subjects, subjectTypes, initialShowChart = true }) {
           backgroundColor: 'rgba(153, 102, 255, 0.6)',
           borderColor: 'rgba(153, 102, 255, 1)',
           borderWidth: 1,
+          subjectsList: sortedTypeNames.map(typeName => subjectNamesListByType[typeName] || [])
         },
       ],
     });
@@ -84,6 +95,45 @@ function SubjectChart({ subjects, subjectTypes, initialShowChart = true }) {
           size: 16,
         }
       },
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            return context[0].label || '';
+          },
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${value} วิชา`;
+          },
+          afterLabel: function(context) {
+            // Get subjects list from dataset
+            const subjectsList = context.dataset.subjectsList[context.dataIndex] || [];
+            
+            // If no subjects, return empty
+            if (!subjectsList.length) return [];
+            
+            // Return list of subjects with bullet points
+            return [
+              '',
+              'รายการวิชา:',
+              ...subjectsList.map(name => `• ${name}`)
+            ];
+          }
+        },
+        padding: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleFont: {
+          family: 'lineseed',
+          size: 14
+        },
+        bodyFont: {
+          family: 'lineseed',
+          size: 13
+        },
+        bodySpacing: 5,
+        boxPadding: 3,
+        displayColors: false
+      }
     },
     scales: {
       y: {
@@ -113,12 +163,12 @@ function SubjectChart({ subjects, subjectTypes, initialShowChart = true }) {
           display: true,
           text: 'กลุ่มสาระการเรียนรู้',
           font: {
-            family: 'Anakotmai Light',
+            family: 'lineseed',
           }
         },
         ticks: {
           font: {
-            family: 'Anakotmai Light',
+            family: 'lineseed',
           },
           maxRotation: 45,
           minRotation: 45
