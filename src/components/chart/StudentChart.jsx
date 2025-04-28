@@ -30,21 +30,36 @@ function StudentChart({ classrooms, students, initialShowChart = true }) {
     
     // Group students by classroom
     const studentsByClassroom = {};
+    const studentNamesListByClassroom = {};
     
     // Initialize with 0 students for each classroom
     classrooms.forEach(classroom => {
       const classKey = `ม.${classroom.classLevel}/${classroom.classRoom}`;
       studentsByClassroom[classKey] = 0;
+      studentNamesListByClassroom[classKey] = [];
     });
     
-    // Count students in each classroom
+    // Count students in each classroom and store student names
     students.forEach(student => {
       if (student.classroomMembers && student.classroomMembers.length > 0) {
         student.classroomMembers.forEach(member => {
           if (member.classroom) {
             const classKey = `ม.${member.classroom.classLevel}/${member.classroom.classRoom}`;
             if (studentsByClassroom[classKey] !== undefined) {
+              // Count student
               studentsByClassroom[classKey]++;
+              
+              // Store student name
+              if (!studentNamesListByClassroom[classKey]) {
+                studentNamesListByClassroom[classKey] = [];
+              }
+              
+              // Format: "รหัสนักเรียน: ชื่อ นามสกุล" (ถ้ามีรหัสนักเรียน)
+              const studentName = student.stdId 
+                ? `${student.stdId}: ${student.fName} ${student.lName}`
+                : `${student.fName} ${student.lName}`;
+                
+              studentNamesListByClassroom[classKey].push(studentName);
             }
           }
         });
@@ -70,6 +85,7 @@ function StudentChart({ classrooms, students, initialShowChart = true }) {
           backgroundColor: 'rgba(75, 192, 192, 0.6)',
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1,
+          studentsList: sortedClassroomKeys.map(key => studentNamesListByClassroom[key] || [])
         },
       ],
     });
@@ -96,6 +112,45 @@ function StudentChart({ classrooms, students, initialShowChart = true }) {
           size: 16,
         }
       },
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            return context[0].label || '';
+          },
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${value} คน`;
+          },
+          afterLabel: function(context) {
+            // Get students list from dataset
+            const studentsList = context.dataset.studentsList[context.dataIndex] || [];
+            
+            // If no students, return empty
+            if (!studentsList.length) return [];
+            
+            // Return list of students with bullet points
+            return [
+              '',
+              'รายชื่อนักเรียนในห้องเรียน:',
+              ...studentsList.map(name => `• ${name}`)
+            ];
+          }
+        },
+        padding: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleFont: {
+          family: 'lineseed',
+          size: 14
+        },
+        bodyFont: {
+          family: 'lineseed',
+          size: 13
+        },
+        bodySpacing: 5,
+        boxPadding: 3,
+        displayColors: false
+      }
     },
     scales: {
       y: {
