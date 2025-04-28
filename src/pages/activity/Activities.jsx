@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config";
 import { Link, useLocation } from "react-router-dom";
 import ActivityList from "../../components/activity/activityList";
 import AlertSuccess from "../../components/alert/success.jsx";
+import ActivityChart from "../../components/chart/ActivityChart.jsx";
 
 function Activities() {
     const [continuousActivities, setContinuousActivities] = useState(null);
@@ -93,12 +94,20 @@ function Activities() {
                     <p className="text-text-color-alt font-body">กรุณาเพิ่มกิจกรรมโดยคลิกที่ปุ่ม "เพิ่มกิจกรรม"</p>
                 </div>
             ) : (
-                <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
-                    <ActivityList 
-                        continuousActivities={continuousActivities}
-                        nonContinuousActivities={nonContinuousActivities}
+                <>
+                    {/* แผนภูมิสัดส่วนกิจกรรม */}
+                    <ActivityChart 
+                        continuousActivities={continuousActivities} 
+                        nonContinuousActivities={nonContinuousActivities} 
                     />
-                </div>
+                    
+                    <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+                        <ActivityList 
+                            continuousActivities={continuousActivities}
+                            nonContinuousActivities={nonContinuousActivities}
+                        />
+                    </div>
+                </>
             )}
         </div>
     );
