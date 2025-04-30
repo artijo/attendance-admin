@@ -272,7 +272,7 @@ function CreateTimetableDragAndDrop() {
                 <div className="rounded-xl bg-white shadow">
                     <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
                         {/* Updated back button with React Router */}
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center justify-between mb-6">
                             <button 
                                 onClick={() => navigate(-1)}
                                 className="flex items-center text-primary hover:text-primary-dark transition-colors"
@@ -283,21 +283,23 @@ function CreateTimetableDragAndDrop() {
                                 <span className="text-sm font-medium">ย้อนกลับ</span>
                             </button>
                         </div>
-                        
-                        <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
-                        <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
-                        <div className="flex items-center gap-2 mb-6">
-                            <div className="bg-primary/10 text-primary rounded-full p-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
+                        <div className="flex justify-between mb-6">
+                            <div>
+                                <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
+                                <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-primary/10 text-primary rounded-full p-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-text-color font-heading">
+                                        ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
+                                    </h3>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-bold text-text-color font-heading">
-                                ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
-                            </h3>
                         </div>
                     </div>
-                    
                     <div className="px-5 pb-5 relative">
                         <table className="w-full border-collapse">
                             <thead>
