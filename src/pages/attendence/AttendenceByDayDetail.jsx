@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { useEffect, useState } from "react";
 import { AttendanceByDayDetailList } from "../../components/attendence/attendenceByDayDetailList";
 import { formatDateToThai, formatDayOfWeeks } from "../../helper";
@@ -16,7 +16,7 @@ function AttendenceByDayDetail() {
     const date = location.state?.date;
     const formattedDate = date ? formatDateToThai(date) : "";
     const dayOfWeek = date ? 
-        formatDayOfWeeks(DateTime.fromISO(`${date}T17:00:00`).setZone('Asia/Bangkok').weekday) : "";
+        formatDayOfWeeks(DateTime.fromISO(`${date}T17:00:00`).setZone(TIME_ZONE).weekday) : "";
     
     const fetchClassroomInfo = async () => {
         if (!classroomId) return;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
@@ -32,8 +32,8 @@ function EdittermForm(){
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/academicterms/${location.state.termId}`);
             if(response.status === 200){
-                const termStartFormat = DateTime.fromISO(response.data.termStart).setZone('Asia/Bangkok');
-                const termEndFormat = DateTime.fromISO(response.data.termEnd).setZone('Asia/Bangkok');
+                const termStartFormat = DateTime.fromISO(response.data.termStart).setZone(TIME_ZONE);
+                const termEndFormat = DateTime.fromISO(response.data.termEnd).setZone(TIME_ZONE);
                 setTermId(response.data.termId);
                 setAcademicYear(response.data.academicYear + 543);
                 setSemester(response.data.semester);

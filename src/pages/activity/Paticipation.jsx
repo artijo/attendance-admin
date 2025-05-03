@@ -1,4 +1,4 @@
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -37,9 +37,9 @@ function Participant() {
 
     useEffect(() => {
         if (activity) {
-            const now = DateTime.now().setZone('Asia/Bangkok');
-            const startDate = DateTime.fromISO(activity.actDate).setZone('Asia/Bangkok');
-            const endDate = DateTime.fromISO(activity.actDateEnd).setZone('Asia/Bangkok');
+            const now = DateTime.now().setZone(TIME_ZONE);
+            const startDate = DateTime.fromISO(activity.actDate).setZone(TIME_ZONE);
+            const endDate = DateTime.fromISO(activity.actDateEnd).setZone(TIME_ZONE);
             
             // Check if current date is within activity period
             if (now >= startDate && now <= endDate) {
@@ -53,8 +53,8 @@ function Participant() {
 
     const getDatesBetween = (startDate, endDate) => {
         const dates = [];
-        let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
-        const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
+        let current = DateTime.fromISO(startDate).setZone(TIME_ZONE).startOf('day');
+        const end = DateTime.fromISO(endDate).setZone(TIME_ZONE).startOf('day');
         
         while (current <= end) {
             dates.push(current.toISODate());
@@ -65,8 +65,8 @@ function Participant() {
 
     const isRecordMatchingDate = (record) => {
         if (!selectedDate) return true;
-        const recordDate = DateTime.fromISO(record.joinTimestamp).setZone('Asia/Bangkok');
-        const filterDate = DateTime.fromISO(selectedDate).setZone('Asia/Bangkok');
+        const recordDate = DateTime.fromISO(record.joinTimestamp).setZone(TIME_ZONE);
+        const filterDate = DateTime.fromISO(selectedDate).setZone(TIME_ZONE);
         return recordDate.hasSame(filterDate, 'day');
     };
 
@@ -99,7 +99,7 @@ function Participant() {
     };
 
     const formatThaiDateTime = (dateTime) => {
-        const dt = DateTime.fromISO(dateTime).setZone('Asia/Bangkok');
+        const dt = DateTime.fromISO(dateTime).setZone(TIME_ZONE);
         const day = dt.toFormat('d');
         const month = convertNumberToThaiMonth(dt.month);
         const year = dt.year + 543;
@@ -264,8 +264,8 @@ function Participant() {
                             <div className="overflow-x-auto pb-2 hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                                 <div className="flex gap-2 px-1">
                                     {getDatesBetween(activity.actDate, activity.actDateEnd).map((date) => {
-                                        const dateTime = DateTime.fromISO(date).setZone('Asia/Bangkok');
-                                        const isToday = DateTime.now().setZone('Asia/Bangkok').hasSame(dateTime, 'day');
+                                        const dateTime = DateTime.fromISO(date).setZone(TIME_ZONE);
+                                        const isToday = DateTime.now().setZone(TIME_ZONE).hasSame(dateTime, 'day');
                                         const thaiMonth = convertNumberToThaiMonth(dateTime.month);  
                                         return (
                                             <button

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { DateTime } from "luxon";
 import { formatDateToThai } from "../../helper";
 import { Link } from "react-router-dom";
@@ -17,7 +17,7 @@ export const Termlistable = () => {
     const [termToDelete, setTermToDelete] = useState(null);
     
     function datetimeFormat(value) {
-        const datetime = DateTime.fromISO(value).setZone('Asia/Bangkok');
+        const datetime = DateTime.fromISO(value).setZone(TIME_ZONE);
         let datetimeString = formatDateToThai(datetime.toFormat('yyyy-MM-dd'));
         return datetimeString;
     };

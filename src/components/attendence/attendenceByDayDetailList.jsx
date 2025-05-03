@@ -5,7 +5,7 @@ import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper";
 import { DateTime } from "luxon";
 
@@ -93,7 +93,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             setExportLoading(prev => ({ ...prev, excel: true }));
             
             try {
-                const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
+                const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone(TIME_ZONE);
                 const fileName = `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน${formatDayOfWeeks(dateformat.weekday)} วันที่${formatDateToThai(dateformat.toString())}`;
                 summaryAttendeanceByDay(studentList, fileName, classroomInfo, dateformat);
             } catch (error) {

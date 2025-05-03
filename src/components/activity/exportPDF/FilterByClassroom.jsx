@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Page, Text, Document, Image, PDFViewer, View } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import axios from "axios";
-import { HOSTNAME } from "../../../config.js";
+import { HOSTNAME, TIME_ZONE } from "../../../config.js";
 import { convertNumberToThaiMonth, formatTitle } from "../../../helper.js";
 import { DateTime } from "luxon";
 import { styles } from "./style.js";
@@ -19,8 +19,8 @@ function FilterByClassroom() {
 
   const getDatesBetween = (startDate, endDate) => {
     const dates = [];
-    let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
-    const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
+    let current = DateTime.fromISO(startDate).setZone(TIME_ZONE).startOf('day');
+    const end = DateTime.fromISO(endDate).setZone(TIME_ZONE).startOf('day');
 
     while (current <= end) {
       dates.push(current.toISODate());
