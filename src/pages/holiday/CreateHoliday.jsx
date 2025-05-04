@@ -3,7 +3,7 @@ import { HOSTNAME } from "../../config";
 import { Link } from "react-router-dom";
 import { Holidaylisttable } from "../../components/holiday/createholiday/holidaylisttable";
 import { formatDateYYYYMMDD } from "../../helper.js";
-import { DateTime } from "luxon";
+import { DateTime, Zone } from "luxon";
 import axios from "axios";
 import AlertSuccess from "../../components/alert/success.jsx";
 import ErrorAlert from "../../components/alert/error.jsx";
@@ -29,8 +29,12 @@ function CreateHoliday() {
     const [holidayAutoList, setHolidayAutoList] = useState([]);
     const [isMultipleMode, setIsMultipleMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    //select option
     const [academicYearTermList, setAcademicYearTermList] = useState([]);
-    const [academicYearSemester, setAcademicYearSemester] = useState("");
+    const [academicYearSemester, setAcademicYearSemester] = useState(null);
+    //for input date
+    const [startDateTerm, setStartDateTerm] = useState("");
+    const [endDateTerm, setEndDateTerm] = useState("");
 
     // input
     const [holidayName, setHolidayName] = useState("");
@@ -82,7 +86,7 @@ function CreateHoliday() {
             if (response.status === 200) {
                 setAcademicYearTermList(response.data);
                 if (response.data.length > 0) {
-                    setAcademicYearSemester(response.data[0].termId);
+                    setAcademicYearSemester(response.data[0]);
                 }
             }
         } catch (error) {
@@ -104,11 +108,23 @@ function CreateHoliday() {
         fecthAcademicYearTerms();
     }, []);
 
+    useEffect(() => {
+        const setDateRange = (startDate, endDate) => {
+            const sDate = DateTime.fromISO(startDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd');
+            const eDate = DateTime.fromISO(endDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd');
+            setStartDateTerm(sDate);
+            setEndDateTerm(eDate);
+        };
+        if(academicYearSemester){
+            setDateRange(academicYearSemester.termStart, academicYearSemester.termEnd);
+        };
+    },[academicYearSemester]);
+
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         const data = {
             holidayList: holidayAutoList,
-            termId: academicYearSemester,
+            termId: academicYearSemester.termId,
         };
         
         try {
@@ -298,6 +314,8 @@ function CreateHoliday() {
                                             type="date"
                                             name="startDate"
                                             value={startDate}
+                                            min={startDateTerm}
+                                            max={endDateTerm}
                                             onChange={(e) => setStartDate(e.target.value)}
                                             required={true}
                                         />
@@ -317,7 +335,8 @@ function CreateHoliday() {
                                             value={endDate}
                                             onChange={(e) => setEndDate(e.target.value)}
                                             required={true}
-                                            min={startDate}
+                                            min={startDateTerm}
+                                            max={endDateTerm}
                                         />
                                     </div>
                                 </div>
@@ -369,8 +388,8 @@ function CreateHoliday() {
                                             {isLoading ? (
                                                 <option value="">กำลังโหลดข้อมูล...</option>
                                             ) : academicYearTermList.length > 0 ? (
-                                                academicYearTermList.map((term) => (
-                                                    <option key={term.termId} value={term.termId}>
+                                                academicYearTermList.map((term, index) => (
+                                                    <option key={term.termId} value={academicYearTermList[index]}>
                                                         ปีการศึกษา {term.academicYear + 543} เทอม {term.semester}
                                                     </option>
                                                 ))
