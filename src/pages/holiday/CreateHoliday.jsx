@@ -335,7 +335,7 @@ function CreateHoliday() {
                                             value={endDate}
                                             onChange={(e) => setEndDate(e.target.value)}
                                             required={true}
-                                            min={startDateTerm}
+                                            min={startDate}
                                             max={endDateTerm}
                                         />
                                     </div>
