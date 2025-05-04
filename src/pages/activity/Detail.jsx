@@ -65,7 +65,8 @@ function ActivityDetail() {
                         </div>
                     </div>
                 )}
-                
+                <div className="flex items-center gap-3">
+
                 <Link 
                     to={`/activity/edit/${activity?.actId}`}
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
@@ -84,6 +85,7 @@ function ActivityDetail() {
                             </svg>
                             QR Code กิจกรรม
                         </Link>
+                </div>
             </div>
             
             {activity ? (

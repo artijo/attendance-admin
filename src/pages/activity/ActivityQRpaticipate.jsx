@@ -186,7 +186,7 @@ function ActivityQRpaticipate() {
                                 พิมพ์ QR Code
                             </button>
                             <Link
-                                to={`/activities/${activityId}`}
+                                to={`/activity/${activityId}`}
                                 className="bg-white text-primary border border-line px-5 py-2.5 rounded-lg inline-flex items-center hover:bg-primary/5 transition-colors shadow-sm group"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
