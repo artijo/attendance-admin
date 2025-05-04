@@ -75,6 +75,15 @@ function ActivityDetail() {
                     </svg>
                     แก้ไขข้อมูลกิจกรรม
                 </Link>
+                <Link
+                            to={`/activity/${id}/qr-code`}
+                            className="py-2.5 px-4 text-sm font-medium text-white bg-primary hover:bg-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300 flex items-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                            QR Code กิจกรรม
+                        </Link>
             </div>
             
             {activity ? (

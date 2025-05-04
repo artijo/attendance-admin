@@ -159,8 +159,12 @@ export function convertNumberToThaiMonth(monthNumber) {
   }
 
   export const formatThaiDate = (dateString) => {
-    const dt = DateTime.fromISO(dateString);
-    return dt.setLocale('th').toFormat('d MMMM yyyy');
+    const date = new Date(dateString);
+    return date.toLocaleDateString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
 };
 
  export const formatThaiDateTime = (dateString) => {

@@ -74,6 +74,7 @@ const ActivityDetail = lazy(() => import("./pages/activity/Detail.jsx"));
 const CreateActivity = lazy(() => import("./pages/activity/Create.jsx"));
 const EditActivity = lazy(() => import("./pages/activity/Edit.jsx"));
 const Participant = lazy(() => import("./pages/activity/Paticipation.jsx"));
+const ActivityQRpaticipate = lazy(() => import('./pages/activity/ActivityQRpaticipate.jsx'));
 //Activity PDF
 const FilterClassroomPage = lazy(() => import("./pages/activity/pdfmanagedownload/FilterClassroomPage.jsx"));
 const FilterByClassroom = lazy(() => import("./components/activity/exportPDF/FilterByClassroom.jsx"));
@@ -155,6 +156,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="activity/:id" element={<ActivityDetail />} />
           <Route path="activity/edit/:id" element={<EditActivity />} />
           <Route path="activity/:id/participate" element={<Participant />} />
+          <Route path='activity/:id/qr-code' element={<ActivityQRpaticipate/>}/>
           {/* By Ohm Section */}
           <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
           <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
