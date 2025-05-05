@@ -21,7 +21,7 @@ function ShowDetail({ classroom }) {
 
   function fetchStudents() {
     axios
-      .get(HOSTNAME + "/a/students/withoutClassroom")
+      .get(HOSTNAME + "/a/students/foraddmemberinclassroom")
       .then((response) => {
         setStudents(response.data);
       })
