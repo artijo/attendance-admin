@@ -40,10 +40,10 @@ function EditClassroom() {
             .get(HOSTNAME + "/a/teachers")
             .then((response) => {
                 setTeacherOptions(response.data
-                    .filter(t => !t.classId) // Filter out teachers with classId
                     .map(t => ({
                         value: t.tchId,
-                        label: `${t.fName} ${t.lName}`
+                        label: `${t.fName} ${t.lName}`,
+                        classTeacher: t.classTeacher   // include assignments
                     }))
                 );
             })
@@ -143,6 +143,8 @@ function EditClassroom() {
         fetchAcademicTerms();
         fetchClassroom();
     }, []);
+
+    const selectedTerm = watch('termId');
 
     return (
         <div className="min-h-screen">
@@ -279,11 +281,15 @@ function EditClassroom() {
                                 id="ClassTeacher"
                                 className="react-select-container"
                                 classNamePrefix="react-select"
-                                options={teacherOptions}
-                                value={teacherOptions?.filter(option => 
-                                    watch('teacherIds')?.includes(option.value)
+                                options={teacherOptions?.filter(opt =>
+                                    // allow if not already advising in this term or already selected
+                                    !opt.classTeacher.some(ct => ct.classroom.termId === selectedTerm)
+                                    || watch('teacherIds')?.includes(opt.value)
                                 )}
-                                onChange={(selectedOptions) => setValue("teacherIds", selectedOptions ? selectedOptions.map(option => option.value) : [])}
+                                value={teacherOptions?.filter(opt =>
+                                    watch('teacherIds')?.includes(opt.value)
+                                )}
+                                onChange={(sel) => setValue("teacherIds", sel ? sel.map(o => o.value) : [])}
                                 isClearable
                                 isMulti
                                 placeholder="เลือกครูที่ปรึกษา..."

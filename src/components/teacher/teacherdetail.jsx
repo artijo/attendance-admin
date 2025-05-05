@@ -78,19 +78,28 @@ function ShowDetail({ teacher }) {
               ห้องประจำชั้น
             </dt>
             <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
-              {teacher.classroom ? (
-                <>
-                <div className="flex items-center">
-                  <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 mr-2">
-                    ม.{teacher.classroom.classLevel}/{teacher.classroom.classRoom}
-                  </span>
-                  {teacher.classroom.classroomType && (
-                    <span className="text-sm text-text-color-alt">
-                      ({teacher.classroom.classroomType.classTypeNameThai})
-                    </span>
-                  )}
-                </div>  
-                </>
+              {teacher.classTeacher && teacher.classTeacher.length > 0 ? (
+                <div className="space-y-2">
+                  {teacher.classTeacher.map((ct) => (
+                    <div key={ct.classTeacherId} className="flex flex-col">
+                      <div className="flex items-center mb-1">
+                        <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 mr-2">
+                          ม.{ct.classroom.classLevel}/{ct.classroom.classRoom}
+                        </span>
+                        {ct.classroom.classTypeId && (
+                          <span className="text-sm text-text-color-alt">
+                            ({ct.classroom.classTypeId})
+                          </span>
+                        )}
+                      </div>
+                      {ct.classroom.term && (
+                        <div className="text-xs text-text-color-alt ml-2">
+                          ภาคเรียนที่ {ct.classroom.term.semester} ปีการศึกษา {ct.classroom.term.academicYear}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <span className="text-text-color-alt">ไม่มีห้องประจำชั้น</span>
               )}

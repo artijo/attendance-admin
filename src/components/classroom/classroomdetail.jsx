@@ -239,15 +239,15 @@ function ShowDetail({ classroom }) {
                 ครูที่ปรึกษาห้องเรียน
               </dt>
               <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
-                {classroom.teacher.length > 0 ? (
+                {classroom.classTeacher && classroom.classTeacher.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {classroom.teacher.map((teacher) => (
-                      <Link 
-                        to={`/teachers/${teacher.tchId}`}
-                        key={teacher.tchId} 
+                    {classroom.classTeacher.map(ct => (
+                      <Link
+                        to={`/teachers/${ct.teacher.tchId}`}
+                        key={ct.classTeacherId}
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors duration-200"
                       >
-                        {teacher.fName} {teacher.lName}
+                        {ct.teacher.fName} {ct.teacher.lName}
                       </Link>
                     ))}
                   </div>
