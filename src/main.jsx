@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import { lazy, Suspense } from "react";
-import AttendenceCanExamPDF from "./pages/attendence/pdfpage/canExam/AttendenceCanExamPDF.jsx";
 
 // Loading component
 const LoadingFallback = () => (
@@ -94,6 +93,7 @@ const AttendenceByClassroomDeatail = lazy(() => import("./pages/attendence/Atten
 const CreateTimetableDragAndDrop = lazy(() => import("./pages/new_timetable/CreateTimetable.jsx"));
 const AttendenceByDayPDF = lazy(() => import("./pages/attendence/pdfpage/byday/AttendenceByDayPDF.jsx"));
 const AttendenceBySubjectPDF = lazy(() => import("./pages/attendence/pdfpage/bysubject/AttendenceBySubjectPDF.jsx"));
+const AttendenceCanExamPDF = lazy(() => import("./pages/attendence/pdfpage/canExam/AttendenceCanExamPDF.jsx"));
 
 
 createRoot(document.getElementById("root")).render(
