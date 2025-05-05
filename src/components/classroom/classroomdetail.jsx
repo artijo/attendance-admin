@@ -84,6 +84,12 @@ function ShowDetail({ classroom }) {
 
   const handleAddStudent = async () => {
     if (!selectedStudent || !studentNo) return;
+
+    // Prevent adding the same student twice
+    if (classroom.classroomMembers.some(member => member.student.stdId === selectedStudent.value)) {
+      setAddError("นักเรียนอยู่ในห้องเรียนแล้ว");
+      return;
+    }
     
     // Validate student number
     const validationError = validateStudentNo(studentNo);
