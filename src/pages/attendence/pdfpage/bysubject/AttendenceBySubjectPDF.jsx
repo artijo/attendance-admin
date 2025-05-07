@@ -11,19 +11,23 @@ function AttendenceBySubjectPDF() {
     const { subject, classroomInfo, month, studentList } = location.state;
     let indexReal = 0;
     const getStatusClass = (status) => {
-        switch (status.toLowerCase()) {
-            case 'present':
-                return '#4CAF50';
-            case 'absent':
-                return '#F44336';
-            case 'late':
-                return '#FF9800';
-            case 'activity':
-                return '#2196F3';
-            case 'leave':
-                return '#9C27B0';
-            default:
-                return '#F5F5F5';
+        if(status === null) {
+            return;
+        }else{
+            switch (status.toLowerCase()) {
+                case 'present':
+                    return '#4CAF50';
+                case 'absent':
+                    return '#F44336';
+                case 'late':
+                    return '#FF9800';
+                case 'activity':
+                    return '#2196F3';
+                case 'leave':
+                    return '#9C27B0';
+                default:
+                    return '#F5F5F5';
+            }
         }
     };
 
@@ -153,7 +157,7 @@ function AttendenceBySubjectPDF() {
                                                 .filter((att) => att.month === month)
                                                 .map((attendance, attIndex) => (
                                                     <Text key={attIndex} style={[styles.tableColumn2, { color: getStatusClass(attendance.attStatus) }]}>
-                                                        {formatAttStatus(attendance.attStatus)}
+                                                         {attendance.attStatus != null ? formatAttStatus(attendance.attStatus) : '-'}
                                                     </Text>
                                             ))}
                                         </View>
