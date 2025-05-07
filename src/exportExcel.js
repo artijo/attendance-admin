@@ -21,34 +21,34 @@ const formatAttStatus = (status) => {
     }
 };
 
-export function AttendanceSummaryByDay(table, fileName){
+export function AttendanceSummaryByDay(table, fileName) {
     const worksheet = XLSX.utils.table_to_sheet(table);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "sheet 1");
-    XLSX.writeFile(workbook, `${fileName}.xlsx`, {compression :true});
+    XLSX.writeFile(workbook, `${fileName}.xlsx`, { compression: true });
 }
 
-export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileName, classroomInfo, subject){
-    try{
+export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileName, classroomInfo, subject) {
+    try {
         let index = 0;
         const sheetData = [
             ['สรุปรายละเอียดการเข้าเรียนตามวิชา'],
             [`วิชา: ${subject.subNameThai} (${subject.subCode})`],
             [`เดือน: ${convertNumberToThaiMonth(month)}`],
-            [`ห้อง: ${classroomInfo.classLevel}/${classroomInfo.classRoom} ปีการศึกษา: ${classroomInfo.term.academicYear + 543} เทอม: ${classroomInfo.term.semester}`],   
+            [`ห้อง: ${classroomInfo.classLevel}/${classroomInfo.classRoom} ปีการศึกษา: ${classroomInfo.term.academicYear + 543} เทอม: ${classroomInfo.term.semester}`],
             [],
-            ['เลขที่','รหัสนักเรียน', 'ชื่อ-นามสกุล'],
+            ['เลขที่', 'รหัสนักเรียน', 'ชื่อ-นามสกุล'],
         ]
-    
-    
+
+
         //Header 1
         objectJson.data[0].attendance.forEach((attInfo) => {
-            if(attInfo.month == month){
+            if (attInfo.month == month) {
                 index++;
                 sheetData[5].push(`${index}\n(${dateTimeFormat(attInfo.studingTimeDate)})`);
             }
         });
-    
+
         //Body info
         objectJson.data.forEach((object, objectIndex) => {
             const arraySheet = [
@@ -56,23 +56,23 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
                 object.stdId,
                 `${formatTitle(object.title)} ${object.fName} ${object.lName}`
             ]
-            
+
             object.attendance.forEach((attend, index) => {
-                if(attend.attStatus == null) {
+                if (attend.attStatus == null) {
                     arraySheet.push("-");
-                }else if(attend.month == month && attend.attStatus != null){
+                } else if (attend.month == month && attend.attStatus != null) {
                     let attendStatus = attend.attStatus.toLowerCase();
-                    if(attendStatus == "absent"){
+                    if (attendStatus == "absent") {
                         arraySheet.push("ไม่เข้าเรียน");
-                    }else if(attendStatus == "present"){
+                    } else if (attendStatus == "present") {
                         arraySheet.push("เข้าเรียน");
-                    }else if(attendStatus == "late"){
+                    } else if (attendStatus == "late") {
                         arraySheet.push("มาสาย");
-                    }else if(attendStatus == "activity"){
+                    } else if (attendStatus == "activity") {
                         arraySheet.push("เข้าร่วมกิจกรรม");
-                    }else if(attendStatus == "leave"){
+                    } else if (attendStatus == "leave") {
                         arraySheet.push("ลา");
-                    }else{
+                    } else {
                         arraySheet.push("-")
                     }
                 }
@@ -80,7 +80,7 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
             sheetData.push(arraySheet);
         });
         const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-        worksheet["!cols"] =[
+        worksheet["!cols"] = [
             { wch: 10 },
             { wch: 10 },
             { wch: 25 },
@@ -88,30 +88,30 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
         ]
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "สรุป");
-        XLSX.writeFile(workbook, `${fileName}.xlsx`, {compression :true});
-    }catch(error){
+        XLSX.writeFile(workbook, `${fileName}.xlsx`, { compression: true });
+    } catch (error) {
         console.error(error);
-    }   
+    }
 }
 
-export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dateformat){
-    try{
+export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dateformat) {
+    try {
         const sheetData = [
             ['สรุปรายละเอียดการเข้าเรียนตามวัน'],
-            [`ประจำวันที: ${dateformat.day}/${dateformat.month}/${dateformat.year+543}`],
+            [`ประจำวันที: ${dateformat.day}/${dateformat.month}/${dateformat.year + 543}`],
             [`ห้อง: ${classroomInfo.classLevel}/${classroomInfo.classRoom}`],
             [],
-            ['คาบที่','',''],
-            ['รหัสวิชา','',''],
-            ['เลขที่','รหัสนักเรียน', 'ชื่อ-นามสกุล'],
+            ['คาบที่', '', ''],
+            ['รหัสวิชา', '', ''],
+            ['เลขที่', 'รหัสนักเรียน', 'ชื่อ-นามสกุล'],
         ]
         //summary 
         const summaryData = [
-            ['มาเรียน', '',''],
-            ['มาสาย','',''],
-            ['ขาดเรียน','',''],
-            ['ลา','',''],
-            ['กิจกรรม','','']
+            ['มาเรียน', '', ''],
+            ['มาสาย', '', ''],
+            ['ขาดเรียน', '', ''],
+            ['ลา', '', ''],
+            ['กิจกรรม', '', '']
         ];
 
         // console.log(objectJson);
@@ -124,7 +124,7 @@ export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dat
             summaryData[3].push(0);
             summaryData[4].push(0);
         })
-        
+
         // console.log(summaryData[0][3]);
         //tableHeader 2
         objectJson[0].attendance.forEach((object) => {
@@ -144,25 +144,30 @@ export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dat
             ];
             // console.log(object.attendance);
             object.attendance.forEach((attend, index) => {
-                let attendStatus = attend.attStatus.toLowerCase();
-                if(attendStatus == "absent"){
-                    summaryData[2][index + 3] += 1;
-                    studentData.push("ขาดเรียน");
-                }else if(attendStatus == "present"){
-                    summaryData[0][index + 3] += 1;
-                    studentData.push("เข้าเรียน");
-                }else if(attendStatus == "late"){
-                    summaryData[1][index + 3] += 1;
-                    studentData.push("มาสาย");
-                }else if(attendStatus == "activity"){
-                    summaryData[4][index + 3] += 1;
-                    studentData.push("เข้าเรียนกิจกรรม");
-                }else if(attendStatus == "leave"){
-                    summaryData[3][index + 3] += 1;
-                    studentData.push("ลา");
-                }else{
-                    studentData.push("-")
+                if(attend.attStatus == null) {
+                    studentData.push('-');
+                }else if (attend.attStatus) {
+                    let attendStatus = attend.attStatus.toLowerCase();
+                    if (attendStatus == "absent") {
+                        summaryData[2][index + 3] += 1;
+                        studentData.push("ขาดเรียน");
+                    } else if (attendStatus == "present") {
+                        summaryData[0][index + 3] += 1;
+                        studentData.push("เข้าเรียน");
+                    } else if (attendStatus == "late") {
+                        summaryData[1][index + 3] += 1;
+                        studentData.push("มาสาย");
+                    } else if (attendStatus == "activity") {
+                        summaryData[4][index + 3] += 1;
+                        studentData.push("เข้าเรียนกิจกรรม");
+                    } else if (attendStatus == "leave") {
+                        summaryData[3][index + 3] += 1;
+                        studentData.push("ลา");
+                    } else {
+                        studentData.push("-")
+                    }
                 }
+
             })
             sheetData.push(studentData);
 
@@ -173,7 +178,7 @@ export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dat
             XLSX.utils.decode_range("A5:C5"),
             XLSX.utils.decode_range("A6:C6"),
         ]
-        worksheet["!cols"] =[
+        worksheet["!cols"] = [
             { wch: 10 },
             { wch: 10 },
             { wch: 30 },
@@ -188,32 +193,32 @@ export function summaryAttendeanceByDay(objectJson, fileName, classroomInfo, dat
         ]
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "สรุป");
-        
-        XLSX.writeFile(workbook, `${fileName}.xlsx`, {compression :true});
-    }catch(error){
+
+        XLSX.writeFile(workbook, `${fileName}.xlsx`, { compression: true });
+    } catch (error) {
         console.error(error);
     }
 }
 
 export async function abstactActivityByRoomJoin(activityId, classId, startDate, endDate, className, activityName, activity) {
     let response;
-    try{
+    try {
         const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/byclassroom/${activityId}/${classId}`);
-        if(responsed.status == 200){
+        if (responsed.status == 200) {
             response = responsed.data;
-        }else{
+        } else {
             throw new Error(response.data.message);
         };
-    }catch(error){
+    } catch (error) {
         console.error(error);
     };
 
-   
+
     const getDatesBetween = (startDate, endDate) => {
         const dates = [];
         let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
         const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
-        
+
         while (current <= end) {
             dates.push(current.toISODate());
             current = current.plus({ days: 1 });
@@ -223,15 +228,15 @@ export async function abstactActivityByRoomJoin(activityId, classId, startDate, 
     const filterParticipate = (participate) => {
         const date = getDatesBetween(startDate, endDate);
         const objectKeys = Object.keys(participate).filter((dateKey) => {
-          if(date.includes(dateKey)) {
-            return dateKey
-          }
+            if (date.includes(dateKey)) {
+                return dateKey
+            }
         });
         return objectKeys;
     };
     const workbook = XLSX.utils.book_new();
 
-    
+
 
     filterParticipate(response).forEach(key => {
         // const arrayOfJsonObject = [];
@@ -273,26 +278,26 @@ export async function abstactActivityByRoomJoin(activityId, classId, startDate, 
             { wch: 30 },  // เวลาที่ลงชื่อ
             { wch: 15 },  // สถานะการเข้าร่วม
         ];
-        XLSX.utils.book_append_sheet(workbook , worksheet, dateFormatToThai)
+        XLSX.utils.book_append_sheet(workbook, worksheet, dateFormatToThai)
     });
 
-    try{
-        XLSX.writeFile(workbook, `สรุปการเข้ากิจกรรม ${activityName} ห้อง ${className} วันที่ (${startDate})-(${endDate}).xlsx`, {compression :true});
-    }catch(error){
+    try {
+        XLSX.writeFile(workbook, `สรุปการเข้ากิจกรรม ${activityName} ห้อง ${className} วันที่ (${startDate})-(${endDate}).xlsx`, { compression: true });
+    } catch (error) {
         console.error(error);
-    }    
+    }
 }
 
 export async function abstactActivity(activityId, classId, startDate, endDate, className, activityName) {
     let response;
-    try{
+    try {
         const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/byclassroom/${activityId}/${classId}`);
-        if(responsed.status == 200){
+        if (responsed.status == 200) {
             response = responsed.data;
-        }else{
+        } else {
             throw new Error(response.data.message);
         };
-    }catch(error){
+    } catch (error) {
         console.error(error);
     };
 
@@ -300,7 +305,7 @@ export async function abstactActivity(activityId, classId, startDate, endDate, c
         const dates = [];
         let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
         const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
-        
+
         while (current <= end) {
             dates.push(current.toISODate());
             current = current.plus({ days: 1 });
@@ -310,9 +315,9 @@ export async function abstactActivity(activityId, classId, startDate, endDate, c
     const filterParticipate = (participate) => {
         const date = getDatesBetween(startDate, endDate);
         const objectKeys = Object.keys(participate).filter((dateKey) => {
-          if(date.includes(dateKey)) {
-            return dateKey
-          }
+            if (date.includes(dateKey)) {
+                return dateKey
+            }
         });
         return objectKeys;
     };
@@ -322,48 +327,48 @@ export async function abstactActivity(activityId, classId, startDate, endDate, c
         const dateSplit = key.split('-');
         const dateFormatToThai = `${dateSplit[2]} ${convertNumberToThaiMonth(parseInt(dateSplit[1]))} ${parseInt(dateSplit[0]) + 543}`;
         response[key].forEach((pati) => {
-            if(pati.isJoin) {
+            if (pati.isJoin) {
                 const dateTime = DateTime.fromISO(pati.joinTimestamp).setZone("Asia/Bangkok");
                 const thaiDateTime = dateTime.setLocale("th").toFormat("d LLLL ") + (dateTime.year + 543) + dateTime.toFormat(" HH:mm น.");
                 const formatObject = {
-                    'รหัสนักเรียน' : pati.stdId,
-                    'ชื่อ-นามสกุล' : `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
-                    'เวลาที่ลงชื่อ' : thaiDateTime,
-                    'สถานะการเข้าร่วม' : "เข้าร่วม"
+                    'รหัสนักเรียน': pati.stdId,
+                    'ชื่อ-นามสกุล': `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
+                    'เวลาที่ลงชื่อ': thaiDateTime,
+                    'สถานะการเข้าร่วม': "เข้าร่วม"
                 }
-            arrayOfJsonObject.push(formatObject);
-            }else{
+                arrayOfJsonObject.push(formatObject);
+            } else {
                 const formatObject = {
-                    'รหัสนักเรียน' : pati.stdId,
-                    'ชื่อ-นามสกุล' : `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
-                    'เวลาที่ลงชื่อ' : "-",
-                    'สถานะการเข้าร่วม' : "ไม่ข้าร่วม"
+                    'รหัสนักเรียน': pati.stdId,
+                    'ชื่อ-นามสกุล': `${formatTitle(pati.student.title)} ${pati.student.fName} ${pati.student.lName}`,
+                    'เวลาที่ลงชื่อ': "-",
+                    'สถานะการเข้าร่วม': "ไม่ข้าร่วม"
                 }
                 arrayOfJsonObject.push(formatObject);
             }
         });
         const worksheet = XLSX.utils.json_to_sheet(arrayOfJsonObject);
-        XLSX.utils.book_append_sheet(workbook , worksheet, dateFormatToThai)
+        XLSX.utils.book_append_sheet(workbook, worksheet, dateFormatToThai)
     });
 
-    try{
-        XLSX.writeFile(workbook, `สรุปการเข้ากิจกรรม ${activityName} ห้อง ${className} วันที่ (${startDate})-(${endDate}).xlsx`, {compression :true});
-    }catch(error){
+    try {
+        XLSX.writeFile(workbook, `สรุปการเข้ากิจกรรม ${activityName} ห้อง ${className} วันที่ (${startDate})-(${endDate}).xlsx`, { compression: true });
+    } catch (error) {
         console.error(error);
-    }    
+    }
 }
 
 export async function abstactActivityFilterByClassroom(activityId, filterRoom, activity) {
     let response;
-    try{
+    try {
         const responsed = await axios.get(`${HOSTNAME}/a/activity/abstact/${activityId}`);
-        if(responsed.status == 200){
+        if (responsed.status == 200) {
             response = responsed.data[filterRoom];
             console.log(responsed.data[filterRoom]);
-        }else{
+        } else {
             throw new Error(response.data.message);
         };
-    }catch(error){
+    } catch (error) {
         console.error(error);
     };
 
@@ -392,15 +397,15 @@ export async function abstactActivityFilterByClassroom(activityId, filterRoom, a
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
     worksheet['!cols'] = [
-        { wch: 15 },  
-        { wch: 25 },  
-        { wch: 10 }, 
+        { wch: 15 },
+        { wch: 25 },
+        { wch: 10 },
     ];
     const nameSplit = filterRoom.split('/');
     XLSX.utils.book_append_sheet(workbook, worksheet, `ห้อง${nameSplit[0]}_${nameSplit[1]}`);
-    try{
-        XLSX.writeFile(workbook, `เอกสารสรุปการเข้าร่วมกิจกรรม ${activity.actName} ห้อง${filterRoom}.xlsx`, {compression :true});
-    }catch(error){
+    try {
+        XLSX.writeFile(workbook, `เอกสารสรุปการเข้าร่วมกิจกรรม ${activity.actName} ห้อง${filterRoom}.xlsx`, { compression: true });
+    } catch (error) {
         console.error(error);
     };
 }
