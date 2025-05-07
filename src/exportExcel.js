@@ -58,7 +58,9 @@ export function summaryAttendeanceBySubjectFilterByDay(objectJson, month, fileNa
             ]
             
             object.attendance.forEach((attend, index) => {
-                if(attend.month == month){
+                if(attend.attStatus == null) {
+                    arraySheet.push("-");
+                }else if(attend.month == month && attend.attStatus != null){
                     let attendStatus = attend.attStatus.toLowerCase();
                     if(attendStatus == "absent"){
                         arraySheet.push("ไม่เข้าเรียน");
