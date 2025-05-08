@@ -23,7 +23,6 @@ function CreateClassroom() {
         watch,
         formState: { errors },
     } = useForm();
-    const selectedTerm = watch('termId');  // <-- new
     const onSubmit = async function (data) {
         try {
             let classrooms = [];
@@ -70,10 +69,11 @@ function CreateClassroom() {
         axios
             .get(HOSTNAME + "/a/teachers")
             .then((response) => {
-                setTeacherOptions(response.data.map(t => ({
+                setTeacherOptions(response.data
+                    .filter(t => t.classId === null)
+                    .map(t => ({
                     value: t.tchId,
-                    label: `${t.fName} ${t.lName}`,
-                    classTeacher: t.classTeacher    // include assignments
+                    label: `${t.fName} ${t.lName}`
                 })));
             })
             .catch((error) => {
@@ -141,71 +141,20 @@ function CreateClassroom() {
         setValue(fieldName, newTeacherIds);
     };
 
-    // เพิ่มการกำหนดค่าเริ่มต้นเมื่อสลับไปโหมดหลายห้องเรียน
-    useEffect(() => {
-        if (isMultipleMode) {
-            // สร้างค่าเริ่มต้นสำหรับแต่ละห้องเรียนเมื่อสลับโหมด
-            Array.from({ length: numberOfClassrooms }).forEach((_, index) => {
-                // ตั้งค่าเริ่มต้นเพื่อให้ React Hook Form ติดตามแต่ละฟอร์ม
-                setValue(`classroom_${index}.classLevel`, 1);
-                setValue(`classroom_${index}.classRoom`, "");
-                setValue(`classroom_${index}.teacherIds`, []);
-            });
-        }
-    }, [isMultipleMode, numberOfClassrooms]);
-    
-    // เพิ่มการกำหนดค่าเริ่มต้นเมื่อเพิ่มจำนวนห้องเรียน
-    useEffect(() => {
-        if (isMultipleMode) {
-            // ตั้งค่าเริ่มต้นสำหรับห้องเรียนใหม่ที่เพิ่มเข้ามา
-            setValue(`classroom_${numberOfClassrooms-1}.classLevel`, 1);
-            setValue(`classroom_${numberOfClassrooms-1}.classRoom`, "");
-            setValue(`classroom_${numberOfClassrooms-1}.teacherIds`, []);
-        }
-    }, [numberOfClassrooms]);
-
     const ClassroomForm = ({ index }) => {
-        // ดึงค่าที่ต้องการแสดงผล
         const currentTeacherIds = watch(`classroom_${index}.teacherIds`) || [];
-        const formTerm = watch(`classroom_${index}.termId`);
-        const classLevel = watch(`classroom_${index}.classLevel`) || 1;
-        const classRoom = watch(`classroom_${index}.classRoom`) || "";
-        const classTypeId = watch(`classroom_${index}.classTypeId`);
-        const leaderId = watch(`classroom_${index}.leaderId`);
-        
-        // สร้างตัวเลือกสำหรับ select components
-        const termOptions = academicterms?.map(term => ({
-            value: term.termId,
-            label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
-        })) || [];
-
-        const classTypeOptions = classroomType?.map(ct => ({ 
-            value: ct.classTypeId, 
-            label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` 
-        })) || [];
         
         return (
-            <div className="border border-gray-200 p-5 rounded-lg bg-gray-50">
-                <div className="flex items-center mb-4">
-                    <div className="bg-primary text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm font-medium">
-                        {index + 1}
-                    </div>
-                    <h3 className="text-text-color font-medium font-heading">ห้องเรียนที่ {index + 1}</h3>
-                </div>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                    {/* ชั้นเรียน */}
-                    <div className="space-y-2">
-                        <label htmlFor={`ClassName_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            ชั้นมัธยมศึกษาปีที่ <span className="text-red-500">*</span>
-                        </label>
+            <div className="border p-4 rounded-lg mb-4">
+                <h3 className="font-medium mb-4">ห้องเรียนที่ {index + 1}</h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {/* Existing form fields with modified register names */}
+                    <div>
+                        <label htmlFor={`ClassName_${index}`} className="block text-sm font-medium text-gray-700">ชั้นมัธยมศึกษาปีที่</label>
                         <select
                             id={`ClassName_${index}`}
-                            className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                            value={classLevel}
-                            onChange={(e) => setValue(`classroom_${index}.classLevel`, Number(e.target.value))}
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
+                            {...register(`classroom_${index}.classLevel`)}
                         >
                             <option value={1}>ม.1</option>
                             <option value={2}>ม.2</option>
@@ -215,103 +164,57 @@ function CreateClassroom() {
                             <option value={6}>ม.6</option>
                         </select>
                     </div>
-
-                    {/* ห้อง */}
-                    <div className="space-y-2">
-                        <label htmlFor={`ClassRoom_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                            </svg>
-                            ห้อง <span className="text-red-500">*</span>
-                        </label>
+                    
+                    <div>
+                        <label htmlFor={`ClassRoom_${index}`} className="block text-sm font-medium text-gray-700">ห้อง</label>
                         <input
                             type="text"
                             id={`ClassRoom_${index}`}
-                            placeholder="กรอกหมายเลขห้อง"
-                            className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                            value={classRoom}
-                            onChange={(e) => setValue(`classroom_${index}.classRoom`, e.target.value)}
+                            placeholder="xx"
+                            className="mt-1 w-full h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm"
+                            {...register(`classroom_${index}.classRoom`)}
                         />
                     </div>
 
-                    {/* ประเภทห้องเรียน */}
-                    <div className="space-y-2">
-                        <label htmlFor={`ClassType_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            ประเภทห้องเรียน
-                        </label>
+                    <div>
+                        <label htmlFor={`ClassType_${index}`} className="block text-sm font-medium text-gray-700"> ประเภทห้องเรียน</label>
                         <Select
                             id={`ClassType_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={classTypeOptions}
-                            value={classTypeOptions.find(opt => opt.value === classTypeId) || null}
+                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
+                            options={classroomType?.map(ct => ({ value: ct.classTypeId, label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` })) || []}
+                            {...register(`classroom_${index}.classTypeId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.classTypeId`, selectedOption ? selectedOption.value : null)}
                             isClearable
-                            placeholder="เลือกประเภทห้องเรียน..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
-                    
-                    {/* ภาคการศึกษา */}
-                    <div className="space-y-2">
-                        <label htmlFor={`AcademicTerm_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            ภาคการศึกษา
-                        </label>
+                    <div>
+                        <label htmlFor={`AcademicTerm_${index}`} className="block text-sm font-medium text-gray-700">ภาคการศึกษา</label>
                         <Select
                             id={`AcademicTerm_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={termOptions}
-                            value={termOptions.find(opt => opt.value === formTerm) || null}
+                            className="mt-1 w-full rounded-md  border-gray-200 shadow-sm sm:text-sm"
+                            options={academicterms?.map(term => ({
+                                value: term.termId,
+                                label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+                            })) || []}
                             onChange={(selectedOption) => {
                                 const term = academicterms?.find(t => t.termId === selectedOption?.value);
                                 if (term) {
                                     setValue(`classroom_${index}.academicYear`, term.academicYear);
                                     setValue(`classroom_${index}.semester`, term.semester);
                                     setValue(`classroom_${index}.termId`, term.termId);
-                                } else {
-                                    setValue(`classroom_${index}.academicYear`, null);
-                                    setValue(`classroom_${index}.semester`, null);
-                                    setValue(`classroom_${index}.termId`, null);
                                 }
                             }}
                             isClearable
-                            placeholder="เลือกภาคการศึกษา..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
 
-                    {/* ครูที่ปรึกษาประจำชั้น */}
-                    <div className="space-y-2">
-                        <label htmlFor={`ClassTeacher_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            ครูที่ปรึกษาประจำชั้น
-                        </label>
+                    <div>
+                        <label htmlFor={`ClassTeacher_${index}`} className="block text-sm font-medium text-gray-700">ครูที่ปรึกษาประจำชั้น</label>
                         <Select
                             id={`ClassTeacher_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={teacherOptions?.filter(opt =>
-                                // allow if not already advising for this term or already selected in this form
-                                (
-                                    !opt.classTeacher.some(ct => ct.classroom.termId === formTerm)
-                                    || currentTeacherIds.includes(opt.value)
-                                )
-                                &&
-                                // prevent selection by other forms unless it's in this form
-                                (
-                                    !selectedTeachers.has(opt.value)
-                                    || currentTeacherIds.includes(opt.value)
-                                )
+                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                            options={teacherOptions?.filter(teacher => 
+                                !selectedTeachers.has(teacher.value) || currentTeacherIds.includes(teacher.value)
                             )}
                             value={teacherOptions?.filter(option => 
                                 currentTeacherIds.includes(option.value)
@@ -319,29 +222,18 @@ function CreateClassroom() {
                             onChange={(selectedOptions) => handleTeacherChange(selectedOptions, index)}
                             isClearable
                             isMulti
-                            placeholder="เลือกครูที่ปรึกษา..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
                     
-                    {/* หัวหน้าห้อง */}
-                    <div className="space-y-2">
-                        <label htmlFor={`Leader_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            หัวหน้าห้อง
-                        </label>
+                    <div>
+                        <label htmlFor={`Leader_${index}`} className="block text-xs font-medium text-gray-700">หัวหน้าห้อง</label>
                         <Select
                             id={`Leader_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
+                            className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                             options={studentOptions}
-                            value={studentOptions?.find(option => option.value === leaderId) || null}
+                            {...register(`classroom_${index}.leaderId`)}
                             onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
                             isClearable
-                            placeholder="เลือกหัวหน้าห้อง..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
                 </div>
@@ -421,7 +313,146 @@ function CreateClassroom() {
                         {isMultipleMode ? (
                             <div className="space-y-6">
                                 {Array.from({ length: numberOfClassrooms }).map((_, index) => (
-                                    <ClassroomForm key={index} index={index} />
+                                    <div key={index} className="border border-gray-200 p-5 rounded-lg bg-gray-50">
+                                        <div className="flex items-center mb-4">
+                                            <div className="bg-primary text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm font-medium">
+                                                {index + 1}
+                                            </div>
+                                            <h3 className="text-text-color font-medium font-heading">ห้องเรียนที่ {index + 1}</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <label htmlFor={`ClassName_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                    </svg>
+                                                    ชั้นมัธยมศึกษาปีที่ <span className="text-red-500">*</span>
+                                                </label>
+                                                <select
+                                                    id={`ClassName_${index}`}
+                                                    className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                                                    {...register(`classroom_${index}.classLevel`)}
+                                                >
+                                                    <option value={1}>ม.1</option>
+                                                    <option value={2}>ม.2</option>
+                                                    <option value={3}>ม.3</option>
+                                                    <option value={4}>ม.4</option>
+                                                    <option value={5}>ม.5</option>
+                                                    <option value={6}>ม.6</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                <label htmlFor={`ClassRoom_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                                    </svg>
+                                                    ห้อง <span className="text-red-500">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id={`ClassRoom_${index}`}
+                                                    placeholder="กรอกหมายเลขห้อง"
+                                                    className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                                                    {...register(`classroom_${index}.classRoom`)}
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label htmlFor={`ClassType_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    ประเภทห้องเรียน
+                                                </label>
+                                                <Select
+                                                    id={`ClassType_${index}`}
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    options={classroomType?.map(ct => ({ value: ct.classTypeId, label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` })) || []}
+                                                    onChange={(selectedOption) => setValue(`classroom_${index}.classTypeId`, selectedOption ? selectedOption.value : null)}
+                                                    isClearable
+                                                    placeholder="เลือกประเภทห้องเรียน..."
+                                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                />
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                <label htmlFor={`AcademicTerm_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    ภาคการศึกษา
+                                                </label>
+                                                <Select
+                                                    id={`AcademicTerm_${index}`}
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    options={academicterms?.map(term => ({
+                                                        value: term.termId,
+                                                        label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+                                                    })) || []}
+                                                    onChange={(selectedOption) => {
+                                                        const term = academicterms?.find(t => t.termId === selectedOption?.value);
+                                                        if (term) {
+                                                            setValue(`classroom_${index}.academicYear`, term.academicYear);
+                                                            setValue(`classroom_${index}.semester`, term.semester);
+                                                            setValue(`classroom_${index}.termId`, term.termId);
+                                                        }
+                                                    }}
+                                                    isClearable
+                                                    placeholder="เลือกภาคการศึกษา..."
+                                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label htmlFor={`ClassTeacher_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                    ครูที่ปรึกษาประจำชั้น
+                                                </label>
+                                                <Select
+                                                    id={`ClassTeacher_${index}`}
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    options={teacherOptions?.filter(teacher => 
+                                                        !selectedTeachers.has(teacher.value) || 
+                                                        (watch(`classroom_${index}.teacherIds`) || []).includes(teacher.value)
+                                                    )}
+                                                    value={teacherOptions?.filter(option => 
+                                                        (watch(`classroom_${index}.teacherIds`) || []).includes(option.value)
+                                                    )}
+                                                    onChange={(selectedOptions) => handleTeacherChange(selectedOptions, index)}
+                                                    isClearable
+                                                    isMulti
+                                                    placeholder="เลือกครูที่ปรึกษา..."
+                                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                />
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                <label htmlFor={`Leader_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    หัวหน้าห้อง
+                                                </label>
+                                                <Select
+                                                    id={`Leader_${index}`}
+                                                    className="react-select-container"
+                                                    classNamePrefix="react-select"
+                                                    options={studentOptions}
+                                                    onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
+                                                    isClearable
+                                                    placeholder="เลือกหัวหน้าห้อง..."
+                                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         ) : (
@@ -523,18 +554,9 @@ function CreateClassroom() {
                                         id="ClassTeacher"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
-                                        options={teacherOptions?.filter(opt =>
-                                            // allow if not already advising for this term or already selected
-                                            (
-                                                !opt.classTeacher.some(ct => ct.classroom.termId === selectedTerm)
-                                                || (watch('teacherIds') || []).includes(opt.value)
-                                            )
-                                            &&
-                                            // prevent selection by other forms unless already selected here
-                                            (
-                                                !selectedTeachers.has(opt.value)
-                                                || (watch('teacherIds') || []).includes(opt.value)
-                                            )
+                                        options={teacherOptions?.filter(teacher => 
+                                            !selectedTeachers.has(teacher.value) || 
+                                            (watch('teacherIds') || []).includes(teacher.value)
                                         )}
                                         value={teacherOptions?.filter(option => 
                                             (watch('teacherIds') || []).includes(option.value)

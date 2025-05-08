@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config.js";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success.jsx";
+import StudentChart from "../../components/chart/StudentChart.jsx";
 
 function Students() {
   const [allStudents, setAllStudents] = useState(null); // Store all students for filtering
@@ -293,6 +294,10 @@ function Students() {
           )}
         </div>
       </div>
+      
+      {students && classrooms && (
+        <StudentChart students={students} classrooms={classrooms} />
+      )}
       
       {!students ? (
         <div className="flex justify-center items-center h-64">

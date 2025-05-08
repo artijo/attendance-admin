@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Page, Text, Document, Image, PDFViewer, View } from "@react-pdf/renderer";
 import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 import axios from "axios";
-import { HOSTNAME } from "../../../config.js";
+import { HOSTNAME, TIME_ZONE } from "../../../config.js";
 import { convertNumberToThaiMonth, formatTitle } from "../../../helper.js";
 import { DateTime } from "luxon";
 import { styles } from "./style.js";
@@ -19,8 +19,8 @@ function FilterByClassroom() {
 
   const getDatesBetween = (startDate, endDate) => {
     const dates = [];
-    let current = DateTime.fromISO(startDate).setZone('Asia/Bangkok').startOf('day');
-    const end = DateTime.fromISO(endDate).setZone('Asia/Bangkok').startOf('day');
+    let current = DateTime.fromISO(startDate).setZone(TIME_ZONE).startOf('day');
+    const end = DateTime.fromISO(endDate).setZone(TIME_ZONE).startOf('day');
 
     while (current <= end) {
       dates.push(current.toISODate());
@@ -174,7 +174,7 @@ function FilterByClassroom() {
                       </Text>
                       {keyFilter.map((key) => (
                         <React.Fragment key={key}>
-                          <Text style={styles.textSpan}>{dateFormatToThai(key)}</Text>
+                          <Text style={[styles.textParagraph,{marginTop:5,paddingTop: 2, paddingLeft: 5,borderLeftWidth:2, borderColor:'#EE722A', borderRadius:1}]}>{dateFormatToThai(key)}</Text>
                           <View style={styles.tableHeader}>
                             <Text style={[styles.tableColumn1, { fontWeight: "bold" }]}>รหัสนักเรียน</Text>
                             <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>ชื่อ-นามสกุล</Text>
@@ -182,7 +182,7 @@ function FilterByClassroom() {
                             <Text style={[styles.tableColumn2, { fontWeight: "bold" }]}>สถานะการเข้าร่วม</Text>
                           </View>
                           {participate[key].map((pati, patiIndex) => (
-                            <View style={styles.tableRow} key={patiIndex}>
+                            <View style={[styles.tableRow]} key={patiIndex}>
                               <Text style={[styles.tableColumn1]}>{pati.stdId}</Text>
                               <Text style={[styles.tableColumn2]}>{formatTitle(pati.student.title)} {pati.student.fName} {pati.student.lName}</Text>
                               <Text style={[styles.tableColumn2]}>{pati.isJoin ? timeStampConvert(pati.joinTimestamp) : "-"}</Text>

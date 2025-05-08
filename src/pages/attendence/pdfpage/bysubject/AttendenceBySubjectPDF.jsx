@@ -11,19 +11,23 @@ function AttendenceBySubjectPDF() {
     const { subject, classroomInfo, month, studentList } = location.state;
     let indexReal = 0;
     const getStatusClass = (status) => {
-        switch (status) {
-            case 'present':
-                return '#4CAF50';
-            case 'absent':
-                return '#F44336';
-            case 'late':
-                return '#FF9800';
-            case 'activity':
-                return '#2196F3';
-            case 'leave':
-                return '#9C27B0';
-            default:
-                return '#F5F5F5';
+        if(status === null) {
+            return;
+        }else{
+            switch (status.toLowerCase()) {
+                case 'present':
+                    return '#4CAF50';
+                case 'absent':
+                    return '#F44336';
+                case 'late':
+                    return '#FF9800';
+                case 'activity':
+                    return '#2196F3';
+                case 'leave':
+                    return '#9C27B0';
+                default:
+                    return '#F5F5F5';
+            }
         }
     };
 
@@ -132,59 +136,10 @@ function AttendenceBySubjectPDF() {
                                                 </Text>
                                             ))}
                                     </View>
-                                    <View
-                                        style={{
-                                            // borderWidth: ,
-                                            // borderColor: '#EE722A',
-                                            width: '20%',
-                                            height: '2px',
-                                            backgroundColor: '#EE722A',
-                                            borderRadius: '5px',
-                                            marginBottom: '10px',
-                                        }}
-                                    ></View>
-                                    <View style={{ flexDirection: 'row', flexWrap: "wrap", gap: "5px", marginBottom: '5px' }}>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignContent: "center", gap: '3px' }}>
-                                            <View style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: getStatusClass('present'),
-                                            }}></View>
-                                            <Text style={styles.textSpan}>เข้าเรียน</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignContent: "center", gap: '3px' }}>
-                                            <View style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: getStatusClass('absent'),
-                                            }}></View>
-                                            <Text style={styles.textSpan}>ไม่เข้าเรียน</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignContent: "center", gap: '3px' }}>
-                                            <View style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: getStatusClass('late'),
-                                            }}></View>
-                                            <Text style={styles.textSpan}>เข้าสาย</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignContent: "center", gap: '3px' }}>
-                                            <View style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: getStatusClass('activity'),
-                                            }}></View>
-                                            <Text style={styles.textSpan}>กิจกรรม</Text>
-                                        </View>
-                                    </View>
                                     <View style={styles.tableHeader}>
-                                        <Text style={[styles.tableColumn1, { width: '5%' }]}>เลขที่</Text>
-                                        <Text style={[styles.tableColumn2, { width: '20%', marginRight: '10px' }]}>รหัสนักเรียน</Text>
-                                        <Text style={[styles.tableColumn2, { width: '30%' }]}>ชือ-นามสกุล</Text>
+                                        <Text style={[styles.tableColumn1,]}>เลขที่</Text>
+                                        <Text style={[styles.tableColumn2,]}>รหัสนักเรียน</Text>
+                                        <Text style={[styles.tableColumn2,]}>ชือ-นามสกุล</Text>
                                         {studentList.data[0].attendance
                                             .filter((att) => att.month === month)
                                             .map((attendance, index) => (
@@ -195,24 +150,16 @@ function AttendenceBySubjectPDF() {
                                     </View>
                                     {studentList.data.map((student, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={[styles.tableColumn1, { width: '5%' }]}>{student.stdNo}</Text>
-                                            <Text style={[styles.tableColumn2, { width: '20%', marginRight: '10px' }]}>{student.stdId}</Text>
-                                            <Text style={[styles.tableColumn2, { width: '30%' }]}>{`${student.fName} ${student.lName}`}</Text>
+                                            <Text style={[styles.tableColumn1]}>{student.stdNo}</Text>
+                                            <Text style={[styles.tableColumn2]}>{student.stdId}</Text>
+                                            <Text style={[styles.tableColumn2]}>{`${student.fName} ${student.lName}`}</Text>
                                             {student.attendance
                                                 .filter((att) => att.month === month)
                                                 .map((attendance, attIndex) => (
-                                                    <View key={attIndex} style={[styles.tableColumn3, { textAlign: 'center' }]}>
-                                                        <View style={{
-                                                            width: 10,
-                                                            height: 10,
-                                                            borderRadius: 5,
-                                                            backgroundColor: attendance.attStatus != null
-                                                                ? getStatusClass(attendance.attStatus)
-                                                                : '#F5F5F5',
-                                                        }}>
-                                                        </View>
-                                                    </View>
-                                                ))}
+                                                    <Text key={attIndex} style={[styles.tableColumn2, { color: getStatusClass(attendance.attStatus) }]}>
+                                                         {attendance.attStatus != null ? formatAttStatus(attendance.attStatus) : '-'}
+                                                    </Text>
+                                            ))}
                                         </View>
                                     ))}
                                 </Page>
@@ -220,7 +167,6 @@ function AttendenceBySubjectPDF() {
                         </PDFViewer>
                     </div>
                 </div>
-
             </div>
         </div>
     );

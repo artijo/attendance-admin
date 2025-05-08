@@ -9,7 +9,7 @@ function EditClassroom() {
     const [error, setError] = useState(null);
     const { id } = useParams();
     const [teacherOptions, setTeacherOptions] = useState(null);
-    const [leaderOptions, setLeaderOptions] = useState(null);
+    const [studentOptions, setStudentOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
     const [academicterms, setAcademicTerms] = useState(null);
     const redirect = useNavigate();
@@ -40,10 +40,10 @@ function EditClassroom() {
             .get(HOSTNAME + "/a/teachers")
             .then((response) => {
                 setTeacherOptions(response.data
-                    .filter(t => !t.classId) // Filter out teachers with classId
                     .map(t => ({
                         value: t.tchId,
-                        label: `${t.fName} ${t.lName}`
+                        label: `${t.fName} ${t.lName}`,
+                        classTeacher: t.classTeacher   // include assignments
                     }))
                 );
             })
@@ -52,20 +52,19 @@ function EditClassroom() {
             });
     }
 
-    function fetchLeader() {
+    function fetchStudents() {
         axios
-            .get(HOSTNAME + "/a/leaders")
+            .get(HOSTNAME + "/a/students")
             .then((response) => {
-                setLeaderOptions(response.data
-                    .filter(l => !l.classroom.some(c => c.leaderId === l.ldrId)) // Filter out leaders with classroom assignments
-                    .map(l => ({
-                        value: l.ldrId,
-                        label: `${l.fName} ${l.lName}`
+                setStudentOptions(response.data
+                    .map(s => ({
+                        value: s.stdId,
+                        label: `${s.fName} ${s.lName}`
                     }))
                 );
             })
             .catch((error) => {
-                console.error("Error fetching leaders", error);
+                console.error("Error fetching students", error);
             });
     }
 
@@ -121,9 +120,9 @@ function EditClassroom() {
                     ]);
                 }
 
-                // If leader exists in classroom, add them to leaderOptions
+                // If leader exists in classroom, add them to studentOptions
                 if (classroom.leader) {
-                    setLeaderOptions(prev => [
+                    setStudentOptions(prev => [
                         ...(prev || []),
                         {
                             value: classroom.leader.ldrId,
@@ -139,11 +138,13 @@ function EditClassroom() {
 
     useEffect(() => {
         fetchTeacher();
-        fetchLeader();
+        fetchStudents();
         fetchClassroomType();
         fetchAcademicTerms();
         fetchClassroom();
     }, []);
+
+    const selectedTerm = watch('termId');
 
     return (
         <div className="min-h-screen">
@@ -280,11 +281,15 @@ function EditClassroom() {
                                 id="ClassTeacher"
                                 className="react-select-container"
                                 classNamePrefix="react-select"
-                                options={teacherOptions}
-                                value={teacherOptions?.filter(option => 
-                                    watch('teacherIds')?.includes(option.value)
+                                options={teacherOptions?.filter(opt =>
+                                    // allow if not already advising in this term or already selected
+                                    !opt.classTeacher.some(ct => ct.classroom.termId === selectedTerm)
+                                    || watch('teacherIds')?.includes(opt.value)
                                 )}
-                                onChange={(selectedOptions) => setValue("teacherIds", selectedOptions ? selectedOptions.map(option => option.value) : [])}
+                                value={teacherOptions?.filter(opt =>
+                                    watch('teacherIds')?.includes(opt.value)
+                                )}
+                                onChange={(sel) => setValue("teacherIds", sel ? sel.map(o => o.value) : [])}
                                 isClearable
                                 isMulti
                                 placeholder="เลือกครูที่ปรึกษา..."
@@ -292,7 +297,7 @@ function EditClassroom() {
                             />
                         </div>
 
-                        {/* <div className="space-y-2">
+                        <div className="space-y-2">
                             <label htmlFor="Leader" className="text-sm font-medium text-text-color font-body flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -303,14 +308,14 @@ function EditClassroom() {
                                 id="Leader"
                                 className="react-select-container"
                                 classNamePrefix="react-select"
-                                options={leaderOptions}
-                                value={leaderOptions?.find(option => option.value === watch('leaderId'))}
+                                options={studentOptions}
+                                value={studentOptions?.find(option => option.value === watch('leaderId'))}
                                 onChange={(selectedOption) => setValue("leaderId", selectedOption ? selectedOption.value : null)}
                                 isClearable
                                 placeholder="เลือกหัวหน้าห้อง..."
                                 noOptionsMessage={() => "ไม่พบข้อมูล"}
                             />
-                        </div> */}
+                        </div>
 
                         <div className="sm:col-span-2 flex justify-between items-center pt-6 border-t border-gray-100 mt-4">
                             <Link 

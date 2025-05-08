@@ -55,7 +55,6 @@ export const formatTitle = (title) => {
 export function calculatedTimeToSecondeDouleDot(time) { // สำหรับ :
   const timeSplit = time.split(':');
   return (parseInt(timeSplit[0])*3600)+(parseInt(timeSplit[1])*60);
-  // return (parseInt(hour)*3600)+(parseInt(miniute)*60);
 }
 
 export function nameFormat(fName, lName) {
@@ -158,3 +157,24 @@ export function convertNumberToThaiMonth(monthNumber) {
     const dateSplit = dateTimeFormat.split('-');
     return `${dateSplit[2]}/${dateSplit[1]}/${parseInt(dateSplit[0])+543}`;
   }
+
+  export const formatThaiDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+};
+
+ export const formatThaiDateTime = (dateString) => {
+        if (!dateString) return "-";
+        const dt = DateTime.fromISO(dateString);
+        return dt.setLocale('th').toFormat('d MMMM yyyy HH:mm น.');
+    };
+
+export const formatTimeThai = (timeString) => {
+      if (!timeString) return "-";
+      const [hours, minutes] = timeString.split(':');
+      return `${hours}:${minutes} น.`;
+  };

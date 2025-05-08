@@ -3,6 +3,7 @@ import { HOSTNAME } from "../../config";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
+import { formatTitle } from "../../helper";
 
 function ShowDetail({ classroom }) {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -20,7 +21,7 @@ function ShowDetail({ classroom }) {
 
   function fetchStudents() {
     axios
-      .get(HOSTNAME + "/a/students/withoutClassroom")
+      .get(HOSTNAME + "/a/students/foraddmemberinclassroom")
       .then((response) => {
         setStudents(response.data);
       })
@@ -83,6 +84,12 @@ function ShowDetail({ classroom }) {
 
   const handleAddStudent = async () => {
     if (!selectedStudent || !studentNo) return;
+
+    // Prevent adding the same student twice
+    if (classroom.classroomMembers.some(member => member.student.stdId === selectedStudent.value)) {
+      setAddError("นักเรียนอยู่ในห้องเรียนแล้ว");
+      return;
+    }
     
     // Validate student number
     const validationError = validateStudentNo(studentNo);
@@ -232,15 +239,15 @@ function ShowDetail({ classroom }) {
                 ครูที่ปรึกษาห้องเรียน
               </dt>
               <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
-                {classroom.teacher.length > 0 ? (
+                {classroom.classTeacher && classroom.classTeacher.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {classroom.teacher.map((teacher) => (
-                      <Link 
-                        to={`/teachers/${teacher.tchId}`}
-                        key={teacher.tchId} 
+                    {classroom.classTeacher.map(ct => (
+                      <Link
+                        to={`/teachers/${ct.teacher.tchId}`}
+                        key={ct.classTeacherId}
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors duration-200"
                       >
-                        {teacher.fName} {teacher.lName}
+                        {ct.teacher.fName} {ct.teacher.lName}
                       </Link>
                     ))}
                   </div>
@@ -273,6 +280,40 @@ function ShowDetail({ classroom }) {
                   </div>
                 ) : (
                   <span className="text-text-color-alt font-body">ไม่มีวิชาที่เรียน</span>
+                )}
+              </dd>
+            </div>
+
+            <div className="grid grid-cols-1 gap-1 py-4 sm:grid-cols-3 sm:gap-4">
+              <dt className="font-medium text-text-color font-body flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                หัวหน้าห้อง
+              </dt>
+              <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
+                {classroom.leader ? (
+                  <div className="flex items-center gap-2">
+                    {/* If there's a leader with student info, display it with a link */}
+                    {classroom.leader.student && (
+                      <Link 
+                        to={`/students/${classroom.leader.stdId}`}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200 transition-colors duration-200"
+                      >
+                        <span className="font-semibold">
+                          {formatTitle(classroom.leader.student.title)}
+                          {classroom.leader.student.fName}
+                        <span className="ml-1">{classroom.leader.student.lName}</span>
+                        </span>
+                      </Link>
+                    )}
+                    {/* If leader ID exists but we have no student info, just show the ID */}
+                    {!classroom.leader.student && classroom.leader.stdId && (
+                      <span>รหัส {classroom.leader.stdId}</span>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-text-color-alt font-body">ไม่มีหัวหน้าห้อง</span>
                 )}
               </dd>
             </div>

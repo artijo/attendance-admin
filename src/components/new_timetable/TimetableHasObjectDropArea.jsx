@@ -42,12 +42,6 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
         };
     }, []);
 
-    // useEffect(() => {
-    //     if (deleteDiologShow === true) {
-    //         console.log(true);
-    //     }
-    // }, [deleteDiologShow])
-
     return (
         <div
             className="w-full h-[150px] text-left transition-transform duration-150 active:opacity-70 active:cursor-grab"
@@ -63,13 +57,15 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
                     x: e.pageX,
                     y: e.pageY,
                 });
-                // console.log("Right Click", e.pageX, e.pageY);
             }}
+
         >
+
             <div
                 className="h-full text-white flex flex-col relative"
                 style={subjectStyle}
             >
+                
                 <div>
                     <h5 className="w-fit text-sm font-medium mb-1 line-clamp-2 mt-2 ml-2">
                         {timetablethistime.subject.subNameThai}

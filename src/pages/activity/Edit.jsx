@@ -4,6 +4,7 @@ import axios from "axios";
 import { HOSTNAME } from "../../config";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
+import { DateTime } from "luxon";
 
 function EditActivity() {
     const navigate = useNavigate();
@@ -50,8 +51,8 @@ function EditActivity() {
             setActivityName(activity.actName);
             
             // Format dates
-            const startDate = new Date(activity.actDate).toISOString().split('T')[0];
-            const endDate = new Date(activity.actDateEnd).toISOString().split('T')[0];
+            const startDate = DateTime.fromISO(activity.actDate).toISODate();
+            const endDate = DateTime.fromISO(activity.actDateEnd).toISODate();
 
             // Format activity type option
             const activityTypeOption = {

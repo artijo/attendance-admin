@@ -1,7 +1,7 @@
 import { CalendarDetatils } from "../../components/calendar/calendardetailsholiday.jsx"
 import { useLocation, Link } from "react-router-dom"
 
-export const CalendarHoliday = () => {
+const CalendarHoliday = () => {
     const location = useLocation();
     const classroomInfo = location.state.classroomInfo;
 
@@ -63,9 +63,11 @@ export const CalendarHoliday = () => {
                         </div>
                     </div>
                     
-                    <CalendarDetatils classroomId={location.state.classroomId}/>
+                    <CalendarDetatils classroom={classroomInfo}/>
                 </div>
             </div>
         </div>
     );
 };
+
+export default CalendarHoliday;

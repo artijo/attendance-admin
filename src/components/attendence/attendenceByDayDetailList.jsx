@@ -1,13 +1,12 @@
 import { PropTypes } from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { AttendanceSummaryByDay } from "../../exportExcel";
+import { summaryAttendeanceByDay } from "../../exportExcel";
 import ExportExcelButton from "../exportExcelButton";
 import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { HOSTNAME } from "../../config";
+import { HOSTNAME, TIME_ZONE } from "../../config";
 import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper";
-import ByDay from "./exportPdf/byday.jsx";
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
@@ -94,9 +93,9 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             setExportLoading(prev => ({ ...prev, excel: true }));
             
             try {
-                const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone('Asia/Bangkok');
+                const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone(TIME_ZONE);
                 const fileName = `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน${formatDayOfWeeks(dateformat.weekday)} วันที่${formatDateToThai(dateformat.toString())}`;
-                AttendanceSummaryByDay(ref.current, fileName);
+                summaryAttendeanceByDay(studentList, fileName, classroomInfo, dateformat);
             } catch (error) {
                 console.error("Export Excel error:", error);
             } finally {
@@ -123,12 +122,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
         }
     };
 
-    const handlePdfComponent = () => {
-        if (studentList.length > 0 && totalStatus && classroomInfo) {
-            return <ByDay studentList={studentList} totalStatus={totalStatus} date={date} classroomInfo={classroomInfo} />;
-        }
-        return null;
-    };
 
     const navigatePdfPage = () => {
         navigate("/attendances/details/byday/pdf", {state: { studentList, totalStatus, date, classroomInfo }});

@@ -5,18 +5,16 @@ import timegridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 
-export const CalendarDetatils = () => {
-    const location = useLocation();
+export const CalendarDetatils = ({classroom}) => {
     const [studyList, setStudyList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+    // console.log(classroom);
     const fectStudyList = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${location.state.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${classroom.classId}`);
             setStudyList(response.data);
             setError(null);
         } catch (err) {
@@ -29,6 +27,7 @@ export const CalendarDetatils = () => {
 
     useEffect(() => {
         fectStudyList();
+        // console.log(studyList);
     }, []);
 
     // Customize the calendar appearance with consistent styling

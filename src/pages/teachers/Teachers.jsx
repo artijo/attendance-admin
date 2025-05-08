@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config.js";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success.jsx";
+import TeacherChart from "../../components/chart/TeacherChart.jsx";
 
 function Teachers() {
   const [teachers, setTeachers] = useState(null);
@@ -241,6 +242,10 @@ function Teachers() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
+        <TeacherChart teachers={teachers} departments={departments} />
       </div>
 
       {!teachers ? (

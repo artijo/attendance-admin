@@ -3,7 +3,7 @@ import { HOSTNAME } from "../../config";
 import { Link } from "react-router-dom";
 import { Holidaylisttable } from "../../components/holiday/createholiday/holidaylisttable";
 import { formatDateYYYYMMDD } from "../../helper.js";
-import { DateTime } from "luxon";
+import { DateTime, Zone } from "luxon";
 import axios from "axios";
 import AlertSuccess from "../../components/alert/success.jsx";
 import ErrorAlert from "../../components/alert/error.jsx";
@@ -29,8 +29,12 @@ function CreateHoliday() {
     const [holidayAutoList, setHolidayAutoList] = useState([]);
     const [isMultipleMode, setIsMultipleMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    //select option
     const [academicYearTermList, setAcademicYearTermList] = useState([]);
-    const [academicYearSemester, setAcademicYearSemester] = useState("");
+    const [academicYearSemester, setAcademicYearSemester] = useState(null);
+    //for input date
+    const [startDateTerm, setStartDateTerm] = useState("");
+    const [endDateTerm, setEndDateTerm] = useState("");
 
     // input
     const [holidayName, setHolidayName] = useState("");
@@ -80,9 +84,10 @@ function CreateHoliday() {
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/academicterms`);
             if (response.status === 200) {
+                // console.log(response.data);
                 setAcademicYearTermList(response.data);
                 if (response.data.length > 0) {
-                    setAcademicYearSemester(response.data[0].termId);
+                    setAcademicYearSemester(response.data[0]);
                 }
             }
         } catch (error) {
@@ -104,11 +109,34 @@ function CreateHoliday() {
         fecthAcademicYearTerms();
     }, []);
 
+    useEffect(() => {
+        const setDateRange = (startDate, endDate) => {
+            console.log(startDate + " " + endDate);
+            const sDate = DateTime.fromISO(startDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd');
+            const eDate = DateTime.fromISO(endDate).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd');
+            console.log('==========');
+            console.log(sDate);
+            console.log(eDate);
+            console.log('==========');
+            setStartDateTerm(sDate);
+            setEndDateTerm(eDate);
+        };
+        if(academicYearSemester){
+            setDateRange(academicYearSemester.termStart, academicYearSemester.termEnd);
+        };
+    },[academicYearSemester]);
+
+    const handleAcademicYearSemeterChange = (value) => {
+        const academicYearList = academicYearTermList;
+        const findAcademicYearList = academicYearList.find((ay) => ay.termId == value);
+        setAcademicYearSemester(findAcademicYearList);
+    };
+
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         const data = {
             holidayList: holidayAutoList,
-            termId: academicYearSemester,
+            termId: academicYearSemester.termId,
         };
         
         try {
@@ -150,6 +178,7 @@ function CreateHoliday() {
         setSuccess(true);
         setMsg("เพิ่มรายการวันหยุดในตารางเรียบร้อย");
     };
+
 
     const dismissAlerts = () => {
         setError(false);
@@ -298,6 +327,8 @@ function CreateHoliday() {
                                             type="date"
                                             name="startDate"
                                             value={startDate}
+                                            min={startDateTerm}
+                                            max={endDateTerm}
                                             onChange={(e) => setStartDate(e.target.value)}
                                             required={true}
                                         />
@@ -317,7 +348,8 @@ function CreateHoliday() {
                                             value={endDate}
                                             onChange={(e) => setEndDate(e.target.value)}
                                             required={true}
-                                            min={startDate}
+                                            min={startDate === '' ? startDateTerm : startDate}
+                                            max={endDateTerm}
                                         />
                                     </div>
                                 </div>
@@ -362,15 +394,16 @@ function CreateHoliday() {
                                     <div className="flex items-center gap-3">
                                         <select
                                             name="academicyear_semester"
-                                            onChange={(e) => setAcademicYearSemester(e.target.value)}
+                                            onChange={(e) => handleAcademicYearSemeterChange(e.target.value)}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                             disabled={isLoading || academicYearTermList.length === 0}
                                         >
                                             {isLoading ? (
                                                 <option value="">กำลังโหลดข้อมูล...</option>
                                             ) : academicYearTermList.length > 0 ? (
-                                                academicYearTermList.map((term) => (
+                                                academicYearTermList.map((term, index) => (
                                                     <option key={term.termId} value={term.termId}>
+                                                        {/* {console.log(term)} */}
                                                         ปีการศึกษา {term.academicYear + 543} เทอม {term.semester}
                                                     </option>
                                                 ))

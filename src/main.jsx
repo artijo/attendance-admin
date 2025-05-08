@@ -39,6 +39,10 @@ const CreateTeacher = lazy(() => import("./pages/teachers/CreateForm.jsx"));
 const EditTeacher = lazy(() => import("./pages/teachers/EditForm.jsx"));
 const DepartmentManage = lazy(() => import("./pages/teachers/department/Manage.jsx"));
 
+// Leave Request Section
+const LeaveRequest = lazy(() => import("./pages/leaverequest/LeaveRequest.jsx"));
+const LeaveRequestDetail = lazy(() => import("./pages/leaverequest/LeaveRequestDetail.jsx"));
+
 // Timetable
 const Timetable = lazy(() => import("./pages/new_timetable/new_timetable.jsx"));
 const CreateTimetable = lazy(() => import("./pages/new_timetable/new_createtimetable.jsx"));
@@ -69,6 +73,7 @@ const ActivityDetail = lazy(() => import("./pages/activity/Detail.jsx"));
 const CreateActivity = lazy(() => import("./pages/activity/Create.jsx"));
 const EditActivity = lazy(() => import("./pages/activity/Edit.jsx"));
 const Participant = lazy(() => import("./pages/activity/Paticipation.jsx"));
+const ActivityQRpaticipate = lazy(() => import('./pages/activity/ActivityQRpaticipate.jsx'));
 //Activity PDF
 const FilterClassroomPage = lazy(() => import("./pages/activity/pdfmanagedownload/FilterClassroomPage.jsx"));
 const FilterByClassroom = lazy(() => import("./components/activity/exportPDF/FilterByClassroom.jsx"));
@@ -84,11 +89,11 @@ const AttendanceDetail = lazy(() => import("./pages/attendence/AttendenceDetail.
 const AttendenceSubjectDetail = lazy(() => import("./pages/attendence/AttendenceSubjectDetail.jsx"));
 const AttendenceByDayDetail = lazy(() => import("./pages/attendence/AttendenceByDayDetail.jsx"));
 const AttendanceBySubjectCanExam = lazy(() => import("./components/attendence/attendenceBySubjectCanExam.jsx").then(module => ({ default: module.AttendanceBySubjectCanExam })));
-const BySubejctCanExamPDF = lazy(() => import("./components/attendence/exportPdf/bysubjectCanExam.jsx"));
 const AttendenceByClassroomDeatail = lazy(() => import("./pages/attendence/AttendenceByClassroomDeatail.jsx"));
 const CreateTimetableDragAndDrop = lazy(() => import("./pages/new_timetable/CreateTimetable.jsx"));
 const AttendenceByDayPDF = lazy(() => import("./pages/attendence/pdfpage/byday/AttendenceByDayPDF.jsx"));
 const AttendenceBySubjectPDF = lazy(() => import("./pages/attendence/pdfpage/bysubject/AttendenceBySubjectPDF.jsx"));
+const AttendenceCanExamPDF = lazy(() => import("./pages/attendence/pdfpage/canExam/AttendenceCanExamPDF.jsx"));
 
 
 createRoot(document.getElementById("root")).render(
@@ -119,6 +124,9 @@ createRoot(document.getElementById("root")).render(
           <Route path="teachers/create" element={<CreateTeacher />} />
           <Route path="teachers/edit/:id" element={<EditTeacher />} />
           <Route path="teachers/departments" element={<DepartmentManage />} />
+          {/* Leave Request Section */}
+          <Route path="leavereq" element={<LeaveRequest />} />
+          <Route path="leavereq/:id" element={<LeaveRequestDetail />} />
           {/* Timetable Section */}
           <Route path="timetable" element={<Timetable/>}/>
           <Route path="testtimetable" element={<CreateTimetableDragAndDrop/>}/>
@@ -148,6 +156,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="activity/:id" element={<ActivityDetail />} />
           <Route path="activity/edit/:id" element={<EditActivity />} />
           <Route path="activity/:id/participate" element={<Participant />} />
+          <Route path='activity/:id/qr-code' element={<ActivityQRpaticipate/>}/>
           {/* By Ohm Section */}
           <Route path="activity/participate/filterbyclassroom/excel" element={<ExcelByFilterRoom />} />
           <Route path="activity/participate/filterbyclassroom" element={<FilterClassroomPage />} />
@@ -162,9 +171,10 @@ createRoot(document.getElementById("root")).render(
           <Route path="attendances/abstract/subject" element={<AttendanceBySubjectCanExam/>}/>
           <Route path="attendances/details/byday" element={<AttendenceByDayDetail/>} />
           <Route path="attendances/details/byclassroom" element={<AttendenceByClassroomDeatail/>} />
-          <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  {/*export pdf by subjectCanExam page*/}
+          {/* <Route path="att/bysubjectCanExam/pdf" element={<BySubejctCanExamPDF/>} />  export pdf by subjectCanExam page */}
           <Route path="attendances/details/byday/pdf" element={<AttendenceByDayPDF/>} />
           <Route path="attendances/details/bysubject/pdf" element={<AttendenceBySubjectPDF/>} /> {/*export pdf by subject page*/}
+          <Route path="attendances/details/bysubject/iscanexam/pdfpage" element={<AttendenceCanExamPDF/>} /> {/*export pdf by subject page*/}
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
