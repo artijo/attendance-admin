@@ -6,15 +6,15 @@ function ShowDetail({ teacher }) {
       <div className="h-2 bg-gradient-to-r from-primary to-secondary"></div>
       <div className="p-4 sm:p-6">
         <dl className="divide-y divide-gray-100 text-sm">
-          {/* <div className="grid grid-cols-1 gap-1 py-4 sm:grid-cols-3 sm:gap-4">
+          <div className="grid grid-cols-1 gap-1 py-4 sm:grid-cols-3 sm:gap-4">
             <dt className="font-medium text-text-color font-body flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
               </svg>
               รหัสครู
             </dt>
-            <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">{teacher.tchCode}</dd>
-          </div> */}
+            <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">{teacher.tchId}</dd>
+          </div>
 
           <div className="grid grid-cols-1 gap-1 py-4 sm:grid-cols-3 sm:gap-4">
             <dt className="font-medium text-text-color font-body flex items-center">
@@ -78,19 +78,26 @@ function ShowDetail({ teacher }) {
               ห้องประจำชั้น
             </dt>
             <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
-              {teacher.classroom ? (
-                <>
-                <div className="flex items-center">
-                  <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 mr-2">
-                    ม.{teacher.classroom.classLevel}/{teacher.classroom.classRoom}
-                  </span>
-                  {teacher.classroom.classroomType && (
-                    <span className="text-sm text-text-color-alt">
-                      ({teacher.classroom.classroomType.classTypeNameThai})
-                    </span>
-                  )}
-                </div>  
-                </>
+              {teacher.classTeacher && teacher.classTeacher.length > 0 ? (
+                teacher.classTeacher.map((classTeacher, index) => (
+                  <div key={classTeacher.classTeacherId} className={`flex flex-col ${index > 0 ? 'mt-2 pt-2 border-t' : ''}`}>
+                    <div className="flex items-center">
+                      <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 mr-2">
+                        ม.{classTeacher.classroom.classLevel}/{classTeacher.classroom.classRoom}
+                      </span>
+                      {classTeacher.classroom.classTypeId && (
+                        <span className="text-sm text-text-color-alt">
+                          ({classTeacher.classroom.classTypeId})
+                        </span>
+                      )}
+                    </div>
+                    {classTeacher.classroom.term && (
+                      <div className="text-xs text-gray-500 mt-1">
+                        ปีการศึกษา {classTeacher.classroom.term.academicYear} ภาคเรียนที่ {classTeacher.classroom.term.semester}
+                      </div>
+                    )}
+                  </div>
+                ))
               ) : (
                 <span className="text-text-color-alt">ไม่มีห้องประจำชั้น</span>
               )}
