@@ -64,7 +64,7 @@ function App() {
     { name: "การเข้าเรียน", path: "/attendances", icon:"attendance.svg" },
     { name: "คำร้อง", path: "/leavereq", icon: "leave.svg" },
     { name: "ผู้ปกครอง", path: "/parent", icon: "parent.svg" },
-    { name: "การจัดการผู้ดูแลระบบ", path: "/users", icon: "adminuser.svg" }
+    // { name: "การจัดการผู้ดูแลระบบ", path: "/users", icon: "adminuser.svg" }
   ];
 
   function openMenu() {
