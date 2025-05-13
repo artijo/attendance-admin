@@ -263,6 +263,8 @@ function CreateActivity() {
                                         <input
                                             type="date"
                                             {...register("actDateEnd", { required: true })}
+                                            min={watch("actDate")}
+                                            disabled={watch("actDate") === ""}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         />
                                     </div>
@@ -293,6 +295,8 @@ function CreateActivity() {
                                         <input
                                             type="time"
                                             {...register("actEndTime", { required: true })}
+                                            min={watch("actStartTime")}
+                                            disabled={watch("actStartTime") === ""}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         />
                                     </div>
