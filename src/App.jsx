@@ -63,7 +63,8 @@ function App() {
     { name: "การจัดการปฎิทิน", path: "/calendar", icon:"calendar.svg"},
     { name: "การเข้าเรียน", path: "/attendances", icon:"attendance.svg" },
     { name: "คำร้อง", path: "/leavereq", icon: "leave.svg" },
-    { name: "ตั้งค่า", path: "/settings", icon: "settings.svg" },
+    { name: "ผู้ปกครอง", path: "/parent", icon: "parent.svg" },
+    // { name: "การจัดการผู้ดูแลระบบ", path: "/users", icon: "adminuser.svg" }
   ];
 
   function openMenu() {

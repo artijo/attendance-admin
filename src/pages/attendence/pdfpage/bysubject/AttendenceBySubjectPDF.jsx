@@ -12,7 +12,7 @@ function AttendenceBySubjectPDF() {
     let indexReal = 0;
     const getStatusClass = (status) => {
         if(status === null) {
-            return;
+            return ;
         }else{
             switch (status.toLowerCase()) {
                 case 'present':

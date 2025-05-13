@@ -99,36 +99,57 @@ function EditClassroom() {
                 setValue("classLevel", classroom.classLevel);
                 setValue("classRoom", classroom.classRoom);
                 setValue("classTypeId", classroom.classroomType?.classTypeId);
-                setValue("teacherIds", classroom.teacher?.map(t => t.tchId));
-                setValue("leaderId", classroom.leader?.ldrId);
+                
+                // Handle teacher values properly - use classTeacher array instead of teacher
+                if (classroom.classTeacher?.length > 0) {
+                    // Set teacher IDs as an array of values
+                    setValue("teacherIds", classroom.classTeacher.map(t => t.tchId));
+                    
+                    // Update teacherOptions to include these teachers with proper format
+                    const teacherData = classroom.classTeacher.map(t => ({
+                        value: t.tchId,
+                        label: `${t.teacher.fName} ${t.teacher.lName}`,
+                        classTeacher: t.teacher.classTeacher || []
+                    }));
+                    
+                    // Make sure we don't duplicate entries when adding to teacherOptions
+                    setTeacherOptions(prevOptions => {
+                        if (!prevOptions) return teacherData;
+                        
+                        const existingIds = prevOptions.map(t => t.value);
+                        const newTeachers = teacherData.filter(t => !existingIds.includes(t.value));
+                        
+                        return [...prevOptions, ...newTeachers];
+                    });
+                }
+                
+                // Handle leader/student value properly
+                if (classroom.leader) {
+                    // Set leader ID - use the stdId from the leader's student object
+                    setValue("leaderId", classroom.leader.stdId);
+                    
+                    // Add leader to studentOptions if not already there
+                    const leaderData = {
+                        value: classroom.leader.stdId,
+                        label: `${classroom.leader.student.fName} ${classroom.leader.student.lName}`
+                    };
+                    
+                    setStudentOptions(prevOptions => {
+                        if (!prevOptions) return [leaderData];
+                        
+                        const existingIds = prevOptions.map(s => s.value);
+                        if (!existingIds.includes(leaderData.value)) {
+                            return [...prevOptions, leaderData];
+                        }
+                        return prevOptions;
+                    });
+                }
 
                 // Set term related values
                 if (classroom.term) {
                     setValue("termId", classroom.term.termId);
                     setValue("academicYear", classroom.term.academicYear);
                     setValue("semester", classroom.term.semester);
-                }
-
-                // If teacher exists in classroom, add them to teacherOptions
-                if (classroom.teacher?.length > 0) {
-                    setTeacherOptions(prev => [
-                        ...(prev || []),
-                        ...classroom.teacher.map(t => ({
-                            value: t.tchId,
-                            label: `${t.fName} ${t.lName}`
-                        }))
-                    ]);
-                }
-
-                // If leader exists in classroom, add them to studentOptions
-                if (classroom.leader) {
-                    setStudentOptions(prev => [
-                        ...(prev || []),
-                        {
-                            value: classroom.leader.ldrId,
-                            label: `${classroom.leader.fName} ${classroom.leader.lName}`
-                        }
-                    ]);
                 }
             })
             .catch((error) => {

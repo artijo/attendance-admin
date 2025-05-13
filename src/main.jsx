@@ -94,6 +94,9 @@ const CreateTimetableDragAndDrop = lazy(() => import("./pages/new_timetable/Crea
 const AttendenceByDayPDF = lazy(() => import("./pages/attendence/pdfpage/byday/AttendenceByDayPDF.jsx"));
 const AttendenceBySubjectPDF = lazy(() => import("./pages/attendence/pdfpage/bysubject/AttendenceBySubjectPDF.jsx"));
 const AttendenceCanExamPDF = lazy(() => import("./pages/attendence/pdfpage/canExam/AttendenceCanExamPDF.jsx"));
+// Parent
+const Parent = lazy(() => import("./pages/parent/Parents.jsx"));
+const ParentDetail = lazy(() => import("./pages/parent/ParentDetail.jsx"));
 
 
 createRoot(document.getElementById("root")).render(
@@ -175,7 +178,11 @@ createRoot(document.getElementById("root")).render(
           <Route path="attendances/details/byday/pdf" element={<AttendenceByDayPDF/>} />
           <Route path="attendances/details/bysubject/pdf" element={<AttendenceBySubjectPDF/>} /> {/*export pdf by subject page*/}
           <Route path="attendances/details/bysubject/iscanexam/pdfpage" element={<AttendenceCanExamPDF/>} /> {/*export pdf by subject page*/}
+          {/* Parent Section */}
+          <Route path="parent" element={<Parent />} />
+          <Route path="parent/:id" element={<ParentDetail />} />
         </Route>
+          {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

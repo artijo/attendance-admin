@@ -1,5 +1,5 @@
-import { set, useForm } from "react-hook-form"
-import { useState, useEffect } from "react";
+import { set, useForm, Controller, useWatch } from "react-hook-form"
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, Link } from "react-router-dom";
@@ -12,7 +12,6 @@ function CreateClassroom() {
     const [teacherOptions, setTeacherOptions] = useState(null);
     const [studentOptions, setStudentOptions] = useState(null);
     const [classroomType, setClassroomType] = useState(null);
-    const [selectedTeachers, setSelectedTeachers] = useState(new Set());
     const [academicterms, setAcademicTerms] = useState(null);
     const redirect = useNavigate();
 
@@ -21,9 +20,11 @@ function CreateClassroom() {
         handleSubmit,
         setValue,
         watch,
+        control,
         formState: { errors },
     } = useForm();
-    const selectedTerm = watch('termId');  // <-- new
+    const selectedTerm = watch('termId');
+    const selectedTeachersRef = useRef(new Set());
     const onSubmit = async function (data) {
         try {
             let classrooms = [];
@@ -118,27 +119,16 @@ function CreateClassroom() {
 
     const handleTeacherChange = (selectedOptions, formIndex = null) => {
         const fieldName = formIndex !== null ? `classroom_${formIndex}.teacherIds` : "teacherIds";
-        
-        // Get previously selected teachers for this form
         const previousTeachers = watch(fieldName) || [];
-        
-        // Remove previous selections from the global set
-        previousTeachers.forEach(teacherId => {
-            setSelectedTeachers(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(teacherId);
-                return newSet;
-            });
-        });
-
-        // Add new selections to the global set
         const newTeacherIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
-        newTeacherIds.forEach(teacherId => {
-            setSelectedTeachers(prev => new Set([...prev, teacherId]));
-        });
 
-        // Update form value
-        setValue(fieldName, newTeacherIds);
+        // Batch update selectedTeachersRef (no re-render)
+        const newSet = new Set(selectedTeachersRef.current);
+        previousTeachers.forEach(teacherId => newSet.delete(teacherId));
+        newTeacherIds.forEach(teacherId => newSet.add(teacherId));
+        selectedTeachersRef.current = newSet;
+
+        setValue(fieldName, newTeacherIds, { shouldValidate: true, shouldDirty: true });
     };
 
     // เพิ่มการกำหนดค่าเริ่มต้นเมื่อสลับไปโหมดหลายห้องเรียน
@@ -152,26 +142,26 @@ function CreateClassroom() {
                 setValue(`classroom_${index}.teacherIds`, []);
             });
         }
-    }, [isMultipleMode, numberOfClassrooms]);
+    }, [isMultipleMode]);
     
-    // เพิ่มการกำหนดค่าเริ่มต้นเมื่อเพิ่มจำนวนห้องเรียน
+    // เพิ่มการกำหนดค่าเริ่มต้นเมื่อเพิ่มจำนวนห้องเรียน (เฉพาะห้องใหม่)
     useEffect(() => {
-        if (isMultipleMode) {
+        if (isMultipleMode && numberOfClassrooms > 1) {
             // ตั้งค่าเริ่มต้นสำหรับห้องเรียนใหม่ที่เพิ่มเข้ามา
             setValue(`classroom_${numberOfClassrooms-1}.classLevel`, 1);
             setValue(`classroom_${numberOfClassrooms-1}.classRoom`, "");
             setValue(`classroom_${numberOfClassrooms-1}.teacherIds`, []);
         }
-    }, [numberOfClassrooms]);
+    }, [numberOfClassrooms, isMultipleMode]);
 
     const ClassroomForm = ({ index }) => {
         // ดึงค่าที่ต้องการแสดงผล
-        const currentTeacherIds = watch(`classroom_${index}.teacherIds`) || [];
-        const formTerm = watch(`classroom_${index}.termId`);
-        const classLevel = watch(`classroom_${index}.classLevel`) || 1;
-        const classRoom = watch(`classroom_${index}.classRoom`) || "";
-        const classTypeId = watch(`classroom_${index}.classTypeId`);
-        const leaderId = watch(`classroom_${index}.leaderId`);
+        const currentTeacherIds = useWatch({ control, name: `classroom_${index}.teacherIds` }) || [];
+        const formTerm = useWatch({ control, name: `classroom_${index}.termId` });
+        const classTypeOptions = classroomType?.map(ct => ({ 
+            value: ct.classTypeId, 
+            label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` 
+        })) || [];
         
         // สร้างตัวเลือกสำหรับ select components
         const termOptions = academicterms?.map(term => ({
@@ -179,11 +169,6 @@ function CreateClassroom() {
             label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
         })) || [];
 
-        const classTypeOptions = classroomType?.map(ct => ({ 
-            value: ct.classTypeId, 
-            label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` 
-        })) || [];
-        
         return (
             <div className="border border-gray-200 p-5 rounded-lg bg-gray-50">
                 <div className="flex items-center mb-4">
@@ -204,8 +189,7 @@ function CreateClassroom() {
                         <select
                             id={`ClassName_${index}`}
                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                            value={classLevel}
-                            onChange={(e) => setValue(`classroom_${index}.classLevel`, Number(e.target.value))}
+                            {...register(`classroom_${index}.classLevel`)}
                         >
                             <option value={1}>ม.1</option>
                             <option value={2}>ม.2</option>
@@ -229,8 +213,7 @@ function CreateClassroom() {
                             id={`ClassRoom_${index}`}
                             placeholder="กรอกหมายเลขห้อง"
                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                            value={classRoom}
-                            onChange={(e) => setValue(`classroom_${index}.classRoom`, e.target.value)}
+                            {...register(`classroom_${index}.classRoom`)}
                         />
                     </div>
 
@@ -243,16 +226,22 @@ function CreateClassroom() {
                             </svg>
                             ประเภทห้องเรียน
                         </label>
-                        <Select
-                            id={`ClassType_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={classTypeOptions}
-                            value={classTypeOptions.find(opt => opt.value === classTypeId) || null}
-                            onChange={(selectedOption) => setValue(`classroom_${index}.classTypeId`, selectedOption ? selectedOption.value : null)}
-                            isClearable
-                            placeholder="เลือกประเภทห้องเรียน..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
+                        <Controller
+                            control={control}
+                            name={`classroom_${index}.classTypeId`}
+                            render={({ field }) => (
+                                <Select
+                                    id={`ClassType_${index}`}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    options={classTypeOptions}
+                                    value={classTypeOptions.find(opt => opt.value === field.value) || null}
+                                    onChange={selectedOption => field.onChange(selectedOption ? selectedOption.value : null)}
+                                    isClearable
+                                    placeholder="เลือกประเภทห้องเรียน..."
+                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                />
+                            )}
                         />
                     </div>
                     
@@ -264,27 +253,33 @@ function CreateClassroom() {
                             </svg>
                             ภาคการศึกษา
                         </label>
-                        <Select
-                            id={`AcademicTerm_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={termOptions}
-                            value={termOptions.find(opt => opt.value === formTerm) || null}
-                            onChange={(selectedOption) => {
-                                const term = academicterms?.find(t => t.termId === selectedOption?.value);
-                                if (term) {
-                                    setValue(`classroom_${index}.academicYear`, term.academicYear);
-                                    setValue(`classroom_${index}.semester`, term.semester);
-                                    setValue(`classroom_${index}.termId`, term.termId);
-                                } else {
-                                    setValue(`classroom_${index}.academicYear`, null);
-                                    setValue(`classroom_${index}.semester`, null);
-                                    setValue(`classroom_${index}.termId`, null);
-                                }
-                            }}
-                            isClearable
-                            placeholder="เลือกภาคการศึกษา..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
+                        <Controller
+                            control={control}
+                            name={`classroom_${index}.termId`}
+                            render={({ field }) => (
+                                <Select
+                                    id={`AcademicTerm_${index}`}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    options={termOptions}
+                                    value={termOptions.find(opt => opt.value === field.value) || null}
+                                    onChange={selectedOption => {
+                                        const term = academicterms?.find(t => t.termId === selectedOption?.value);
+                                        if (term) {
+                                            setValue(`classroom_${index}.academicYear`, term.academicYear);
+                                            setValue(`classroom_${index}.semester`, term.semester);
+                                            field.onChange(term.termId);
+                                        } else {
+                                            setValue(`classroom_${index}.academicYear`, null);
+                                            setValue(`classroom_${index}.semester`, null);
+                                            field.onChange(null);
+                                        }
+                                    }}
+                                    isClearable
+                                    placeholder="เลือกภาคการศึกษา..."
+                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                />
+                            )}
                         />
                     </div>
 
@@ -296,31 +291,37 @@ function CreateClassroom() {
                             </svg>
                             ครูที่ปรึกษาประจำชั้น
                         </label>
-                        <Select
-                            id={`ClassTeacher_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={teacherOptions?.filter(opt =>
-                                // allow if not already advising for this term or already selected in this form
-                                (
-                                    !opt.classTeacher.some(ct => ct.classroom.termId === formTerm)
-                                    || currentTeacherIds.includes(opt.value)
-                                )
-                                &&
-                                // prevent selection by other forms unless it's in this form
-                                (
-                                    !selectedTeachers.has(opt.value)
-                                    || currentTeacherIds.includes(opt.value)
-                                )
+                        <Controller
+                            control={control}
+                            name={`classroom_${index}.teacherIds`}
+                            render={({ field }) => (
+                                <Select
+                                    id={`ClassTeacher_${index}`}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    options={teacherOptions?.filter(opt =>
+                                        (
+                                            !opt.classTeacher.some(ct => ct.classroom.termId === formTerm)
+                                            || (field.value || []).includes(opt.value)
+                                        )
+                                        &&
+                                        (
+                                            !selectedTeachersRef.current.has(opt.value)
+                                            || (field.value || []).includes(opt.value)
+                                        )
+                                    )}
+                                    value={teacherOptions?.filter(option =>
+                                        (field.value || []).includes(option.value)
+                                    )}
+                                    onChange={selectedOptions => {
+                                        handleTeacherChange(selectedOptions, index);
+                                    }}
+                                    isClearable
+                                    isMulti
+                                    placeholder="เลือกครูที่ปรึกษา..."
+                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                />
                             )}
-                            value={teacherOptions?.filter(option => 
-                                currentTeacherIds.includes(option.value)
-                            )}
-                            onChange={(selectedOptions) => handleTeacherChange(selectedOptions, index)}
-                            isClearable
-                            isMulti
-                            placeholder="เลือกครูที่ปรึกษา..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
                         />
                     </div>
                     
@@ -332,16 +333,22 @@ function CreateClassroom() {
                             </svg>
                             หัวหน้าห้อง
                         </label>
-                        <Select
-                            id={`Leader_${index}`}
-                            className="react-select-container"
-                            classNamePrefix="react-select"
-                            options={studentOptions}
-                            value={studentOptions?.find(option => option.value === leaderId) || null}
-                            onChange={(selectedOption) => setValue(`classroom_${index}.leaderId`, selectedOption ? selectedOption.value : null)}
-                            isClearable
-                            placeholder="เลือกหัวหน้าห้อง..."
-                            noOptionsMessage={() => "ไม่พบข้อมูล"}
+                        <Controller
+                            control={control}
+                            name={`classroom_${index}.leaderId`}
+                            render={({ field }) => (
+                                <Select
+                                    id={`Leader_${index}`}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    options={studentOptions}
+                                    value={studentOptions?.find(option => option.value === field.value) || null}
+                                    onChange={selectedOption => field.onChange(selectedOption ? selectedOption.value : null)}
+                                    isClearable
+                                    placeholder="เลือกหัวหน้าห้อง..."
+                                    noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                />
+                            )}
                         />
                     </div>
                 </div>
@@ -532,7 +539,7 @@ function CreateClassroom() {
                                             &&
                                             // prevent selection by other forms unless already selected here
                                             (
-                                                !selectedTeachers.has(opt.value)
+                                                !selectedTeachersRef.current.has(opt.value)
                                                 || (watch('teacherIds') || []).includes(opt.value)
                                             )
                                         )}

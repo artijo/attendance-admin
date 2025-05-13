@@ -38,6 +38,7 @@ export const AttendanceBySubjectCanExam = () => {
             );
             const data = response.data || [];
             setStudentList(data);
+            // console.log(data);
 
             if (data.length > 0) {
                 const cannotExamCount = data.filter(student => student.canExam === "ไม่มีสิทธิ์สอบ").length;
