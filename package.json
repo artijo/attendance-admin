@@ -17,6 +17,7 @@
     "@fullcalendar/list": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
+    "@hookform/resolvers": "^5.0.1",
     "@react-pdf/renderer": "^4.1.6",
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.8.4",
