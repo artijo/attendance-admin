@@ -167,11 +167,12 @@ export function convertNumberToThaiMonth(monthNumber) {
     });
 };
 
- export const formatThaiDateTime = (dateString) => {
-        if (!dateString) return "-";
-        const dt = DateTime.fromISO(dateString);
-        return dt.setLocale('th').toFormat('d MMMM yyyy HH:mm น.');
-    };
+export const formatThaiDateTime = (dateString) => {
+  if (!dateString) return "-";
+  const dt = DateTime.fromISO(dateString);
+  // Convert to Thai locale and add 543 years for Buddhist Era
+  return dt.setLocale('th').toFormat('d MMMM ') + (dt.year + 543) + dt.toFormat(' HH:mm น.');
+};
 
 export const formatTimeThai = (timeString) => {
       if (!timeString) return "-";

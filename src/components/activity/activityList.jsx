@@ -1,19 +1,7 @@
 import { Link } from "react-router-dom";
-import { DateTime } from "luxon";
+import { formatThaiDate, formatTimeThai } from "../../helper";
 
 function ActivityList({ continuousActivities, nonContinuousActivities }) {
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
-
-    const formatTime = (timeString) => {
-        return DateTime.fromISO(timeString).toLocaleString(DateTime.TIME_SIMPLE);
-    };
-
     const ActivityTable = ({ activities, title, type }) => (
         <div className="mb-6 px-6 py-5">
             <div className="flex items-center mb-4">
@@ -59,14 +47,14 @@ function ActivityList({ continuousActivities, nonContinuousActivities }) {
                                         </Link>
                                     </td>
                                     <td className="px-4 py-3.5 font-body text-text-color">
-                                        {formatDate(activity.actDate)}
+                                        {formatThaiDate(activity.actDate)}
                                     </td>
                                     <td className="px-4 py-3.5 font-body text-text-color whitespace-nowrap">
                                         <div className="flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-text-color-alt mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
+                                            {formatTimeThai(activity.actStartTime)} - {formatTimeThai(activity.actEndTime)}
                                         </div>
                                     </td>
                                     <td className="px-4 py-3.5 font-body text-text-color">

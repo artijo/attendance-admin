@@ -98,6 +98,8 @@ const AttendenceCanExamPDF = lazy(() => import("./pages/attendence/pdfpage/canEx
 const Parent = lazy(() => import("./pages/parent/Parents.jsx"));
 const ParentDetail = lazy(() => import("./pages/parent/ParentDetail.jsx"));
 
+const Setting = lazy(() => import("./pages/setting.jsx"));
+
 
 createRoot(document.getElementById("root")).render(
   
@@ -109,6 +111,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/" element={<App />}>
           <Route path="dashboard" index element={<Dashboard />} />
+          <Route path="settings" element={<Setting />} />
           {/* Student Section */}
           <Route path="students" element={<Students />} />
           <Route path="students/create" element={<CreateForm />} />

@@ -1,19 +1,7 @@
 import { DateTime } from "luxon";
+import { formatThaiDate, formatTimeThai } from "../../helper";
 
 function ShowDetail({ activity }) {
-    const formatDate = (dateString) => {
-        if (!dateString) return "";
-        return new Date(dateString).toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
-
-    const formatTime = (timeString) => {
-        if (!timeString) return "";
-        return DateTime.fromISO(timeString).toLocaleString(DateTime.TIME_SIMPLE);
-    };
 
     return (
         <div className="flow-root">
@@ -81,11 +69,11 @@ function ShowDetail({ activity }) {
                         <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
                             <div className="flex items-center">
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-100 text-green-800 mr-2">
-                                    {formatDate(activity.actDate)}
+                                    {formatThaiDate(activity.actDate)}
                                 </span>
                                 <span className="mx-2">-</span>
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-100 text-green-800">
-                                    {formatDate(activity.actDateEnd)}
+                                    {formatThaiDate(activity.actDateEnd)}
                                 </span>
                             </div>
                         </dd>
@@ -99,7 +87,7 @@ function ShowDetail({ activity }) {
                             เวลา
                         </dt>
                         <dd className="font-body text-text-color sm:col-span-2 bg-gray-50 p-2 rounded-lg">
-                            {formatTime(activity.actStartTime)} - {formatTime(activity.actEndTime)}
+                            {formatTimeThai(activity.actStartTime)} - {formatTimeThai(activity.actEndTime)}
                         </dd>
                     </div>
 
