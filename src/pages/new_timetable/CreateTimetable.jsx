@@ -6,6 +6,8 @@ import { TimetableRow } from "../../components/new_timetable/TimetableRow";
 import { formatDayOfWeeks } from "../../helper";
 import { DateTime, Interval } from "luxon";
 import { Searchpanel } from "../../components/new_timetable/subject/searchpanel";
+import ErrorAlert from "../../components/alert/error";
+import { set } from "react-hook-form";
 
 const timeStudyList = [
     {
@@ -80,14 +82,20 @@ function CreateTimetableDragAndDrop() {
     const [activeCard, setActiveCard] = useState(null); // วิชาที่เลือก
     const [subjectActiveCard, setSubjectActiveCard] = useState(null) // วิชาที่เลือกจะใส่ในตาราง
 
+    //Error State 
+    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);
+
+
+
     const handleFormEnable = (timetablethistime, schedule) => {
         const timeStartActiveCard = DateTime.fromISO(timetablethistime.timeStart);
         const timeLateActiveCard = DateTime.fromISO(timetablethistime.timeLate);
         const diffLateTime = timeLateActiveCard.diff(timeStartActiveCard, ["minutes"]);
         setLateTime(diffLateTime.minutes);
         setEditFrom(true);
-        setTimetableEditNow({...timetablethistime, schedule});
-        
+        setTimetableEditNow({ ...timetablethistime, schedule });
+
     };
 
     const handleFormDisable = () => {
@@ -95,8 +103,8 @@ function CreateTimetableDragAndDrop() {
         setTimetableEditNow(null);
     };
 
-     //fetch timetable 
-     const fetchTimetable = async (classroomId) => {
+    //fetch timetable 
+    const fetchTimetable = async (classroomId) => {
         try {
             // setIsLoading(true);
             // setError(null);
@@ -118,46 +126,46 @@ function CreateTimetableDragAndDrop() {
     const onEditLateTimeSubmit = async (e) => {
         e.preventDefault();
         const lateTimePlus = DateTime.fromISO(timetableEditNow.timeStart).plus({ minutes: lateTime }).toFormat('HH:mm:ss');
-        try{
-            const response = await axios.put(`${HOSTNAME}/a/timetable/editlatetime`, {timetable: timetableEditNow, lateTime: lateTimePlus});
-            if(response.status === 200) {
+        try {
+            const response = await axios.put(`${HOSTNAME}/a/timetable/editlatetime`, { timetable: timetableEditNow, lateTime: lateTimePlus });
+            if (response.status === 200) {
                 fetchTimetable(classroom.classId);
                 handleFormDisable();
-            }else{
+            } else {
                 throw new Error(response.data.message);
             };
-        }catch(error){
+        } catch (error) {
             console.error(error);
         };
     }
 
     const handleOnChangeNumberLateTime = (value) => {
         let lateTimeClone = value;
-        if(lateTimeClone < 0) {
+        if (lateTimeClone < 0) {
             setLateTime(0);
-        }else{
+        } else {
             setLateTime(value);
         };
     };
 
 
-    const callDeleteTimetableApi = async (timetablethistime,schedule) => {
+    const callDeleteTimetableApi = async (timetablethistime, schedule) => {
         // timetableformate: "13.50 - 14.40",
         // period: 6
-        try{
+        try {
             const text = `คุณต้องการที่จะลบวิชา ${timetablethistime.subject.subNameThai} ในคาบ ${schedule.period} เวลา ${schedule.timetableformate}`
-            if(confirm(text) === true) {
+            if (confirm(text) === true) {
                 const response = await axios.delete(`${HOSTNAME}/a/timetable/${timetablethistime.timetableId}`)
-                if(response.status === 200) {
+                if (response.status === 200) {
                     // console.log('delete sucessful');
                     fetchTimetable(classroom.classId);
-                }else{
+                } else {
                     throw new Error(response.data.message);
                 }
-            }else{
+            } else {
                 return;
             }
-        }catch(error){
+        } catch (error) {
             console.error(error)
         }
     }
@@ -165,56 +173,69 @@ function CreateTimetableDragAndDrop() {
     const callCreateTimetableBySubject = async (classroom, timetable, schedule, weekday) => {
         try {
             const data = {
-                classroom: classroom,
-                timetable: timetable,
-                schedule: schedule,
-                weekday: weekday
-            }
+                classroom,
+                timetable,
+                schedule,
+                weekday
+            };
             const response = await axios.post(`${HOSTNAME}/a/timetable/bysubject`, data);
-            if (response.status === 200) {
-                fetchTimetable(classroom.classId);
-            } else {
-                throw new Error(response.data.message);
-            }
+            fetchTimetable(classroom.classId);
         } catch (error) {
-            console.error(error);
+            setError(true);
+            // ถ้า server ส่ง error แบบ JSON ที่มี message
+            const message = error.response?.data?.message || error.message;
+            setMessage(message);
+
+            setTimeout(() => {
+                setError(false);
+                setMessage(null);
+            }, 5000);
         }
+
     }
 
     const callSwitchTimetableSubjectPeriod = async (timetable, classroom, schedule, weekday) => {
         try {
             const data = {
-                timetable: timetable,
-                classroom: classroom,
-                schedule: schedule,
-                weekday:weekday
-            }
+                classroom,
+                timetable,
+                schedule,
+                weekday
+            };
             const response = await axios.post(`${HOSTNAME}/a/timetable/byswitchperiod`, data);
-            if (response.status === 200) {
-                fetchTimetable(classroom.classId);
-            } else {
-                throw new Error(response.data.message);
-            }
+            fetchTimetable(classroom.classId);
         } catch (error) {
-            console.error(error);
+            setError(true);
+            // ถ้า server ส่ง error แบบ JSON ที่มี message
+            const message = error.response?.data?.message || error.message;
+            setMessage(message);
+
+            setTimeout(() => {
+                setError(false);
+                setMessage(null);
+            }, 5000);
         }
     }
 
     const callSwitchSubjectAndSubject = async (firstTimetable, secondTimetable, schedule) => {
         try {
             const data = {
-                firstTimetable: firstTimetable,
-                secondTimetable: secondTimetable,
-                schedule: schedule
+                firstTimetable,
+                secondTimetable,
+                schedule
             }
             const response = await axios.post(`${HOSTNAME}/a/timetable/switchsubjectandsubject`, data);
-            if (response.status === 200) {
-                fetchTimetable(classroom.classId);
-            } else {
-                throw new Error(response.data.message);
-            }
+            fetchTimetable(classroom.classId);
         } catch (error) {
-            console.error(error);
+            setError(true);
+            const message = error.response?.data?.message || error.message;
+            setMessage(message);
+
+            setTimeout(() => {
+                setError(false);
+                setMessage(null);
+            }, 5000);
+
         }
     }
 
@@ -259,152 +280,195 @@ function CreateTimetableDragAndDrop() {
 
     }
 
+    const ErrorAlertDialog = ({ message }) => {
+        return (
+            <div role="alert" className="rounded-md border border-red-100 bg-red-100 p-4">
+                <div className="flex items-start gap-4">
+                    <span className="text-red-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                            <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
+                        </svg>
+                    </span>
+                    <div className="flex-1">
+                        <strong className="block font-medium text-red-600">เกิดข้อผิดพลาด</strong>
+                        <p className="mt-1 text-sm text-red-600">{message}</p>
+                    </div>
+                    {/* <button className="text-gray-500 transition hover:text-gray-600">
+                        <span className="sr-only">Dismiss popup</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button> */}
+                </div>
+            </div>
+        );
+    }
+
     useEffect(() => {
         if (classroom) {
             fetchTimetable(classroom.classId);
         };
     }, [classroom]);
 
-  
     return (
-        <div className="grid grid-cols-[auto_400px] gap-5 p-5 content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
-            <div className="overflow-auto h-full">
-                <div className="rounded-xl bg-white shadow">
-                    <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
-                        {/* Updated back button with React Router */}
-                        <div className="flex items-center justify-between mb-6">
-                            <button 
-                                onClick={() => navigate(-1)}
-                                className="flex items-center text-primary hover:text-primary-dark transition-colors"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                                </svg>
-                                <span className="text-sm font-medium">ย้อนกลับ</span>
-                            </button>
-                        </div>
-                        <div className="flex justify-between mb-6">
-                            <div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
-                                <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
-                                <div className="flex items-center gap-2">
-                                    <div className="bg-primary/10 text-primary rounded-full p-1.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-text-color font-heading">
-                                        ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="px-5 pb-5 relative">
-                        <table className="w-full border-collapse">
-                            <thead>
-                                <tr>
-                                    <th className="px-2 py-3 bg-gray-50 border border-gray-100 text-center w-10">
-                                        <div className="text-xs font-medium text-text-color-alt tracking-wider uppercase font-heading">
-                                            วัน / คาบเรียน
-                                        </div>
-                                    </th>
-                                    {timeStudyList.map((time, index) => (
-                                        <th key={index} className={`w-20 py-3 text-center border border-gray-100 ${time.period === 'พักเที่ยง' ? 'bg-amber-50' : 'bg-gray-50'}`}>
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-medium text-primary tracking-wider uppercase font-heading">
-                                                    {typeof time.period === 'number' ? `คาบที่ ${time.period}` : time.period}
-                                                </span>
-                                                <span className="text-xs text-text-color-alt font-body mt-1">
-                                                    {time.timetableformate}
-                                                </span>
-                                            </div>
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {dateKey.length > 0 && (
-                                    dateKey.map((date, index) => (
-                                        <React.Fragment key={index}>
-                                            <TimetableRow
-                                                scheduleWeekDay={timetable[date]}
-                                                timeStudyList={timeStudyList}
-                                                date={date}
-                                                setActiveCard={setActiveCard}
-                                                onDrop={onDrop}
-                                                callDeleteTimetableApi={callDeleteTimetableApi}
-                                                handleFormEnable={handleFormEnable}
-                                            />
-                                        </React.Fragment>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <Searchpanel setSubjectActiveCard={setSubjectActiveCard} />
-            {editForm && (
-                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/5 z-40">
-                    <div className="">
-                        <form className="bg-white w-[400px] p-6 rounded-xl shadow" onSubmit={(e) => onEditLateTimeSubmit(e)}>
-                            <div className="mb-2">
-                                <h1 className="text-lg font-bold text-primary font-heading">แก้ไขเวลาการเข้าสาย</h1>
-                                <div className="flex gap-2 bg-gray-100/70 p-2 rounded-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                    </svg>
-                                    <div className="text-xs">
-                                        <p>
-                                            คาบที่ {timetableEditNow.schedule.period} เวลา {timetableEditNow.schedule.timetableformate} 
-                                        </p>
-                                        <p>
-                                            วิชา {timetableEditNow.subject.subNameThai}
-                                        </p>
-                                    </div>
-                                    
-                                </div>
-                                <div className="mt-2 h-1 w-20 bg-secondary rounded-full"></div>
-                            </div>
-                            <div className="grid">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    เวลาการเข้าเรียนสาย (นาที)
-                                </label>
-                                <input
-                                    className="mt-1 w-full rounded-md px-1.5 py-1  border-gray-200 shadow-sm sm:text-sm"
-                                    value={lateTime}
-                                    type="number"
-                                    onChange={(e) => handleOnChangeNumberLateTime(e.target.value)}
-                                />
-                            </div>
-                            <div className="flex gap-2 w-fit mt-2 ml-auto">
-                                <button
-                                    type="button"
-                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-xs font-medium rounded-lg text-text-color bg-white hover:bg-gray-100 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
-                                    onClick={() => handleFormDisable()}
-                                >
-                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                    </svg>
-
-                                    ยกเลิก
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-xs font-medium rounded-lg text-white bg-primary hover:cursor-pointer hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    บันทึกการแก้ไข
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+        <div>
+            {setError && (
+                <div className="fixed w-1/4 top-0 left-1/2 -translate-x-1/2 z-40  mt-4">
+                    <ErrorAlertDialog message={message} />
                 </div>
             )}
+
+            <div className="grid grid-cols-[auto_400px] gap-5 p-5 content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
+                <div className="overflow-auto h-full">
+                    <div className="rounded-xl bg-white shadow">
+                        <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
+                            {/* Updated back button with React Router */}
+                            <div className="flex items-center justify-between mb-6">
+                                <button
+                                    onClick={() => navigate(-1)}
+                                    className="flex items-center text-primary hover:text-primary-dark transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                    </svg>
+                                    <span className="text-sm font-medium">ย้อนกลับ</span>
+                                </button>
+                            </div>
+                            <div className="flex justify-between mb-6">
+                                <div>
+                                    <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
+                                    <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="bg-primary/10 text-primary rounded-full p-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-text-color font-heading">
+                                            ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="px-5 pb-5 relative">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th className="px-2 py-3 bg-gray-50 border border-gray-100 text-center w-10">
+                                            <div className="text-xs font-medium text-text-color-alt tracking-wider uppercase font-heading">
+                                                วัน / คาบเรียน
+                                            </div>
+                                        </th>
+                                        {timeStudyList.map((time, index) => (
+                                            <th key={index} className={`w-20 py-3 text-center border border-gray-100 ${time.period === 'พักเที่ยง' ? 'bg-amber-50' : 'bg-gray-50'}`}>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-medium text-primary tracking-wider uppercase font-heading">
+                                                        {typeof time.period === 'number' ? `คาบที่ ${time.period}` : time.period}
+                                                    </span>
+                                                    <span className="text-xs text-text-color-alt font-body mt-1">
+                                                        {time.timetableformate}
+                                                    </span>
+                                                </div>
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {dateKey.length > 0 && (
+                                        dateKey.map((date, index) => (
+                                            <React.Fragment key={index}>
+                                                <TimetableRow
+                                                    scheduleWeekDay={timetable[date]}
+                                                    timeStudyList={timeStudyList}
+                                                    date={date}
+                                                    setActiveCard={setActiveCard}
+                                                    onDrop={onDrop}
+                                                    callDeleteTimetableApi={callDeleteTimetableApi}
+                                                    handleFormEnable={handleFormEnable}
+                                                />
+                                            </React.Fragment>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <Searchpanel setSubjectActiveCard={setSubjectActiveCard} />
+                {editForm && (
+                    <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/5 z-40">
+                        <div className="">
+                            <form className="bg-white w-[400px] p-6 rounded-xl shadow" onSubmit={(e) => onEditLateTimeSubmit(e)}>
+                                <div className="mb-2">
+                                    <h1 className="text-lg font-bold text-primary font-heading">แก้ไขเวลาการเข้าสาย</h1>
+                                    <div className="flex gap-2 bg-gray-100/70 p-2 rounded-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                        </svg>
+                                        <div className="text-xs">
+                                            <p>
+                                                คาบที่ {timetableEditNow.schedule.period} เวลา {timetableEditNow.schedule.timetableformate}
+                                            </p>
+                                            <p>
+                                                วิชา {timetableEditNow.subject.subNameThai}
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                    <div className="mt-2 h-1 w-20 bg-secondary rounded-full"></div>
+                                </div>
+                                <div className="grid">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        เวลาการเข้าเรียนสาย (นาที)
+                                    </label>
+                                    <input
+                                        className="mt-1 w-full rounded-md px-1.5 py-1  border-gray-200 shadow-sm sm:text-sm"
+                                        value={lateTime}
+                                        type="number"
+                                        onChange={(e) => handleOnChangeNumberLateTime(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex gap-2 w-fit mt-2 ml-auto">
+                                    <button
+                                        type="button"
+                                        className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-xs font-medium rounded-lg text-text-color bg-white hover:bg-gray-100 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                        onClick={() => handleFormDisable()}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+
+                                        ยกเลิก
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-xs font-medium rounded-lg text-white bg-primary hover:cursor-pointer hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        บันทึกการแก้ไข
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
+
     );
 };
 
