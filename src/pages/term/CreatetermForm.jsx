@@ -3,9 +3,10 @@ import { useState } from "react";
 import { HOSTNAME } from "../../config";
 import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function CreatetermForm() {
+    const navigate = useNavigate();
     const [academicYear, setAcademicYear] = useState("");
     const [semester, setSemester] = useState("");
     const [termStart, setTermStart] = useState("");
@@ -36,6 +37,8 @@ function CreatetermForm() {
             setError(true);
         } finally {
             setIsSubmitting(false);
+            navigate("/terms");
+            
         }
     }
     
