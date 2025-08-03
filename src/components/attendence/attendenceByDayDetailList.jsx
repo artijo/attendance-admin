@@ -10,6 +10,7 @@ import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
+    // console.log(studentList);
     const ref = useRef(null);
     const location = useLocation();
     const date = location.state?.date;
@@ -31,7 +32,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             activity: 0,
             leave: 0
         };
-        
+
         // Calculate per-period statistics
         const periodsCount = studentList[0].attendance.length;
         const periodStats = Array(periodsCount).fill().map(() => ({
@@ -41,14 +42,14 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             activity: 0,
             leave: 0
         }));
-        
+
         studentList.forEach((student) => {
             student.attendance.forEach((attendance, periodIndex) => {
                 if (attendance.attStatus !== null) {
                     const status = attendance.attStatus.toLowerCase();
                     if (updatedTotalStatus.hasOwnProperty(status)) {
                         updatedTotalStatus[status]++;
-                        
+
                         // Update per-period statistics
                         if (periodStats[periodIndex].hasOwnProperty(status)) {
                             periodStats[periodIndex][status]++;
@@ -57,7 +58,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                 }
             });
         });
-        
+
         setTotalStatus(updatedTotalStatus);
         setPeriodStatus(periodStats);
     };
@@ -70,13 +71,13 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             'activity': 'เข้าร่วมกิจกรรม',
             'leave': 'ลา'
         };
-        
+
         return statusMap[status] || status;
     };
 
     const getAttStatusClassName = (status) => {
         if (!status) return "text-gray-400";
-        
+
         const statusClasses = {
             'present': 'text-green-600 font-medium',
             'absent': 'text-red-600 font-medium',
@@ -84,14 +85,14 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             'activity': 'text-blue-600 font-medium',
             'leave': 'text-purple-600 font-medium'
         };
-        
+
         return statusClasses[status.toLowerCase()] || "";
     };
 
     const handleExportExcel = () => {
         if (ref.current) {
             setExportLoading(prev => ({ ...prev, excel: true }));
-            
+
             try {
                 const dateformat = DateTime.fromISO(`${date}T00:00:00`).setZone(TIME_ZONE);
                 const fileName = `สรุปการเข้าเรียนตามรายวันห้องม.${classroomInfo.classLevel}/${classroomInfo.classRoom} วัน${formatDayOfWeeks(dateformat.weekday)} วันที่${formatDateToThai(dateformat.toString())}`;
@@ -106,7 +107,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
     const fetchClassroomInfo = async () => {
         if (!location.state?.classroomId) return;
-        
+
         try {
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
@@ -124,9 +125,9 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
 
     const navigatePdfPage = () => {
-        navigate("/attendances/details/byday/pdf", {state: { studentList, totalStatus, date, classroomInfo }});
+        navigate("/attendances/details/byday/pdf", { state: { studentList, totalStatus, date, classroomInfo } });
     }
-  
+
     useEffect(() => {
         fetchClassroomInfo();
     }, []);
@@ -174,130 +175,129 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
         <div>
             {studentList.length > 0 && totalStatus && classroomInfo && (
                 <div className="flex justify-end items-center space-x-2 mb-4">
-                     <ExportPdfButton
-                        onClikFunction={navigatePdfPage} 
+                    <ExportPdfButton
+                        onClikFunction={navigatePdfPage}
                     />
-                    <ExportExcelButton 
+                    <ExportExcelButton
                         handelOnClickFunction={handleExportExcel}
-                        isLoading={exportLoading.excel} 
+                        isLoading={exportLoading.excel}
                     />
                 </div>
             )}
-            
-            <div>
-                <div className="overflow-x-auto">
-                    <table 
-                        ref={ref} 
-                        className="w-full border-collapse text-sm bg-white rounded-lg overflow-hidden"
-                    >
-                        <thead className="bg-gray-50">
-                            <tr className="border-b border-gray-200">
-                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>คาบที่</th>
-                                {studentList[0].attendance.map((attendance, index) => (
-                                    <th 
-                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
-                                        key={index}
-                                    >
-                                        {index + 1}
-                                        <span className="block text-xs font-normal mt-1 text-gray-500">
-                                            ({dateTimeFormat(attendance.studingTimeDate)})
-                                        </span>
-                                    </th>
-                                ))}
-                            </tr>
-                            <tr className="border-b border-gray-200">
-                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>รหัสวิชา</th>
-                                {studentList[0].attendance.map((attendance, index) => (
-                                    <th 
-                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
-                                        key={index}
-                                    >
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {attendance.subjectCode}
-                                        </span>
-                                    </th>
-                                ))}
-                            </tr>
-                            <tr className="border-b border-gray-200">
-                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">เลขที่</th>
-                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">รหัสนักเรียน</th>
-                                <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">ชื่อ-นามสกุล</th>
-                                {studentList[0].attendance.map((attendance, index) => (
-                                    <th 
-                                        className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" 
-                                        key={index}
-                                    >
-                                        <div className="truncate max-w-[150px]">{attendance.subjectName}</div>
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {studentList.map((student, index) => (
-                                <tr 
-                                    key={index} 
-                                    className="hover:bg-gray-50 transition-colors duration-150"
+
+            <div className="overflow-y-auto h-[500px]">
+                <table
+                    ref={ref}
+                    className="w-full border-collapse text-sm bg-white rounded-lg"
+                >
+                    <thead className="bg-white sticky top-0 z-100">
+                        <tr className=" border-gray-200">
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>คาบที่</th>
+                            {studentList[0].attendance.map((attendance, index) => (
+                                <th
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    key={index}
                                 >
-                                    <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{student.stdNo}</td>
-                                    <td className="px-6 py-4 border-r border-gray-200 text-text-color">{student.stdId}</td>
-                                    <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
-                                    {student.attendance.map((attendance, idx) => (
-                                        <td 
-                                            key={idx} 
-                                            className={`px-6 py-4 border-r border-gray-200 ${getAttStatusClassName(attendance.attStatus?.toLowerCase())}`}
-                                        >
-                                            {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
-                                        </td>
-                                    ))}
-                                </tr>
+                                    {index + 1}
+                                    <span className="block text-xs font-normal mt-1 text-gray-500">
+                                        ({dateTimeFormat(attendance.studingTimeDate)})
+                                    </span>
+                                </th>
                             ))}
-                        </tbody>
-                        <tfoot>
-                            <tr className="bg-gray-50">
-                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาเรียน</td>
-                                {periodStatus.map((period, index) => (
-                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium text-center">
-                                        {period.present || 0} คน
+                        </tr>
+                        <tr className=" border-gray-200">
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>รหัสวิชา</th>
+                            {studentList[0].attendance.map((attendance, index) => (
+                                <th
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    key={index}
+                                >
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {attendance.subjectCode}
+                                    </span>
+                                </th>
+                            ))}
+                        </tr>
+                        <tr className=" border-gray-200">
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">เลขที่</th>
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">รหัสนักเรียน</th>
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">ชื่อ-นามสกุล</th>
+                            {studentList[0].attendance.map((attendance, index) => (
+                                <th
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    key={index}
+                                >
+                                    <div className="truncate max-w-[150px]">{attendance.subjectName}</div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {studentList.map((student, index) => (
+                            <tr
+                                key={index}
+                                className="hover:bg-gray-50 transition-colors duration-150"
+                            >
+                                <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{student.stdNo}</td>
+                                <td className="px-6 py-4 border-r border-gray-200 text-text-color">{student.stdId}</td>
+                                <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
+                                {student.attendance.map((attendance, idx) => (
+                                    <td
+                                        key={idx}
+                                        className={`px-6 py-4 border-r border-gray-200 ${getAttStatusClassName(attendance.attStatus?.toLowerCase())}`}
+                                    >
+                                        {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="bg-gray-50">
-                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาสาย</td>
-                                {periodStatus.map((period, index) => (
-                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-orange-500 font-medium text-center">
-                                        {period.late || 0} คน
-                                    </td>
-                                ))}
-                            </tr>
-                            <tr className="bg-gray-50">
-                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ขาดเรียน</td>
-                                {periodStatus.map((period, index) => (
-                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium text-center">
-                                        {period.absent || 0} คน
-                                    </td>
-                                ))}
-                            </tr>
-                            <tr className="bg-gray-50">
-                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ลา</td>
-                                {periodStatus.map((period, index) => (
-                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium text-center">
-                                        {period.leave || 0} คน
-                                    </td>
-                                ))}
-                            </tr>
-                            <tr className="bg-gray-50">
-                                <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>กิจกรรม</td>
-                                {periodStatus.map((period, index) => (
-                                    <td key={index} className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium text-center">
-                                        {period.activity || 0} คน
-                                    </td>
-                                ))}
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                
-                <div className="mt-6">
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr className="bg-gray-50">
+                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาเรียน</td>
+                            {periodStatus.map((period, index) => (
+                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium text-center">
+                                    {period.present || 0} คน
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="bg-gray-50">
+                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาสาย</td>
+                            {periodStatus.map((period, index) => (
+                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-orange-500 font-medium text-center">
+                                    {period.late || 0} คน
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="bg-gray-50">
+                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ขาดเรียน</td>
+                            {periodStatus.map((period, index) => (
+                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium text-center">
+                                    {period.absent || 0} คน
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="bg-gray-50">
+                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ลา</td>
+                            {periodStatus.map((period, index) => (
+                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium text-center">
+                                    {period.leave || 0} คน
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="bg-gray-50">
+                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>กิจกรรม</td>
+                            {periodStatus.map((period, index) => (
+                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium text-center">
+                                    {period.activity || 0} คน
+                                </td>
+                            ))}
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div className="mt-6">
                     <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
                         <h4 className="text-sm font-medium text-text-color mb-3">คำอธิบายสถานะ:</h4>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -324,7 +324,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
