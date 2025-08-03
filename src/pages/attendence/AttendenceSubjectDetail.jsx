@@ -26,7 +26,10 @@ function AttendenceSubjectDetail() {
     const fetchData = async () => {
         try {
             const response = await axios.get(`${HOSTNAME}/a/attendence/${location.state?.subject?.subId}/${location.state?.classroomId}`);
-            setStudentList(response.data);
+            console.log(response.data)
+            const studentSortedByNumber = response.data.data.sort((a, b) => parseInt(a.stdNo) - parseInt(b.stdNo));
+            // console.log(studentSortedByNumber);
+            setStudentList({...response.data,data: studentSortedByNumber});
             setError(null);
         } catch (error) {
             console.error(error);

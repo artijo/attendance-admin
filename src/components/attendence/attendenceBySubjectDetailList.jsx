@@ -10,6 +10,7 @@ import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
 import { convertNumberToThaiMonth, dateTimeFormat } from "../../helper";
 
 export const AttendenceBySubjectDetailList = ({ studentList }) => {
+    // console.log(studentList);
     const navigate = useNavigate();
     const location = useLocation();
     const subject = location.state?.subject;
@@ -37,7 +38,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const TableHeader = ({ month }) => {
         let indexReal = 0;
         return (
-            <tr className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr className="text-xs text-gray-700 uppercase bg-white sticky top-0 z-10 ">
                 <th className="px-4 py-3">เลขที่</th>
                 <th className="px-4 py-3">รหัสนักเรียน</th>
                 <th className="px-4 py-3">ชื่อ-นามสกุล</th>
@@ -186,8 +187,8 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     {exportExcel}
                 </div>
                 
-                <div ref={(element) => (ref.current[index] = element)} className="overflow-x-auto">
-                    <table className="w-full text-sm text-left border border-line rounded-lg overflow-hidden">
+                <div ref={(element) => (ref.current[index] = element)} className="overflow-auto h-[500px]">
+                    <table className="w-full text-sm text-left rounded-lg">
                         <thead>
                             <TableHeader month={month} />
                         </thead>
