@@ -6,7 +6,7 @@ import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME, TIME_ZONE } from "../../config";
-import { dateTimeFormat, formatDateToThai, formatDayOfWeeks } from "../../helper";
+import { dateTimeFormat, formatDateToThai, formatDateToThaiStyle, formatDayOfWeeks } from "../../helper";
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
@@ -185,32 +185,36 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                 </div>
             )}
 
-            <div className="overflow-y-auto h-[500px]">
+            <div className="overflow-y-auto h-[500px] border border-gray-200 rounded-lg">
                 <table
                     ref={ref}
-                    className="w-full border-collapse text-sm bg-white rounded-lg"
+                    className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg"
                 >
-                    <thead className="bg-white sticky top-0 z-100">
-                        <tr className=" border-gray-200">
-                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>คาบที่</th>
+                    <thead className="bg-white sticky top-0 z-20">
+                        <tr>
+                            <th
+                                className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white"
+                                colSpan={3}
+                            >
+                                คาบที่
+                            </th>
                             {studentList[0].attendance.map((attendance, index) => (
                                 <th
-                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider outline-1 outline-gray-200"
                                     key={index}
+                                    style={{ minWidth: '200px' }}
                                 >
                                     {index + 1}
-                                    <span className="block text-xs font-normal mt-1 text-gray-500">
-                                        ({dateTimeFormat(attendance.studingTimeDate)})
-                                    </span>
                                 </th>
                             ))}
                         </tr>
                         <tr className=" border-gray-200">
-                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200" colSpan={3}>รหัสวิชา</th>
+                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white" colSpan={3}>รหัสวิชา</th>
                             {studentList[0].attendance.map((attendance, index) => (
                                 <th
-                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider outline-1 outline-gray-200"
                                     key={index}
+                                    style={{ minWidth: '200px' }}
                                 >
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                         {attendance.subjectCode}
@@ -219,32 +223,64 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                             ))}
                         </tr>
                         <tr className=" border-gray-200">
-                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">เลขที่</th>
-                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">รหัสนักเรียน</th>
-                            <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200">ชื่อ-นามสกุล</th>
+                            <th
+                                className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white"
+                                style={{ minWidth: '80px' }}
+                            >
+                                เลขที่
+                            </th>
+                            <th
+                                className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-[80px] outline-1 outline-gray-200 bg-white"
+                                style={{ minWidth: '128px' }}
+                            >
+                                รหัสนักเรียน
+                            </th>
+                            <th
+                                className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-[208px] outline-1 outline-gray-200 bg-white"
+                                style={{ minWidth: '200px' }}
+                            >
+                                ชื่อ-นามสกุล
+                            </th>
                             {studentList[0].attendance.map((attendance, index) => (
                                 <th
-                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider border-r border-gray-200"
+                                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider outline-1 outline-gray-200"
                                     key={index}
+                                    style={{ minWidth: '200px' }}
                                 >
-                                    <div className="truncate max-w-[150px]">{attendance.subjectName}</div>
+                                    <div className="truncate max-w-[150px]">วิชา {attendance.subjectName}</div>
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody>
                         {studentList.map((student, index) => (
                             <tr
                                 key={index}
                                 className="hover:bg-gray-50 transition-colors duration-150"
                             >
-                                <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{student.stdNo}</td>
-                                <td className="px-6 py-4 border-r border-gray-200 text-text-color">{student.stdId}</td>
-                                <td className="px-6 py-4 border-r border-gray-200 font-medium text-text-color">{`${student.fName} ${student.lName}`}</td>
+                                <td
+                                    className="px-6 py-4 font-medium text-text-color sticky left-0 bg-white z-0 outline-1 outline-gray-200"
+                                    style={{ minWidth: '80px' }}
+                                >
+                                    {student.stdNo}
+                                </td>
+                                <td
+                                    className="px-6 py-4 font-medium text-text-color sticky left-[80px] bg-white z-0 outline-1 outline-gray-200"
+                                    style={{ minWidth: '128px' }}
+                                >
+                                    {student.stdId}
+                                </td>
+                                <td
+                                    className="px-6 py-4 font-medium text-text-color sticky left-[208px] bg-white z-0 outline-1 outline-gray-200"
+                                    style={{ minWidth: '200px' }}
+                                >
+                                    {`${student.fName} ${student.lName}`}
+                                </td>
                                 {student.attendance.map((attendance, idx) => (
                                     <td
                                         key={idx}
-                                        className={`px-6 py-4 border-r border-gray-200 ${getAttStatusClassName(attendance.attStatus?.toLowerCase())}`}
+                                        className={`px-6 py-4  outline-1 outline-gray-200 ${getAttStatusClassName(attendance.attStatus?.toLowerCase())}`}
+                                        style={{ minWidth: '200px' }}
                                     >
                                         {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
                                     </td>
@@ -253,77 +289,63 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                         ))}
                     </tbody>
                     <tfoot>
-                        <tr className="bg-gray-50">
-                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาเรียน</td>
-                            {periodStatus.map((period, index) => (
-                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-green-600 font-medium text-center">
-                                    {period.present || 0} คน
+                        {[
+                            { label: "มาเรียน", color: "text-green-600", key: "present" },
+                            { label: "มาสาย", color: "text-orange-500", key: "late" },
+                            { label: "ขาดเรียน", color: "text-red-600", key: "absent" },
+                            { label: "ลา", color: "text-purple-600", key: "leave" },
+                            { label: "กิจกรรม", color: "text-blue-600", key: "activity" },
+                        ].map((row, idx) => (
+                            <tr key={idx} className="bg-gray-50">
+                                <td
+                                    colSpan={3}
+                                    className="sticky left-0 bg-gray-50 z-20 px-6 py-3 font-medium text-text-color outline-1 outline-gray-200"
+                                    style={{ width: '280px' }}
+                                >
+                                    {row.label}
                                 </td>
-                            ))}
-                        </tr>
-                        <tr className="bg-gray-50">
-                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>มาสาย</td>
-                            {periodStatus.map((period, index) => (
-                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-orange-500 font-medium text-center">
-                                    {period.late || 0} คน
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="bg-gray-50">
-                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ขาดเรียน</td>
-                            {periodStatus.map((period, index) => (
-                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-red-600 font-medium text-center">
-                                    {period.absent || 0} คน
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="bg-gray-50">
-                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>ลา</td>
-                            {periodStatus.map((period, index) => (
-                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-purple-600 font-medium text-center">
-                                    {period.leave || 0} คน
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="bg-gray-50">
-                            <td className="px-6 py-3 border-r border-gray-200 font-medium text-text-color" colSpan={3}>กิจกรรม</td>
-                            {periodStatus.map((period, index) => (
-                                <td key={index} className="px-6 py-3 border-r border-gray-200 text-blue-600 font-medium text-center">
-                                    {period.activity || 0} คน
-                                </td>
-                            ))}
-                        </tr>
+                                {periodStatus.map((period, index) => (
+                                    <td
+                                        key={index}
+                                        className={`px-6 py-3 border-r border-gray-200 font-medium text-center ${row.color}`}
+                                        style={{ minWidth: '150px' }}
+                                    >
+                                        {period[row.key] || 0} คน
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
                     </tfoot>
                 </table>
             </div>
 
             <div className="mt-6">
-                    <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-text-color mb-3">คำอธิบายสถานะ:</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <div className="flex items-center">
-                                <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
-                                <span className="text-sm">เข้าเรียน</span>
-                            </div>
-                            <div className="flex items-center">
-                                <span className="w-3 h-3 bg-red-600 rounded-full mr-2"></span>
-                                <span className="text-sm">ไม่เข้าเรียน</span>
-                            </div>
-                            <div className="flex items-center">
-                                <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
-                                <span className="text-sm">มาสาย</span>
-                            </div>
-                            <div className="flex items-center">
-                                <span className="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
-                                <span className="text-sm">เข้าร่วมกิจกรรม</span>
-                            </div>
-                            <div className="flex items-center">
-                                <span className="w-3 h-3 bg-purple-600 rounded-full mr-2"></span>
-                                <span className="text-sm">ลา</span>
-                            </div>
+                <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-text-color mb-3">คำอธิบายสถานะ:</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div className="flex items-center">
+                            <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+                            <span className="text-sm">เข้าเรียน</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                            <span className="text-sm">ไม่เข้าเรียน</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                            <span className="text-sm">มาสาย</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
+                            <span className="text-sm">เข้าร่วมกิจกรรม</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="w-3 h-3 bg-purple-600 rounded-full mr-2"></span>
+                            <span className="text-sm">ลา</span>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     );
 };
