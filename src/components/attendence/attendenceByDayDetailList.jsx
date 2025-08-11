@@ -188,7 +188,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             <div className="overflow-y-auto h-[500px] border border-gray-200 rounded-lg">
                 <table
                     ref={ref}
-                    className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg"
+                    className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg "
                 >
                     <thead className="bg-white sticky top-0 z-20">
                         <tr>
