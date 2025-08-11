@@ -122,7 +122,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                                 >
                                     {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
                                 </td>
-                            ))}
+                        ))}
                     </tr>
                 ))}
             </>
@@ -236,7 +236,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                         <thead className="bg-white sticky top-0 z-20">
                             <TableHeader month={month} />
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody>
                             <TableBody month={month} />
                         </tbody>
                         <tfoot>
