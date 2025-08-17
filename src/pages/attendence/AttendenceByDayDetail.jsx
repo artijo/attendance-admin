@@ -40,7 +40,9 @@ function AttendenceByDayDetail() {
         try {
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/attendence/byDate/${date}/${classroomId}`);
-            setStudentList(response.data);
+            const studentSortedByNumber = response.data.sort((a, b) => parseInt(a.stdNo) - parseInt(b.stdNo));
+            setStudentList(studentSortedByNumber);
+            // console.log(studentSortedByNumber);
             setError(null);
         } catch (error) {
             console.error(error);

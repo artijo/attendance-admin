@@ -47,6 +47,7 @@ function EdittermForm(){
             setMsg(error.message || "ไม่สามารถโหลดข้อมูลเทอมได้");
         } finally {
             setIsLoading(false);
+           
         }
     };
 
@@ -68,6 +69,7 @@ function EdittermForm(){
             setSuccess(false);
         } finally {
             setIsSubmitting(false);
+            navigate("/terms");
         }
     };
 

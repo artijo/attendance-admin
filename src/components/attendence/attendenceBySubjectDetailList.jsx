@@ -7,9 +7,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import axios from "axios";
 import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
-import { convertNumberToThaiMonth, dateTimeFormat } from "../../helper";
+import { convertNumberToThaiMonth, dateTimeFormat, formatDateToThaiStyle } from "../../helper";
 
 export const AttendenceBySubjectDetailList = ({ studentList }) => {
+    // console.log(studentList);
     const navigate = useNavigate();
     const location = useLocation();
     const subject = location.state?.subject;
@@ -20,7 +21,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const [error, setError] = useState(null);
 
     // console.log(classroomInfo);
-    
+
     // Format attendance status to Thai language
     const formatAttStatus = (status) => {
         const statusMap = {
@@ -37,16 +38,36 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const TableHeader = ({ month }) => {
         let indexReal = 0;
         return (
-            <tr className="text-xs text-gray-700 uppercase bg-gray-50">
-                <th className="px-4 py-3">เลขที่</th>
-                <th className="px-4 py-3">รหัสนักเรียน</th>
-                <th className="px-4 py-3">ชื่อ-นามสกุล</th>
+            <tr >
+                <th
+                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white"
+                    style={{ minWidth: '80px' }}
+                >
+                    เลขที่
+                </th>
+                <th
+                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-[80px] outline-1 outline-gray-200 bg-white"
+                    style={{ minWidth: '128px' }}
+                >
+                    รหัสนักเรียน
+                </th>
+                <th
+                    className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-[208px] outline-1 outline-gray-200 bg-white"
+                    style={{ minWidth: '200px' }}
+                >
+                    ชื่อ-นามสกุล
+                </th>
                 {studentList.data[0].attendance
                     .filter((att) => att.month === month)
                     .map((attendance, index) => (
-                        <th key={index} className="px-4 py-3 text-center whitespace-nowrap">
-                            <div className="font-medium">คาบที่ {++indexReal}</div>
-                            <div className="text-xs mt-1 text-gray-500 font-normal">({dateTimeFormat(attendance.studingTimeDate)})</div>
+                        <th
+                            className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider outline-1 outline-gray-200"
+                            key={index}
+                            style={{ minWidth: '240px' }}
+                        >
+                            คาบที่ {++indexReal} วันที่ {formatDateToThaiStyle(attendance.studingTimeDate)}
+                            {/* <div className="font-medium">คาบที่ {++indexReal}</div>
+                            <div className="text-xs mt-1 text-gray-500 font-normal">({dateTimeFormat(attendance.studingTimeDate)})</div> */}
                         </th>
                     ))}
             </tr>
@@ -57,7 +78,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const TableBody = ({ month }) => {
         const getStatusClass = (status) => {
             if (!status) return "text-gray-400";
-            
+
             const statusClasses = {
                 'present': 'text-green-600 font-medium',
                 'absent': 'text-red-600 font-medium',
@@ -65,24 +86,43 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 'activity': 'text-blue-600 font-medium',
                 'leave': 'text-purple-600 font-medium'
             };
-            
+
             return statusClasses[status.toLowerCase()] || "";
         };
-        
+
         return (
             <>
                 {studentList.data.map((student, index) => (
-                    <tr key={index} className="bg-white border-b hover:bg-gray-50 transition-colors duration-150">
-                        <td className="px-4 py-3 text-center font-medium">{student.stdNo}</td>
-                        <td className="px-4 py-3">{student.stdId}</td>
-                        <td className="px-4 py-3 font-medium">{`${student.fName} ${student.lName}`}</td>
+                    <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                        <td 
+                            className="px-4 py-3 font-medium text-text-color sticky left-0 bg-white outline-1 outline-gray-200"
+                            style={{ minWidth: '80px' }}
+                        >
+                            {student.stdNo}
+                        </td>
+                        <td 
+                            className="px-4 py-3 font-medium text-text-color sticky left-[80px] bg-white outline-1 outline-gray-200"
+                            style={{ minWidth: '128px' }}
+                        >
+                            {student.stdId}
+                        </td>
+                        <td 
+                            className="px-4 py-3 font-medium text-text-color sticky left-[208px] bg-white outline-1 outline-gray-200"
+                            style={{ minWidth: '200px' }}
+                        >
+                            {`${student.fName} ${student.lName}`}
+                        </td>
                         {student.attendance
                             .filter((att) => att.month === month)
                             .map((attendance, attIndex) => (
-                                <td key={attIndex} className={`px-4 py-3 text-center ${getStatusClass(attendance.attStatus?.toLowerCase())}`}>
+                                <td 
+                                    key={attIndex} 
+                                    className={`px-6 py-4  outline-1 outline-gray-200 ${getStatusClass(attendance.attStatus?.toLowerCase())}`}
+                                    style={{ minWidth: '200px' }}
+                                >
                                     {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : '-'}
                                 </td>
-                            ))}
+                        ))}
                     </tr>
                 ))}
             </>
@@ -92,17 +132,17 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     // Render table footer with status summary
     const TableFooter = ({ month }) => {
         // Get all attendance records for this month
-        const monthAttendance = studentList.data.flatMap(student => 
+        const monthAttendance = studentList.data.flatMap(student =>
             student.attendance.filter(att => att.month === month)
         );
-        
+
         // Group attendance records by period (using their index)
         const periodStatusCounts = {};
-        
+
         monthAttendance.forEach((attendance, index) => {
             // Get period index (e.g., 1st period, 2nd period)
             const periodIndex = index % (monthAttendance.length / studentList.data.length);
-            
+
             if (!periodStatusCounts[periodIndex]) {
                 periodStatusCounts[periodIndex] = {
                     present: 0,
@@ -113,11 +153,11 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     null: 0
                 };
             }
-            
+
             const status = attendance.attStatus?.toLowerCase() || 'null';
             periodStatusCounts[periodIndex][status]++;
         });
-        
+
         const getStatusSummaryStyle = (status) => {
             const statusStyles = {
                 present: 'bg-green-50 text-green-700',
@@ -127,18 +167,18 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 leave: 'bg-purple-50 text-purple-700',
                 null: 'bg-gray-50 text-gray-500'
             };
-            
+
             return statusStyles[status] || 'bg-gray-50 text-gray-500';
         };
-        
+
         const renderStatusSummary = (counts) => {
             const totalStudents = studentList.data.length;
-            
+
             return (
                 <div className="flex flex-col space-y-1 min-w-[100px]">
                     {Object.entries(counts).map(([status, count]) => {
                         if (count === 0 || status === 'null') return null;
-                        
+
                         const statusLabel = {
                             present: 'เข้าเรียน',
                             absent: 'ไม่เข้าเรียน',
@@ -146,12 +186,13 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                             activity: 'เข้าร่วมกิจกรรม',
                             leave: 'ลา'
                         }[status];
-                        
+
                         const percentage = Math.round((count / totalStudents) * 100);
-                        
+
                         return (
-                            <div 
-                                key={status} 
+                            <div
+                                key={status}
+            
                                 className={`text-xs px-2 py-1 rounded-md flex justify-between items-center ${getStatusSummaryStyle(status)}`}
                             >
                                 <span>{statusLabel}</span>
@@ -162,10 +203,14 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 </div>
             );
         };
-        
+
         return (
             <tr className="bg-gray-50 border-t-2 border-gray-200">
-                <td colSpan={3} className="px-4 py-3 font-medium text-gray-700">
+                <td 
+                    colSpan={3} 
+                    className="sticky left-0 bg-gray-50 z-20 px-6 py-3 font-medium text-text-color outline-1 outline-gray-200"
+                    style={{ minWidth: '280px' }}
+                >
                     สรุปจำนวนแต่ละสถานะ
                 </td>
                 {Object.entries(periodStatusCounts).map(([periodIndex, counts]) => (
@@ -185,13 +230,13 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     {exportPdf}
                     {exportExcel}
                 </div>
-                
-                <div ref={(element) => (ref.current[index] = element)} className="overflow-x-auto">
-                    <table className="w-full text-sm text-left border border-line rounded-lg overflow-hidden">
-                        <thead>
+
+                <div ref={(element) => (ref.current[index] = element)} className="overflow-auto h-[500px] border border-gray-200 rounded-lg">
+                    <table className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg ">
+                        <thead className="bg-white sticky top-0 z-20">
                             <TableHeader month={month} />
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody>
                             <TableBody month={month} />
                         </tbody>
                         <tfoot>
@@ -237,17 +282,17 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     };
 
     // Handle Excel export
-    const handleExportExcel = (objectlist ,month) => {
+    const handleExportExcel = (objectlist, month) => {
         const fileName = `สรุปการเข้าเรียนวิชา${subject.subNameThai}_ม.${classroomInfo.classLevel}/${classroomInfo.classRoom}_เดือน${convertNumberToThaiMonth(month)}`;
-        try{
+        try {
             summaryAttendeanceBySubjectFilterByDay(objectlist, month, fileName, classroomInfo, subject);
-        }catch(error){
+        } catch (error) {
             console.log(error);
         }
     };
 
-    const navigateToPDF = (subject,classroomInfo, month) => {
-        navigate('/attendances/details/bysubject/pdf', {state: { subject, classroomInfo, month, studentList}});
+    const navigateToPDF = (subject, classroomInfo, month) => {
+        navigate('/attendances/details/bysubject/pdf', { state: { subject, classroomInfo, month, studentList } });
     }
 
     // Navigate to exam eligibility summary page
@@ -264,7 +309,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     // Summary button component
     const ExamEligibilityButton = () => {
         return (
-            <button 
+            <button
                 onClick={handleNavigateToExamEligibility}
                 className="inline-flex items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
@@ -280,7 +325,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         if (location.state?.classroomId) {
             fetchClassroomInfo();
         }
-        
+
         if (studentList) {
             makeValueIsOpen();
         }
@@ -301,17 +346,17 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     <div className="text-text-color-alt font-body text-sm">จำนวนเดือนที่มีข้อมูล:</div>
                     <div className="font-medium text-primary text-lg font-heading">{studentList.month.length} เดือน</div>
                 </div>
-                
+
                 <ExamEligibilityButton />
             </div>
-            
+
             <div className="space-y-4">
                 {classroomInfo != null && studentList.month.map((month, index) => (
                     <div key={index}>
-                        <TapAttendenceSummaryOpen 
-                            title={`เดือน${convertNumberToThaiMonth(month)}`} 
-                            index={index} 
-                            isTabOpen={isTabOpen} 
+                        <TapAttendenceSummaryOpen
+                            title={`เดือน${convertNumberToThaiMonth(month)}`}
+                            index={index}
+                            isTabOpen={isTabOpen}
                             handleIsTabOpen={handleIsTabOpen}
                             icon={
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -319,16 +364,16 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                                 </svg>
                             }
                         >
-                            <Table 
-                                month={month} 
-                                index={index} 
-                                exportPdf={<ExportPdfButton onClikFunction={() => navigateToPDF(subject,classroomInfo,month, index)}/>}
+                            <Table
+                                month={month}
+                                index={index}
+                                exportPdf={<ExportPdfButton onClikFunction={() => navigateToPDF(subject, classroomInfo, month, index)} />}
                                 exportExcel={<ExportExcelButton handelOnClickFunction={() => handleExportExcel(studentList, month)} />}
                             />
                         </TapAttendenceSummaryOpen>
                     </div>
                 ))}
-                
+
                 {studentList.month.length === 0 && (
                     <div className="bg-white rounded-xl shadow-md p-6 text-center border border-line">
                         <div className="flex justify-center mb-4 text-text-color-alt">
@@ -341,10 +386,10 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                     </div>
                 )}
             </div>
-            
+
             <div className="flex justify-center mt-6">
-                <Link 
-                    to="/attendances" 
+                <Link
+                    to="/attendances"
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
