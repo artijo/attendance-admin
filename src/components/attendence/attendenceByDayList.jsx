@@ -12,14 +12,14 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    
+
     const totalPages = Math.ceil(dayList.length / itemsPerPage);
     const sliceDayList = dayList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-    
+
     const getTermBetween = async () => {
         try {
             setIsLoading(true);
@@ -71,7 +71,7 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                     จำนวนวันที่มีการเรียนตามเทอม: <span className="text-primary ml-1 font-semibold">{dayList.length} วัน</span>
                 </div>
             </div>
-            
+
             <div className="bg-white rounded-lg border border-line overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
@@ -85,33 +85,33 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                         <tbody className="divide-y divide-gray-200">
                             {sliceDayList.length > 0 ? (
                                 sliceDayList.map((day, index) => {
-                                    const formattedDate = formatDateToThai(day);
-                                    const dayOfWeek = formatDayOfWeeks(DateTime.fromISO(`${day}T13:00:00Z`).setZone(TIME_ZONE).weekday);
-                                    const isWeekend = ["เสาร์", "อาทิตย์"].includes(dayOfWeek);
-                                    return (
-                                        <tr key={index} className={`${isWeekend ? 'bg-red-50' : 'bg-white'} hover:bg-gray-50 transition-colors duration-150`}>
-                                            <td className="px-6 py-4 font-medium text-text-color">
-                                                {formattedDate}
-                                            </td>
-                                            <td className={`px-6 py-4 ${isWeekend ? 'text-red-600 font-medium' : 'text-text-color'}`}>
-                                                {dayOfWeek}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <Link 
-                                                    to="/attendances/details/byday" 
-                                                    state={{ classroomId: classroomId, date: day }}
-                                                    className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors duration-300"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                    </svg>
-                                                    ดูการเข้าเรียน
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
+                                  const formattedDate = formatDateToThai(day);
+                                      // สร้าง DateTime object ด้วยโซนเวลาท้องถิ่นตั้งแต่แรก
+                                      const dayOfWeek = formatDayOfWeeks(DateTime.fromISO(day, { zone: TIME_ZONE }).weekday);
+                                      const isWeekend = ["เสาร์", "อาทิตย์"].includes(dayOfWeek);
+                                      return (
+                                          <tr key={index} className={`${isWeekend ? 'bg-red-50' : 'bg-white'} hover:bg-gray-50 transition-colors duration-150`}>
+                                              <td className="px-6 py-4 font-medium text-text-color">
+                                                  {formattedDate}
+                                              </td>
+                                              <td className={`px-6 py-4 ${isWeekend ? 'text-red-600 font-medium' : 'text-text-color'}`}>
+                                                  {dayOfWeek}
+                                              </td>
+                                              <td className="px-6 py-4 text-right">
+                                                  <Link
+                                                      to="/attendances/details/byday"
+                                                      state={{ classroomId: classroomId, date: day }}
+                                                      className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors duration-300"
+                                                  >
+                                                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                      </svg>
+                                                      ดูการเข้าเรียน
+                                                  </Link>
+                                              </td>
+                                          </tr>
+                                      );
                             ) : (
                                 <tr>
                                     <td colSpan={3} className="px-6 py-10 text-center">
@@ -130,21 +130,21 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                         </tbody>
                     </table>
                 </div>
-                
+
                 {dayList.length > 0 && (
                     <div className="border-t border-line px-6 py-4">
                         <div className="flex items-center justify-between">
                             <p className="text-sm text-text-color-alt">
                                 แสดง <span className="font-medium text-text-color">{sliceDayList.length}</span> จาก <span className="font-medium text-text-color">{dayList.length}</span> รายการ
                             </p>
-                            
+
                             <div className="flex items-center justify-end gap-1">
                                 <button
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
                                     className={`flex items-center justify-center px-3 py-1 rounded border ${
-                                        currentPage === 1 
-                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        currentPage === 1
+                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                                         : 'border-gray-200 bg-white text-text-color hover:bg-gray-50 transition-colors'
                                     }`}
                                 >
@@ -156,8 +156,8 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                                     .filter(page => {
                                         // Show current page, first, last, and pages near current
-                                        return page === 1 || 
-                                               page === totalPages || 
+                                        return page === 1 ||
+                                               page === totalPages ||
                                                (page >= currentPage - 1 && page <= currentPage + 1);
                                     })
                                     .map((page, index, array) => (
@@ -168,8 +168,8 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                                             <button
                                                 onClick={() => handlePageChange(page)}
                                                 className={`px-3 py-1 rounded ${
-                                                    currentPage === page 
-                                                    ? 'bg-primary text-white' 
+                                                    currentPage === page
+                                                    ? 'bg-primary text-white'
                                                     : 'bg-white text-text-color hover:bg-gray-50 border border-gray-200 transition-colors'
                                                 }`}
                                             >
@@ -183,8 +183,8 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
                                     className={`flex items-center justify-center px-3 py-1 rounded border ${
-                                        currentPage === totalPages 
-                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        currentPage === totalPages
+                                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                                         : 'border-gray-200 bg-white text-text-color hover:bg-gray-50 transition-colors'
                                     }`}
                                 >
@@ -205,4 +205,3 @@ AttendenceByDayList.propTypes = {
     termId: PropTypes.string.isRequired,
     classroomId: PropTypes.string.isRequired
 };
-
