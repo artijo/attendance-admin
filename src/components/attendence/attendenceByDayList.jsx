@@ -86,7 +86,7 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                             {sliceDayList.length > 0 ? (
                                 sliceDayList.map((day, index) => {
                                     const formattedDate = formatDateToThai(day);
-                                    const dayOfWeek = formatDayOfWeeks(DateTime.fromISO(`${day}T17:00:00`).setZone(TIME_ZONE).weekday);
+                                    const dayOfWeek = formatDayOfWeeks(DateTime.fromISO(`${day}T13:00:00Z`).setZone(TIME_ZONE).weekday);
                                     const isWeekend = ["เสาร์", "อาทิตย์"].includes(dayOfWeek);
                                     return (
                                         <tr key={index} className={`${isWeekend ? 'bg-red-50' : 'bg-white'} hover:bg-gray-50 transition-colors duration-150`}>
