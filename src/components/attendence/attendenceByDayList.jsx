@@ -113,8 +113,10 @@ export const AttendenceByDayList = ({ termId, classroomId }) => {
                 sliceDayList.map((day, index) => {
                   const formattedDate = formatDateToThai(day);
                   // สร้าง DateTime object ด้วยโซนเวลาท้องถิ่นตั้งแต่แรก
+                  // วิธีที่ 2: ใช้ fromFormat() เพื่อสร้างวันที่โดยอ้างอิงจากโซนเวลาท้องถิ่น
                   const dayOfWeek = formatDayOfWeeks(
-                    DateTime.fromISO(day, { zone: TIME_ZONE }).weekday,
+                    DateTime.fromFormat(day, "yyyy-MM-dd", { zone: TIME_ZONE })
+                      .weekday,
                   );
                   const isWeekend = ["เสาร์", "อาทิตย์"].includes(dayOfWeek);
                   return (
