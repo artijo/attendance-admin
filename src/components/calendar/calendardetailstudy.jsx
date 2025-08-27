@@ -16,6 +16,7 @@ export const CalendarDetatils = ({classroom}) => {
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/fullcalendarStudyTime/${classroom.classId}`);
             setStudyList(response.data);
+            // console.log(response.data);
             setError(null);
         } catch (err) {
             console.error(err);
