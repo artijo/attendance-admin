@@ -1,13 +1,14 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HOSTNAME } from '../../config';
 import { formatDateTimeISOToDate } from "../../helper.js";
-import AlertSuccess from '../../components/alert/success.jsx';
+// import AlertSuccess from '../../components/alert/success.jsx';
 import ErrorAlert from '../../components/alert/error.jsx';
 
 function EditHoliday() {
     const params = useParams();
+    const navigate = useNavigate();
     const [holidayName, setHolidayName] = useState("");
     const [dateStartDateEndDate, setDateStartDateEndDate] = useState("");
     const [holidayType, setHolidayType] = useState("RATCHAKHAN");
@@ -18,7 +19,7 @@ function EditHoliday() {
     // response from server 
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
+    // const [success, setSuccess] = useState(false);
 
     const onSubmitEdit = async (event) => {
         event.preventDefault();
@@ -29,20 +30,22 @@ function EditHoliday() {
                 startHolidayDate: dateStartDateEndDate,
                 type: holidayType,
             });
-            if (response.status === 200) {
-                setMsg(response.data.message || "แก้ไขข้อมูลวันหยุดเรียบร้อยแล้ว");
-                setSuccess(true);
-                setError(false);
-            } else {
+            if (!response.status === 200) {
                 throw new Error(response.data.message);
             }
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการแก้ไขวันหยุด");
             setError(true);
-            setSuccess(false);
         } finally {
             setIsSubmitting(false);
+            let state = {
+                title: "แก้ไขวันหยุดสำเร็จ",
+                status: true,
+                msg: `แก้ไขวันหยุด ${holidayName} สำเร็จ`
+            }
+            setIsSubmitting(false);
+            navigate("/holiday", { state: state})
         }
     };
 
@@ -53,6 +56,7 @@ function EditHoliday() {
             if (response.status === 200) {
                 const holiday = response.data;
                 setOriginalHoliday(holiday);
+                // firstHolidayName = holiday.holidayName;
                 setHolidayName(holiday.holidayName || "");
                 setDateStartDateEndDate(formatDateTimeISOToDate(holiday.startHolidayDate) || "");
                 setHolidayType(holiday.type || "RATCHAKHAN");
@@ -113,7 +117,6 @@ function EditHoliday() {
             
             <div className="mb-4" onClick={dismissAlerts}>
                 {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>}
-                {success && <AlertSuccess title="สำเร็จ" message={msg}/>}
             </div>
             
             {isLoading ? (
