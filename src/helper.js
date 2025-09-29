@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, Zone } from "luxon";
 
 export function formatPhoneNumber(phoneNumber) {
   // ลบตัวอักษรที่ไม่ใช่ตัวเลขออก
@@ -129,6 +129,13 @@ export function formatDateYYYYMMDD(date) {
   return `${parseInt(year)}-${month}-${day}`;
 }
 
+export function formatDateToInputFormat(date) {
+  // console.log(date);
+  const datetime = DateTime.fromISO(date).setZone('Asia/Bangkok').toFormat('yyyy-MM-dd');
+  // console.log(datetime);
+  return datetime;
+}
+
 export function convertNumberToThaiMonth(monthNumber) {
   const thaiMonths = [
     "มกราคม",   // เดือนที่ 1
@@ -198,3 +205,19 @@ export const formatDateToThaiStyle = (date) => {
   const dateformat = DateTime.fromISO(date).setZone("Asia/Bangkok");
   return `${dateformat.day} ${convertNumberToThaiMonth(dateformat.month)} ${dateformat.year + 543}`;
 };
+
+export function daybetween(Start, End) {
+    const dates = [];
+    if (Start !== "" && End !== "") {
+        const startDate = DateTime.fromISO(Start);
+        const endDate = DateTime.fromISO(End);
+        let currentDate = startDate;
+        while (currentDate <= endDate) {
+            dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
+            currentDate = currentDate.plus({ days: 1 }); // เพิ่มวันทีละ 1
+        }
+    } else {
+        console.error("termStart or termEnd is not set!");
+    }
+    return dates;
+}

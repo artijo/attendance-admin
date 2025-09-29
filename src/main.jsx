@@ -52,6 +52,7 @@ const CalendarStudy = lazy(() => import("./pages/calendar/CalendarStudy.jsx"));
 const CalendarHoliday = lazy(() => import("./pages/calendar/CalendarHoliday.jsx"));
 // Holiday Section
 const EditHoliday = lazy(() => import("./pages/holiday/EditHoliday.jsx"));
+// const CreateHoliday = lazy(() => import("./pages/holiday/CreateHoliday.jsx"));
 const CreateHoliday = lazy(() => import("./pages/holiday/CreateHoliday.jsx"));
 const Holiday = lazy(() => import("./pages/holiday/Holiday.jsx"));
 

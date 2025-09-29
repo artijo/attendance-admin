@@ -32,7 +32,7 @@ function CreatetermForm() {
             setError(true);
         } finally {
             let state = {
-                title: "บันทึก",
+                title: "บันทึกสำเร็จ",
                 status : true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
                 msg: `เพิ่ม ${valueNumberToThaiText(semester)} ปีการศึกษา ${academicYear} เข้าสู่ระบบแล้ว`
             }

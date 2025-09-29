@@ -1,16 +1,33 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { HolidayListable } from "../../components/holiday/holidaylistable.jsx"
 import { HOSTNAME } from "../../config.js";
 import { formatDateTimeISOToDate } from "../../helper.js";
+import AlertSuccess from "../../components/alert/success.jsx";
 
 function Holiday(){
+    const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     const [academicYearSemester, setAcademicYearSemester] = useState("");
     const [academicYearTermList, setAcademicYearTermList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const title = useState(location.state?.title);
+    const [ isSuccesful, setIsSuccesful ] = useState(
+        location.state?.status === true ? true : false
+    );
+    const [msg, setMsg] = useState(
+        location.state?.msg !== undefined ? location.state.msg : ""   
+    );
+    // console.log(msg);
+    const dismissAlerts = () => {
+        setIsSuccesful(false);
+        // setSuccess(false);
+        setMsg("");
+    };
+
 
     const fectHolidayList = async () => {
         try {
@@ -75,7 +92,13 @@ function Holiday(){
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">จัดการวันหยุด</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
+            <div className="mb-4" onClick={dismissAlerts}>
+                {/* {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>} */}
+                {isSuccesful && <AlertSuccess title={title} message={msg}/>}
+            </div>
+
+
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                     <div className="bg-primary/10 text-primary rounded-full p-2">
