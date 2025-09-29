@@ -167,6 +167,20 @@ export const formatThaiDate = (dateString) => {
   });
 };
 
+export const valueNumberToThaiText = (number) => {
+  switch (parseInt(number)) {
+    case 1:
+      return "เทอม 1";
+    case 2:
+      return "เทอม 2";
+    case 3:
+      return "เทอม 3 (ภาคฤดูร้อน)";
+    default:
+      return "เลขเทอมไม่ถูกต้อง"
+  }
+}
+
+
 export const formatThaiDateTime = (dateString) => {
   if (!dateString) return "-";
   const dt = DateTime.fromISO(dateString);

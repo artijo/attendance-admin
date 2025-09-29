@@ -4,6 +4,7 @@ import { HOSTNAME } from "../../config";
 import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
 import { Link, useNavigate } from "react-router-dom";
+import { valueNumberToThaiText } from "../../helper";
 
 function CreatetermForm() {
     const navigate = useNavigate();
@@ -18,28 +19,12 @@ function CreatetermForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
 
-    const valueNumberToThaiText = (number) => {
-        switch(parseInt(number)) {
-            case 1: 
-                return "เทอม 1";
-            case 2:
-                return "เทอม 2";
-            case 3:
-                return "เทอม 3 (ภาคฤดูร้อน)";
-            default :
-                return "เลขเทอมไม่ถูกต้อง"
-        }
-    }
     
     const sentFormData = async(data) => {
         try {
             setIsSubmitting(true);
             const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
-            if (response.status === 200) {
-                setMsg("บันทึกสำเร็จระบบกำลังจะส่งท่านกลับไปยังหน้าการจัดการเทอม");
-                // setSuccess(true);
-                // Reset form after successful submission
-            } else {
+            if (!response.status === 200) {
                 throw new Error(response.data.message);
             }
         } catch (error) {
@@ -47,6 +32,7 @@ function CreatetermForm() {
             setError(true);
         } finally {
             let state = {
+                title: "บันทึก",
                 status : true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
                 msg: `เพิ่ม ${valueNumberToThaiText(semester)} ปีการศึกษา ${academicYear} เข้าสู่ระบบแล้ว`
             }
