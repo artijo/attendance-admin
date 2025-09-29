@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { daybetween, formatDateToInputFormat, formatDateToThaiStyle, formatTypeToThai } from "../../../helper";
 
 function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAddHoliday, prevStep, isSubmitting}) {
-    const totalPages = Math.ceil(holidayList.length / 5);
+    const totalPages = Math.ceil(holidayList.length / 10);
     const [currentPage, setCurrentPage] = useState(1);
-    const sliceHolidayList = holidayList.slice((currentPage - 1) * 5, currentPage * 5);
+    const sliceHolidayList = holidayList.slice((currentPage - 1) * 10, currentPage * 10);
 
     // console.log(termStart);
 
@@ -63,6 +63,10 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
         setHolidayList((prevState) => [...holidayRangeList, ...prevState]);
     }
 
+    const handlePrevStep = () => {
+        prevStep();
+        setHolidayList([]); // เคลียร์ holiday list เมื่อย้อนกลับไป step ก่อนหน้า
+    }
 
     return (
         <div className="mt-4">
@@ -255,7 +259,7 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
             )}
             <div className="flex justify-end gap-2 mt-3">
                 <button
-                    onClick={() => prevStep()}
+                    onClick={() => handlePrevStep()}
                     className="cursor-pointer inline-flex justify-center items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-gray-200 bg-gray-400 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -286,7 +290,7 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
-                                        เพิ่มเทอม
+                                        เพิ่มวันหยุดเข้าสู่ระบบ
                                     </>
                                 )}
                 </button>
