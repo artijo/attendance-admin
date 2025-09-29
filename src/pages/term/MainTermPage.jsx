@@ -1,12 +1,32 @@
+import { use, useState } from "react";
 import { Termlistable } from "../../components/term/termlistable";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import AlertSuccess from "../../components/alert/success";
 
 function MainTermPage() {
+    const location = useLocation();
+    const [ isSuccesful, setIsSuccesful ] = useState(
+        location.state?.status === true ? true : false
+    );
+    const [msg, setMsg] = useState(
+        location.state?.msg !== undefined ? location.state.msg : ""   
+    );
+    // console.log(msg);
+    const dismissAlerts = () => {
+        setIsSuccesful(false);
+        // setSuccess(false);
+        setMsg("");
+    };
     return (
         <div className="min-h-screen">
             <div className="mb-6">
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">จัดการเทอมและปีการศึกษา</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+            </div>
+
+            <div className="mb-4" onClick={dismissAlerts}>
+                {/* {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>} */}
+                {isSuccesful && <AlertSuccess title={"บันทึกสำเร็จ"} message={msg}/>}
             </div>
             
             <div className="flex justify-between items-center mb-6">

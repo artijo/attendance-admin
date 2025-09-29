@@ -14,21 +14,31 @@ function CreatetermForm() {
     // responed from server 
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
+    // const [success, setSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+    const valueNumberToThaiText = (number) => {
+        switch(parseInt(number)) {
+            case 1: 
+                return "เทอม 1";
+            case 2:
+                return "เทอม 2";
+            case 3:
+                return "เทอม 3 (ภาคฤดูร้อน)";
+            default :
+                return "เลขเทอมไม่ถูกต้อง"
+        }
+    }
     
     const sentFormData = async(data) => {
         try {
             setIsSubmitting(true);
             const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
             if (response.status === 200) {
-                setMsg(response.data.message);
-                setSuccess(true);
+                setMsg("บันทึกสำเร็จระบบกำลังจะส่งท่านกลับไปยังหน้าการจัดการเทอม");
+                // setSuccess(true);
                 // Reset form after successful submission
-                setAcademicYear("");
-                setSemester("");
-                setTermStart("");
-                setTermEnd("");
             } else {
                 throw new Error(response.data.message);
             }
@@ -36,9 +46,12 @@ function CreatetermForm() {
             setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างข้อมูล");
             setError(true);
         } finally {
+            let state = {
+                status : true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
+                msg: `เพิ่ม ${valueNumberToThaiText(semester)} ปีการศึกษา ${academicYear} เข้าสู่ระบบแล้ว`
+            }
             setIsSubmitting(false);
-            navigate("/terms");
-            
+            navigate("/terms", { state: state})
         }
     }
     
@@ -55,12 +68,15 @@ function CreatetermForm() {
 
     const dismissAlerts = () => {
         setError(false);
-        setSuccess(false);
+        // setSuccess(false);
         setMsg("");
     };
 
     return( 
         <div className="min-h-screen">
+
+
+
             <div className="mb-6">
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มเทอมและปีการศึกษา</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
@@ -94,7 +110,6 @@ function CreatetermForm() {
             
             <div className="mb-4" onClick={dismissAlerts}>
                 {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>}
-                {success && <AlertSuccess title="สำเร็จ" message={msg}/>}
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
