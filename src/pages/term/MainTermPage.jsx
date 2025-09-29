@@ -5,6 +5,7 @@ import AlertSuccess from "../../components/alert/success";
 
 function MainTermPage() {
     const location = useLocation();
+    const title = useState(location.state?.title);
     const [ isSuccesful, setIsSuccesful ] = useState(
         location.state?.status === true ? true : false
     );
@@ -26,7 +27,7 @@ function MainTermPage() {
 
             <div className="mb-4" onClick={dismissAlerts}>
                 {/* {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>} */}
-                {isSuccesful && <AlertSuccess title={"บันทึกสำเร็จ"} message={msg}/>}
+                {isSuccesful && <AlertSuccess title={title} message={msg}/>}
             </div>
             
             <div className="flex justify-between items-center mb-6">

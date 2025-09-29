@@ -5,8 +5,9 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
 import { DateTime } from "luxon";
+import { valueNumberToThaiText } from "../../helper";
 
-function EdittermForm(){
+function EdittermForm() {
     const location = useLocation();
     const navigate = useNavigate();
     const [termId, setTermId] = useState("");
@@ -16,13 +17,13 @@ function EdittermForm(){
     const [termEnd, setTermEnd] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
     // responed from server 
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    function spiltUtcTime(value){
+    function spiltUtcTime(value) {
         const date = value.split("T")[0];
         return date;
     };
@@ -31,7 +32,7 @@ function EdittermForm(){
         try {
             setIsLoading(true);
             const response = await axios.get(`${HOSTNAME}/a/academicterms/${location.state.termId}`);
-            if(response.status === 200){
+            if (response.status === 200) {
                 const termStartFormat = DateTime.fromISO(response.data.termStart).setZone(TIME_ZONE);
                 const termEndFormat = DateTime.fromISO(response.data.termEnd).setZone(TIME_ZONE);
                 setTermId(response.data.termId);
@@ -47,38 +48,37 @@ function EdittermForm(){
             setMsg(error.message || "ไม่สามารถโหลดข้อมูลเทอมได้");
         } finally {
             setIsLoading(false);
-           
+
         }
     };
 
     const sentFormData = async (data) => {
-        try{
+        try {
             setIsSubmitting(true);
             const response = await axios.put(`${HOSTNAME}/a/academicterms`, data);
-            if (response.status === 200) {
-                setMsg(response.data.message);
-                setSuccess(true);
-                // Reset form errors on success
-                setError(false);
-            } else {
+            if (!response.status === 200) {
                 throw new Error(response.data.message);
             }
-        } catch(error){
+        } catch (error) {
             setMsg(error.response?.data?.message || "เกิดข้อผิดพลาด");
             setError(true);
-            setSuccess(false);
+            // setSuccess(false);
         } finally {
+            let state = {
+                title: "แก้ไขสำเร็จ",
+                status: true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
+                msg: `แก้ไข ${valueNumberToThaiText(semester)} ปีการศึกษา ${academicYear} เรียบร้อยแล้ว`
+            }
             setIsSubmitting(false);
-            navigate("/terms");
+            // navigate("/terms");
+            navigate("/terms", { state: state })
         }
     };
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
-        
         // Convert back to Buddhist year (BE) to Gregorian year (CE) for backend
         const academicYearCE = parseInt(academicYear) - 543;
-        
         const data = {
             termId: termId,
             academicYear: academicYearCE,
@@ -124,9 +124,9 @@ function EdittermForm(){
                         <p className="text-sm text-text-color-alt font-body">ปรับปรุงข้อมูลเทอมและปีการศึกษา</p>
                     </div>
                 </div>
-                
-                <Link 
-                    to="/terms" 
+
+                <Link
+                    to="/terms"
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,10 +135,9 @@ function EdittermForm(){
                     กลับไปหน้ารายการเทอม
                 </Link>
             </div>
-            
+
             <div className="mb-4" onClick={dismissAlerts}>
-                {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>}
-                {success && <AlertSuccess title="สำเร็จ" message={msg}/>}
+                {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg} />}
             </div>
 
             {isLoading ? (
@@ -158,7 +157,7 @@ function EdittermForm(){
                                         </svg>
                                         ปีการศึกษา (พ.ศ.) <span className="text-red-500">*</span>
                                     </label>
-                                    <input 
+                                    <input
                                         type="text"
                                         name="academicYear"
                                         value={academicYear}
@@ -198,7 +197,7 @@ function EdittermForm(){
                                         </svg>
                                         วันเริ่มต้นเทอม <span className="text-red-500">*</span>
                                     </label>
-                                    <input 
+                                    <input
                                         type="date"
                                         name="termStart"
                                         value={termStart}
@@ -216,7 +215,7 @@ function EdittermForm(){
                                         </svg>
                                         วันสิ้นสุดเทอม <span className="text-red-500">*</span>
                                     </label>
-                                    <input 
+                                    <input
                                         type="date"
                                         name="termEnd"
                                         value={termEnd}
@@ -228,9 +227,9 @@ function EdittermForm(){
                                     <p className="text-xs text-text-color-alt font-body mt-1">วันสุดท้ายของเทอมการศึกษา</p>
                                 </div>
                             </div>
-                            
+
                             <div className="flex justify-end items-center mt-4 pt-4 border-t border-gray-100">
-                                <button 
+                                <button
                                     type="submit"
                                     disabled={isSubmitting}
                                     className="inline-flex justify-center items-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
