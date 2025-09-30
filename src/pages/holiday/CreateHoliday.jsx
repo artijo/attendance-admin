@@ -38,6 +38,7 @@ function CreateHoliday() {
     };
 
     const nextStep = () => {
+
         let step = stepProcess + 1;
         if (step > 3) {
             step = stepProcess

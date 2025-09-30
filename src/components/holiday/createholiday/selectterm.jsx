@@ -30,7 +30,7 @@ function SelectTerm({ selectedTerm, setSelectedTerm,setTermInformation, nextStep
         <div className="flex flex-col gap-4">
             <p className="font-medium">เทอมและปีการศึกษา</p>
             <select
-                defaultValue="default"
+                defaultValue={selectedTerm}
                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm 
              focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
                 onChange={(e) => handleValueChange(e.target.value)}
@@ -48,7 +48,8 @@ function SelectTerm({ selectedTerm, setSelectedTerm,setTermInformation, nextStep
 
             <button
                 onClick={() => nextStep()}
-                className="inline-flex justify-center items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                disabled={selectedTerm === "default" ? true : false}
+                className="disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed inline-flex justify-center items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

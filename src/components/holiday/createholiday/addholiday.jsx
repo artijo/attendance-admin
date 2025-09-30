@@ -29,7 +29,7 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
         } else {
             cloneHolidaySelected.pop(index);
         }
-        console.log(cloneHolidaySelected);
+        // console.log(cloneHolidaySelected);
         setSelectedHolidays(cloneHolidaySelected);
         // console.log(selectedHolidays);
     };
