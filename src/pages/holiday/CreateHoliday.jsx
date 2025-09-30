@@ -111,6 +111,7 @@ function CreateHoliday() {
 
             {/* Content */}
             <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+                <div className="h-2 bg-gradient-to-r from-primary to-secondary"></div>
                 <div className="text-sm p-6">
                     <ul className="flex flex-row gap-5 cursor-default">
                         {[1, 2].map((step, index) => (

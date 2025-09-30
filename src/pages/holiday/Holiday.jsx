@@ -125,8 +125,10 @@ function Holiday(){
                 </Link>
             </div>
             
-            <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
-                <div className="flex flex-wrap md:flex-nowrap gap-4 items-center justify-between">
+            <div className="bg-white rounded-xl shadow-md border border-line mb-6">
+                <div className="h-2 bg-gradient-to-r from-primary to-secondary rounded-t-xl"></div>
+                <div className="flex flex-wrap md:flex-nowrap gap-4 items-center justify-between p-6">
+                    
                     <div className="w-full md:w-auto">
                         <label className="block text-sm font-medium text-text-color font-body mb-2 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
