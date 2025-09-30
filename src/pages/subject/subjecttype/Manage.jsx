@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HOSTNAME } from "../../../config.js";
 import { Link } from 'react-router-dom';
+import { validateEnglishCharacters, validateThaiCharacters } from '../../../regx.js';
 
 const SubjectTypeManage = () => {
   const [subjectTypes, setSubjectTypes] = useState([]);
@@ -13,6 +14,7 @@ const SubjectTypeManage = () => {
     subTypeNameEng: '' 
   });
   const [editingId, setEditingId] = useState(null);
+  const [formError, setFormError] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,11 +38,20 @@ const SubjectTypeManage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      if(!validateEnglishCharacters(formData.subTypeNameEng) || !validateThaiCharacters(formData.subTypeNameThai) ){
+        setFormError('กรุณากรอกภาษาของช่องกรอกนั้นเท่านั้น'); 
+        // console.log(error);
+        return;
+      }
+
+
       if (editingId) {
         await axios.put(`${HOSTNAME}/a/subject/type/${editingId}`, formData);
       } else {
         await axios.post(`${HOSTNAME}/a/subject/type`, formData);
       }
+      setFormData('');
       setIsModalOpen(false);
       setFormData({ subTypeNameThai: '', subTypeNameEng: '' });
       setEditingId(null);
@@ -231,6 +242,16 @@ const SubjectTypeManage = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div className="flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <div>{formError}</div>
+                </div>
+              </div>
+            )}
             <div className="mb-5">
               <h3 className="text-xl font-bold text-text-color font-heading mb-2">
                 {editingId ? 'แก้ไขกลุ่มสาระการเรียนรู้' : 'เพิ่มกลุ่มสาระการเรียนรู้'}
