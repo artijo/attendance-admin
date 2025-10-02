@@ -73,7 +73,7 @@ function CreateClassroom() {
                 if(!validateNumber(charAtClassname)) {
                     const description = "กรุณากรอกเฉพาะหมายเลขที่ช่องกรองหมายเลขห้อง";
                     setInputError(errorMessageFormat(description, isMultipleMode, index));
-                    console.log('ไม่ผ่าน ' + charAtClassname);
+                    // console.log('ไม่ผ่าน ' + charAtClassname);
                     return false;
                 }
             };
@@ -97,7 +97,7 @@ function CreateClassroom() {
             } else {
                 classrooms = [data];
             }
-            console.log(classrooms);
+            // console.log(classrooms);
             const validateInputStatus = inputValidation(classrooms, isMultipleMode); // Call inputValidation function.
             if (validateInputStatus === false) return; //if format not good for any input return; for stop this function.
 
