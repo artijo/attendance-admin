@@ -46,6 +46,9 @@ function EditForm() {
     };
 
     const onSubmit = async function (data) {
+        const validateInputStatus = inputValidation(data); // Call inputValidation function.
+        if (!validateInputStatus) return; //if format not good for any input return; for stop this function.
+
         try {
             const response = await axios.put(`${HOSTNAME}/a/student`, data);
             if (response.status === 200) {

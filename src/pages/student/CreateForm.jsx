@@ -38,7 +38,7 @@ function CreateForm() {
             return false;
         };
 
-        //tel validate
+        //tel validate format
         if (!validatePhoneNumber(data.tel)) {
             if (data.tel === "" || data.tel === " ") {
                 return true;
@@ -50,7 +50,7 @@ function CreateForm() {
                 return false;
             };
         };
-
+        
         return true;
     };
 
