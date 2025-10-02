@@ -88,6 +88,7 @@ function EditForm() {
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 bg-gray-100 shadow-sm font-body text-text-color cursor-not-allowed"
                                         {...register("stdId")}
                                         disabled
+                                        required
                                     />
                                 </div>
                                 
@@ -102,6 +103,7 @@ function EditForm() {
                                         id="Title"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("title", { required: true })}
+                                        required
                                     >
                                         <option value="BOY">เด็กชาย</option>
                                         <option value="GIRL">เด็กหญิง</option>
@@ -123,6 +125,7 @@ function EditForm() {
                                         placeholder="ชื่อ"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("fName", { required: true })}
+                                        required
                                     />
                                 </div>
                                 
@@ -139,6 +142,7 @@ function EditForm() {
                                         placeholder="นามสกุล"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
+                                        required
                                     />
                                 </div>
                                 
@@ -150,11 +154,12 @@ function EditForm() {
                                         อีเมล
                                     </label>
                                     <input
-                                        type="text"
+                                        type="email"
                                         id="Email"
                                         placeholder="user@nps.ac.th"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("email")}
+                                        required
                                     />
                                     {errors.email && <p className="text-red-500 text-xs mt-1 font-body">{errors.email}</p>}
                                 </div>
