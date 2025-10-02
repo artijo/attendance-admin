@@ -4,6 +4,8 @@ import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, Link } from "react-router-dom";
 import Select from "react-select";
+import { validateEnglishCharacters, validateThaiCharacters } from "../../regx.js";
+import ErrorAlert from "../../components/alert/error.jsx";
 
 function CreateForm() {
     const [error, setError] = useState(null);
@@ -13,6 +15,8 @@ function CreateForm() {
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const redirect = useNavigate();
+    const [inputError, setInputError] = useState({});
+
     const {
         register,
         handleSubmit,
@@ -21,30 +25,61 @@ function CreateForm() {
 
     useEffect(() => {
         setIsLoading(true);
-        
+
         Promise.all([
             axios.get(`${HOSTNAME}/a/subjects/type`),
             axios.get(`${HOSTNAME}/a/teachers`),
             axios.get(`${HOSTNAME}/a/subjects`)
         ])
-        .then(([typesRes, teachersRes, subjectsRes]) => {
-            setSubjectTypes(typesRes.data);
-            
-            // Format teachers for React-Select
-            const teacherOptions = teachersRes.data.map(teacher => ({
-                value: teacher.tchId,
-                label: `${teacher.fName} ${teacher.lName}`
-            }));
-            setTeachers(teacherOptions);
-            setSubjects(subjectsRes.data);
-            setIsLoading(false);
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-            setError("ไม่สามารถโหลดข้อมูลได้");
-            setIsLoading(false);
-        });
+            .then(([typesRes, teachersRes, subjectsRes]) => {
+                setSubjectTypes(typesRes.data);
+
+                // Format teachers for React-Select
+                const teacherOptions = teachersRes.data.map(teacher => ({
+                    value: teacher.tchId,
+                    label: `${teacher.fName} ${teacher.lName}`
+                }));
+                setTeachers(teacherOptions);
+                setSubjects(subjectsRes.data);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setError("ไม่สามารถโหลดข้อมูลได้");
+                setIsLoading(false);
+            });
     }, []);
+
+    const inputValidation = (data) => {
+        /*
+        Example Subject Data:
+            {
+                "subCode": "มธ101",                         // รหัสวิชา ตัวอย่าง
+                "subCredit": "3",                            // หน่วยกิตตัวอย่าง
+                "subNameThai": "คณิตศาสตร์พื้นฐาน",       // ชื่อวิชาไทยตัวอย่าง
+                "subNameEng": "Basic Mathematics",          // ชื่อวิชาภาษาอังกฤษตัวอย่าง
+                "subTypeId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" // รหัสประเภทวิชา (UUID ตัวอย่าง)
+            }
+        */
+
+        if (!validateEnglishCharacters(data.subNameEng)) {
+            setInputError({
+                title: "เกิดข้อผิดพลาด",
+                description: "กรุณาเฉพาะภาษาอังกฤษในช่องภาษาอังกฤษ"
+            });
+            return false;
+        };
+
+        if (!validateThaiCharacters(data.subNameThai)) {
+            setInputError({
+                title: "เกิดข้อผิดพลาด",
+                description: "กรุณาเฉพาะภาษาไทยในช่องภาษาไทย"
+            });
+            return false;
+        };
+
+        return  true;
+    };
 
     const onSubmit = async function (data) {
         // Check if subject code already exists
@@ -53,7 +88,8 @@ function CreateForm() {
         //     setError("รหัสวิชานี้มีอยู่ในระบบแล้ว");
         //     return;
         // }
-
+        const validateInputStatus = inputValidation(data); // Call inputValidation function.
+        if (!validateInputStatus) return; //if format not good for any input return; for stop this function.
         try {
             const formData = {
                 ...data,
@@ -62,7 +98,7 @@ function CreateForm() {
             const response = await axios.post(`${HOSTNAME}/a/subject`, formData);
             if (response.status === 200) {
                 redirect("/subjects",
-                    {state: {message: "เพิ่มวิชาเรียบร้อยแล้ว"}}
+                    { state: { message: "เพิ่มวิชาเรียบร้อยแล้ว" } }
                 );
             }
         } catch (error) {
@@ -94,7 +130,15 @@ function CreateForm() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาใหม่</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
+            {inputError.title && inputError.description && (
+                // Onclick = {() => setInputError({})} mean dismiss alert.  
+                <div className="mb-6" onClick={() => setInputError({})}>
+                    <ErrorAlert title={inputError.title} message={inputError.description} />
+                </div>
+
+            )}
+
             <div className="mt-5">
                 {error ? (
                     <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
@@ -131,7 +175,7 @@ function CreateForm() {
                                     />
                                     {errors.subCode && <p className="text-red-500 text-xs mt-1 font-body">กรุณากรอกรหัสวิชา</p>}
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="subCredit" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,7 +190,7 @@ function CreateForm() {
                                         min="0"
                                         step="0.5"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
-                                        {...register("subCredit", { 
+                                        {...register("subCredit", {
                                             required: true,
                                             min: 0
                                         })}
@@ -231,8 +275,8 @@ function CreateForm() {
                                 </div>
 
                                 <div className="sm:col-span-2 flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
-                                    <Link 
-                                        to="/subjects" 
+                                    <Link
+                                        to="/subjects"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                                     >
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,7 +284,7 @@ function CreateForm() {
                                         </svg>
                                         ยกเลิก
                                     </Link>
-                                    
+
                                     <button
                                         type="submit"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
