@@ -18,6 +18,11 @@ export function validateUsername(input) {
     return regex.test(input);
 }
 
+export function validateStudent(input) {
+    const regex = /^[0-9]{5}$/;
+    return regex.test(input);
+}
+
 export function validatePhoneNumber(input) {
     const regex = /^[0-9]{10}$/;
     return regex.test(input);
