@@ -4,6 +4,8 @@ import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, Link } from "react-router-dom";
 import Select from "react-select";
+import { validateNumber } from "../../regx.js";
+import ErrorAlert from "../../components/alert/error.jsx";
 
 function CreateClassroom() {
     const [error, setError] = useState(null);
@@ -14,6 +16,7 @@ function CreateClassroom() {
     const [classroomType, setClassroomType] = useState(null);
     const [academicterms, setAcademicTerms] = useState(null);
     const redirect = useNavigate();
+    const [inputError, setInputError] = useState({});
 
     const {
         register,
@@ -25,6 +28,62 @@ function CreateClassroom() {
     } = useForm();
     const selectedTerm = watch('termId');
     const selectedTeachersRef = useRef(new Set());
+
+    const inputValidation = (classrooms, isMultipleMode) => {
+        /*
+        Example Class Data:
+        {
+            "classLevel": "2",                             // ระดับชั้น
+            "classRoom": "12",                             // ห้องเรียน
+            "classTypeId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", // รหัสประเภทห้องเรียน (UUID ตัวอย่าง)
+            "academicYear": 2025,                          // ปีการศึกษา
+            "semester": 1,                                 // ภาคการศึกษา
+            "termId": "yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy", // รหัสภาคเรียน (UUID ตัวอย่าง)
+            "teacherIds": [                                // รายชื่อครูประจำชั้น (UUID ตัวอย่าง)
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+            ],
+            "leaderId": "00001"                            // รหัสหัวหน้าห้องตัวอย่าง
+        }
+        */
+
+        const errorMessageFormat = (description, isMultipleMode, index) => {
+            let title = "เกิดข้อผิดพลาด";
+            let descriptionFormat = description;
+            if (isMultipleMode) {
+                title += `ที่ฟอร์มลำดับที่ ${index + 1}`
+                return {
+                    title: title,
+                    description: descriptionFormat
+                }
+            } else {
+                return {
+                    title: title,
+                    description: descriptionFormat
+                }
+            };
+
+        };
+
+        for (let index = 0; index < classrooms.length; index++) {
+            const classroom = classrooms[index];
+            // console.log(classroom["className"].length);
+            for(let i = 0; i < classroom.classRoom.length ; i++) {
+                let charAtClassname = classroom.classRoom[i];
+                if(!validateNumber(charAtClassname)) {
+                    const description = "กรุณากรอกเฉพาะหมายเลขที่ช่องกรองหมายเลขห้อง";
+                    setInputError(errorMessageFormat(description, isMultipleMode, index));
+                    console.log('ไม่ผ่าน ' + charAtClassname);
+                    return false;
+                }
+            };
+        };
+
+        return true; // correct format
+
+    };
+
+
     const onSubmit = async function (data) {
         try {
             let classrooms = [];
@@ -38,16 +97,19 @@ function CreateClassroom() {
             } else {
                 classrooms = [data];
             }
+            console.log(classrooms);
+            const validateInputStatus = inputValidation(classrooms, isMultipleMode); // Call inputValidation function.
+            if (validateInputStatus === false) return; //if format not good for any input return; for stop this function.
 
             const responses = await Promise.all(
-                classrooms.map(classroom => 
+                classrooms.map(classroom =>
                     axios.post(`${HOSTNAME}/a/classroom`, classroom)
                 )
             );
 
             if (responses.every(response => response.status === 200)) {
                 redirect("/classroom",
-                    {state: {message: "เพิ่มห้องเรียนเรียบร้อยแล้ว"}}
+                    { state: { message: "เพิ่มห้องเรียนเรียบร้อยแล้ว" } }
                 );
             }
         } catch (error) {
@@ -88,10 +150,10 @@ function CreateClassroom() {
             .then((response) => {
                 setStudentOptions(response.data
                     .map(s => ({
-                    value: s.stdId,
-                    label: `${s.fName} ${s.lName}`
-                })));
-                
+                        value: s.stdId,
+                        label: `${s.fName} ${s.lName}`
+                    })));
+
             })
             .catch((error) => {
                 console.error("Error fetching students", error);
@@ -115,7 +177,7 @@ function CreateClassroom() {
         fetchClassroomType();
         fetchAcademicTerms();
     }
-    , []);
+        , []);
 
     const handleTeacherChange = (selectedOptions, formIndex = null) => {
         const fieldName = formIndex !== null ? `classroom_${formIndex}.teacherIds` : "teacherIds";
@@ -143,14 +205,14 @@ function CreateClassroom() {
             });
         }
     }, [isMultipleMode]);
-    
+
     // เพิ่มการกำหนดค่าเริ่มต้นเมื่อเพิ่มจำนวนห้องเรียน (เฉพาะห้องใหม่)
     useEffect(() => {
         if (isMultipleMode && numberOfClassrooms > 1) {
             // ตั้งค่าเริ่มต้นสำหรับห้องเรียนใหม่ที่เพิ่มเข้ามา
-            setValue(`classroom_${numberOfClassrooms-1}.classLevel`, 1);
-            setValue(`classroom_${numberOfClassrooms-1}.classRoom`, "");
-            setValue(`classroom_${numberOfClassrooms-1}.teacherIds`, []);
+            setValue(`classroom_${numberOfClassrooms - 1}.classLevel`, 1);
+            setValue(`classroom_${numberOfClassrooms - 1}.classRoom`, "");
+            setValue(`classroom_${numberOfClassrooms - 1}.teacherIds`, []);
         }
     }, [numberOfClassrooms, isMultipleMode]);
 
@@ -158,15 +220,15 @@ function CreateClassroom() {
         // ดึงค่าที่ต้องการแสดงผล
         const currentTeacherIds = useWatch({ control, name: `classroom_${index}.teacherIds` }) || [];
         const formTerm = useWatch({ control, name: `classroom_${index}.termId` });
-        const classTypeOptions = classroomType?.map(ct => ({ 
-            value: ct.classTypeId, 
-            label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})` 
+        const classTypeOptions = classroomType?.map(ct => ({
+            value: ct.classTypeId,
+            label: `${ct.classTypeNameThai} (${ct.classTypeNameEng})`
         })) || [];
-        
+
         // สร้างตัวเลือกสำหรับ select components
         const termOptions = academicterms?.map(term => ({
             value: term.termId,
-            label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+            label: `ปีการศึกษา ${term.academicYear + 543} เทอม ${term.semester}`
         })) || [];
 
         return (
@@ -190,6 +252,7 @@ function CreateClassroom() {
                             id={`ClassName_${index}`}
                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                             {...register(`classroom_${index}.classLevel`)}
+                            required
                         >
                             <option value={1}>ม.1</option>
                             <option value={2}>ม.2</option>
@@ -214,6 +277,7 @@ function CreateClassroom() {
                             placeholder="กรอกหมายเลขห้อง"
                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                             {...register(`classroom_${index}.classRoom`)}
+                            required
                         />
                     </div>
 
@@ -239,12 +303,13 @@ function CreateClassroom() {
                                     onChange={selectedOption => field.onChange(selectedOption ? selectedOption.value : null)}
                                     isClearable
                                     placeholder="เลือกประเภทห้องเรียน..."
+                                    required
                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
                                 />
                             )}
                         />
                     </div>
-                    
+
                     {/* ภาคการศึกษา */}
                     <div className="space-y-2">
                         <label htmlFor={`AcademicTerm_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
@@ -276,6 +341,7 @@ function CreateClassroom() {
                                         }
                                     }}
                                     isClearable
+                                    required
                                     placeholder="เลือกภาคการศึกษา..."
                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
                                 />
@@ -318,13 +384,14 @@ function CreateClassroom() {
                                     }}
                                     isClearable
                                     isMulti
+                                    required
                                     placeholder="เลือกครูที่ปรึกษา..."
                                     noOptionsMessage={() => "ไม่พบข้อมูล"}
                                 />
                             )}
                         />
                     </div>
-                    
+
                     {/* หัวหน้าห้อง */}
                     <div className="space-y-2">
                         <label htmlFor={`Leader_${index}`} className="text-sm font-medium text-text-color font-body flex items-center">
@@ -362,7 +429,15 @@ function CreateClassroom() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มห้องเรียน</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
+            {inputError.title && inputError.description && (
+                // Onclick = {() => setInputError({})} mean dismiss alert.  
+                <div className="mb-2" onClick={() => setInputError({})}>
+                    <ErrorAlert title={inputError.title} message={inputError.description} />
+                </div>
+
+            )}
+
             <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
                 <div className="h-2 bg-gradient-to-r from-primary to-secondary"></div>
                 <div className="p-6">
@@ -376,12 +451,12 @@ function CreateClassroom() {
                             </div>
                         </div>
                     )}
-                    
+
                     <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
                         <label className="flex items-center gap-3 cursor-pointer">
                             <div className="relative">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     className="sr-only peer"
                                     onChange={(e) => setIsMultipleMode(e.target.checked)}
                                 />
@@ -394,8 +469,8 @@ function CreateClassroom() {
                             <div className="mt-4 flex items-center gap-3">
                                 <span className="text-sm text-text-color-alt font-body">จำนวนห้องเรียน:</span>
                                 <div className="flex items-center gap-2">
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         onClick={() => setNumberOfClassrooms(prev => Math.max(1, prev - 1))}
                                         className="px-3 py-1 border rounded-md hover:bg-gray-100 transition-colors"
                                     >
@@ -410,7 +485,7 @@ function CreateClassroom() {
                                         className="w-20 h-9 text-center rounded-md border-gray-300 shadow-sm text-sm font-body"
                                         min="1"
                                     />
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => setNumberOfClassrooms(prev => prev + 1)}
                                         className="px-3 py-1 border rounded-md hover:bg-gray-100 transition-colors"
@@ -444,6 +519,7 @@ function CreateClassroom() {
                                         id="ClassName"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("classLevel")}
+                                        required
                                     >
                                         <option value={1}>ม.1</option>
                                         <option value={2}>ม.2</option>
@@ -453,7 +529,7 @@ function CreateClassroom() {
                                         <option value={6}>ม.6</option>
                                     </select>
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="ClassRoom" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -467,6 +543,7 @@ function CreateClassroom() {
                                         placeholder="กรอกหมายเลขห้อง"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("classRoom")}
+                                        required
                                     />
                                 </div>
 
@@ -486,6 +563,7 @@ function CreateClassroom() {
                                         onChange={(selectedOption) => setValue("classTypeId", selectedOption ? selectedOption.value : null)}
                                         isClearable
                                         placeholder="เลือกประเภทห้องเรียน..."
+                                        required
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
                                     />
                                 </div>
@@ -501,9 +579,10 @@ function CreateClassroom() {
                                         id="AcademicTerm"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
+                                        required
                                         options={academicterms?.map(term => ({
                                             value: term.termId,
-                                            label: `ปีการศึกษา ${term.academicYear+543} เทอม ${term.semester}`
+                                            label: `ปีการศึกษา ${term.academicYear + 543} เทอม ${term.semester}`
                                         })) || []}
                                         onChange={(selectedOption) => {
                                             const term = academicterms?.find(t => t.termId === selectedOption?.value);
@@ -530,6 +609,7 @@ function CreateClassroom() {
                                         id="ClassTeacher"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
+                                        required
                                         options={teacherOptions?.filter(opt =>
                                             // allow if not already advising for this term or already selected
                                             (
@@ -543,7 +623,7 @@ function CreateClassroom() {
                                                 || (watch('teacherIds') || []).includes(opt.value)
                                             )
                                         )}
-                                        value={teacherOptions?.filter(option => 
+                                        value={teacherOptions?.filter(option =>
                                             (watch('teacherIds') || []).includes(option.value)
                                         )}
                                         onChange={(selectedOptions) => handleTeacherChange(selectedOptions)}
@@ -553,7 +633,7 @@ function CreateClassroom() {
                                         noOptionsMessage={() => "ไม่พบข้อมูล"}
                                     />
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Leader" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -574,10 +654,10 @@ function CreateClassroom() {
                                 </div>
                             </div>
                         )}
-                        
+
                         <div className="flex justify-between items-center pt-6 border-t border-gray-100 mt-6">
-                            <Link 
-                                to="/classroom" 
+                            <Link
+                                to="/classroom"
                                 className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -585,7 +665,7 @@ function CreateClassroom() {
                                 </svg>
                                 ยกเลิก
                             </Link>
-                            
+
                             <button
                                 type="submit"
                                 className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"

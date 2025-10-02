@@ -13,6 +13,11 @@ export function validatePassword(input) {
     return regex.test(input);
 }
 
+export function validateNumber(input) {
+    const regex = /^[0-9]$/;
+    return regex.test(input);
+}
+
 export function validateUsername(input) {
     const regex = /^[a-zA-Z0-9]{4,}$/;
     return regex.test(input);
