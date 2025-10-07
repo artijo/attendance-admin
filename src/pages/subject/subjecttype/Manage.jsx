@@ -3,20 +3,25 @@ import axios from 'axios';
 import { HOSTNAME } from "../../../config.js";
 import { Link } from 'react-router-dom';
 import { validateEnglishCharacters, validateThaiCharacters } from '../../../regx.js';
+import AlertSuccess from '../../../components/alert/success.jsx';
 
 const SubjectTypeManage = () => {
   const [subjectTypes, setSubjectTypes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [subjectTypeToDelete, setSubjectTypeToDelete] = useState(null);
-  const [formData, setFormData] = useState({ 
-    subTypeNameThai: '', 
-    subTypeNameEng: '' 
+  const [formData, setFormData] = useState({
+    subTypeNameThai: '',
+    subTypeNameEng: ''
   });
   const [editingId, setEditingId] = useState(null);
   const [formError, setFormError] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [successful, setSuccessful] = useState({
+    title: '',
+    description: ''
+  })
 
   const fetchSubjectTypes = async () => {
     setIsLoading(true);
@@ -39,8 +44,8 @@ const SubjectTypeManage = () => {
     e.preventDefault();
     try {
 
-      if(!validateEnglishCharacters(formData.subTypeNameEng) || !validateThaiCharacters(formData.subTypeNameThai) ){
-        setFormError('กรุณากรอกภาษาของช่องกรอกนั้นเท่านั้น'); 
+      if (!validateEnglishCharacters(formData.subTypeNameEng) || !validateThaiCharacters(formData.subTypeNameThai)) {
+        setFormError('กรุณากรอกภาษาของช่องกรอกนั้นเท่านั้น');
         // console.log(error);
         return;
       }
@@ -50,7 +55,11 @@ const SubjectTypeManage = () => {
         await axios.put(`${HOSTNAME}/a/subject/type/${editingId}`, formData);
       } else {
         await axios.post(`${HOSTNAME}/a/subject/type`, formData);
-      }
+      };
+      setSuccessful({
+        title: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สำเร็จ`,
+        description: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สังกัดกลุ่มสาระสำเร็จ`
+      });
       setFormData('');
       setIsModalOpen(false);
       setFormData({ subTypeNameThai: '', subTypeNameEng: '' });
@@ -74,7 +83,7 @@ const SubjectTypeManage = () => {
 
   const confirmDelete = async () => {
     if (!subjectTypeToDelete) return;
-    
+
     try {
       await axios.delete(`${HOSTNAME}/a/subject/type/${subjectTypeToDelete.subTypeId}`);
       await fetchSubjectTypes();
@@ -82,6 +91,10 @@ const SubjectTypeManage = () => {
       setError('ลบไม่สำเร็จ');
       return;
     } finally {
+      setSuccessful({
+        title: 'ลบสำเร็จ',
+        description: 'ลบกลุ่มสาระนั้นสำเร็จ'
+      });
       setIsDeleteModalOpen(false);
       setSubjectTypeToDelete(null);
     }
@@ -93,7 +106,7 @@ const SubjectTypeManage = () => {
         <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">จัดการกลุ่มสาระการเรียนรู้</h1>
         <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
       </div>
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         {subjectTypes.length > 0 && (
           <div className="mb-3 sm:mb-0 bg-white rounded-lg px-4 py-2 border border-line shadow-sm">
@@ -101,7 +114,7 @@ const SubjectTypeManage = () => {
             <span className="ml-2 font-medium text-primary text-lg font-heading">{subjectTypes.length} กลุ่ม</span>
           </div>
         )}
-        
+
         <button
           onClick={() => {
             setIsModalOpen(true);
@@ -117,6 +130,12 @@ const SubjectTypeManage = () => {
           เพิ่มกลุ่มสาระการเรียนรู้
         </button>
       </div>
+
+      {successful.title && successful.description && (
+        <div className='mb-6' onClick={() => setSuccessful({title:'', description:''})}>
+            <AlertSuccess title={successful.title} message={successful.description}/>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
@@ -191,8 +210,8 @@ const SubjectTypeManage = () => {
 
       {/* Footer action button */}
       <div className="mt-6 flex justify-end">
-        <Link 
-          to="/subjects" 
+        <Link
+          to="/subjects"
           className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +277,7 @@ const SubjectTypeManage = () => {
               </h3>
               <div className="h-1 w-10 bg-secondary rounded-full"></div>
             </div>
-            
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">

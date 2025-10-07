@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HOSTNAME } from "../../../config.js";
 import { Link } from 'react-router-dom';
+import AlertSuccess from '../../../components/alert/success.jsx'
 import { validateEnglishCharacters, validateThaiCharacters } from '../../../regx.js';
 
 const ClassroomTypeManage = () => {
@@ -14,6 +15,12 @@ const ClassroomTypeManage = () => {
   const [error, setError] = useState('');
   const [formError, setFormError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [successful, setSuccessful] = useState({
+    title: '',
+    description: ''
+  });
+
+
 
   const fetchClassroomTypes = async () => {
     setIsLoading(true);
@@ -39,7 +46,6 @@ const ClassroomTypeManage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       /* 
         เช็คว่าช่องกรอกนั้นมีเฉพาะตัวอักษรในช่องกรอกนั้นจริงหรือไม่
       */
@@ -54,6 +60,10 @@ const ClassroomTypeManage = () => {
       } else {
         await axios.post(`${HOSTNAME}/a/classroom/type`, formData);
       }
+      setSuccessful({ 
+        title:`${editingId ? 'แก้ไข' : 'บันทึก'}สำเร็จ` ,
+        description: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สังกัดกลุ่มสาระสำเร็จ`}
+      );
       setFormError(''); /*ให้ alert error หายไปหากส่งข้อมูลแลว */
       setIsModalOpen(false);
       setFormData({ classTypeNameThai: '', classTypeNameEng: '' });
@@ -93,6 +103,7 @@ const ClassroomTypeManage = () => {
       setError('ลบไม่สำเร็จ');
       return;
     } finally {
+      setSuccessful({title:'ลบสำเร็จ', description:'ลบประเภทห้องเรียนนั้นสำเร็จ'});
       setIsDeleteModalOpen(false);
       setClassroomTypeToDelete(null);
     }
@@ -128,6 +139,13 @@ const ClassroomTypeManage = () => {
           เพิ่มประเภทห้องเรียน
         </button>
       </div>
+      
+      {successful.title && successful.description && (
+        <div className='mb-6' onClick={() => setSuccessful({title:'', description:''})}>
+            <AlertSuccess title={successful.title} message={successful.description}/>
+        </div>
+      )}
+
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">

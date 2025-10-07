@@ -166,6 +166,7 @@ function CreateActivity() {
                                             {...register("actName", { required: true })}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                             placeholder="ระบุชื่อกิจกรรม"
+                                            required
                                         />
                                     </div>
 
@@ -188,6 +189,7 @@ function CreateActivity() {
                                                     styles={customSelectStyles}
                                                     placeholder="เลือกประเภทกิจกรรม"
                                                     className="font-body"
+                                                    required
                                                 />
                                             )}
                                         />
@@ -207,6 +209,7 @@ function CreateActivity() {
                                             {...register("actLocation", { required: true })}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                             placeholder="ระบุสถานที่จัดกิจกรรม"
+                                            required
                                         />
                                     </div>
 
@@ -223,6 +226,7 @@ function CreateActivity() {
                                             rows={3}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                             placeholder="อธิบายรายละเอียดของกิจกรรม"
+                                            required
                                         />
                                     </div>
                                 </div>
@@ -247,6 +251,7 @@ function CreateActivity() {
                                         </label>
                                         <input
                                             type="date"
+                                            required
                                             {...register("actDate", { required: true })}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         />
@@ -264,6 +269,7 @@ function CreateActivity() {
                                             type="date"
                                             {...register("actDateEnd", { required: true })}
                                             min={watch("actDate")}
+                                            required
                                             disabled={watch("actDate") === ""}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         />
@@ -281,6 +287,7 @@ function CreateActivity() {
                                             type="time"
                                             {...register("actStartTime", { required: true })}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                                            required
                                         />
                                     </div>
 
@@ -298,6 +305,7 @@ function CreateActivity() {
                                             min={watch("actStartTime")}
                                             disabled={watch("actStartTime") === ""}
                                             className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
+                                            required
                                         />
                                     </div>
                                 </div>
