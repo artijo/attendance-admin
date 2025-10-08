@@ -268,6 +268,7 @@ function CreateForm() {
                                         onChange={setSelectedTeacher}
                                         placeholder="ค้นหาครูผู้สอน"
                                         isSearchable={true}
+                                        required
                                         noOptionsMessage={() => "ไม่พบข้อมูลครู"}
                                         styles={customSelectStyles}
                                         className="font-body text-text-color"

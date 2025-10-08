@@ -253,6 +253,7 @@ function CreateForm() {
                                         type="email"
                                         id="Email"
                                         placeholder="example@nps.ac.th"
+                                        required
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("email", { required: true })}
                                     />
