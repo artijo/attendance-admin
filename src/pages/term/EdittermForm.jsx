@@ -57,7 +57,7 @@ function EdittermForm() {
                 {
                     academicYear : response.data.academicYear + 543,
                     semester : response.data.semester,
-                    termStat: spiltStringUtcTime(termStartDateTime.toString()),
+                    termStart: spiltStringUtcTime(termStartDateTime.toString()),
                     termEnd: spiltStringUtcTime(termEndDateTime.toString())
                 }
             );
