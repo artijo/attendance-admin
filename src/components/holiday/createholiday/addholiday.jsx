@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { daybetween, formatDateToInputFormat, formatDateToThaiStyle, formatTypeToThai } from "../../../helper";
 
 function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAddHoliday, prevStep, isSubmitting}) {
+
     const totalPages = Math.ceil(holidayList.length / 10);
     const [currentPage, setCurrentPage] = useState(1);
     const sliceHolidayList = holidayList.slice((currentPage - 1) * 10, currentPage * 10);
 
-    // console.log(termStart);
-
-    //for add holiday
+    //form data สำหรับรับค่า เพิ่มรายการ holiday
     const [holiday, setHoliday] = useState({
         name: "",
         startDate: "",
@@ -29,12 +28,10 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
         } else {
             cloneHolidaySelected.pop(index);
         }
-        // console.log(cloneHolidaySelected);
         setSelectedHolidays(cloneHolidaySelected);
-        // console.log(selectedHolidays);
     };
 
-    // ฟังก์ชันลบรายการที่เลือก
+    // ฟังก์ชันลบรายการที่เลือกจาก checkBox
     const handleDeleteSelected = () => {
         const filteredList = holidayList.filter((_, index) => !selectedHolidays.includes(index));
         setHolidayList(filteredList);
@@ -59,14 +56,13 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
                 type: holiday.type,
             }
         });
-        // console.log(holidayRangeList);
         setHolidayList((prevState) => [...holidayRangeList, ...prevState]);
-    }
+    };
 
     const handlePrevStep = () => {
         prevStep();
         setHolidayList([]); // เคลียร์ holiday list เมื่อย้อนกลับไป step ก่อนหน้า
-    }
+    };
 
     return (
         <div className="mt-4">
@@ -175,8 +171,8 @@ function AddHoliday({ holidayList, setHolidayList, termStart, termEnd, callApiAd
                                             checked={selectedHolidays.includes(index)}
                                             onChange={() => handleCheckboxChange(index)}
                                             className="mr-1.5"
-                                        />{" "}
-                                        {holiday.holidayname}
+                                        />
+                                        {" "} {holiday.holidayname}
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap">
                                         {formatDateToThaiStyle(holiday.startDate)}

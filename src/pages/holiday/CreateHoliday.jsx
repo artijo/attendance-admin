@@ -7,23 +7,23 @@ import SelectTerm from "../../components/holiday/createholiday/selectterm";
 import AddHoliday from "../../components/holiday/createholiday/addholiday";
 import { formatDateToThaiStyle } from "../../helper";
 import { set } from "react-hook-form";
+import ErrorAlert from "../../components/alert/error";
 
 
 function CreateHoliday() {
 
     const [stepProcess, setStepProcess] = useState(1);
-    // term section
+    // input term section
     const [selectedTerm, setSelectedTerm] = useState("default");
     const [termInformation, setTermInformation] = useState({});
-    // holiday section
+    // holidaylist section
     const [holidayList, setHolidayList] = useState([]);
-
+    // State สำหรับการแจ้งเตือนจาก server
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
+    // State สำหรับเก็บสถานะว่ากำลังส่งข้อมูลไป server
     const [isSubmitting, setIsSubmitting] = useState(false);
-
     const navigate = useNavigate();
-
 
     const stepNumberToThaiText = (number) => {
         // console.log(number);
@@ -54,6 +54,7 @@ function CreateHoliday() {
         setStepProcess(step);
     }
 
+    // เรียกใช้ Api สำหรับเพิ่มวันหยุดในเทอมนั้นไปที่ Back end 
     const callApiAddHoliday = async () => {
 
         try {
@@ -75,7 +76,12 @@ function CreateHoliday() {
             setIsSubmitting(false);
             navigate("/holiday", { state: state})
         }
+    };
 
+    //dismiss alert dialog
+    const dismissAlert = () => {
+        setError(false);
+        setMsg("");
     };
 
     return (
@@ -109,6 +115,14 @@ function CreateHoliday() {
                     กลับไปหน้ารายการวันหยุด
                 </Link>
             </div>
+
+            {/* Alert section */}
+            { error && (
+                <div className="mb-6" onClick={() => dismissAlert()}>
+                    <ErrorAlert title={"เกิดข้อผิดพลาด"} message={msg}/>
+                </div>
+            )}
+            
 
             {/* Content */}
             <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
