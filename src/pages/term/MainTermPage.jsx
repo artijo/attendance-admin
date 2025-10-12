@@ -4,20 +4,23 @@ import { Link, useLocation } from "react-router-dom";
 import AlertSuccess from "../../components/alert/success";
 
 function MainTermPage() {
-    const location = useLocation();
-    const title = useState(location.state?.title);
+
+    // location = ตัวแปรที่ใช้สำหรับการรับค่า state ที่ส่งมาจากหน้า edit หรือ หน้า create ของ term
+    const location = useLocation(); 
+    const title = useState(location.state?.title); // หัวข้อของสถานะการสร้างหรือแก้ไข
     const [ isSuccesful, setIsSuccesful ] = useState(
-        location.state?.status === true ? true : false
+        location.state?.status === true ? true : false // state สำหรับเช็คว่ามีสถานะส่งมาไหม
     );
     const [msg, setMsg] = useState(
-        location.state?.msg !== undefined ? location.state.msg : ""   
+        location.state?.msg !== undefined ? location.state.msg : ""   //ข้อความที่ได้รับมาจากหน้า Edit หรือ Create สำหรับแสดงรายละเอียด
     );
-    // console.log(msg);
+
+    //function สำหรับปิดการแจ้งเตือน
     const dismissAlerts = () => {
         setIsSuccesful(false);
-        // setSuccess(false);
         setMsg("");
     };
+
     return (
         <div className="min-h-screen">
             <div className="mb-6">
