@@ -62,19 +62,18 @@ function EditHoliday() {
                 setHolidayType(holiday.type || "RATCHAKHAN");
             } else {
                 throw new Error("ไม่สามารถโหลดข้อมูลวันหยุดได้");
-            }
+            };
         } catch (error) {
             console.error(error);
             setError(true);
             setMsg(error.message || "ไม่สามารถโหลดข้อมูลวันหยุด");
         } finally {
             setIsLoading(false);
-        }
+        };
     };
 
     const dismissAlerts = () => {
         setError(false);
-        setSuccess(false);
         setMsg("");
     };
 
