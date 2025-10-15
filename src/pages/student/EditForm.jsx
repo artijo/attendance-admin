@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { validatePhoneNumber } from "../../regx.js";
+import ErrorAlert from "../../components/alert/error.jsx";
 
 function EditForm() {
     const [errors, setErrors] = useState({});
@@ -14,12 +16,43 @@ function EditForm() {
         setValue,
         formState: { errors: formErrors },
     } = useForm();
+    const [inputError, setInputError] = useState({});
+
+    const inputValidation = (data) => {
+        /* data structure
+        {  
+            "stdId": "Number XXXXXX",
+            "title": "BOY",
+            "fName": "John",
+            "lName": "Wood",
+            "email": "email@email.com",
+            "tel": "XXXXXXXX"
+        }
+        */
+        //tel validate
+        if (!validatePhoneNumber(data.tel)) {
+            if (data.tel === "" || data.tel === " ") {
+                return true;
+            } else {
+                setInputError({
+                    title: "เกิดข้อผิดพลาด",
+                    description: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง"
+                })
+                return false;
+            };
+        };
+
+        return true;
+    };
 
     const onSubmit = async function (data) {
+        const validateInputStatus = inputValidation(data); // Call inputValidation function.
+        if (!validateInputStatus) return; //if format not good for any input return; for stop this function.
+
         try {
             const response = await axios.put(`${HOSTNAME}/a/student`, data);
             if (response.status === 200) {
-                redirect("/students/"+id, { state: { message: "แก้ไขนักเรียนสำเร็จ" } });
+                redirect("/students/" + id, { state: { message: "แก้ไขนักเรียนสำเร็จ" } });
             }
         } catch (error) {
             console.error(error);
@@ -58,8 +91,17 @@ function EditForm() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">แก้ไขข้อมูลนักเรียน</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
             <div className="mt-5">
+                {inputError.title && inputError.description && (
+                    // Onclick = {() => setInputError({})} mean dismiss alert.  
+                    <div className="mb-2" onClick={() => setInputError({})}>
+                        <ErrorAlert title={inputError.title} message={inputError.description} />
+                    </div>
+
+                )}
+
+
                 {errors.general ? (
                     <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
                         <div className="flex justify-center mb-4 text-text-color-alt">
@@ -88,9 +130,10 @@ function EditForm() {
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 bg-gray-100 shadow-sm font-body text-text-color cursor-not-allowed"
                                         {...register("stdId")}
                                         disabled
+                                        required
                                     />
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Title" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,6 +145,7 @@ function EditForm() {
                                         id="Title"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("title", { required: true })}
+                                        required
                                     >
                                         <option value="BOY">เด็กชาย</option>
                                         <option value="GIRL">เด็กหญิง</option>
@@ -109,7 +153,7 @@ function EditForm() {
                                         <option value="MS">นางสาว</option>
                                     </select>
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Firstname" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,9 +167,10 @@ function EditForm() {
                                         placeholder="ชื่อ"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("fName", { required: true })}
+                                        required
                                     />
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Lastname" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,9 +184,10 @@ function EditForm() {
                                         placeholder="นามสกุล"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
+                                        required
                                     />
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Email" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,15 +196,16 @@ function EditForm() {
                                         อีเมล
                                     </label>
                                     <input
-                                        type="text"
+                                        type="email"
                                         id="Email"
                                         placeholder="user@nps.ac.th"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("email")}
+                                        required
                                     />
                                     {errors.email && <p className="text-red-500 text-xs mt-1 font-body">{errors.email}</p>}
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label htmlFor="Tel" className="text-sm font-medium text-text-color font-body flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,7 +224,7 @@ function EditForm() {
                                 </div>
 
                                 <div className="sm:col-span-2 flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
-                                    <Link 
+                                    <Link
                                         to={`/students/${id}`}
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                                     >
@@ -186,7 +233,7 @@ function EditForm() {
                                         </svg>
                                         ยกเลิก
                                     </Link>
-                                    
+
                                     <button
                                         type="submit"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"

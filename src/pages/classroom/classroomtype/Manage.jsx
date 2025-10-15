@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HOSTNAME } from "../../../config.js";
 import { Link } from 'react-router-dom';
+import AlertSuccess from '../../../components/alert/success.jsx'
+import { validateEnglishCharacters, validateThaiCharacters } from '../../../regx.js';
 
 const ClassroomTypeManage = () => {
   const [classroomTypes, setClassroomTypes] = useState([]);
@@ -11,7 +13,14 @@ const ClassroomTypeManage = () => {
   const [formData, setFormData] = useState({ classTypeNameThai: '', classTypeNameEng: '' });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [successful, setSuccessful] = useState({
+    title: '',
+    description: ''
+  });
+
+
 
   const fetchClassroomTypes = async () => {
     setIsLoading(true);
@@ -37,11 +46,25 @@ const ClassroomTypeManage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      /* 
+        เช็คว่าช่องกรอกนั้นมีเฉพาะตัวอักษรในช่องกรอกนั้นจริงหรือไม่
+      */
+      if (!validateThaiCharacters(formData.classTypeNameThai) || !validateEnglishCharacters(formData.classTypeNameEng)) {
+        setFormError('กรุณากรอกภาษาของช่องกรอกนั้นเท่านั้น'); 
+        // console.log(error);
+        return;
+      }
+
       if (editingId) {
         await axios.put(`${HOSTNAME}/a/classroom/type/${editingId}`, formData);
       } else {
         await axios.post(`${HOSTNAME}/a/classroom/type`, formData);
       }
+      setSuccessful({ 
+        title:`${editingId ? 'แก้ไข' : 'บันทึก'}สำเร็จ` ,
+        description: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สังกัดกลุ่มสาระสำเร็จ`}
+      );
+      setFormError(''); /*ให้ alert error หายไปหากส่งข้อมูลแลว */
       setIsModalOpen(false);
       setFormData({ classTypeNameThai: '', classTypeNameEng: '' });
       setEditingId(null);
@@ -72,7 +95,7 @@ const ClassroomTypeManage = () => {
 
   const confirmDelete = async () => {
     if (!classroomTypeToDelete) return;
-    
+
     try {
       await axios.delete(`${HOSTNAME}/a/classroom/type/${classroomTypeToDelete.classTypeId}`);
       await fetchClassroomTypes();
@@ -80,6 +103,7 @@ const ClassroomTypeManage = () => {
       setError('ลบไม่สำเร็จ');
       return;
     } finally {
+      setSuccessful({title:'ลบสำเร็จ', description:'ลบประเภทห้องเรียนนั้นสำเร็จ'});
       setIsDeleteModalOpen(false);
       setClassroomTypeToDelete(null);
     }
@@ -99,7 +123,7 @@ const ClassroomTypeManage = () => {
             <span className="ml-2 font-medium text-primary text-lg font-heading">{classroomTypes.length} ประเภท</span>
           </div>
         )}
-        
+
         <button
           onClick={() => {
             setIsModalOpen(true);
@@ -115,6 +139,13 @@ const ClassroomTypeManage = () => {
           เพิ่มประเภทห้องเรียน
         </button>
       </div>
+      
+      {successful.title && successful.description && (
+        <div className='mb-6' onClick={() => setSuccessful({title:'', description:''})}>
+            <AlertSuccess title={successful.title} message={successful.description}/>
+        </div>
+      )}
+
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
@@ -201,8 +232,8 @@ const ClassroomTypeManage = () => {
 
       {/* Footer action button */}
       <div className="mt-6 flex justify-end">
-        <Link 
-          to="/classroom" 
+        <Link
+          to="/classroom"
           className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,13 +283,23 @@ const ClassroomTypeManage = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div className="flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <div>{formError}</div>
+                </div>
+              </div>
+            )}
             <div className="mb-5">
               <h3 className="text-xl font-bold text-text-color font-heading mb-2">
                 {editingId ? 'แก้ไขประเภทห้องเรียน' : 'เพิ่มประเภทห้องเรียน'}
               </h3>
               <div className="h-1 w-10 bg-secondary rounded-full"></div>
             </div>
-            
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -278,7 +319,7 @@ const ClassroomTypeManage = () => {
                     placeholder="กรอกชื่อประเภทห้องเรียนภาษาไทย"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-text-color font-body flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">

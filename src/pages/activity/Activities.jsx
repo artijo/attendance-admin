@@ -47,7 +47,10 @@ function Activities() {
             </div>
             
             {state && state.message && (
-                <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
+                <div className="mb-6">
+                    <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
+                </div>
+                
             )}
             
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6">

@@ -1,5 +1,5 @@
 export function validateThaiCharacters(input) {
-    const regex = /^[ก-๙\s]+$/;
+    const regex = /^[ก-๙0-9\s]+$/;
     return regex.test(input);
 }
 
@@ -13,8 +13,18 @@ export function validatePassword(input) {
     return regex.test(input);
 }
 
+export function validateNumber(input) {
+    const regex = /^[0-9]$/;
+    return regex.test(input);
+}
+
 export function validateUsername(input) {
     const regex = /^[a-zA-Z0-9]{4,}$/;
+    return regex.test(input);
+}
+
+export function validateStudent(input) {
+    const regex = /^[0-9]{5}$/;
     return regex.test(input);
 }
 
@@ -24,6 +34,6 @@ export function validatePhoneNumber(input) {
 }
 
 export function validateEnglishCharacters(input) {
-    const regex = /^[a-zA-Z\s]+$/;
+    const regex = /^[a-zA-Z0-9\s]+$/;
     return regex.test(input);
 }

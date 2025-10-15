@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HOSTNAME } from "../../../config.js";
 import { Link } from 'react-router-dom';
+import AlertSuccess from '../../../components/alert/success.jsx';
 
 const DepartmentManage = () => {
   const [departments, setDepartments] = useState([]);
@@ -12,6 +13,10 @@ const DepartmentManage = () => {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [successful, setSuccessful] = useState({
+    title: '',
+    description : ''
+  });
 
   const fetchDepartments = async () => {
     setIsLoading(true);
@@ -39,6 +44,10 @@ const DepartmentManage = () => {
       } else {
         await axios.post(`${HOSTNAME}/a/department`, formData);
       }
+      setSuccessful({
+        title: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สำเร็จ`,
+        description: `${editingId ? 'แก้ไข' : 'เพิ่ม'}สังกัดกลุ่มสาระสำเร็จ`
+      });
       setIsModalOpen(false);
       setFormData({  deptName: '' });
       setEditingId(null);
@@ -69,6 +78,10 @@ const DepartmentManage = () => {
       setError('Delete failed');
       return;
     } finally {
+      setSuccessful({
+        title: 'ลบสำเร็จ',
+        description: 'ลบกลุ่มสาระนั้นสำเร็จ'
+      });
       setIsDeleteModalOpen(false);
       setDepartmentToDelete(null);
     }
@@ -103,6 +116,13 @@ const DepartmentManage = () => {
           เพิ่มสังกัดกลุ่มสาระ
         </button>
       </div>
+
+      
+      {successful.title && successful.description && (
+        <div className='mb-6' onClick={() => setSuccessful({title:'', description:''})}>
+            <AlertSuccess title={successful.title} message={successful.description}/>
+        </div>
+      )}
       
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">

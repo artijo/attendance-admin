@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ClassroomList from "../../components/classroom/classroomlist";
+import AlertSuccess from "../../components/alert/success";
 
 function Classroom() {
     const [allClassrooms, setAllClassrooms] = useState(null);
@@ -10,6 +11,8 @@ function Classroom() {
     const [selectedYear, setSelectedYear] = useState("all");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const location = useLocation();
+    const { state } = location;
 
     // Extract unique academic years
     const academicYears = useMemo(() => {
@@ -17,23 +20,23 @@ function Classroom() {
         const years = [...new Set(allClassrooms.map(classroom => classroom.term.academicYear))];
         return years.sort((a, b) => b - a); // Sort in descending order
     }, [allClassrooms]);
-    
+
     // Apply filters to allClassrooms (client-side filtering)
     const filteredClassrooms = useMemo(() => {
         if (!allClassrooms) return null;
-        
+
         let filtered = [...allClassrooms];
-        
+
         // Filter by grade level
         if (selectedGrade !== "all") {
             filtered = filtered.filter((classroom) => parseInt(classroom.classLevel) == selectedGrade);
         }
-        
+
         // Filter by academic year
         if (selectedYear !== "all") {
             filtered = filtered.filter((classroom) => classroom.term.academicYear == selectedYear);
         }
-        
+
         return filtered;
     }, [allClassrooms, selectedGrade, selectedYear]);
 
@@ -69,7 +72,14 @@ function Classroom() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">ห้องเรียน</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
+            {state && state.message && (
+                <div className="mb-6">
+                    <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
+                </div>
+                
+            )}
+
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
                 {filteredClassrooms && (
                     <div className="mb-3 sm:mb-0 bg-white rounded-lg px-4 py-2 border border-line shadow-sm">
@@ -82,10 +92,10 @@ function Classroom() {
                         )}
                     </div>
                 )}
-                
+
                 <div className="flex flex-col sm:flex-row gap-3">
-                    <Link 
-                        to={'create'} 
+                    <Link
+                        to={'create'}
                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                     >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,8 +103,8 @@ function Classroom() {
                         </svg>
                         เพิ่มห้องเรียน
                     </Link>
-                    <Link 
-                        to={'types'} 
+                    <Link
+                        to={'types'}
                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-secondary hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all duration-300"
                     >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +115,7 @@ function Classroom() {
                     </Link>
                 </div>
             </div>
-            
+
             <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="w-full sm:w-1/2">
@@ -132,7 +142,7 @@ function Classroom() {
                             <option value="6">มัธยมศึกษาปีที่ 6</option>
                         </select>
                     </div>
-                    
+
                     <div className="w-full sm:w-1/2">
                         <label htmlFor="yearFilter" className="block text-sm font-medium text-text-color font-body mb-2 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -151,13 +161,13 @@ function Classroom() {
                             <option value="all">ทุกปีการศึกษา</option>
                             {academicYears.map(year => (
                                 <option key={year} value={year}>
-                                    ปีการศึกษา {year+543}
+                                    ปีการศึกษา {year + 543}
                                 </option>
                             ))}
                         </select>
                     </div>
                 </div>
-                
+
                 {(selectedGrade !== "all" || selectedYear !== "all") && (
                     <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
                         <div className="text-sm text-text-color font-body mr-2">
@@ -167,7 +177,7 @@ function Classroom() {
                             {selectedGrade !== "all" && (
                                 <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
                                     ระดับชั้น {selectedGrade}
-                                    <button 
+                                    <button
                                         onClick={() => setSelectedGrade("all")}
                                         className="ml-1.5 hover:text-primary/70"
                                     >
@@ -179,8 +189,8 @@ function Classroom() {
                             )}
                             {selectedYear !== "all" && (
                                 <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
-                                    ปีการศึกษา {parseInt(selectedYear)+543}
-                                    <button 
+                                    ปีการศึกษา {parseInt(selectedYear) + 543}
+                                    <button
                                         onClick={() => setSelectedYear("all")}
                                         className="ml-1.5 hover:text-primary/70"
                                     >
@@ -215,7 +225,7 @@ function Classroom() {
                         </svg>
                     </div>
                     <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">{error}</h2>
-                    <button 
+                    <button
                         onClick={() => window.location.reload()}
                         className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                     >
@@ -235,7 +245,7 @@ function Classroom() {
                     <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">ไม่พบข้อมูลห้องเรียน</h2>
                     <p className="text-text-color-alt font-body">กรุณาเพิ่มห้องเรียนหรือเปลี่ยนตัวกรอง</p>
                     {(selectedGrade !== "all" || selectedYear !== "all") && (
-                        <button 
+                        <button
                             onClick={resetFilters}
                             className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                         >

@@ -1,61 +1,67 @@
 import axios from "axios";
 import { useState } from "react";
 import { HOSTNAME } from "../../config";
-import AlertSuccess from "../../components/alert/success";
 import ErrorAlert from "../../components/alert/error";
 import { Link, useNavigate } from "react-router-dom";
+import { valueNumberToThaiText } from "../../helper";
+import Button from "../../components/button";
 
 function CreatetermForm() {
+    // สำหรับไปหน้า Main Term page และส่ง state ที่ใช้สำหรับข้อความสร้างเทอมหรือปีการศึกษาสำเร็จ
     const navigate = useNavigate();
-    const [academicYear, setAcademicYear] = useState("");
-    const [semester, setSemester] = useState("");
-    const [termStart, setTermStart] = useState("");
-    const [termEnd, setTermEnd] = useState("");
-    // responed from server 
+
+    // ตัวแปร state สำหรับการเก็บค่าที่รับมาจาก element input ต่างๆ
+    const [formData, setFormData] = useState({
+        academicYear: "",
+        semester: "",
+        termStart: "",
+        termEnd: ""
+    });
+    
+    // State สำหรับการแจ้งเตือนจาก server
     const [msg, setMsg] = useState("");
     const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
+    // State สำหรับเก็บสถานะว่ากำลังส่งข้อมูลไป server
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    const sentFormData = async(data) => {
+
+    // function สำหรับการเปลี่ยนค่า state ของแต่ละ input
+    const onChangeInputFormData = (e) => {
+        let inputName = e.target.name;
+        let inputValue = e.target.value;
+        let formDataState = {
+            ...formData,
+            [inputName] : inputValue
+        };
+        setFormData(formDataState);
+    };
+
+    // function สำหรับส่งข้อมูลไปยังฝั่ง Backend
+    const handleOnSubmit = async(e) => {
+        e.preventDefault();
         try {
             setIsSubmitting(true);
-            const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, data);
-            if (response.status === 200) {
-                setMsg(response.data.message);
-                setSuccess(true);
-                // Reset form after successful submission
-                setAcademicYear("");
-                setSemester("");
-                setTermStart("");
-                setTermEnd("");
-            } else {
+            const response = await axios.post(`${HOSTNAME}/a/academicYearTerm`, formData);
+            if (!response.status === 200) {
                 throw new Error(response.data.message);
             }
         } catch (error) {
             setMsg(error.response?.data?.message || "เกิดข้อผิดพลาดในการสร้างข้อมูล");
             setError(true);
         } finally {
+            let state = {
+                title: "บันทึกสำเร็จ",
+                status : true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
+                msg: `เพิ่ม ${valueNumberToThaiText(formData.semester)} ปีการศึกษา ${formData.academicYear} เข้าสู่ระบบแล้ว`
+            }
             setIsSubmitting(false);
-            navigate("/terms");
-            
+            navigate("/terms", { state: state})
         }
     }
     
-    const handleOnSubmit = (e) => {
-        e.preventDefault();
-        const data = {
-            academicYear: academicYear,
-            semester: semester,
-            termStart: termStart,
-            termEnd: termEnd
-        }
-        sentFormData(data);
-    }
-
+    // function สำหรับปิด alert dialog
     const dismissAlerts = () => {
         setError(false);
-        setSuccess(false);
+        // setSuccess(false);
         setMsg("");
     };
 
@@ -94,7 +100,6 @@ function CreatetermForm() {
             
             <div className="mb-4" onClick={dismissAlerts}>
                 {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>}
-                {success && <AlertSuccess title="สำเร็จ" message={msg}/>}
             </div>
 
             <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
@@ -102,6 +107,7 @@ function CreatetermForm() {
                 <div className="p-6">
                     <form onSubmit={handleOnSubmit} className="grid grid-cols-1 gap-6">
                         <div className="grid gap-6 md:grid-cols-2">
+                            {/* Input ปีการศึกษา */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-text-color font-body flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,8 +118,8 @@ function CreatetermForm() {
                                 <input 
                                     type="text"
                                     name="academicYear"
-                                    value={academicYear}
-                                    onChange={(e) => setAcademicYear(e.target.value)}
+                                    value={formData.academicYear}
+                                    onChange={(e) => onChangeInputFormData(e)}
                                     placeholder="เช่น 2566"
                                     required
                                     className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
@@ -121,6 +127,7 @@ function CreatetermForm() {
                                 <p className="text-xs text-text-color-alt font-body mt-1">กรอกเป็นตัวเลขปีพุทธศักราช (พ.ศ.)</p>
                             </div>
 
+                            {/* Input เทอม */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-text-color font-body flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,8 +137,8 @@ function CreatetermForm() {
                                 </label>
                                 <select
                                     name="semester"
-                                    value={semester}
-                                    onChange={(e) => setSemester(e.target.value)}
+                                    value={formData.semester}
+                                    onChange={(e) => onChangeInputFormData(e)}
                                     required
                                     className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                 >
@@ -142,6 +149,7 @@ function CreatetermForm() {
                                 </select>
                             </div>
 
+                            {/* Input วันเริ่มต้นเทอม */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-text-color font-body flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -152,14 +160,15 @@ function CreatetermForm() {
                                 <input 
                                     type="date"
                                     name="termStart"
-                                    value={termStart}
-                                    onChange={(e) => setTermStart(e.target.value)}
+                                    value={formData.termStart}
+                                    onChange={(e) => onChangeInputFormData(e)}
                                     required
                                     className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                 />
                                 <p className="text-xs text-text-color-alt font-body mt-1">วันแรกของเทอมการศึกษา</p>
                             </div>
 
+                            {/* Input วันสิ้นสุดเทอม */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-text-color font-body flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -170,10 +179,10 @@ function CreatetermForm() {
                                 <input 
                                     type="date"
                                     name="termEnd"
-                                    value={termEnd}
-                                    onChange={(e) => setTermEnd(e.target.value)}
+                                    value={formData.termEnd}
+                                    onChange={(e) => onChangeInputFormData(e)}
                                     required
-                                    min={termStart}
+                                    min={formData.termStart}
                                     className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                 />
                                 <p className="text-xs text-text-color-alt font-body mt-1">วันสุดท้ายของเทอมการศึกษา</p>
@@ -181,28 +190,7 @@ function CreatetermForm() {
                         </div>
 
                         <div className="flex justify-end items-center mt-4 pt-4 border-t border-gray-100">
-                            <button 
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="inline-flex justify-center items-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        กำลังบันทึก...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
-                                        เพิ่มเทอม
-                                    </>
-                                )}
-                            </button>
+                            <Button isSubmitting={isSubmitting}/>
                         </div>
                     </form>
                 </div>

@@ -4,11 +4,14 @@ import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, Link } from "react-router-dom";
 import Select from "react-select";
+import { validatePhoneNumber, validateStudent } from "../../regx.js";
+import ErrorAlert from "../../components/alert/error.jsx";
 
 function CreateForm() {
     const [errors, setErrors] = useState({});
     const [department, setDepartment] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [inputError, setInputError] = useState({});
 
     // Fetch departments when component mounts
     useEffect(() => {
@@ -35,15 +38,45 @@ function CreateForm() {
 
     const password = watch("password");
 
+    const inputValidation = (data) => {
+        /*
+            Data Structure Example (Teacher):
+            {
+                "fName": "teacher1",                    // ชื่อจริง
+                "lName": "teacher1",                    // นามสกุล
+                "email": "teacher1@gmail.com",          // อีเมลติดต่อ
+                "tel": "0651088956",                    // เบอร์โทรศัพท์
+                "deptId": "uuid" // รหัสแผนก (UUID)
+            }
+        */
+
+        //tel validate format
+        if (!validatePhoneNumber(data.tel)) {
+            if (data.tel === "" || data.tel === " ") {
+                return true;
+            } else {
+                setInputError({
+                    title: "เกิดข้อผิดพลาด",
+                    description: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง"
+                })
+                return false;
+            };
+        };
+
+        return true;
+    };
+
+
     const onSubmit = async function (data) {
         // Form data will now properly include deptId from the Controller
         const { confirmPassword, ...submitData } = data;
-        
+        const validateInputStatus = inputValidation(data); // Call inputValidation function.
+        if (!validateInputStatus) return; //if format not good for any input return; for stop this function.
         try {
             const response = await axios.post(`${HOSTNAME}/a/teacher`, submitData);
             if (response.status === 200) {
                 redirect("/teachers",
-                    {state: {message: "เพิ่มครูเรียบร้อยแล้ว"}}
+                    { state: { message: "เพิ่มครูเรียบร้อยแล้ว" } }
                 );
             }
         } catch (error) {
@@ -68,8 +101,17 @@ function CreateForm() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มคุณครู</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
             <div className="mt-5">
+                {inputError.title && inputError.description && (
+                    // Onclick = {() => setInputError({})} mean dismiss alert.  
+                    <div className="mb-2" onClick={() => setInputError({})}>
+                        <ErrorAlert title={inputError.title} message={inputError.description} />
+                    </div>
+
+                )}
+
+
                 {errors.general ? (
                     <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
                         <div className="flex justify-center mb-4 text-text-color-alt">
@@ -133,6 +175,7 @@ function CreateForm() {
                                         placeholder="ชื่อ"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("fName", { required: true })}
+                                        required
                                     />
                                 </div>
 
@@ -149,6 +192,7 @@ function CreateForm() {
                                         placeholder="นามสกุล"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
+                                        required
                                     />
                                 </div>
 
@@ -159,7 +203,7 @@ function CreateForm() {
                                         </svg>
                                         กลุ่มสาระที่สังกัด <span className="text-red-500">*</span>
                                     </label>
-                                    
+
                                     {/* Replace the Select with Controller component */}
                                     <Controller
                                         name="deptId"
@@ -169,29 +213,30 @@ function CreateForm() {
                                             <Select
                                                 {...field}
                                                 id="Department"
-                                                options={department.map((dept) => ({ 
-                                                    value: dept.deptId, 
-                                                    label: dept.deptName 
+                                                options={department.map((dept) => ({
+                                                    value: dept.deptId,
+                                                    label: dept.deptName
                                                 }))}
                                                 isDisabled={isLoading}
                                                 classNamePrefix="react-select"
                                                 placeholder="เลือกกลุ่มสาระ..."
-                                                noOptionsMessage={() => "ไม่พบข้อมูล"} 
-                                                 menuPortalTarget={document.body}
-                                                    menuPosition="fixed"
+                                                noOptionsMessage={() => "ไม่พบข้อมูล"}
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
                                                 onChange={(option) => field.onChange(option.value)}
+                                                required
                                                 // We need to transform the value for react-select
                                                 value={department.find(dept => dept.deptId === field.value)
-                                                    ? { 
-                                                        value: field.value, 
-                                                        label: department.find(dept => dept.deptId === field.value).deptName 
+                                                    ? {
+                                                        value: field.value,
+                                                        label: department.find(dept => dept.deptId === field.value).deptName
                                                     }
                                                     : null
                                                 }
                                             />
                                         )}
                                     />
-                                    
+
                                     {formErrors.deptId && (
                                         <p className="text-red-500 text-xs mt-1 font-body">กรุณาเลือกกลุ่มสาระ</p>
                                     )}
@@ -208,6 +253,7 @@ function CreateForm() {
                                         type="email"
                                         id="Email"
                                         placeholder="example@nps.ac.th"
+                                        required
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("email", { required: true })}
                                     />
@@ -280,8 +326,8 @@ function CreateForm() {
                                 </div> */}
 
                                 <div className="sm:col-span-2 flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
-                                    <Link 
-                                        to="/teachers" 
+                                    <Link
+                                        to="/teachers"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                                     >
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,7 +335,7 @@ function CreateForm() {
                                         </svg>
                                         ยกเลิก
                                     </Link>
-                                    
+
                                     <button
                                         type="submit"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"

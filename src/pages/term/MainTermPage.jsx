@@ -1,12 +1,36 @@
+import { use, useState } from "react";
 import { Termlistable } from "../../components/term/termlistable";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import AlertSuccess from "../../components/alert/success";
 
 function MainTermPage() {
+
+    // location = ตัวแปรที่ใช้สำหรับการรับค่า state ที่ส่งมาจากหน้า edit หรือ หน้า create ของ term
+    const location = useLocation(); 
+    const title = useState(location.state?.title); // หัวข้อของสถานะการสร้างหรือแก้ไข
+    const [ isSuccesful, setIsSuccesful ] = useState(
+        location.state?.status === true ? true : false // state สำหรับเช็คว่ามีสถานะส่งมาไหม
+    );
+    const [msg, setMsg] = useState(
+        location.state?.msg !== undefined ? location.state.msg : ""   //ข้อความที่ได้รับมาจากหน้า Edit หรือ Create สำหรับแสดงรายละเอียด
+    );
+
+    //function สำหรับปิดการแจ้งเตือน
+    const dismissAlerts = () => {
+        setIsSuccesful(false);
+        setMsg("");
+    };
+
     return (
         <div className="min-h-screen">
             <div className="mb-6">
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">จัดการเทอมและปีการศึกษา</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+            </div>
+
+            <div className="mb-4" onClick={dismissAlerts}>
+                {/* {error && <ErrorAlert title="เกิดข้อผิดพลาด" message={msg}/>} */}
+                {isSuccesful && <AlertSuccess title={title} message={msg}/>}
             </div>
             
             <div className="flex justify-between items-center mb-6">

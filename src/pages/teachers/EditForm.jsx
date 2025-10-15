@@ -4,6 +4,8 @@ import axios from "axios";
 import { HOSTNAME } from "../../config.js";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import Select from "react-select";
+import { validatePhoneNumber } from "../../regx.js";
+import ErrorAlert from "../../components/alert/error.jsx";
 
 function EditForm() {
     const [errors, setErrors] = useState({});
@@ -12,7 +14,8 @@ function EditForm() {
     const [selectedDepartment, setSelectedDepartment] = useState(null);
     const redirect = useNavigate();
     const { id } = useParams();
-    
+    const [inputError, setInputError] = useState({});
+
     const {
         register,
         handleSubmit,
@@ -26,28 +29,28 @@ function EditForm() {
 
     useEffect(() => {
         setIsLoading(true);
-        
+
         // Fetch departments first
         const fetchDepartment = axios.get(HOSTNAME + "/a/departments");
-        
+
         // Fetch teacher data
         const fetchTeacher = axios.get(`${HOSTNAME}/a/teacher/${id}`);
-        
+
         // Use Promise.all to fetch both in parallel
         Promise.all([fetchDepartment, fetchTeacher])
             .then(([deptResponse, teacherResponse]) => {
                 const departments = deptResponse.data;
                 const teacherData = teacherResponse.data;
-                
+
                 setDepartment(departments);
-                
+
                 // Set form values
                 setValue("tchCode", teacherData.tchCode);
                 setValue("fName", teacherData.fName);
                 setValue("lName", teacherData.lName);
                 setValue("email", teacherData.email);
                 setValue("tel", teacherData.tel);
-                
+
                 // Find and set the selected department
                 if (teacherData.deptId) {
                     const currentDept = departments.find(dept => dept.deptId === teacherData.deptId);
@@ -57,7 +60,7 @@ function EditForm() {
                         setValue("deptId", deptOption.value);
                     }
                 }
-                
+
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -67,9 +70,40 @@ function EditForm() {
             });
     }, [id, setValue]);
 
+    const inputValidation = (data) => {
+        /*
+            Data Structure Example (Teacher):
+            {
+                "fName": "teacher1",                    // ชื่อจริง
+                "lName": "teacher1",                    // นามสกุล
+                "email": "teacher1@gmail.com",          // อีเมลติดต่อ
+                "tel": "0651088956",                    // เบอร์โทรศัพท์
+                "deptId": "uuid" // รหัสแผนก (UUID)
+            }
+        */
+
+        //tel validate format
+        if (!validatePhoneNumber(data.tel)) {
+            if (data.tel === "" || data.tel === " ") {
+                return true;
+            } else {
+                setInputError({
+                    title: "เกิดข้อผิดพลาด",
+                    description: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง"
+                })
+                return false;
+            };
+        };
+
+        return true;
+    };
+
     const onSubmit = async function (data) {
         // Remove confirm password and empty password fields before submitting
         const { confirmPassword, password, ...submitData } = data;
+        const validateInputStatus = inputValidation(data); // Call inputValidation function.
+        if (!validateInputStatus) return; //if format not good for any input return; for stop this function.
+
         if (password) {
             submitData.password = password;
         }
@@ -78,7 +112,7 @@ function EditForm() {
             const response = await axios.put(`${HOSTNAME}/a/teacher/${id}`, submitData);
             if (response.status === 200) {
                 redirect("/teachers",
-                    {state: {message: "แก้ไขข้อมูลครูเรียบร้อยแล้ว"}}
+                    { state: { message: "แก้ไขข้อมูลครูเรียบร้อยแล้ว" } }
                 );
             }
         } catch (error) {
@@ -102,8 +136,17 @@ function EditForm() {
                 <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">แก้ไขข้อมูลคุณครู</h1>
                 <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
             </div>
-            
+
             <div className="mt-5">
+                {inputError.title && inputError.description && (
+                    // Onclick = {() => setInputError({})} mean dismiss alert.  
+                    <div className="mb-2" onClick={() => setInputError({})}>
+                        <ErrorAlert title={inputError.title} message={inputError.description} />
+                    </div>
+
+                )}
+
+
                 {errors.general ? (
                     <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
                         <div className="flex justify-center mb-4 text-text-color-alt">
@@ -171,6 +214,7 @@ function EditForm() {
                                         placeholder="ชื่อ"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("fName", { required: true })}
+                                        required
                                     />
                                 </div>
 
@@ -187,6 +231,7 @@ function EditForm() {
                                         placeholder="นามสกุล"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("lName", { required: true })}
+                                        required
                                     />
                                 </div>
 
@@ -205,19 +250,20 @@ function EditForm() {
                                         render={({ field }) => (
                                             <Select
                                                 id="Department"
-                                                options={department.map((dept) => ({ 
-                                                    value: dept.deptId, 
-                                                    label: dept.deptName 
+                                                options={department.map((dept) => ({
+                                                    value: dept.deptId,
+                                                    label: dept.deptName
                                                 }))}
                                                 value={selectedDepartment}
                                                 onChange={(option) => {
                                                     setSelectedDepartment(option);
                                                     field.onChange(option.value);
                                                 }}
+                                                required
                                                 classNamePrefix="react-select"
                                                 placeholder="เลือกกลุ่มสาระ..."
                                                 noOptionsMessage={() => "ไม่พบข้อมูล"}
-                                                 menuPortalTarget={document.body}
+                                                menuPortalTarget={document.body}
                                                 menuPosition="fixed"
                                             />
                                         )}
@@ -240,6 +286,7 @@ function EditForm() {
                                         placeholder="example@nps.ac.th"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("email", { required: true })}
+                                        required
                                     />
                                     {errors.email && <p className="text-red-500 text-xs mt-1 font-body">{errors.email}</p>}
                                 </div>
@@ -298,7 +345,7 @@ function EditForm() {
                                         placeholder="••••••••"
                                         className="w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color"
                                         {...register("confirmPassword", {
-                                            validate: value => 
+                                            validate: value =>
                                                 !password || value === password || "รหัสผ่านไม่ตรงกัน"
                                         })}
                                     />
@@ -308,7 +355,7 @@ function EditForm() {
                                 </div>
 
                                 <div className="sm:col-span-2 flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
-                                    <Link 
+                                    <Link
                                         to={`/teachers/${id}`}
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                                     >
@@ -317,7 +364,7 @@ function EditForm() {
                                         </svg>
                                         ยกเลิก
                                     </Link>
-                                    
+
                                     <button
                                         type="submit"
                                         className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
