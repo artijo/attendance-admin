@@ -458,3 +458,48 @@ export function validateSubject(data) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateSubjectType(data) {
+  const schema = yup.object({
+    subTypeNameThai: yup
+      .string()
+      .required("กรุณากรอกชื่อกลุ่มสาระการเรียนรู้ภาษาไทย")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อกลุ่มสาระการเรียนรู้ภาษาไทย",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อกลุ่มสาระต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(100, "ชื่อกลุ่มสาระต้องไม่เกิน 100 ตัวอักษร")
+      .matches(/^[ก-๙0-9\s]+$/, "ชื่อกลุ่มสาระภาษาไทยต้องเป็นภาษาไทยเท่านั้น"),
+    subTypeNameEng: yup
+      .string()
+      .required("กรุณากรอกชื่อกลุ่มสาระการเรียนรู้ภาษาอังกฤษ")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อกลุ่มสาระการเรียนรู้ภาษาอังกฤษ",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อกลุ่มสาระต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(100, "ชื่อกลุ่มสาระต้องไม่เกิน 100 ตัวอักษร")
+      .matches(
+        /^[a-zA-Z0-9\s]+$/,
+        "ชื่อกลุ่มสาระภาษาอังกฤษต้องเป็นภาษาอังกฤษเท่านั้น"
+      ),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}
