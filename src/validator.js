@@ -330,3 +330,51 @@ export function validateClassroom(data) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateClassroomType(data) {
+  const schema = yup.object({
+    classTypeNameThai: yup
+      .string()
+      .required("กรุณากรอกชื่อประเภทห้องเรียนภาษาไทย")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อประเภทห้องเรียนภาษาไทย",
+        (value) => value && value.length > 0
+      )
+      .min(2, "ชื่อประเภทห้องเรียนต้องมีอย่างน้อย 2 ตัวอักษร")
+      .max(100, "ชื่อประเภทห้องเรียนต้องไม่เกิน 100 ตัวอักษร")
+      .matches(
+        /^[ก-๙0-9\s\-()]+$/,
+        "ชื่อประเภทห้องเรียนต้องเป็นภาษาไทยเท่านั้น"
+      ),
+    classTypeNameEng: yup
+      .string()
+      .required("กรุณากรอกชื่อประเภทห้องเรียนภาษาอังกฤษ")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อประเภทห้องเรียนภาษาอังกฤษ",
+        (value) => value && value.length > 0
+      )
+      .min(2, "ชื่อประเภทห้องเรียนต้องมีอย่างน้อย 2 ตัวอักษร")
+      .max(100, "ชื่อประเภทห้องเรียนต้องไม่เกิน 100 ตัวอักษร")
+      .matches(
+        /^[a-zA-Z0-9\s\-()]+$/,
+        "ชื่อประเภทห้องเรียนต้องเป็นภาษาอังกฤษเท่านั้น"
+      ),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}

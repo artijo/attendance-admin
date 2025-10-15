@@ -47,3 +47,13 @@ export function validateClassroomNumber(input) {
   const regex = /^[0-9]{1,3}$/;
   return regex.test(input);
 }
+
+export function validateClassroomTypeThai(input) {
+  const regex = /^[ก-๙0-9\s\-()]+$/;
+  return regex.test(input);
+}
+
+export function validateClassroomTypeEnglish(input) {
+  const regex = /^[a-zA-Z0-9\s\-()]+$/;
+  return regex.test(input);
+}
