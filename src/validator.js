@@ -610,3 +610,128 @@ export function validateTerm(data) {
 
   return validateWithSchema(schema, data);
 }
+
+export function validateHoliday(data) {
+  const schema = yup.object({
+    holidayName: yup
+      .string()
+      .required("กรุณากรอกชื่อวันหยุด")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อวันหยุด",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อวันหยุดต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(200, "ชื่อวันหยุดต้องไม่เกิน 200 ตัวอักษร")
+      .matches(
+        /^[ก-๙a-zA-Z0-9\s\-()]+$/,
+        "ชื่อวันหยุดต้องเป็นตัวอักษรไทย อังกฤษ ตัวเลข เครื่องหมาย - () เท่านั้น"
+      ),
+    startHolidayDate: yup
+      .string()
+      .required("กรุณาเลือกวันที่หยุด")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      }),
+    type: yup
+      .string()
+      .required("กรุณาเลือกประเภทวันหยุด")
+      .oneOf(
+        ["RATCHAKHAN", "SCHOOL"],
+        "ประเภทวันหยุดต้องเป็น RATCHAKHAN หรือ SCHOOL เท่านั้น"
+      ),
+  });
+
+  return validateWithSchema(schema, data);
+}
+
+export function validateHolidayList(data) {
+  const schema = yup.object({
+    holidayList: yup
+      .array()
+      .of(
+        yup.object({
+          holidayName: yup
+            .string()
+            .required("กรุณากรอกรหัสวิชา")
+            .trim()
+            .min(3, "ชื่อวันหยุดต้องมีอย่างน้อย 3 ตัวอักษร")
+            .max(200, "ชื่อวันหยุดต้องไม่เกิน 200 ตัวอักษร"),
+          startHolidayDate: yup
+            .string()
+            .required("กรุณาเลือกวันที่หยุด")
+            .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+              if (!value) return false;
+              const date = new Date(value);
+              return date instanceof Date && !isNaN(date);
+            }),
+          type: yup
+            .string()
+            .required("กรุณาเลือกประเภทวันหยุด")
+            .oneOf(["RATCHAKHAN", "SCHOOL"], "ประเภทวันหยุดไม่ถูกต้อง"),
+        })
+      )
+      .min(1, "กรุณาเพิ่มรายการวันหยุดอย่างน้อย 1 รายการ")
+      .required("กรุณาเพิ่มรายการวันหยุด"),
+    termId: yup.string().required("กรุณาเลือกเทอมการศึกษา"),
+  });
+
+  return validateWithSchema(schema, data);
+}
+
+export function validateHolidayInput(data) {
+  const schema = yup.object({
+    name: yup
+      .string()
+      .required("กรุณากรอกชื่อวันหยุด")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อวันหยุด",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อวันหยุดต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(200, "ชื่อวันหยุดต้องไม่เกิน 200 ตัวอักษร")
+      .matches(
+        /^[ก-๙a-zA-Z0-9\s\-()]+$/,
+        "ชื่อวันหยุดต้องเป็นตัวอักษรไทย อังกฤษ ตัวเลข เครื่องหมาย - () เท่านั้น"
+      ),
+    startDate: yup
+      .string()
+      .required("กรุณาเลือกวันที่เริ่มหยุด")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      }),
+    endDate: yup
+      .string()
+      .required("กรุณาเลือกวันที่สิ้นสุด")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      })
+      .test(
+        "is-after-start",
+        "วันที่สิ้นสุดต้องมาหลังหรือเท่ากับวันที่เริ่มหยุด",
+        function (value) {
+          const { startDate } = this.parent;
+          if (!startDate || !value) return true;
+          return new Date(value) >= new Date(startDate);
+        }
+      ),
+    type: yup
+      .string()
+      .required("กรุณาเลือกประเภทวันหยุด")
+      .oneOf(
+        ["RATCHAKHAN", "SCHOOL"],
+        "ประเภทวันหยุดต้องเป็น RATCHAKHAN หรือ SCHOOL เท่านั้น"
+      ),
+  });
+
+  return validateWithSchema(schema, data);
+}

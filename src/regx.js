@@ -104,3 +104,8 @@ export function validateDate(input) {
   const date = new Date(input);
   return date instanceof Date && !isNaN(date);
 }
+
+export function validateHolidayName(input) {
+  const regex = /^[ก-๙a-zA-Z0-9\s\-()]+$/;
+  return regex.test(input);
+}
