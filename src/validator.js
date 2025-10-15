@@ -132,3 +132,91 @@ export function validateStudent(data) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateTeacher(data, isEdit = false) {
+  const schema = yup.object({
+    fName: yup
+      .string()
+      .required("กรุณากรอกชื่อ")
+      .trim()
+      .test("not-empty", "กรุณากรอกชื่อ", (value) => value && value.length > 0)
+      .min(2, "ชื่อต้องมีอย่างน้อย 2 ตัวอักษร")
+      .matches(/^[ก-๙a-zA-Z\s]+$/, "ชื่อต้องเป็นตัวอักษรไทยหรืออังกฤษเท่านั้น"),
+    lName: yup
+      .string()
+      .required("กรุณากรอกนามสกุล")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกนามสกุล",
+        (value) => value && value.length > 0
+      )
+      .min(2, "นามสกุลต้องมีอย่างน้อย 2 ตัวอักษร")
+      .matches(
+        /^[ก-๙a-zA-Z\s]+$/,
+        "นามสกุลต้องเป็นตัวอักษรไทยหรืออังกฤษเท่านั้น"
+      ),
+    email: yup
+      .string()
+      .required("กรุณากรอกอีเมล")
+      .trim()
+      .email("รูปแบบอีเมลไม่ถูกต้อง")
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "รูปแบบอีเมลไม่ถูกต้อง"
+      ),
+    tel: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        const trimmed = originalValue ? originalValue.trim() : "";
+        return trimmed === "" ? null : trimmed;
+      })
+      .matches(/^[0-9]{10}$|^$/, "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก"),
+    deptId: yup.string().required("กรุณาเลือกกลุ่มสาระ"),
+    password: isEdit
+      ? yup
+          .string()
+          .nullable()
+          .transform((value, originalValue) => {
+            const trimmed = originalValue ? originalValue.trim() : "";
+            return trimmed === "" ? null : trimmed;
+          })
+          .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร")
+      : yup
+          .string()
+          .nullable()
+          .transform((value, originalValue) => {
+            const trimmed = originalValue ? originalValue.trim() : "";
+            return trimmed === "" ? null : trimmed;
+          }),
+    confirmPassword: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        const trimmed = originalValue ? originalValue.trim() : "";
+        return trimmed === "" ? null : trimmed;
+      })
+      .test("passwords-match", "รหัสผ่านไม่ตรงกัน", function (value) {
+        const { password } = this.parent;
+        // If password is provided, confirmPassword must match
+        if (password && password.length > 0) {
+          return value === password;
+        }
+        return true;
+      }),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}
