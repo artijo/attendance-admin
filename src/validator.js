@@ -555,3 +555,58 @@ export function validateActivity(data) {
 
   return validateWithSchema(schema, data);
 }
+
+export function validateTerm(data) {
+  const schema = yup.object({
+    academicYear: yup
+      .string()
+      .required("กรุณากรอกปีการศึกษา")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกปีการศึกษา",
+        (value) => value && value.length > 0
+      )
+      .matches(/^[0-9]{4}$/, "ปีการศึกษาต้องเป็นตัวเลข 4 หลัก")
+      .test(
+        "is-valid-buddhist-year",
+        "ปีการศึกษาต้องอยู่ระหว่าง พ.ศ. 2500-2600",
+        (value) => {
+          if (!value) return false;
+          const year = parseInt(value);
+          return year >= 2500 && year <= 2600;
+        }
+      ),
+    semester: yup
+      .string()
+      .required("กรุณาเลือกเทอม")
+      .oneOf(["1", "2", "3"], "กรุณาเลือกเทอมที่ถูกต้อง"),
+    termStart: yup
+      .string()
+      .required("กรุณาเลือกวันเริ่มต้นเทอม")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      }),
+    termEnd: yup
+      .string()
+      .required("กรุณาเลือกวันสิ้นสุดเทอม")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      })
+      .test(
+        "is-after-start",
+        "วันที่สิ้นสุดต้องมาหลังวันที่เริ่มต้น",
+        function (value) {
+          const { termStart } = this.parent;
+          if (!termStart || !value) return true;
+          return new Date(value) > new Date(termStart);
+        }
+      ),
+  });
+
+  return validateWithSchema(schema, data);
+}

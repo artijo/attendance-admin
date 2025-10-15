@@ -87,3 +87,20 @@ export function validateTime(input) {
   const regex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
   return regex.test(input);
 }
+
+export function validateAcademicYear(input) {
+  const regex = /^[0-9]{4}$/;
+  if (!regex.test(input)) return false;
+  const year = parseInt(input);
+  return year >= 2500 && year <= 2600;
+}
+
+export function validateSemester(input) {
+  return ["1", "2", "3"].includes(input);
+}
+
+export function validateDate(input) {
+  if (!input) return false;
+  const date = new Date(input);
+  return date instanceof Date && !isNaN(date);
+}
