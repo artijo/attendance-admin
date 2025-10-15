@@ -253,3 +253,80 @@ export function validateDepartment(data) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateClassroom(data) {
+  const schema = yup.object({
+    classLevel: yup
+      .number()
+      .required("กรุณาเลือกระดับชั้น")
+      .min(1, "ระดับชั้นต้องอยู่ระหว่าง 1-6")
+      .max(6, "ระดับชั้นต้องอยู่ระหว่าง 1-6"),
+    classRoom: yup
+      .string()
+      .required("กรุณากรอกหมายเลขห้อง")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกหมายเลขห้อง",
+        (value) => value && value.length > 0
+      )
+      .matches(/^[0-9]+$/, "หมายเลขห้องต้องเป็นตัวเลขเท่านั้น")
+      .min(1, "หมายเลขห้องต้องมีอย่างน้อย 1 หลัก")
+      .max(3, "หมายเลขห้องต้องไม่เกิน 3 หลัก"),
+    classTypeId: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+    termId: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+    academicYear: yup
+      .number()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+    semester: yup
+      .number()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+    teacherIds: yup
+      .array()
+      .of(yup.string())
+      .nullable()
+      .default([])
+      .transform((value, originalValue) => {
+        // Allow empty array or null
+        if (!originalValue || originalValue.length === 0) {
+          return [];
+        }
+        return value;
+      }),
+    leaderId: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}

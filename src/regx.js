@@ -42,3 +42,8 @@ export function validateDepartmentName(input) {
   const regex = /^[ก-๙a-zA-Z0-9\s\-()]+$/;
   return regex.test(input);
 }
+
+export function validateClassroomNumber(input) {
+  const regex = /^[0-9]{1,3}$/;
+  return regex.test(input);
+}
