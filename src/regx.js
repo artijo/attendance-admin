@@ -77,3 +77,13 @@ export function validateCredit(input) {
   const num = parseFloat(input);
   return !isNaN(num) && num >= 0 && num <= 10 && num % 0.5 === 0;
 }
+
+export function validateActivityName(input) {
+  const regex = /^[ก-๙a-zA-Z0-9\s\-()]+$/;
+  return regex.test(input);
+}
+
+export function validateTime(input) {
+  const regex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+  return regex.test(input);
+}

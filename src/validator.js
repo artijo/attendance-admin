@@ -421,3 +421,137 @@ export function validateSubjectType(data) {
 
   return validateWithSchema(schema, data);
 }
+
+export function validateActivity(data) {
+  const schema = yup.object({
+    actName: yup
+      .string()
+      .required("กรุณากรอกชื่อกิจกรรม")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อกิจกรรม",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อกิจกรรมต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(200, "ชื่อกิจกรรมต้องไม่เกิน 200 ตัวอักษร"),
+    actDate: yup
+      .string()
+      .required("กรุณาเลือกวันที่เริ่มกิจกรรม")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      }),
+    actDateEnd: yup
+      .string()
+      .required("กรุณาเลือกวันที่สิ้นสุดกิจกรรม")
+      .test("is-valid-date", "วันที่ไม่ถูกต้อง", (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date);
+      })
+      .test(
+        "is-after-start",
+        "วันที่สิ้นสุดต้องมาหลังหรือเท่ากับวันที่เริ่ม",
+        function (value) {
+          const { actDate } = this.parent;
+          if (!actDate || !value) return true;
+          return new Date(value) >= new Date(actDate);
+        }
+      ),
+    actTypeId: yup
+      .mixed()
+      .required("กรุณาเลือกประเภทกิจกรรม")
+      .test("is-valid-type", "กรุณาเลือกประเภทกิจกรรม", (value) => {
+        return value && (value.value || typeof value === "string");
+      }),
+    actDesc: yup
+      .string()
+      .required("กรุณากรอกรายละเอียดกิจกรรม")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกรายละเอียดกิจกรรม",
+        (value) => value && value.length > 0
+      )
+      .min(10, "รายละเอียดต้องมีอย่างน้อย 10 ตัวอักษร")
+      .max(1000, "รายละเอียดต้องไม่เกิน 1000 ตัวอักษร"),
+    actLocation: yup
+      .string()
+      .required("กรุณากรอกสถานที่จัดกิจกรรม")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกสถานที่จัดกิจกรรม",
+        (value) => value && value.length > 0
+      )
+      .min(3, "สถานที่ต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(200, "สถานที่ต้องไม่เกิน 200 ตัวอักษร"),
+    actStartTime: yup
+      .string()
+      .required("กรุณาเลือกเวลาเริ่มกิจกรรม")
+      .matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "รูปแบบเวลาไม่ถูกต้อง"),
+    actEndTime: yup
+      .string()
+      .required("กรุณาเลือกเวลาสิ้นสุดกิจกรรม")
+      .matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "รูปแบบเวลาไม่ถูกต้อง")
+      .test(
+        "is-after-start-time",
+        "เวลาสิ้นสุดต้องมาหลังเวลาเริ่ม",
+        function (value) {
+          const { actStartTime, actDate, actDateEnd } = this.parent;
+          if (!actStartTime || !value) return true;
+
+          // If same day, end time must be after start time
+          if (actDate === actDateEnd) {
+            return value > actStartTime;
+          }
+
+          return true;
+        }
+      ),
+    joinLimit: yup.boolean(),
+    joinLimitType: yup.string().when("joinLimit", {
+      is: true,
+      then: (schema) =>
+        schema
+          .required("กรุณาเลือกประเภทการจำกัด")
+          .oneOf(["classroom", "number"], "ประเภทการจำกัดไม่ถูกต้อง"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    joinLimitNumber: yup
+      .number()
+      .nullable()
+      .when(["joinLimit", "joinLimitType"], {
+        is: (joinLimit, joinLimitType) =>
+          joinLimit === true && joinLimitType === "number",
+        then: (schema) =>
+          schema
+            .required("กรุณากรอกรายละเอียดกิจกรรม")
+            .min(1, "จำนวนผู้เข้าร่วมต้องมากกว่า 0")
+            .max(10000, "จำนวนผู้เข้าร่วมต้องไม่เกิน 10,000 คน"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+    teachers: yup.array().when("teacherAll", {
+      is: false,
+      then: (schema) =>
+        schema
+          .min(1, "กรุณาเลือกครูผู้ดูแลอย่างน้อย 1 คน")
+          .required("กรุณาเลือกครูผู้ดูแล"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    teacherAll: yup.boolean(),
+    classrooms: yup.array().when(["joinLimit", "joinLimitType"], {
+      is: (joinLimit, joinLimitType) =>
+        joinLimit === true && joinLimitType === "classroom",
+      then: (schema) =>
+        schema
+          .min(1, "กรุณาเลือกห้องเรียนอย่างน้อย 1 ห้อง")
+          .required("กรุณาเลือกห้องเรียน"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  });
+
+  return validateWithSchema(schema, data);
+}
