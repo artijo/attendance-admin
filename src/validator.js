@@ -1,5 +1,26 @@
 import * as yup from "yup";
 
+/**
+ * Helper function to validate data with Yup schema
+ * @param {yup.ObjectSchema} schema - Yup validation schema
+ * @param {Object} data - Data to validate
+ * @returns {Object} - { success: boolean, value?: Object, errors?: Object }
+ */
+function validateWithSchema(schema, data) {
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}
+
 export function validateLogin(username, password) {
   const schema = yup.object({
     username: yup.string().required("กรุณากรอกชื่อผู้ใช้"),
@@ -9,22 +30,7 @@ export function validateLogin(username, password) {
       .required("กรุณากรอกรหัสผ่าน"),
   });
 
-  try {
-    const result = schema.validateSync(
-      { username, password },
-      { abortEarly: false }
-    );
-    return { success: true, value: result };
-  } catch (error) {
-    // Format Yup error messages
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, { username, password });
 }
 
 export function validatePasswordChange(
@@ -47,22 +53,11 @@ export function validatePasswordChange(
       .oneOf([yup.ref("newPassword")], "รหัสผ่านไม่ตรงกัน"),
   });
 
-  try {
-    const result = schema.validateSync(
-      { oldPassword, newPassword, confirmPassword },
-      { abortEarly: false }
-    );
-    return { success: true, value: result };
-  } catch (error) {
-    // Format Yup error messages
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, {
+    oldPassword,
+    newPassword,
+    confirmPassword,
+  });
 }
 
 export function validateStudent(data) {
@@ -119,18 +114,7 @@ export function validateStudent(data) {
       .matches(/^[0-9]{10}$|^$/, "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก"),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateTeacher(data, isEdit = false) {
@@ -207,18 +191,7 @@ export function validateTeacher(data, isEdit = false) {
       }),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateDepartment(data) {
@@ -240,18 +213,7 @@ export function validateDepartment(data) {
       ),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateClassroom(data) {
@@ -317,18 +279,7 @@ export function validateClassroom(data) {
       }),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateClassroomType(data) {
@@ -365,18 +316,7 @@ export function validateClassroomType(data) {
       ),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateSubject(data) {
@@ -445,18 +385,7 @@ export function validateSubject(data) {
       }),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
 
 export function validateSubjectType(data) {
@@ -490,16 +419,5 @@ export function validateSubjectType(data) {
       ),
   });
 
-  try {
-    const result = schema.validateSync(data, { abortEarly: false });
-    return { success: true, value: result };
-  } catch (error) {
-    const formattedErrors = {};
-    if (error.inner && Array.isArray(error.inner)) {
-      error.inner.forEach((err) => {
-        formattedErrors[err.path] = err.message;
-      });
-    }
-    return { success: false, errors: formattedErrors };
-  }
+  return validateWithSchema(schema, data);
 }
