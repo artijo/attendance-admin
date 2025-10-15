@@ -57,3 +57,23 @@ export function validateClassroomTypeEnglish(input) {
   const regex = /^[a-zA-Z0-9\s\-()]+$/;
   return regex.test(input);
 }
+
+export function validateSubjectCode(input) {
+  const regex = /^[ก-๙a-zA-Z0-9]+$/;
+  return regex.test(input);
+}
+
+export function validateSubjectNameThai(input) {
+  const regex = /^[ก-๙0-9\s]+$/;
+  return regex.test(input);
+}
+
+export function validateSubjectNameEnglish(input) {
+  const regex = /^[a-zA-Z0-9\s]+$/;
+  return regex.test(input);
+}
+
+export function validateCredit(input) {
+  const num = parseFloat(input);
+  return !isNaN(num) && num >= 0 && num <= 10 && num % 0.5 === 0;
+}

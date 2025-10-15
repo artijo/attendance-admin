@@ -378,3 +378,83 @@ export function validateClassroomType(data) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateSubject(data) {
+  const schema = yup.object({
+    subCode: yup
+      .string()
+      .required("กรุณากรอกรหัสวิชา")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกรหัสวิชา",
+        (value) => value && value.length > 0
+      )
+      .min(2, "รหัสวิชาต้องมีอย่างน้อย 2 ตัวอักษร")
+      .max(20, "รหัสวิชาต้องไม่เกิน 20 ตัวอักษร")
+      .matches(
+        /^[ก-๙a-zA-Z0-9]+$/,
+        "รหัสวิชาต้องเป็นตัวอักษรไทย อังกฤษ หรือตัวเลขเท่านั้น"
+      ),
+    subNameThai: yup
+      .string()
+      .required("กรุณากรอกชื่อวิชาภาษาไทย")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อวิชาภาษาไทย",
+        (value) => value && value.length > 0
+      )
+      .min(2, "ชื่อวิชาต้องมีอย่างน้อย 2 ตัวอักษร")
+      .max(200, "ชื่อวิชาต้องไม่เกิน 200 ตัวอักษร")
+      .matches(/^[ก-๙0-9\s]+$/, "ชื่อวิชาภาษาไทยต้องเป็นภาษาไทยเท่านั้น"),
+    subNameEng: yup
+      .string()
+      .required("กรุณากรอกชื่อวิชาภาษาอังกฤษ")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อวิชาภาษาอังกฤษ",
+        (value) => value && value.length > 0
+      )
+      .min(2, "ชื่อวิชาต้องมีอย่างน้อย 2 ตัวอักษร")
+      .max(200, "ชื่อวิชาต้องไม่เกิน 200 ตัวอักษร")
+      .matches(
+        /^[a-zA-Z0-9\s]+$/,
+        "ชื่อวิชาภาษาอังกฤษต้องเป็นภาษาอังกฤษเท่านั้น"
+      ),
+    subCredit: yup
+      .number()
+      .required("กรุณากรอกหน่วยกิต")
+      .min(0, "หน่วยกิตต้องมากกว่าหรือเท่ากับ 0")
+      .max(10, "หน่วยกิตต้องไม่เกิน 10")
+      .test(
+        "is-valid-credit",
+        "หน่วยกิตต้องเป็นทศนิยม 0.5 เท่านั้น",
+        (value) => {
+          if (value === undefined || value === null) return false;
+          return value % 0.5 === 0;
+        }
+      ),
+    subTypeId: yup.string().required("กรุณาเลือกกลุ่มสาระการเรียนรู้"),
+    tchId: yup
+      .string()
+      .nullable()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+      }),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}
