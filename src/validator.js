@@ -220,3 +220,36 @@ export function validateTeacher(data, isEdit = false) {
     return { success: false, errors: formattedErrors };
   }
 }
+
+export function validateDepartment(data) {
+  const schema = yup.object({
+    deptName: yup
+      .string()
+      .required("กรุณากรอกชื่อกลุ่มสาระ")
+      .trim()
+      .test(
+        "not-empty",
+        "กรุณากรอกชื่อกลุ่มสาระ",
+        (value) => value && value.length > 0
+      )
+      .min(3, "ชื่อกลุ่มสาระต้องมีอย่างน้อย 3 ตัวอักษร")
+      .max(100, "ชื่อกลุ่มสาระต้องไม่เกิน 100 ตัวอักษร")
+      .matches(
+        /^[ก-๙a-zA-Z0-9\s\-()]+$/,
+        "ชื่อกลุ่มสาระต้องเป็นตัวอักษรไทย อังกฤษ ตัวเลข เครื่องหมาย - () เท่านั้น"
+      ),
+  });
+
+  try {
+    const result = schema.validateSync(data, { abortEarly: false });
+    return { success: true, value: result };
+  } catch (error) {
+    const formattedErrors = {};
+    if (error.inner && Array.isArray(error.inner)) {
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+    }
+    return { success: false, errors: formattedErrors };
+  }
+}
