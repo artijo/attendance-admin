@@ -141,7 +141,7 @@ function Logout() {
 
   return (
     <>
-    <header className="font-heading bg-primary text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-screen flex flex-col">
+    <header className="font-heading bg-primary text-white sticky left-0 top-0 md:bottom-0 md:fixed md:w-56 h-[4.5rem] md:h-screen flex flex-col z-50">
       <div className="p-2 md:p-3 text-white flex sm:block justify-between items-center h-auto">
         <div
           id="toggle"
@@ -252,7 +252,7 @@ function Logout() {
          
         </ul>
       </nav>
-      <div className="hidden mt-auto mx-3 mb-6 md:block">
+      <div className="hidden mt-auto mx-3 mb-6 md:block ">
         <button 
           onClick={Logout}
           className="w-full py-2.5 px-4 text-sm font-medium text-white hover:bg-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 flex items-center justify-center"

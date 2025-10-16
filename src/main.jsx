@@ -43,10 +43,6 @@ const DepartmentManage = lazy(() => import("./pages/teachers/department/Manage.j
 const LeaveRequest = lazy(() => import("./pages/leaverequest/LeaveRequest.jsx"));
 const LeaveRequestDetail = lazy(() => import("./pages/leaverequest/LeaveRequestDetail.jsx"));
 
-// Timetable
-// const Timetable = lazy(() => import("./pages/new_timetable/new_timetable.jsx"));
-// const CreateTimetable = lazy(() => import("./pages/new_timetable/new_createtimetable.jsx"));
-// const EditTimetable = lazy(() => import("./pages/new_timetable/new_edittimetable.jsx"));
 //  Calendar
 const CalendarStudy = lazy(() => import("./pages/calendar/CalendarStudy.jsx"));
 const CalendarHoliday = lazy(() => import("./pages/calendar/CalendarHoliday.jsx"));

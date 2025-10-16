@@ -44,7 +44,7 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
 
     return (
         <div
-            className="w-full h-[150px] text-left transition-transform duration-150 active:opacity-70 active:cursor-grab"
+            className="w-full text-nowrap h-[150px] text-left bg-gray-50 border border-gray-200 transition-transform duration-150 active:opacity-70 active:cursor-grab"
             draggable
             onDragStart={() => setActiveCard(timetablethistime)}
             onDragEnd={() => setActiveCard(null)}
@@ -54,13 +54,11 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
                 e.preventDefault();
                 setClicked(true);
                 setPoints({
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.clientX,
+                    y: e.clientY,
                 });
             }}
-
         >
-
             <div
                 className="h-full text-white flex flex-col relative"
                 style={subjectStyle}
@@ -88,7 +86,7 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
             </div>
             {clicked && (
                 <div
-                    className={`fixed w-[250px] box-border bg-white border border-gray-200 z-50`}
+                    className={`fixed w-[250px] box-border bg-white border border-gray-200`}
                     style={{
                         top: `${points.y}px`,
                         left: `${points.x}px`
