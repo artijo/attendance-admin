@@ -81,7 +81,6 @@ function CreateTimetableDragAndDrop() {
     //drag and drop
     const [activeCard, setActiveCard] = useState(null); // วิชาที่เลือก
     const [subjectActiveCard, setSubjectActiveCard] = useState(null) // วิชาที่เลือกจะใส่ในตาราง
-
     //Error State 
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);

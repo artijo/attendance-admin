@@ -124,7 +124,7 @@ export const RoomList = ({ academicYearTermId, selectedClassLevel }) => {
                                     </Link> */}
 
                                     <Link 
-                                        to="/testtimetable"
+                                        to="/timetable"
                                         state={{ classroom: classroom }}
                                         className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-primary/30 bg-primary/5 text-sm font-medium text-primary hover:bg-primary/10 transition-colors duration-300"
                                     >

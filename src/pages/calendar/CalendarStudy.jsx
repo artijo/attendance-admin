@@ -4,7 +4,7 @@ import { useLocation, Link } from "react-router-dom";
 const CalendarStudy = () => {
     const location = useLocation();
     const classroomInfo = location.state.classroomInfo;
-    console.log(classroomInfo);
+    // console.log(classroomInfo);
 
     return (
         <div className="min-h-screen">

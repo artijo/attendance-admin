@@ -44,9 +44,9 @@ const LeaveRequest = lazy(() => import("./pages/leaverequest/LeaveRequest.jsx"))
 const LeaveRequestDetail = lazy(() => import("./pages/leaverequest/LeaveRequestDetail.jsx"));
 
 // Timetable
-const Timetable = lazy(() => import("./pages/new_timetable/new_timetable.jsx"));
-const CreateTimetable = lazy(() => import("./pages/new_timetable/new_createtimetable.jsx"));
-const EditTimetable = lazy(() => import("./pages/new_timetable/new_edittimetable.jsx"));
+// const Timetable = lazy(() => import("./pages/new_timetable/new_timetable.jsx"));
+// const CreateTimetable = lazy(() => import("./pages/new_timetable/new_createtimetable.jsx"));
+// const EditTimetable = lazy(() => import("./pages/new_timetable/new_edittimetable.jsx"));
 //  Calendar
 const CalendarStudy = lazy(() => import("./pages/calendar/CalendarStudy.jsx"));
 const CalendarHoliday = lazy(() => import("./pages/calendar/CalendarHoliday.jsx"));
@@ -135,10 +135,10 @@ createRoot(document.getElementById("root")).render(
           <Route path="leavereq" element={<LeaveRequest />} />
           <Route path="leavereq/:id" element={<LeaveRequestDetail />} />
           {/* Timetable Section */}
-          <Route path="timetable" element={<Timetable/>}/>
-          <Route path="testtimetable" element={<CreateTimetableDragAndDrop/>}/>
-          <Route path="timetable/create" element={<CreateTimetable/>}/>
-          <Route path="timetable/edit" element={<EditTimetable/>}/>
+          {/* <Route path="timetable" element={<Timetable/>}/> */}
+          <Route path="timetable" element={<CreateTimetableDragAndDrop/>}/>
+          {/* <Route path="timetable/create" element={<CreateTimetable/>}/>
+          <Route path="timetable/edit" element={<EditTimetable/>}/> */}
           {/* CalendarSchool study Section */}
           <Route path="calendarstudy" element={<CalendarStudy />}/>
           <Route path="calendarholiday" element={<CalendarHoliday />}/>
