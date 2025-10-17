@@ -137,7 +137,7 @@ function Attendence() {
                 </div>
             ) : (
                 <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
-                    <div className="p-0">
+                    <div>
                         <ClassroomAttendenceList 
                             classLevel={selectedClassLevel} 
                             academicYearTerm={selectedAcademicYearTerm}

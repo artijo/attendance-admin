@@ -150,11 +150,11 @@ function Calendar() {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
             ) : (
-                <div id="classroomList">
+                <div id="classroomList" className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
                     {selectedAcademicYearTerm && (
                         <RoomList 
                             academicYearTermId={selectedAcademicYearTerm} 
-                            selectedClassLevel={selectedClassLevel} 
+                            classLevel={selectedClassLevel} 
                         />
                     )}
                 </div>
