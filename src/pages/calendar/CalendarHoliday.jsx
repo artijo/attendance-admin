@@ -51,7 +51,7 @@ const CalendarHoliday = () => {
                             ปฏิทินวันหยุดประจำปีการศึกษา
                         </h3>
                         
-                        <div className="flex gap-3">
+                        {/* <div className="flex gap-3">
                             <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 <span className="w-2 h-2 rounded-full bg-red-600 mr-1.5"></span>
                                 วันหยุดราชการ
@@ -60,7 +60,7 @@ const CalendarHoliday = () => {
                                 <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
                                 วันหยุดโรงเรียน
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     
                     <CalendarDetatils classroom={classroomInfo}/>

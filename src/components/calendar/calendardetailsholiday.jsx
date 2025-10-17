@@ -8,14 +8,9 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 export const CalendarDetatils = ({classroom}) => {
-    // const location = useLocation();
     const [holidayList, setHolidayList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-
-    console.log(classroom);
-    
+    const [error, setError] = useState(null);    
     const fetchHolidayList = async () => {
         try {
             setIsLoading(true);
@@ -34,12 +29,14 @@ export const CalendarDetatils = ({classroom}) => {
         fetchHolidayList();
     }, []);
 
+    // console.log(holidayList);
+
     // Customize the calendar appearance with consistent styling
     const calendarOptions = {
         plugins: [dayGridPlugin, timegridPlugin, interactionPlugin],
         timeZone: "Asia/Bangkok",
         locale: "th",
-        height: 650,
+        height: 1000,
         initialView: "dayGridMonth",
         initialDate: holidayList.length > 0 ? holidayList[0].start : new Date(),
         eventDisplay: "block",
@@ -47,11 +44,12 @@ export const CalendarDetatils = ({classroom}) => {
             info.el.style.cursor = 'pointer';
             
             // Add tooltip with more details
+            const holidayType = info.event["_def"].extendedProps.holidayType;
             const tooltip = document.createElement('div');
             tooltip.classList.add('calendar-tooltip');
             tooltip.innerHTML = `
                 <strong>${info.event.title}</strong><br>
-                ประเภท: ${info.event.backgroundColor === 'red' ? 'วันหยุดราชการ' : 'วันหยุดโรงเรียน'}<br>
+                ประเภท: ${holidayType === 'SCHOOL' ? 'วันหยุดโรงเรียน' : 'วันหยุดราชการ'}<br>
             `;
             
             info.el.addEventListener('mouseover', () => {
@@ -89,17 +87,27 @@ export const CalendarDetatils = ({classroom}) => {
             day: 'วัน',
         },
         eventContent: (eventInfo) => {
+            // console.log(eventInfo.event["_def"].extendedProps.holidayType);
+            const holidayType = eventInfo.event["_def"].extendedProps.holidayType;
+
             return (
-                <div className="flex items-center px-1">
-                    <div className={`w-2 h-2 rounded-full mr-1.5 ${eventInfo.event.backgroundColor === '#EF4444' ? 'bg-red-600' : 'bg-blue-600'}`}></div>
-                    <span className="text-xs font-medium truncate">{eventInfo.event.title}</span>
+                <div className={`flex items-center text-xs px-1 py-1 rounded-md text-white ${holidayType === 'SCHOOL' ? "bg-blue-600" : "bg-red-600"}`}>
+                    <span className="text-sm font-medium truncate">{eventInfo.event.title}</span>
                 </div>
             );
         },
+        eventColor: "transparent",
+        eventBackgroundColor: "transparent", 
+        eventBorderColor: "transparent", 
+        eventTextColor:"black",
+        themeSystem: 'standard',
         // Custom styling for calendar elements
         dayCellClassNames: 'text-sm p-1',
         dayHeaderClassNames: 'text-xs font-medium py-2',
-        eventClassNames: 'rounded-md shadow-sm border-none',
+        // Custom styling for calendar elements
+        // eventColor: "red",
+        // eventClassNames: 'rounded-md shadow-sm border-none',
+
     };
 
     if (isLoading) {
@@ -126,7 +134,7 @@ export const CalendarDetatils = ({classroom}) => {
     return (
         <div className="calendar-container relative">
             {holidayList.length > 0 ? (
-                <div className="rounded-lg overflow-hidden border border-line">
+                <div className="rounded-lg overflow-hidden">
                     <FullCalendar {...calendarOptions} />
                 </div>
             ) : (

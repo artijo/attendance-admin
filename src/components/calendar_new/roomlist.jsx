@@ -34,6 +34,7 @@ export const RoomList = ({ academicYearTermId, classLevel }) => {
         }
     };
 
+
     useEffect(() => {
         if (academicYearTermId) {
             fetchClassrooms();
@@ -172,6 +173,7 @@ export const RoomList = ({ academicYearTermId, classLevel }) => {
                             )}
                         </tbody>
                     </table>
+                    
                 </div>
             </div>
         </div>
