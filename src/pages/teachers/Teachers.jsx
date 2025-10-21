@@ -100,23 +100,25 @@ function Teachers() {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">
+        <h1 className="text-2xl font-bold md:text-3xl text-primary font-heading">
           คุณครู
         </h1>
-        <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+        <div className="w-16 h-1 mt-2 rounded-full bg-secondary"></div>
       </div>
 
       {state && state.message && (
-        <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
+        <div className="mb-6"> 
+            <AlertSuccess title="บันทึกข้อมูลแล้ว" message={state.message} />
+        </div>
       )}
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+      <div className="flex flex-col items-center justify-between mb-6 sm:flex-row">
         {teachers && (
-          <div className="mb-3 sm:mb-0 bg-white rounded-lg px-4 py-2 border border-line shadow-sm">
+          <div className="px-4 py-2 mb-3 bg-white border rounded-lg shadow-sm sm:mb-0 border-line">
             <span className="text-text-color-alt font-body">
               จำนวนครูทั้งหมด:
             </span>
-            <span className="ml-2 font-medium text-primary text-lg font-heading">
+            <span className="ml-2 text-lg font-medium text-primary font-heading">
               {teachers.length} คน
             </span>
             {teachers.length !== totalTeachers && (
@@ -127,7 +129,7 @@ function Teachers() {
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             to="restore"
             className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all duration-300"
@@ -195,18 +197,18 @@ function Teachers() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
+      <div className="p-6 mb-6 bg-white border shadow-md rounded-xl border-line">
         <div className="flex flex-col space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             {/* Department Filter */}
             <div className="w-full sm:w-72">
               <label
                 htmlFor="departmentFilter"
-                className="text-sm font-medium text-text-color font-body flex items-center mb-2"
+                className="flex items-center mb-2 text-sm font-medium text-text-color font-body"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2 text-primary"
+                  className="w-5 h-5 mr-2 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -276,12 +278,12 @@ function Teachers() {
           {/* Active Filters */}
           {(search !== "" || selectedDept !== "all") && (
             <div className="flex items-center pt-3 border-t border-gray-100">
-              <div className="text-sm text-text-color font-body mr-2">
+              <div className="mr-2 text-sm text-text-color font-body">
                 กำลังกรอง:
               </div>
               <div className="flex flex-wrap gap-2">
                 {search !== "" && (
-                  <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
+                  <div className="flex items-center px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
                     ค้นหา: {search}
                     <button
                       onClick={() => setSearch("")}
@@ -289,7 +291,7 @@ function Teachers() {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="w-4 h-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -305,7 +307,7 @@ function Teachers() {
                   </div>
                 )}
                 {selectedDept !== "all" && (
-                  <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium flex items-center">
+                  <div className="flex items-center px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
                     กลุ่มสาระ: {getDepartmentName(selectedDept)}
                     <button
                       onClick={() => setSelectedDept("all")}
@@ -313,7 +315,7 @@ function Teachers() {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="w-4 h-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -331,7 +333,7 @@ function Teachers() {
                 {(search !== "" || selectedDept !== "all") && (
                   <button
                     onClick={resetFilters}
-                    className="text-text-color-alt hover:text-primary text-xs font-medium flex items-center"
+                    className="flex items-center text-xs font-medium text-text-color-alt hover:text-primary"
                   >
                     ล้างตัวกรองทั้งหมด
                   </button>
@@ -342,19 +344,19 @@ function Teachers() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md p-6 border border-line mb-6">
+      <div className="p-6 mb-6 bg-white border shadow-md rounded-xl border-line">
         <TeacherChart teachers={teachers} departments={departments} />
       </div>
 
       {!teachers ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center h-64">
+          <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary"></div>
         </div>
       ) : teachers.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
+        <div className="p-8 text-center bg-white border shadow-md rounded-xl border-line">
           <div className="flex justify-center mb-4 text-text-color-alt">
             <svg
-              className="h-16 w-16"
+              className="w-16 h-16"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -367,7 +369,7 @@ function Teachers() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">
+          <h2 className="mb-2 text-xl font-semibold text-text-color font-heading">
             ไม่พบข้อมูลครู
           </h2>
           <p className="text-text-color-alt font-body">
@@ -376,7 +378,7 @@ function Teachers() {
           {(search !== "" || selectedDept !== "all") && (
             <button
               onClick={resetFilters}
-              className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              className="inline-flex items-center px-4 py-2 mt-4 text-sm font-medium bg-white border border-gray-300 rounded-md shadow-sm text-text-color hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -396,7 +398,7 @@ function Teachers() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+        <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">
           <TeacherList teachers={teachers} teachersPerPage={10} />
         </div>
       )}

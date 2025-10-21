@@ -119,19 +119,19 @@ const DepartmentManage = () => {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">
+        <h1 className="text-2xl font-bold md:text-3xl text-primary font-heading">
           จัดการสังกัดกลุ่มสาระของคุณครู
         </h1>
-        <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+        <div className="w-16 h-1 mt-2 rounded-full bg-secondary"></div>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+      <div className="flex flex-col items-center justify-between mb-6 sm:flex-row">
         {departments.length > 0 && (
-          <div className="mb-3 sm:mb-0 bg-white rounded-lg px-4 py-2 border border-line shadow-sm">
+          <div className="px-4 py-2 mb-3 bg-white border rounded-lg shadow-sm sm:mb-0 border-line">
             <span className="text-text-color-alt font-body">
               จำนวนกลุ่มสาระทั้งหมด:
             </span>
-            <span className="ml-2 font-medium text-primary text-lg font-heading">
+            <span className="ml-2 text-lg font-medium text-primary font-heading">
               {departments.length} กลุ่ม
             </span>
           </div>
@@ -181,15 +181,15 @@ const DepartmentManage = () => {
       )}
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center h-64">
+          <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary"></div>
         </div>
       ) : departments.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-md p-8 text-center border border-line">
+        <div className="p-8 text-center bg-white border shadow-md rounded-xl border-line">
           <div className="flex justify-center mb-4 text-text-color-alt">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-16 w-16"
+              className="w-16 h-16"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -202,7 +202,7 @@ const DepartmentManage = () => {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-text-color mb-2 font-heading">
+          <h2 className="mb-2 text-xl font-semibold text-text-color font-heading">
             ไม่พบข้อมูลกลุ่มสาระ
           </h2>
           <p className="text-text-color-alt font-body">
@@ -210,10 +210,10 @@ const DepartmentManage = () => {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+        <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-text-color-alt font-medium uppercase tracking-wider bg-gray-50 border-b border-line">
+              <thead className="text-xs font-medium tracking-wider uppercase border-b text-text-color-alt bg-gray-50 border-line">
                 <tr>
                   <th className="px-6 py-4">ชื่อกลุ่มสาระ</th>
                   <th className="px-6 py-4 text-center" width="180">
@@ -225,13 +225,13 @@ const DepartmentManage = () => {
                 {departments.map((dept) => (
                   <tr
                     key={dept.deptId}
-                    className="hover:bg-gray-50 transition-colors duration-150"
+                    className="transition-colors duration-150 hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 font-medium text-text-color">
                       {dept.deptName}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="inline-flex overflow-hidden rounded-md border border-line bg-white shadow-sm">
+                      <div className="inline-flex overflow-hidden bg-white border rounded-md shadow-sm border-line">
                         <button
                           className="inline-block p-2.5 text-primary hover:bg-gray-50 focus:relative"
                           onClick={() => handleEdit(dept)}
@@ -283,7 +283,7 @@ const DepartmentManage = () => {
       )}
 
       {/* Footer action button */}
-      <div className="mt-6 flex justify-end">
+      <div className="flex justify-end mt-6">
         <Link
           to="/teachers"
           className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
@@ -307,12 +307,12 @@ const DepartmentManage = () => {
 
       {/* Modals */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
-            <div className="text-center mb-5">
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white border shadow-lg rounded-xl border-line">
+            <div className="mb-5 text-center">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-red-50">
                 <svg
-                  className="h-10 w-10 text-red-500"
+                  className="w-10 h-10 text-red-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -325,7 +325,7 @@ const DepartmentManage = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-text-color font-heading mb-2">
+              <h3 className="mb-2 text-xl font-bold text-text-color font-heading">
                 ยืนยันการลบ
               </h3>
               <p className="text-text-color-alt font-body">
@@ -355,18 +355,18 @@ const DepartmentManage = () => {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white border shadow-lg rounded-xl border-line">
             <div className="mb-5">
-              <h3 className="text-xl font-bold text-text-color font-heading mb-2">
+              <h3 className="mb-2 text-xl font-bold text-text-color font-heading">
                 {editingId ? "แก้ไขสังกัดกลุ่มสาระ" : "เพิ่มสังกัดกลุ่มสาระ"}
               </h3>
-              <div className="h-1 w-10 bg-secondary rounded-full"></div>
+              <div className="w-10 h-1 rounded-full bg-secondary"></div>
             </div>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-text-color font-body mb-2">
+                <label className="block mb-2 text-sm font-medium text-text-color font-body">
                   ชื่อกลุ่มสาระ <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -390,16 +390,16 @@ const DepartmentManage = () => {
                   placeholder="ระบุชื่อกลุ่มสาระการเรียนรู้"
                 />
                 {validationErrors.deptName && (
-                  <p className="text-red-500 text-xs mt-1 font-body">
+                  <p className="mt-1 text-xs text-red-500 font-body">
                     {validationErrors.deptName}
                   </p>
                 )}
-                <p className="text-xs text-text-color-alt mt-1 font-body">
+                <p className="mt-1 text-xs text-text-color-alt font-body">
                   ตัวอย่าง: กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี
                 </p>
               </div>
 
-              <div className="flex justify-between gap-3 mt-6 pt-4 border-t border-gray-100">
+              <div className="flex justify-between gap-3 pt-4 mt-6 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => {
@@ -418,7 +418,7 @@ const DepartmentManage = () => {
                     <span className="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
+                        className="w-5 h-5 mr-2"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"

@@ -50,23 +50,25 @@ function TeacherDetail() {
   return (
     <div className="min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">
+        <h1 className="text-2xl font-bold md:text-3xl text-primary font-heading">
           รายละเอียดคุณครู
         </h1>
-        <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+        <div className="w-16 h-1 mt-2 rounded-full bg-secondary"></div>
       </div>
 
       {state && state.message && (
-        <AlertSuccess title="แก้ไขข้อมูลแล้ว" message={state.message} />
+        <div className="mb-6">
+          <AlertSuccess title="แก้ไขข้อมูลแล้ว" message={state.message} />
+        </div>
       )}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         {teacher && (
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary rounded-full p-2">
+            <div className="p-2 rounded-full bg-primary/10 text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="w-6 h-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -119,7 +121,7 @@ function TeacherDetail() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="w-5 h-5 mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -137,17 +139,17 @@ function TeacherDetail() {
       </div>
 
       {teacher ? (
-        <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+        <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">
           <ShowDetail teacher={teacher} />
         </div>
       ) : (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center h-64">
+          <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary"></div>
         </div>
       )}
 
       {teacher && (
-        <div className="mt-6 flex justify-end">
+        <div className="flex justify-end mt-6">
           <Link
             to="/teachers"
             className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
@@ -172,9 +174,9 @@ function TeacherDetail() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="max-w-sm p-6 bg-white rounded-lg shadow-lg">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
               <svg
                 className="w-6 h-6 text-red-600"
                 fill="none"
@@ -189,14 +191,14 @@ function TeacherDetail() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-center text-text-color mb-2">
+            <h3 className="mb-2 text-lg font-medium text-center text-text-color">
               ยืนยันการลบครู
             </h3>
-            <p className="text-sm text-center text-text-color-alt mb-6">
+            <p className="mb-6 text-sm text-center text-text-color-alt">
               คุณแน่ใจว่าต้องการลบครู "{teacher?.fName} {teacher?.lName}"
               หรือไม่
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex justify-center gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 disabled={isDeleting}
