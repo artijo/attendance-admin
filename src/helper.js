@@ -207,17 +207,41 @@ export const formatDateToThaiStyle = (date) => {
 };
 
 export function daybetween(Start, End) {
-    const dates = [];
-    if (Start !== "" && End !== "") {
-        const startDate = DateTime.fromISO(Start);
-        const endDate = DateTime.fromISO(End);
-        let currentDate = startDate;
-        while (currentDate <= endDate) {
-            dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
-            currentDate = currentDate.plus({ days: 1 }); // เพิ่มวันทีละ 1
-        }
-    } else {
-        console.error("termStart or termEnd is not set!");
+  const dates = [];
+  if (Start !== "" && End !== "") {
+    const startDate = DateTime.fromISO(Start);
+    const endDate = DateTime.fromISO(End);
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      dates.push(currentDate.toISODate().split("-").join("-")); // เพิ่มวันที่ในรูปแบบ YYYY-MM-DD
+      currentDate = currentDate.plus({ days: 1 }); // เพิ่มวันทีละ 1
     }
-    return dates;
+  } else {
+    console.error("termStart or termEnd is not set!");
+  }
+  return dates;
 }
+
+export const formatAttStatus = (status) => {
+  switch (status) {
+    case 'present': {
+      return 'เข้าเรียน';
+    }
+    case 'absent': {
+      return 'ไม่เข้าเรียน';
+    }
+    case 'late': {
+      return 'มาสาย';
+    }
+    case 'activity': {
+
+      return 'เข้าเรียนกิจกรรม';
+    }
+    case 'leave': {
+
+      return 'ลา';
+    }
+    default:
+      return status;
+  }
+};
