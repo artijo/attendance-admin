@@ -10,12 +10,11 @@ import { dateTimeFormat, formatAttStatus, formatDateToThai, formatDateToThaiStyl
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
-    // console.log(studentList);
     const ref = useRef(null);
     const location = useLocation();
+    const classroomId = location.state?.classroomId;
     const date = location.state?.date;
     const navigate = useNavigate();
-    // const [totalStatus, setTotalStatus] = useState(null);
     const [periodStatus, setPeriodStatus] = useState([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -24,15 +23,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
     const setupTotalStatus = () => {
         if (!studentList || !studentList.length) return;
-        // Calculate per-period statistics
-        const periodsCount = studentList[0].attendance.length;
-        // const periodStats = Array(periodsCount).fill().map(() => ({
-        //     present: 0,
-        //     late: 0,
-        //     absent: 0,
-        //     activity: 0,
-        //     leave: 0
-        // }));
         const periodStats = studentList[0].attendance.map((att) => ({
             subjectName: `${att.subjectName}`,
             present: 0,
@@ -41,7 +31,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             activity: 0,
             leave: 0
         }));
-
         studentList.forEach((student) => {
             student.attendance.forEach((attendance, periodIndex) => {
                 if (attendance.attStatus !== null) {
@@ -52,7 +41,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                 }
             });
         });
-        console.log(periodStats)
+        // console.log(periodStats)
         setPeriodStatus(periodStats);
     };
 
@@ -87,11 +76,11 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
     };
 
     const fetchClassroomInfo = async () => {
-        if (!location.state?.classroomId) return;
+        if (!classroomId) return;
 
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
             if (response.status === 200) {
                 setClassroomInfo(response.data);
                 setError(null);
@@ -328,5 +317,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 };
 
 AttendanceByDayDetailList.propTypes = {
-    studentList: PropTypes.array.isRequired
+    studentList: PropTypes.array.isRequired,
+    date: PropTypes.string
 };

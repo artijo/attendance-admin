@@ -10,7 +10,6 @@ function AttendenceByDayDetail() {
     const location = useLocation();
     const classroomId = location.state?.classroomId;
     const date = location.state?.date;
-    
     const [studentList, setStudentList] = useState([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -47,7 +46,7 @@ function AttendenceByDayDetail() {
             // console.log(studentSortedByNumber);
             setError(null);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             setError("ไม่สามารถโหลดข้อมูลการเข้าเรียนได้");
         } finally {
             setIsLoading(false);

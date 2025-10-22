@@ -57,7 +57,8 @@ function AttendenceByDayPDF() {
                 </div>
 
                 <Link
-                    to={`/activity/participate/filterbyclassroomjoin`}
+                    to={`/attendances/details/byday`}
+                    state={{classroomId: classroomInfo.classId, date: date}}
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,22 +183,6 @@ function AttendenceByDayPDF() {
                                 </Document>
                             </PDFViewer>
                         )}
-                        {/* PeriodTable */}
-                        {/* <View>
-                                        <View style={styles.tableHeader}>
-                                            <Text style={styles.tableColumn2}>วิชา</Text>
-                                            <Text style={styles.tableColumn2}>มาเรียน</Text>
-                                            <Text style={styles.tableColumn2}> มาสาย</Text>
-                                            <Text style={styles.tableColumn2}>ขาดเรียน</Text>
-                                            <Text style={styles.tableColumn2}>ลา</Text>
-                                            <Text style={styles.tableColumn2}>กิจกรรม</Text>
-                                        </View>
-                                        {periodStatus.map((period, periodIndex) => (
-                                            <View key={`${period.subjectName} index ${periodIndex}`}>
-                                                <Text></Text>
-                                            </View>
-                                        ))}
-                                    </View> */}
                     </div>
                 </div>
             </div>
@@ -205,114 +190,6 @@ function AttendenceByDayPDF() {
     );
 };
 
-// {/* <PDFViewer width={"100%"} height={"100%"} style={{ borderRadius: "0.5rem" }}>
-//     <Document
-//         pageMode="fullScreen"
-//         title={`เอกสารการเข้าเรียนประจำวันที่ ${formatDateToThai(date)}`}
-//     >
-//         <Page size="A4" style={styles.page} orientation="portrait">
-//             <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
-//             <Text style={styles.textHeader}>สรุปการเข้าเรียน | ห้องม.{classroomInfo.classLevel}/{classroomInfo.classRoom}</Text>
-//             <View
-//                 style={{
-//                     width: '20%',
-//                     height: '2px',
-//                     backgroundColor: '#EE722A',
-//                     borderRadius: '5px',
-//                     marginBottom: '5px',
-//                 }}
-//             ></View>
-//             <Text style={styles.textParagraph}>ประจำวันที่ {formatDateToThai(date)}</Text>
-
-//             {/* First row - Period Numbers */}
-//             <View style={styles.tableHeader}>
-// <Text style={[styles.tableColumn1, { width: '5%' }]}>คาบที่</Text>
-// <Text style={[styles.tableColumn1, { width: '15%' }]}></Text>
-// <Text style={[styles.tableColumn1, { width: '15%' }]}></Text>
-// {studentList[0].attendance.map((_, index) => (
-//     <Text key={index} style={[styles.tableColumn2, { textAlign: 'center' }]}>{index + 1}</Text>
-// ))}
-//             </View>
-
-//             {/* Second row - Subject Codes */}
-// <View style={styles.tableRow}>
-//     <Text style={[styles.tableColumn1, { width: '5%' }]}>รหัสวิชา</Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}></Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}></Text>
-//     {studentList[0].attendance.map((att, index) => (
-//         <Text key={index} style={[styles.tableColumn2, { textAlign: 'center' }]}>{att.subjectCode}</Text>
-//     ))}
-// </View>
-
-// {/* Third row - Column Headers */}
-// <View style={styles.tableRow}>
-//     <Text style={[styles.tableColumn1, { width: '5%' }]}>เลขที่</Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}>รหัสนักเรียน</Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}>ชื่อ-นามสกุล</Text>
-//     {studentList[0].attendance.map((att, index) => (
-//         <Text key={index} style={[styles.tableColumn2, { textAlign: 'center' }]}>{att.subjectName}</Text>
-//     ))}
-// </View>
-
-//             {/* Student rows */}
-//             {studentList.map((student, index) => (
-// <View key={index} style={styles.tableRow}>
-//     <Text style={[styles.tableColumn1, { width: '5%' }]}>{student.stdNo}</Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}>{student.stdId}</Text>
-//     <Text style={[styles.tableColumn1, { width: '15%' }]}>{`${formatTitle(student.title)}${student.fName} ${student.lName}`}</Text>
-
-//     {student.attendance.map((attendance, idx) => (
-//         <Text key={idx} style={[styles.tableColumn2, { textAlign: 'center' }]}>
-//             {attendance.attStatus != null ? formatAttStatus(attendance.attStatus.toLowerCase()) : "-"}
-//         </Text>
-//     ))}
-// </View>
-//             ))}
-
-//             {/* Summary rows */}
-//             <View style={styles.tableRow}>
-//                 <Text style={[styles.tableColumn1, { width: '35%', textAlign: 'left', color: '#22c55e' }]}>มาเรียน</Text>
-//                 {periodStatus.map((period, index) => (
-//                     <Text key={index} style={[styles.tableColumn2, { color: '#22c55e', textAlign: 'center' }]}>
-//                         {period.present || 0} คน
-//                     </Text>
-//                 ))}
-//             </View>
-//             <View style={styles.tableRow}>
-//                 <Text style={[styles.tableColumn1, { width: '35%', textAlign: 'left', color: '#f97316' }]}>มาสาย</Text>
-//                 {periodStatus.map((period, index) => (
-//                     <Text key={index} style={[styles.tableColumn2, { color: '#f97316', textAlign: 'center' }]}>
-//                         {period.late || 0} คน
-//                     </Text>
-//                 ))}
-//             </View>
-//             <View style={styles.tableRow}>
-//                 <Text style={[styles.tableColumn1, { width: '35%', textAlign: 'left', color: '#dc2626' }]}>ขาดเรียน</Text>
-//                 {periodStatus.map((period, index) => (
-//                     <Text key={index} style={[styles.tableColumn2, { color: '#dc2626', textAlign: 'center' }]}>
-//                         {period.absent || 0} คน
-//                     </Text>
-//                 ))}
-//             </View>
-//             <View style={styles.tableRow}>
-//                 <Text style={[styles.tableColumn1, { width: '35%', textAlign: 'left', color: '#9333ea' }]}>ลา</Text>
-//                 {periodStatus.map((period, index) => (
-//                     <Text key={index} style={[styles.tableColumn2, { color: '#9333ea', textAlign: 'center' }]}>
-//                         {period.leave || 0} คน
-//                     </Text>
-//                 ))}
-//             </View>
-//             <View style={styles.tableRow}>
-//                 <Text style={[styles.tableColumn1, { width: '35%', textAlign: 'left', color: '#2563eb' }]}>กิจกรรม</Text>
-//                 {periodStatus.map((period, index) => (
-//                     <Text key={index} style={[styles.tableColumn2, { color: '#2563eb', textAlign: 'center' }]}>
-//                         {period.activity || 0} คน
-//                     </Text>
-//                 ))}
-//             </View>
-//         </Page>
-//     </Document>
-// </PDFViewer> */}
 
 
 export default AttendenceByDayPDF;
