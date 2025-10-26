@@ -10,7 +10,7 @@ function AttendenceBySubjectPDF() {
     const location = useLocation();
     const { subject, classroomInfo, month, studentList } = location.state;
     const [newStudentList, setNewStudentList] = useState([]);
-    console.log(newStudentList);
+    // console.log(newStudentList);
 
     const getStatusClass = (status) => {
         if (status === null) {
@@ -100,7 +100,7 @@ function AttendenceBySubjectPDF() {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    กลับไปหน้าเลือกห้อง
+                    ย้อนกลับ
                 </Link>
             </div>
             <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">

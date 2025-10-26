@@ -220,9 +220,10 @@ export const AttendanceBySubjectCanExam = () => {
                         
                         {studentList.length > 0 && (
                             <div className="flex gap-3">
+                                <ExportExcelButton handelOnClickFunction={handleExportExcel} />
                                 <ExportPdfButton onClikFunction={navigateToPDFpage}/>
                                 {/* <ExportPdfButtonComponent /> */}
-                                <ExportExcelButton handelOnClickFunction={handleExportExcel} />
+                                
                             </div>
                         )}
                     </div>
