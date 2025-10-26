@@ -130,13 +130,13 @@ function AttendenceByDayDetail() {
                 )}
                 
                 <Link 
-                    to="/attendances" 
+                    to={`/attendances/details/${location.state?.classroomId}`}
                     className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-text-color bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    กลับไปหน้ารายการ
+                    ย้อนกลับ
                 </Link>
             </div>
 

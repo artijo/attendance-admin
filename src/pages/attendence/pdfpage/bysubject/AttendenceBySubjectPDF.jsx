@@ -1,19 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import { styles } from "../style.js";
 import { Page, Text, View, Document, PDFViewer, Image } from "@react-pdf/renderer";
-import React from "react";
-import { dateTimeFormat } from "../../../../helper.js";
+import React, { useEffect, useState } from "react";
+import { convertNumberToThaiMonth, dateTimeFormat, formatAttStatus, formatDateToThai } from "../../../../helper.js";
 // import { Table, TR, TH, TD } from "@ag-media/react-pdf-table";
 
 function AttendenceBySubjectPDF() {
     // subject, classroomInfo, month, tableJson: tableJson
     const location = useLocation();
     const { subject, classroomInfo, month, studentList } = location.state;
-    let indexReal = 0;
+    const [newStudentList, setNewStudentList] = useState([]);
+    console.log(newStudentList);
+
     const getStatusClass = (status) => {
-        if(status === null) {
-            return ;
-        }else{
+        if (status === null) {
+            return;
+        } else {
             switch (status.toLowerCase()) {
                 case 'present':
                     return '#4CAF50';
@@ -31,26 +33,42 @@ function AttendenceBySubjectPDF() {
         }
     };
 
-    const formatAttStatus = (status) => {
-        const statusMap = {
-            'present': 'เข้าเรียน',
-            'absent': 'ไม่เข้าเรียน',
-            'late': 'มาสาย',
-            'activity': 'เข้าร่วมกิจกรรม',
-            'leave': 'ลา'
+    useEffect(() => {
+        let listPerPage = 25;
+        let totalPage = Math.ceil(studentList.data.length / listPerPage);
+        let itemsPage = [];
+        // Array structure
+        /*
+            [
+                [],[]
+            ]
+        */
+        for (let i = 1; i <= totalPage; i++) {
+            let sliceStudentList = studentList.data.slice((i - 1) * listPerPage, i * listPerPage).map((student) => {
+                const attFilter = student.attendance.filter((att) => att.month === month);
+                // console.log(attFilter);
+                const studentObject = {
+                    ...student,
+                    attendance: attFilter
+                };
+                return studentObject
+            });
+            // console.log(sliceStudentList);
+            itemsPage.push(sliceStudentList);
         };
-        return statusMap[status.toLowerCase()] || status;
-    };
+        // console.log(itemsPage);
+        setNewStudentList(itemsPage);
+    }, []);
 
     return (
         <div className="min-h-screen">
             <div className="mb-6">
-                <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">รายงาน PDF สรุปการเข้าเรียนตามวิชา</h1>
-                <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+                <h1 className="text-2xl font-bold md:text-3xl text-primary font-heading">รายงาน PDF สรุปการเข้าเรียนตามวิชา</h1>
+                <div className="w-16 h-1 mt-2 rounded-full bg-secondary"></div>
             </div>
-            <div className="flex justify-between items-center mb-6">
-                <div className="bg-primary/10 text-primary rounded-full p-2 mt-1 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center justify-between mb-6">
+                <div className="p-2 mt-1 mr-3 rounded-full bg-primary/10 text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
@@ -61,10 +79,10 @@ function AttendenceBySubjectPDF() {
                             {location.state.subject.subCode}
                         </span>
                     </h2>
-                    <p className="text-sm text-text-color-alt font-body mt-1">
+                    <p className="mt-1 text-sm text-text-color-alt font-body">
                         {location.state.subject.subNameEng}
                     </p>
-                    <div className="mt-3 flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-3">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                             ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
                         </span>
@@ -85,18 +103,18 @@ function AttendenceBySubjectPDF() {
                     กลับไปหน้าเลือกห้อง
                 </Link>
             </div>
-            <div className="bg-white rounded-xl shadow-md border border-line overflow-hidden">
+            <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">
                 <div className="p-6">
                     <div className="mb-6">
-                        <div className="bg-gray-50 border border-line rounded-lg p-4">
+                        <div className="p-4 border rounded-lg bg-gray-50 border-line">
                             <div className="flex items-center gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <div>
                                     <h4 className="font-medium text-text-color font-body">รายละเอียดการเข้าเรียนตามวิชา</h4>
-                                    <p className="text-sm text-text-color-alt font-body mt-1">
-                                        {/* ประจำวันที่ {formatDateToThai(date)} | ห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom} */}
+                                    <p className="mt-1 text-sm text-text-color-alt font-body">
+                                        ประจำวันที่ {convertNumberToThaiMonth(month)} | ห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
                                     </p>
                                 </div>
                             </div>
@@ -106,63 +124,61 @@ function AttendenceBySubjectPDF() {
                         <PDFViewer width={"100%"} height={"100%"} style={{ borderRadius: "0.5rem" }}>
                             <Document
                                 pageMode="fullScreen"
-                                title={`เอกสารการเข้าเรียนวิชา ${subject.subNameThai} (${subject.subCode}) เดือน ${month} ปีการศึกษา ${classroomInfo.term.academicYear + 543} เทอม ${classroomInfo.term.semester} ห้องเรียน ม.${classroomInfo.classLevel}/${classroomInfo.classRoom}`}
+                                title={`เอกสารการเข้าเรียนวิชา ${subject.subNameThai} (${subject.subCode}) เดือน ${convertNumberToThaiMonth(month)} ปีการศึกษา ${classroomInfo.term.academicYear + 543} เทอม ${classroomInfo.term.semester} ห้องเรียน ม.${classroomInfo.classLevel}/${classroomInfo.classRoom}`}
                             >
-                                <Page size="A4" style={styles.page} orientation="portrait">
-                                    <Image src={`/Logo_NPS.png`} style={styles.logoSize} />
-                                    <Text style={styles.textHeader}>สรุปการเข้าเรียนตามวิชา</Text>
-                                    <View
-                                        style={{
-                                            // borderWidth: ,
-                                            // borderColor: '#EE722A',
-                                            width: '20%',
-                                            height: '2px',
-                                            backgroundColor: '#EE722A',
-                                            borderRadius: '5px',
-                                            marginBottom: '5px',
-                                        }}
-                                    ></View>
-                                    <Text style={styles.textParagraph}>
-                                        วิชา {subject.subNameThai} ({subject.subCode}) เดือน {month} ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
-                                    </Text>
-                                    <Text style={[styles.textHeader, {fontSize:12}]}>รายละเอียดวันของแต่ละคาบเรียน</Text>
-                                    <View style={{ flexDirection: 'row', flexWrap: "wrap", gap: "5px", marginBottom: '5px' }}>
-
-                                        {studentList.data[0].attendance
-                                            .filter((att) => att.month === month)
-                                            .map((attendance, index) => (
+                                {newStudentList.map((student, pageIndex) => (
+                                    // {console.log(student)}
+                                    <Page size="A4" style={styles.page} orientation="portrait" key={pageIndex + 1}>
+                                        <Image src={'/Logo_NPS.png'} style={styles.logoSize} />
+                                        <Text style={styles.textHeader}>สรุปการเข้าเรียนตามวิชา</Text>
+                                        <View
+                                            style={{
+                                                // borderWidth: ,
+                                                // borderColor: '#EE722A',
+                                                width: '20%',
+                                                height: '2px',
+                                                backgroundColor: '#EE722A',
+                                                borderRadius: '5px',
+                                                marginBottom: '5px',
+                                            }}
+                                        ></View>
+                                        <Text style={styles.textParagraph}>
+                                            วิชา {subject.subNameThai} ({subject.subCode}) เดือน {month} ปีการศึกษา {classroomInfo.term.academicYear + 543} เทอม {classroomInfo.term.semester} ห้องเรียน ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
+                                        </Text>
+                                        <Text style={[styles.textHeader, { fontSize: 12 }]}>รายละเอียดวันของแต่ละคาบเรียน</Text>
+                                        <View style={{ flexDirection: 'row', flexWrap: "wrap", gap: "5px", marginBottom: '5px' }}>
+                                            {student[0].attendance.map((attendance, index) => (
                                                 <Text key={index} style={[styles.textSpan, { backgroundColor: '#F5F5F5', padding: '2px 5px', borderRadius: '5px', marginBottom: '2px' }]}>
                                                     คาบที่ {index + 1} {dateTimeFormat(attendance.studingTimeDate)}
                                                 </Text>
                                             ))}
-                                    </View>
-                                    <View style={styles.tableHeader}>
-                                        <Text style={[styles.tableColumn1,]}>เลขที่</Text>
-                                        <Text style={[styles.tableColumn2,]}>รหัสนักเรียน</Text>
-                                        <Text style={[styles.tableColumn2,]}>ชือ-นามสกุล</Text>
-                                        {studentList.data[0].attendance
-                                            .filter((att) => att.month === month)
-                                            .map((attendance, index) => (
+                                        </View>
+                                        <View style={styles.tableHeader}>
+                                            <Text style={[styles.tableColumn1,]}>เลขที่</Text>
+                                            <Text style={[styles.tableColumn2,]}>รหัสนักเรียน</Text>
+                                            <Text style={[styles.tableColumn2,]}>ชือ-นามสกุล</Text>
+                                            {student[0].attendance.map((_, index) => (
                                                 <Text key={index} style={[styles.tableColumn2]}>
-                                                    {++indexReal}
+                                                    {index + 1}
                                                 </Text>
                                             ))}
-                                    </View>
-                                    {studentList.data.map((student, index) => (
-                                        <View key={index} style={styles.tableRow}>
-                                            <Text style={[styles.tableColumn1]}>{student.stdNo}</Text>
-                                            <Text style={[styles.tableColumn2]}>{student.stdId}</Text>
-                                            <Text style={[styles.tableColumn2]}>{`${student.fName} ${student.lName}`}</Text>
-                                            {student.attendance
-                                                .filter((att) => att.month === month)
-                                                .map((attendance, attIndex) => (
-                                                    <Text key={attIndex} style={[styles.tableColumn2, { color: getStatusClass(attendance.attStatus) }]}>
-                                                         {attendance.attStatus != null ? formatAttStatus(attendance.attStatus) : '-'}
-                                                    </Text>
-                                            ))}
                                         </View>
-                                    ))}
-                                </Page>
+                                        {student.map((std, index) => (
+                                            <View key={index} style={styles.tableRow}>
+                                                <Text style={[styles.tableColumn1]}>{std.stdNo}</Text>
+                                                <Text style={[styles.tableColumn2]}>{std.stdId}</Text>
+                                                <Text style={[styles.tableColumn2]}>{`${std.fName} ${std.lName}`}</Text>
+                                                {std.attendance.map((attendance, attIndex) => (
+                                                    <Text key={attIndex} style={[styles.tableColumn2, { color: getStatusClass(attendance.attStatus) }]}>
+                                                        {attendance.attStatus != null ? formatAttStatus(attendance.attStatus) : '-'}
+                                                    </Text>
+                                                ))}
+                                            </View>
+                                        ))}
+                                    </Page>
+                                ))}
+
+
                             </Document>
                         </PDFViewer>
                     </div>

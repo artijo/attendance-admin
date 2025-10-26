@@ -7,13 +7,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { HOSTNAME } from "../../config";
 import axios from "axios";
 import { TapAttendenceSummaryOpen } from "./tapAttendenceSummaryOpen";
-import { convertNumberToThaiMonth, dateTimeFormat, formatDateToThaiStyle } from "../../helper";
+import { convertNumberToThaiMonth,formatDateToThaiStyle,formatAttStatus } from "../../helper";
 
 export const AttendenceBySubjectDetailList = ({ studentList }) => {
     // console.log(studentList);
     const navigate = useNavigate();
     const location = useLocation();
     const subject = location.state?.subject;
+    const classroomId = location.state?.classroomId;
     const ref = useRef([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState([]);
@@ -22,17 +23,6 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
 
     // console.log(classroomInfo);
 
-    // Format attendance status to Thai language
-    const formatAttStatus = (status) => {
-        const statusMap = {
-            'present': 'เข้าเรียน',
-            'absent': 'ไม่เข้าเรียน',
-            'late': 'มาสาย',
-            'activity': 'เข้าร่วมกิจกรรม',
-            'leave': 'ลา'
-        };
-        return statusMap[status.toLowerCase()] || status;
-    };
 
     // Render table header for each month
     const TableHeader = ({ month }) => {
@@ -67,7 +57,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                         >
                             คาบที่ {++indexReal} วันที่ {formatDateToThaiStyle(attendance.studingTimeDate)}
                             {/* <div className="font-medium">คาบที่ {++indexReal}</div>
-                            <div className="text-xs mt-1 text-gray-500 font-normal">({dateTimeFormat(attendance.studingTimeDate)})</div> */}
+                            <div className="mt-1 text-xs font-normal text-gray-500">({dateTimeFormat(attendance.studingTimeDate)})</div> */}
                         </th>
                     ))}
             </tr>
@@ -93,9 +83,9 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         return (
             <>
                 {studentList.data.map((student, index) => (
-                    <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                    <tr key={index} className="transition-colors duration-150 hover:bg-gray-50">
                         <td 
-                            className="px-4 py-3 font-medium text-text-color sticky left-0 bg-white outline-1 outline-gray-200"
+                            className="sticky left-0 px-4 py-3 font-medium bg-white text-text-color outline-1 outline-gray-200"
                             style={{ minWidth: '80px' }}
                         >
                             {student.stdNo}
@@ -205,10 +195,10 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
         };
 
         return (
-            <tr className="bg-gray-50 border-t-2 border-gray-200">
+            <tr className="border-t-2 border-gray-200 bg-gray-50">
                 <td 
                     colSpan={3} 
-                    className="sticky left-0 bg-gray-50 z-20 px-6 py-3 font-medium text-text-color outline-1 outline-gray-200"
+                    className="sticky left-0 z-20 px-6 py-3 font-medium bg-gray-50 text-text-color outline-1 outline-gray-200"
                     style={{ minWidth: '280px' }}
                 >
                     สรุปจำนวนแต่ละสถานะ
@@ -226,14 +216,14 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const Table = ({ month, exportPdf, exportExcel, index }) => {
         return (
             <div className="space-y-4">
-                <div className="flex justify-end items-center gap-3">
+                <div className="flex items-center justify-end gap-3">
                     {exportPdf}
                     {exportExcel}
                 </div>
 
                 <div ref={(element) => (ref.current[index] = element)} className="overflow-auto h-[500px] border border-gray-200 rounded-lg">
-                    <table className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg ">
-                        <thead className="bg-white sticky top-0 z-20">
+                    <table className="w-full text-sm bg-white border-collapse border-gray-200 rounded-lg ">
+                        <thead className="sticky top-0 z-20 bg-white">
                             <TableHeader month={month} />
                         </thead>
                         <tbody>
@@ -252,7 +242,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
     const fetchClassroomInfo = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state?.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
             if (response.status === 200) {
                 setClassroomInfo(response.data);
                 setError(null);
@@ -313,7 +303,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 onClick={handleNavigateToExamEligibility}
                 className="inline-flex items-center gap-2 px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 แบบสรุปการมีสิทธิ์สอบตามรายวิชา
@@ -333,18 +323,18 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
 
     if (!studentList || !studentList.data) {
         return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <div className="flex items-center justify-center h-64">
+                <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary"></div>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="bg-white rounded-lg px-4 py-3 border border-line shadow-sm">
-                    <div className="text-text-color-alt font-body text-sm">จำนวนเดือนที่มีข้อมูล:</div>
-                    <div className="font-medium text-primary text-lg font-heading">{studentList.month.length} เดือน</div>
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                <div className="px-4 py-3 bg-white border rounded-lg shadow-sm border-line">
+                    <div className="text-sm text-text-color-alt font-body">จำนวนเดือนที่มีข้อมูล:</div>
+                    <div className="text-lg font-medium text-primary font-heading">{studentList.month.length} เดือน</div>
                 </div>
 
                 <ExamEligibilityButton />
@@ -359,7 +349,7 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                             isTabOpen={isTabOpen}
                             handleIsTabOpen={handleIsTabOpen}
                             icon={
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             }
@@ -375,13 +365,13 @@ export const AttendenceBySubjectDetailList = ({ studentList }) => {
                 ))}
 
                 {studentList.month.length === 0 && (
-                    <div className="bg-white rounded-xl shadow-md p-6 text-center border border-line">
+                    <div className="p-6 text-center bg-white border shadow-md rounded-xl border-line">
                         <div className="flex justify-center mb-4 text-text-color-alt">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-medium text-text-color mb-1">ไม่พบข้อมูลรายเดือน</h3>
+                        <h3 className="mb-1 text-lg font-medium text-text-color">ไม่พบข้อมูลรายเดือน</h3>
                         <p className="text-text-color-alt">ยังไม่มีข้อมูลการเข้าเรียนในรายวิชานี้</p>
                     </div>
                 )}

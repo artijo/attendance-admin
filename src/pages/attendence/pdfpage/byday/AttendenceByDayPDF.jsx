@@ -10,10 +10,7 @@ function AttendenceByDayPDF() {
     const { studentList, periodStatus, date, classroomInfo } = location.state;
     const [newStudentList, setNewStudentList] = useState([]);
 
-    // console.log(studentList);
-    // console.log(totalStatus);
-    // Calculate per-period statistics
-
+    
     useEffect(() => {
         let listPerPage = 25;
         let totalPage = Math.ceil(studentList.length / listPerPage); // ปัดเศษขึ้น 
@@ -64,7 +61,7 @@ function AttendenceByDayPDF() {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    กลับไปหน้าเลือกห้อง
+                    ย้อนกลับ
                 </Link>
             </div>
             <div className="overflow-hidden bg-white border shadow-md rounded-xl border-line">
@@ -78,7 +75,7 @@ function AttendenceByDayPDF() {
                                 <div>
                                     <h4 className="font-medium text-text-color font-body">รายละเอียดการเข้าเรียน</h4>
                                     <p className="mt-1 text-sm text-text-color-alt font-body">
-                                        ประจำวันที่ {formatDateToThai(date)} | ห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom}
+                                        {/* ประจำวันที่ {formatDateToThai(date)} | ห้อง ม.{classroomInfo.classLevel}/{classroomInfo.classRoom} */}
                                     </p>
                                 </div>
                             </div>

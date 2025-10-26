@@ -223,7 +223,7 @@ export function daybetween(Start, End) {
 }
 
 export const formatAttStatus = (status) => {
-  switch (status) {
+  switch (status.toLowerCase()) {
     case 'present': {
       return 'เข้าเรียน';
     }
