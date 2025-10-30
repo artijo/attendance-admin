@@ -1,12 +1,14 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { HOSTNAME } from "../../config";
 import { AttendenceByDayList } from "../../components/attendence/attendenceByDayList";
 import { AttendenceBySubjectList } from "../../components/attendence/attendenceBySubjectList";
 import { TapAttendenceSummaryOpen } from "../../components/attendence/tapAttendenceSummaryOpen";
+import Calendar from "../../components/attendence/Calendar";
 
 function AttendanceDetail() {
+    const navigate = useNavigate();
     const params = useParams();
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isTabOpen, setIsTabOpen] = useState(new Array(3).fill(false));
@@ -25,6 +27,12 @@ function AttendanceDetail() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const navigateDetailPage = (classroomId, date) => {
+        // to="/attendances/details/byday"
+        //                   state={{ classroomId: classroomId, date: date }}
+        navigate("/attendances/details/byday", { state: { classroomId: classroomId, date: date } });
     };
 
     useEffect(() => {
@@ -110,10 +118,11 @@ function AttendanceDetail() {
                                 </svg>
                             }
                         >
-                            <AttendenceByDayList
+                            {/* <AttendenceByDayList
                                 termId={classroomInfo.term.termId}
                                 classroomId={classroomInfo.classId}
-                            />
+                            /> */}
+                            <Calendar classroom={classroomInfo} term={classroomInfo.term} navigateDetailPage={navigateDetailPage} />
                         </TapAttendenceSummaryOpen>
 
                         <TapAttendenceSummaryOpen
