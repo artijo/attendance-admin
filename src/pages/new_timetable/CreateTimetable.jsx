@@ -81,11 +81,11 @@ function CreateTimetableDragAndDrop() {
     //drag and drop
     const [activeCard, setActiveCard] = useState(null); // วิชาที่เลือก
     const [subjectActiveCard, setSubjectActiveCard] = useState(null) // วิชาที่เลือกจะใส่ในตาราง
-
     //Error State 
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadinMessage, setLoadingMessage] = useState("กำลังโหลดข้อมูล...");
 
 
     const handleFormEnable = (timetablethistime, schedule) => {
@@ -117,9 +117,6 @@ function CreateTimetableDragAndDrop() {
             }
         } catch (error) {
             console.error(error);
-            // setError("ไม่สามารถโหลดข้อมูลตารางเรียนได้");
-        } finally {
-            // setIsLoading(false);
         }
     };
 
@@ -127,6 +124,8 @@ function CreateTimetableDragAndDrop() {
         e.preventDefault();
         const lateTimePlus = DateTime.fromISO(timetableEditNow.timeStart).plus({ minutes: lateTime }).toFormat('HH:mm:ss');
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังบันทึกการแก้ไขเวลามาสาย...");
             const response = await axios.put(`${HOSTNAME}/a/timetable/editlatetime`, { timetable: timetableEditNow, lateTime: lateTimePlus });
             if (response.status === 200) {
                 fetchTimetable(classroom.classId);
@@ -135,8 +134,13 @@ function CreateTimetableDragAndDrop() {
                 throw new Error(response.data.message);
             };
         } catch (error) {
-            console.error(error);
-        };
+            // console.error(error);
+            setIsLoading(false);
+            setLoadingMessage("");
+        }finally{
+            setIsLoading(false);
+            setLoadingMessage("");
+        }
     }
 
     const handleOnChangeNumberLateTime = (value) => {
@@ -155,6 +159,8 @@ function CreateTimetableDragAndDrop() {
         try {
             const text = `คุณต้องการที่จะลบวิชา ${timetablethistime.subject.subNameThai} ในคาบ ${schedule.period} เวลา ${schedule.timetableformate}`
             if (confirm(text) === true) {
+                setIsLoading(true);
+                setLoadingMessage("กำลังลบข้อมูล...");
                 const response = await axios.delete(`${HOSTNAME}/a/timetable/${timetablethistime.timetableId}`)
                 if (response.status === 200) {
                     // console.log('delete sucessful');
@@ -162,16 +168,22 @@ function CreateTimetableDragAndDrop() {
                 } else {
                     throw new Error(response.data.message);
                 }
-            } else {
-                return;
             }
+            return;
         } catch (error) {
-            console.error(error)
+            // console.error(error)
+            setIsLoading(false);
+            setLoadingMessage("");
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
     const callCreateTimetableBySubject = async (classroom, timetable, schedule, weekday) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังเพิ่มวิชาในตาราง...");
             const data = {
                 classroom,
                 timetable,
@@ -182,20 +194,22 @@ function CreateTimetableDragAndDrop() {
             fetchTimetable(classroom.classId);
         } catch (error) {
             setError(true);
-            // ถ้า server ส่ง error แบบ JSON ที่มี message
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
-
     }
 
     const callSwitchTimetableSubjectPeriod = async (timetable, classroom, schedule, weekday) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังย้ายวิชาไปยังคาบอื่น...");
             const data = {
                 classroom,
                 timetable,
@@ -206,19 +220,22 @@ function CreateTimetableDragAndDrop() {
             fetchTimetable(classroom.classId);
         } catch (error) {
             setError(true);
-            // ถ้า server ส่ง error แบบ JSON ที่มี message
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
     const callSwitchSubjectAndSubject = async (firstTimetable, secondTimetable, schedule) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังสลับวิชา...");
             const data = {
                 firstTimetable,
                 secondTimetable,
@@ -230,12 +247,13 @@ function CreateTimetableDragAndDrop() {
             setError(true);
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
-
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
@@ -325,150 +343,137 @@ function CreateTimetableDragAndDrop() {
     }, [classroom]);
 
     return (
-        <div>
+        <div className="min-h-screen">
             {error && (
                 <div className="fixed w-1/4 bottom-0 right-0 z-40 mx-6 my-4">
                     <ErrorAlertDialog message={message} />
                 </div>
             )}
-            <div className="grid grid-cols-[auto_400px] gap-5 p-5 content-center fixed top-0 left-0 w-full h-screen bg-gray-50 z-30">
-                <div className="overflow-auto h-full">
-                    <div className="rounded-xl bg-white shadow">
-                        <div className="rounded-t-xl px-5 pt-5 py-1 mb-2 ">
-                            {/* Updated back button with React Router */}
-                            <div className="flex items-center justify-between mb-6">
-                                <button
-                                    onClick={() => navigate(-1)}
-                                    className="flex items-center text-primary hover:text-primary-dark transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                                    </svg>
-                                    <span className="text-sm font-medium">ย้อนกลับ</span>
-                                </button>
-                            </div>
-                            <div className="flex justify-between mb-6">
-                                <div>
-                                    <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">เพิ่มรายวิชาในตารางเรียน</h1>
-                                    <div className="mt-2 mb-2 h-1 w-16 bg-secondary rounded-full"></div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="bg-primary/10 text-primary rounded-full p-1.5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-lg font-bold text-text-color font-heading">
-                                            ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="px-5 pb-5 relative">
-                            <table className="w-full border-collapse">
-                                <thead>
-                                    <tr>
-                                        <th className="px-2 py-3 bg-gray-50 border border-gray-100 text-center w-10">
-                                            <div className="text-xs font-medium text-text-color-alt tracking-wider uppercase font-heading">
-                                                วัน / คาบเรียน
-                                            </div>
-                                        </th>
-                                        {timeStudyList.map((time, index) => (
-                                            <th key={index} className={`w-20 py-3 text-center border border-gray-100 ${time.period === 'พักเที่ยง' ? 'bg-amber-50' : 'bg-gray-50'}`}>
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-medium text-primary tracking-wider uppercase font-heading">
-                                                        {typeof time.period === 'number' ? `คาบที่ ${time.period}` : time.period}
-                                                    </span>
-                                                    <span className="text-xs text-text-color-alt font-body mt-1">
-                                                        {time.timetableformate}
-                                                    </span>
-                                                </div>
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {dateKey.length > 0 && (
-                                        dateKey.map((date, index) => (
-                                            <React.Fragment key={index}>
-                                                <TimetableRow
-                                                    scheduleWeekDay={timetable[date]}
-                                                    timeStudyList={timeStudyList}
-                                                    date={date}
-                                                    setActiveCard={setActiveCard}
-                                                    onDrop={onDrop}
-                                                    callDeleteTimetableApi={callDeleteTimetableApi}
-                                                    handleFormEnable={handleFormEnable}
-                                                />
-                                            </React.Fragment>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+
+            {isLoading && (
+                <div className="fixed inset-0 z-50 w-full h-full flex flex-col justify-center items-center py-12 gap-5 ">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
+                    <p className="text-primary">{loadinMessage}</p>
+                </div>
+            )}
+
+            <div>
+                <div className="mb-6">
+                    <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">ปฏิทินการเรียน</h1>
+                    <div className="mt-2 h-1 w-16 bg-secondary rounded-full"></div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 text-primary rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-medium text-text-color font-heading">
+                            จัดการตารางเรียน
+                        </h2>
+                        <p className="text-sm text-text-color-alt font-body"> ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}</p>
                     </div>
                 </div>
-                <Searchpanel setSubjectActiveCard={setSubjectActiveCard} />
-                {editForm && (
-                    <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/5 z-40">
-                        <div className="">
-                            <form className="bg-white w-[400px] p-6 rounded-xl shadow" onSubmit={(e) => onEditLateTimeSubmit(e)}>
-                                <div className="mb-2">
-                                    <h1 className="text-lg font-bold text-primary font-heading">แก้ไขเวลาการเข้าสาย</h1>
-                                    <div className="flex gap-2 bg-gray-100/70 p-2 rounded-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                        </svg>
-                                        <div className="text-xs">
-                                            <p>
-                                                คาบที่ {timetableEditNow.schedule.period} เวลา {timetableEditNow.schedule.timetableformate}
-                                            </p>
-                                            <p>
-                                                วิชา {timetableEditNow.subject.subNameThai}
-                                            </p>
-                                        </div>
-
-                                    </div>
-                                    <div className="mt-2 h-1 w-20 bg-secondary rounded-full"></div>
-                                </div>
-                                <div className="grid">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        เวลาการเข้าเรียนสาย (นาที)
-                                    </label>
-                                    <input
-                                        className="mt-1 w-full rounded-md px-1.5 py-1  border-gray-200 shadow-sm sm:text-sm"
-                                        value={lateTime}
-                                        type="number"
-                                        onChange={(e) => handleOnChangeNumberLateTime(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex gap-2 w-fit mt-2 ml-auto">
-                                    <button
-                                        type="button"
-                                        className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-xs font-medium rounded-lg text-text-color bg-white hover:bg-gray-100 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
-                                        onClick={() => handleFormDisable()}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-
-                                        ยกเลิก
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-xs font-medium rounded-lg text-white bg-primary hover:cursor-pointer hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        บันทึกการแก้ไข
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
             </div>
+            {/* <h3 className="text-lg font-bold text-text-color font-heading">
+                                           
+                                        </h3> */}
+            <div className="mt-5 content-center flex gap-4">
+                <div className="overflow-auto h-full w-3/4">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="text-left text-xs">
+                                <th className="min-w-12  pb-2"></th>
+                                {timeStudyList.map((timeStudy, index) => (
+                                    <th key={index} className="min-w-52 pb-2">
+                                        <p className="text-blue-600">{timeStudy.period === "พักเที่ยง" ? "พักเที่ยง" : `คาบที่ ${timeStudy.period}`}</p>
+                                        <p className="text-gray-700">{timeStudy.timetableformate}</p>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="text-xs">
+                            {dateKey.length > 0 && (
+                                dateKey.map((date, index) => (
+                                    <React.Fragment key={index}>
+                                        <TimetableRow
+                                            scheduleWeekDay={timetable[date]}
+                                            timeStudyList={timeStudyList}
+                                            date={date}
+                                            setActiveCard={setActiveCard}
+                                            onDrop={onDrop}
+                                            callDeleteTimetableApi={callDeleteTimetableApi}
+                                            handleFormEnable={handleFormEnable}
+                                        />
+                                    </React.Fragment>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                <Searchpanel setSubjectActiveCard={setSubjectActiveCard} />
+
+            </div>
+            {editForm && (
+                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/50 z-50">
+                    <div className="">
+                        <form className="bg-white w-[400px] p-6 rounded-xl shadow" onSubmit={(e) => onEditLateTimeSubmit(e)}>
+                            <div className="mb-2">
+                                <h1 className="text-lg font-bold text-primary font-heading">แก้ไขเวลาการเข้าสาย</h1>
+                                <div className="flex gap-2 bg-gray-100/70 p-2 rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                    <div className="text-xs">
+                                        <p>
+                                            คาบที่ {timetableEditNow.schedule.period} เวลา {timetableEditNow.schedule.timetableformate}
+                                        </p>
+                                        <p>
+                                            วิชา {timetableEditNow.subject.subNameThai}
+                                        </p>
+                                    </div>
+
+                                </div>
+                                <div className="mt-2 h-1 w-20 bg-secondary rounded-full"></div>
+                            </div>
+                            <div className="grid">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    เวลาการเข้าเรียนสาย (นาที)
+                                </label>
+                                <input
+                                    className="mt-1 w-full rounded-md px-1.5 py-1  border-gray-200 shadow-sm sm:text-sm"
+                                    value={lateTime}
+                                    type="number"
+                                    onChange={(e) => handleOnChangeNumberLateTime(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex gap-2 w-fit mt-2 ml-auto">
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-xs font-medium rounded-lg text-text-color bg-white hover:bg-gray-100 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                    onClick={() => handleFormDisable()}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+
+                                    ยกเลิก
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent shadow-sm text-xs font-medium rounded-lg text-white bg-primary hover:cursor-pointer hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    บันทึกการแก้ไข
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
 
     );

@@ -40,17 +40,17 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            <div className="flex items-center justify-center py-8">
+                <div className="w-10 h-10 border-b-2 rounded-full animate-spin border-primary"></div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="px-4 py-3 text-red-700 border border-red-200 rounded-lg bg-red-50">
                 <div className="flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                     </svg>
                     <div>{error}</div>
@@ -61,19 +61,19 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
                 <div className="inline-flex items-center px-2.5 py-1 bg-gray-100 rounded-lg text-sm font-medium text-text-color">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
-                    จำนวนวิชาทั้งหมด: <span className="text-primary ml-1 font-semibold">{subjectList.length} วิชา</span>
+                    จำนวนวิชาทั้งหมด: <span className="ml-1 font-semibold text-primary">{subjectList.length} วิชา</span>
                 </div>
             </div>
             
-            <div className="bg-white rounded-lg border border-line overflow-hidden">
+            <div className="overflow-hidden bg-white border rounded-lg border-line">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-text-color-alt uppercase tracking-wider bg-gray-50 border-b border-line">
+                        <thead className="text-xs tracking-wider uppercase border-b text-text-color-alt bg-gray-50 border-line">
                             <tr>
                                 <th className="px-6 py-3" width="60">ลำดับ</th>
                                 <th className="px-6 py-3">รหัสวิชา</th>
@@ -86,24 +86,22 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
                         <tbody className="divide-y divide-gray-200">
                             {sliceSubjectList.length > 0 ? (
                                 sliceSubjectList.map((subject, index) => (
-                                    <tr key={index} className="bg-white hover:bg-gray-50 transition-colors duration-150">
-                                        <td className="px-6 py-4 font-medium text-text-color text-center">
+                                    <tr key={index} className="transition-colors duration-150 bg-white hover:bg-gray-50">
+                                        <td className="px-6 py-4 font-medium text-center text-text-color">
                                             {(currentPage - 1) * itemsPerPage + index + 1}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs text-nowrap font-medium bg-blue-100 text-blue-800">
                                                 {subject.subCode}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div>
-                                                <div className="font-medium text-text-color">{subject.subNameThai}</div>
-                                                <div className="text-xs text-text-color-alt">{subject.subNameEng}</div>
-                                            </div>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-medium text-text-color">{subject.subNameThai}</div>
+                                            <div className="text-xs text-text-color-alt">{subject.subNameEng}</div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium mr-2">
+                                                <div className="flex items-center justify-center w-8 h-8 mr-2 font-medium rounded-full bg-primary/10 text-primary">
                                                     {subject.teacher?.fName?.charAt(0)}
                                                 </div>
                                                 <span>
@@ -111,7 +109,7 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <Link 
                                                 to="/attendances/details/bysubject" 
                                                 state={{ subject: subject, classroomId: classroomId }}
@@ -130,12 +128,12 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
                                 <tr>
                                     <td colSpan={5} className="px-6 py-10 text-center">
                                         <div className="flex flex-col items-center justify-center">
-                                            <div className="bg-gray-100 text-gray-500 rounded-full p-3 mb-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <div className="p-3 mb-3 text-gray-500 bg-gray-100 rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                 </svg>
                                             </div>
-                                            <h3 className="font-medium text-text-color mb-1">ไม่พบข้อมูลรายวิชา</h3>
+                                            <h3 className="mb-1 font-medium text-text-color">ไม่พบข้อมูลรายวิชา</h3>
                                             <p className="text-sm text-text-color-alt">ห้องเรียนนี้ยังไม่มีรายวิชาที่กำหนด</p>
                                         </div>
                                     </td>
@@ -146,7 +144,7 @@ export const AttendenceBySubjectList = ({ classroomId }) => {
                 </div>
                 
                 {subjectList.length > 0 && (
-                    <div className="border-t border-line px-6 py-4">
+                    <div className="px-6 py-4 border-t border-line">
                         <div className="flex items-center justify-between">
                             <p className="text-sm text-text-color-alt">
                                 แสดง <span className="font-medium text-text-color">{sliceSubjectList.length}</span> จาก <span className="font-medium text-text-color">{subjectList.length}</span> รายการ

@@ -6,16 +6,15 @@ import ExportPdfButton from "../exportPdfButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HOSTNAME, TIME_ZONE } from "../../config";
-import { dateTimeFormat, formatDateToThai, formatDateToThaiStyle, formatDayOfWeeks } from "../../helper";
+import { dateTimeFormat, formatAttStatus, formatDateToThai, formatDateToThaiStyle, formatDayOfWeeks } from "../../helper";
 import { DateTime } from "luxon";
 
 export const AttendanceByDayDetailList = ({ studentList }) => {
-    // console.log(studentList);
     const ref = useRef(null);
     const location = useLocation();
+    const classroomId = location.state?.classroomId;
     const date = location.state?.date;
     const navigate = useNavigate();
-    const [totalStatus, setTotalStatus] = useState(null);
     const [periodStatus, setPeriodStatus] = useState([]);
     const [classroomInfo, setClassroomInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -24,55 +23,26 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
     const setupTotalStatus = () => {
         if (!studentList || !studentList.length) return;
-
-        const updatedTotalStatus = {
-            present: 0,
-            late: 0,
-            absent: 0,
-            activity: 0,
-            leave: 0
-        };
-
-        // Calculate per-period statistics
-        const periodsCount = studentList[0].attendance.length;
-        const periodStats = Array(periodsCount).fill().map(() => ({
+        const periodStats = studentList[0].attendance.map((att) => ({
+            subjectName: `${att.subjectName}`,
             present: 0,
             late: 0,
             absent: 0,
             activity: 0,
             leave: 0
         }));
-
         studentList.forEach((student) => {
             student.attendance.forEach((attendance, periodIndex) => {
                 if (attendance.attStatus !== null) {
                     const status = attendance.attStatus.toLowerCase();
-                    if (updatedTotalStatus.hasOwnProperty(status)) {
-                        updatedTotalStatus[status]++;
-
-                        // Update per-period statistics
-                        if (periodStats[periodIndex].hasOwnProperty(status)) {
-                            periodStats[periodIndex][status]++;
-                        }
+                    if (periodStats[periodIndex].hasOwnProperty(status)) {
+                        periodStats[periodIndex][status]++;
                     }
                 }
             });
         });
-
-        setTotalStatus(updatedTotalStatus);
+        // console.log(periodStats)
         setPeriodStatus(periodStats);
-    };
-
-    const formatAttStatus = (status) => {
-        const statusMap = {
-            'present': 'เข้าเรียน',
-            'absent': 'ไม่เข้าเรียน',
-            'late': 'มาสาย',
-            'activity': 'เข้าร่วมกิจกรรม',
-            'leave': 'ลา'
-        };
-
-        return statusMap[status] || status;
     };
 
     const getAttStatusClassName = (status) => {
@@ -106,11 +76,11 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
     };
 
     const fetchClassroomInfo = async () => {
-        if (!location.state?.classroomId) return;
+        if (!classroomId) return;
 
         try {
             setIsLoading(true);
-            const response = await axios.get(`${HOSTNAME}/a/classroom/${location.state.classroomId}`);
+            const response = await axios.get(`${HOSTNAME}/a/classroom/${classroomId}`);
             if (response.status === 200) {
                 setClassroomInfo(response.data);
                 setError(null);
@@ -125,26 +95,23 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
 
     const navigatePdfPage = () => {
-        navigate("/attendances/details/byday/pdf", { state: { studentList, totalStatus, date, classroomInfo } });
+        navigate("/attendances/details/byday/pdf", { state: { studentList,periodStatus, date, classroomInfo } });
     }
 
     useEffect(() => {
         fetchClassroomInfo();
-    }, []);
-
-    useEffect(() => {
         setupTotalStatus();
-    }, [studentList]);
+    }, []);
 
     if (studentList.length === 0) {
         return (
-            <div className="bg-white rounded-lg border border-line p-8 text-center">
+            <div className="p-8 text-center bg-white border rounded-lg border-line">
                 <div className="flex justify-center mb-4 text-text-color-alt">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <h3 className="text-lg font-medium text-text-color mb-1">ไม่มีการเรียนในวันนี้</h3>
+                <h3 className="mb-1 text-lg font-medium text-text-color">ไม่มีการเรียนในวันนี้</h3>
                 <p className="text-text-color-alt">ไม่มีการเรียนในวันนี้หรือยังไม่สร้างปฏิทินการเรียน</p>
             </div>
         );
@@ -152,17 +119,17 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            <div className="flex items-center justify-center py-8">
+                <div className="w-10 h-10 border-b-2 rounded-full animate-spin border-primary"></div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="px-4 py-3 text-red-700 border border-red-200 rounded-lg bg-red-50">
                 <div className="flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                     </svg>
                     <div>{error}</div>
@@ -173,8 +140,8 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 
     return (
         <div>
-            {studentList.length > 0 && totalStatus && classroomInfo && (
-                <div className="flex justify-end items-center space-x-2 mb-4">
+            {(studentList.length > 0 && classroomInfo && periodStatus.length > 0)&& (
+                <div className="flex items-center justify-end mb-4 space-x-2">
                     <ExportPdfButton
                         onClikFunction={navigatePdfPage}
                     />
@@ -184,13 +151,12 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                     />
                 </div>
             )}
-
             <div className="overflow-y-auto h-[500px] border border-gray-200 rounded-lg">
                 <table
                     ref={ref}
-                    className="w-full border-gray-200 border-collapse text-sm bg-white rounded-lg "
+                    className="w-full text-sm bg-white border-collapse border-gray-200 rounded-lg "
                 >
-                    <thead className="bg-white sticky top-0 z-20">
+                    <thead className="sticky top-0 z-20 bg-white">
                         <tr>
                             <th
                                 className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white"
@@ -208,7 +174,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                                 </th>
                             ))}
                         </tr>
-                        <tr className=" border-gray-200">
+                        <tr className="border-gray-200 ">
                             <th className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white" colSpan={3}>รหัสวิชา</th>
                             {studentList[0].attendance.map((attendance, index) => (
                                 <th
@@ -222,7 +188,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                                 </th>
                             ))}
                         </tr>
-                        <tr className=" border-gray-200">
+                        <tr className="border-gray-200 ">
                             <th
                                 className="px-6 py-3.5 text-left text-xs font-medium text-text-color-alt tracking-wider sticky left-0 outline-1 outline-gray-200 bg-white"
                                 style={{ minWidth: '80px' }}
@@ -256,10 +222,10 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                         {studentList.map((student, index) => (
                             <tr
                                 key={index}
-                                className="hover:bg-gray-50 transition-colors duration-150"
+                                className="transition-colors duration-150 hover:bg-gray-50"
                             >
                                 <td
-                                    className="px-6 py-4 font-medium text-text-color sticky left-0 bg-white z-0 outline-1 outline-gray-200"
+                                    className="sticky left-0 z-0 px-6 py-4 font-medium bg-white text-text-color outline-1 outline-gray-200"
                                     style={{ minWidth: '80px' }}
                                 >
                                     {student.stdNo}
@@ -299,7 +265,7 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
                             <tr key={idx} className="bg-gray-50">
                                 <td
                                     colSpan={3}
-                                    className="sticky left-0 bg-gray-50 z-20 px-6 py-3 font-medium text-text-color outline-1 outline-gray-200"
+                                    className="sticky left-0 z-20 px-6 py-3 font-medium bg-gray-50 text-text-color outline-1 outline-gray-200"
                                     style={{ width: '280px' }}
                                 >
                                     {row.label}
@@ -320,27 +286,27 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
             </div>
 
             <div className="mt-6">
-                <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-text-color mb-3">คำอธิบายสถานะ:</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+                    <h4 className="mb-3 text-sm font-medium text-text-color">คำอธิบายสถานะ:</h4>
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
                         <div className="flex items-center">
-                            <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+                            <span className="w-3 h-3 mr-2 bg-green-600 rounded-full"></span>
                             <span className="text-sm">เข้าเรียน</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                            <span className="w-3 h-3 mr-2 bg-red-600 rounded-full"></span>
                             <span className="text-sm">ไม่เข้าเรียน</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                            <span className="w-3 h-3 mr-2 bg-orange-500 rounded-full"></span>
                             <span className="text-sm">มาสาย</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
+                            <span className="w-3 h-3 mr-2 bg-blue-600 rounded-full"></span>
                             <span className="text-sm">เข้าร่วมกิจกรรม</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="w-3 h-3 bg-purple-600 rounded-full mr-2"></span>
+                            <span className="w-3 h-3 mr-2 bg-purple-600 rounded-full"></span>
                             <span className="text-sm">ลา</span>
                         </div>
                     </div>
@@ -351,5 +317,6 @@ export const AttendanceByDayDetailList = ({ studentList }) => {
 };
 
 AttendanceByDayDetailList.propTypes = {
-    studentList: PropTypes.array.isRequired
+    studentList: PropTypes.array.isRequired,
+    date: PropTypes.string
 };

@@ -2,34 +2,67 @@ import axios from "axios";
 import { HOSTNAME } from "../../../config";
 import { nameFormat } from "../../../helper";
 import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
+
+const SearchIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+);
+
+const BuildingIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+);
+
+const UserIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+);
+
 
 export const Searchpanel = ({ setSubjectActiveCard }) => {
     const [subjectList, setSubjectList] = useState([]);
     const [filteredSubjects, setFilteredSubjects] = useState([]);
     const [value, setValue] = useState("");
+    const [isCardActive, setIsCardActive] = useState(-1);
+
+    const getSubjectCardStyle = (subject) => {
+        const hash = subject.subCode.split('').reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+
+        const hue = hash % 360;
+        const saturation = 75 + (hash % 20);
+        const lightness = 40 + (hash % 10);
+
+        return {
+            borderLeft: `4px solid hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%)`
+        };
+    };
 
     const fetchSubjectList = async () => {
         try {
-            // setIsLoading(true);
-            // setError(null);
             const response = await axios.get(`${HOSTNAME}/a/subjects`);
             setSubjectList(response.data);
             setFilteredSubjects(response.data);
         } catch (error) {
-            console.error(error);
-            // setError("ไม่สามารถโหลดข้อมูลวิชาได้");
-        } finally {
-            // setIsLoading(false);
+            console.error("Failed to fetch subject list:", error);
         }
     };
-    const handleChange = (value) => {
-        setValue(value);
-        if (value.trim() === '') {
+
+    const handleChange = (event) => {
+        const searchTerm = event.target.value;
+        setValue(searchTerm);
+
+        if (searchTerm.trim() === '') {
             setFilteredSubjects(subjectList);
             return;
         }
 
-        const searchLower = value.toLowerCase();
+        const searchLower = searchTerm.toLowerCase();
         const results = subjectList.filter((subject) =>
             subject.teacher.fName.toLowerCase().includes(searchLower) ||
             subject.teacher.lName.toLowerCase().includes(searchLower) ||
@@ -44,72 +77,70 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
 
     useEffect(() => {
         fetchSubjectList();
-    }, [])
+    }, []);
 
     return (
-        <div className="relative max-w-[400px] rounded-xl shadow scroll-smooth bg-white overflow-y-scroll overflow-x-hidden">
-            <div>
-                <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-primary text-white">
-                    <h3 className="text-lg font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        ค้นหาและเลือกรายวิชา
-                    </h3>
-                </div>
-                <div className="p-4 border-b border-gray-200">
-                    <label className="text-xs text-text-color-alt block mb-1">
-                        ค้นหาโดย ชื่อวิชา, รหัสวิชา, ชื่อคุณครู
-                    </label>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                            value={value}
-                            placeholder="พิมพ์คำค้นหา..."
-                            onChange={(e) => handleChange(e.target.value)}
-                            autoFocus
-                        />
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
+        <div className="relative flex flex-col h-[730px] w-[1/4] bg-white rounded-lg shadow-lg border border-gray-200 z-0">
+            
+            <div className="p-4 border-b border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
+                    <SearchIcon />
+                    <span className="ml-2">ค้นหารายวิชา</span>
+                </h3>
+                <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <SearchIcon />
                     </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4 p-2 ">
-                    {filteredSubjects.map((subject) => (
-                        <div
-                            key={subject.subId} className="bg-white shadow rounded-xl p-5 transition-all duration-200 ease-in-out hover:scale-105 hover:cursor-grab"
-                            draggable
-                            onDragStart={() => setSubjectActiveCard(subject)}
-                            onDragEnd={() => setSubjectActiveCard(null)}
-                        >
-                            <h5 className="card-title text-text-color font-medium">{subject.subNameThai} <span className="text-text-color-alt ml-2 text-sm">({subject.subNameEng})</span></h5>
-                            <div className="card-body mt-1 flex items-center gap-3 text-sm">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs">
-                                    {subject.subCode}
-                                </span>
-                                <span className="inline-flex items-center text-text-color-alt">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                    {subject.subjectType.subTypeNameThai}
-                                </span>
-                            </div>
-                            <div className="mt-2 text-sm text-text-color-alt flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                คุณครู {subject.teacher.fName} {subject.teacher.lName}
-                            </div>
-                        </div>
-                    ))}
+                    <input
+                        type="text"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        value={value}
+                        placeholder="ชื่อวิชา, รหัส, ชื่อผู้สอน..."
+                        onChange={handleChange}
+                        autoFocus
+                    />
                 </div>
             </div>
 
+            <div className="flex-grow overflow-y-auto p-2 space-y-2">
+                {filteredSubjects.length > 0 ? (
+                    filteredSubjects.map((subject,index) => (
+                        <div 
+                            className={`${isCardActive === index && "opacity-50"}  p-4 border border-gray-200 rounded-md  w-full flex flex-col items-start space-y-1 transition-all duration-150 ease-in-out hover:bg-gray-50 hover:shadow hover:border-transparent hover:cursor-grab active:cursor-grabbing`}
+                            key={subject.subNameThai}
+                            draggable
+                            style={getSubjectCardStyle(subject)}
+                            onDragStart={() => {
+                                setSubjectActiveCard(subject)
+                                setIsCardActive(index);
+                            }}
+                            onDragEnd={() => {
+                                setSubjectActiveCard(null)
+                                setIsCardActive(-1);
+                            }}
+                        >
+                            <p className="text-sm font-medium text-gray-500">{subject.subCode}</p>
+                            <h5 className="text-base font-bold text-gray-800">{subject.subNameThai}</h5>
+                            <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                                {subject.subNameEng}
+                            </p>
+                            <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                                <BuildingIcon />
+                                <span>{subject.subjectType.subTypeNameThai}</span>
+                            </p>
+
+                            <p className="text-sm font-medium text-gray-600 italic inline-flex items-center">
+                                <UserIcon />
+                                คุณครู {nameFormat(subject.teacher.fName, subject.teacher.lName)}
+                            </p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-10 px-4">
+                        <p className="text-gray-500">ไม่พบรายวิชาที่ตรงกับคำค้นหา</p>
+                    </div>
+                )}
+            </div>
         </div>
-
-
     );
 };

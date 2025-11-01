@@ -5,6 +5,7 @@ import timegridPlugin from "@fullcalendar/timegrid";
 import axios from "axios";
 import { HOSTNAME } from "../../config";
 import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
 
 export const CalendarDetatils = ({classroom}) => {
     const [studyList, setStudyList] = useState([]);
@@ -31,6 +32,7 @@ export const CalendarDetatils = ({classroom}) => {
         // console.log(studyList);
     }, []);
 
+    // console.log(studyList);
     // Customize the calendar appearance with consistent styling
     const calendarOptions = {
         initialView: "dayGridMonth",
@@ -38,7 +40,7 @@ export const CalendarDetatils = ({classroom}) => {
         plugins: [dayGridPlugin, timegridPlugin, interactionPlugin],
         timeZone: "Asia/Bangkok",
         locale: "th",
-        height: 650,
+        height: 1000,
         eventDisplay: "block",
         eventDidMount: (info) => {
             info.el.style.cursor = 'pointer';
@@ -46,9 +48,10 @@ export const CalendarDetatils = ({classroom}) => {
             // Add tooltip with more details
             const tooltip = document.createElement('div');
             tooltip.classList.add('calendar-tooltip');
+            const startDateTimeFormat = DateTime.fromISO(info.event.startStr).toFormat("HH:mm น.");
             tooltip.innerHTML = `
                 <strong>${info.event.title}</strong><br>
-                เวลา: ${info.timeText || 'ทั้งวัน'}<br>
+                เวลา: ${startDateTimeFormat || 'ทั้งวัน'}<br>
             `;
             
             info.el.addEventListener('mouseover', () => {
@@ -86,21 +89,22 @@ export const CalendarDetatils = ({classroom}) => {
             day: 'วัน',
         },
         eventContent: (eventInfo) => {
+            const startDateTimeFormat = DateTime.fromISO(eventInfo.event.startStr)
             return (
-                <div className="flex items-center gap-1 text-xs">
-                    {eventInfo.timeText && (
-                        <span className="font-medium">{eventInfo.timeText}</span>
-                    )}
-                    <span className="truncate">{eventInfo.event.title}</span>
+                <div className={`flex truncate items-center gap-1 text-xs px-1 py-1 rounded-md text-white ${startDateTimeFormat > DateTime.now() ? "bg-blue-600 " : "bg-gray-600"} `}>
+                    <p className="text-sm">{startDateTimeFormat.toFormat('HH:mm น.')} {eventInfo.event.title}</p>
                 </div>
             );
         },
-        eventColor: '#4F46E5', // Primary color for consistency
+        eventColor: "transparent",
+        eventBackgroundColor: "transparent", 
+        eventBorderColor: "transparent", 
+        eventTextColor:"black",
         themeSystem: 'standard',
         // Custom styling for calendar elements
         dayCellClassNames: 'text-sm p-1',
         dayHeaderClassNames: 'text-xs font-medium py-2',
-        eventClassNames: 'rounded-md shadow-sm border-none',
+        // eventClassNames: 'hover:',
     };
 
     if (isLoading) {
@@ -127,7 +131,7 @@ export const CalendarDetatils = ({classroom}) => {
     return (
         <div className="calendar-container relative">
             {studyList.length > 0 ? (
-                <div className="rounded-lg overflow-hidden border border-line">
+                <div className="rounded-lg overflow-hidden">
                     <FullCalendar {...calendarOptions} />
                 </div>
             ) : (
@@ -151,9 +155,17 @@ export const CalendarDetatils = ({classroom}) => {
                                 <span className="inline-block w-3 h-3 rounded-full bg-blue-600 mr-2"></span>
                                 วันเรียนปกติตามตารางเรียน
                             </li> */}
-                            <li className="flex items-center">
+                            {/* <li className="flex items-center">
                                 <span className="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
                                 วันเรียนปกติตามตารางเรียน
+                            </li> */}
+                            <li className="flex items-center">
+                                <span className="inline-block w-3 h-3 rounded-full bg-gray-600 mr-2"></span>
+                                วิชาที่เรียนผ่านไปแล้วของวันนั้นในปฎิทิน
+                            </li>
+                            <li className="flex items-center">
+                                <span className="inline-block w-3 h-3 rounded-full bg-blue-600 mr-2"></span>
+                                วิชาที่ต้องเรียนในอนาคตของวันนั้นในปฎิทิน
                             </li>
                         </ul>
                     </div>

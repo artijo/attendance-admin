@@ -13,6 +13,22 @@ function Searchbar({ valueSetSelectedSubject }) {
     const [error, setError] = useState(null);
     const modalRef = useRef(null);
 
+
+    const getSubjectCardStyle = (subject) => {
+        // Generate a consistent color based on subject code
+        const hash = subject.subCode.split('').reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+
+        const hue = hash % 360;
+        const saturation = 75 + (hash % 20);
+        const lightness = 40 + (hash % 10);
+
+        return {
+            borderTop: `4px solid hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%)`
+        };
+    };
+
     const fetchSubjectList = async () => {
         try {
             setIsLoading(true);
