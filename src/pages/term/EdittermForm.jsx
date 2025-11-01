@@ -118,9 +118,8 @@ function EdittermForm() {
       let state = {
         title: "แก้ไขสำเร็จ",
         status: true, // แปลว่าสร้างเทอมสำเร็จเพิ่มเทอมสำเร็จ
-        msg: `แก้ไข ${valueNumberToThaiText(formData.semester)} ปีการศึกษา ${
-          formData.academicYear
-        } เรียบร้อยแล้ว`,
+        msg: `แก้ไข ${valueNumberToThaiText(formData.semester)} ปีการศึกษา ${formData.academicYear
+          } เรียบร้อยแล้ว`,
       };
       setIsSubmitting(false);
       navigate("/terms", { state: state });
@@ -235,11 +234,10 @@ function EdittermForm() {
                     value={formData.academicYear}
                     onChange={(e) => onChangeInputFormData(e)}
                     placeholder="เช่น 2566"
-                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${
-                      validationErrors.academicYear
+                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${validationErrors.academicYear
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   {validationErrors.academicYear && (
                     <p className="text-red-500 text-xs mt-1 font-body">
@@ -274,11 +272,10 @@ function EdittermForm() {
                     name="semester"
                     value={formData.semester}
                     onChange={(e) => onChangeInputFormData(e)}
-                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${
-                      validationErrors.semester
+                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${validationErrors.semester
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : ""
-                    }`}
+                      }`}
                   >
                     <option value="">-- เลือกเทอม --</option>
                     <option value="1">เทอม 1</option>
@@ -316,11 +313,10 @@ function EdittermForm() {
                     name="termStart"
                     value={formData.termStart}
                     onChange={(e) => onChangeInputFormData(e)}
-                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${
-                      validationErrors.termStart
+                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${validationErrors.termStart
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   {validationErrors.termStart && (
                     <p className="text-red-500 text-xs mt-1 font-body">
@@ -357,11 +353,10 @@ function EdittermForm() {
                     value={formData.termEnd}
                     onChange={(e) => onChangeInputFormData(e)}
                     min={formData.termStart}
-                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${
-                      validationErrors.termEnd
+                    className={`w-full rounded-lg border-gray-300 py-2.5 px-3 shadow-sm focus:border-primary focus:ring-primary font-body text-text-color ${validationErrors.termEnd
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   {validationErrors.termEnd && (
                     <p className="text-red-500 text-xs mt-1 font-body">
@@ -375,7 +370,28 @@ function EdittermForm() {
               </div>
 
               <div className="flex justify-end items-center mt-4 pt-4 border-t border-gray-100">
-                <Button isSubmitting={isSubmitting} />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex justify-center items-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      กำลังบันทึก...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      แก้ไข
+                    </>
+                  )}
+                </button>
               </div>
             </form>
           </div>
