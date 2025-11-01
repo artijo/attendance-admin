@@ -84,7 +84,8 @@ function CreateTimetableDragAndDrop() {
     //Error State 
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadinMessage, setLoadingMessage] = useState("กำลังโหลดข้อมูล...");
 
 
     const handleFormEnable = (timetablethistime, schedule) => {
@@ -116,9 +117,6 @@ function CreateTimetableDragAndDrop() {
             }
         } catch (error) {
             console.error(error);
-            // setError("ไม่สามารถโหลดข้อมูลตารางเรียนได้");
-        } finally {
-            // setIsLoading(false);
         }
     };
 
@@ -126,6 +124,8 @@ function CreateTimetableDragAndDrop() {
         e.preventDefault();
         const lateTimePlus = DateTime.fromISO(timetableEditNow.timeStart).plus({ minutes: lateTime }).toFormat('HH:mm:ss');
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังบันทึกการแก้ไขเวลามาสาย...");
             const response = await axios.put(`${HOSTNAME}/a/timetable/editlatetime`, { timetable: timetableEditNow, lateTime: lateTimePlus });
             if (response.status === 200) {
                 fetchTimetable(classroom.classId);
@@ -134,8 +134,13 @@ function CreateTimetableDragAndDrop() {
                 throw new Error(response.data.message);
             };
         } catch (error) {
-            console.error(error);
-        };
+            // console.error(error);
+            setIsLoading(false);
+            setLoadingMessage("");
+        }finally{
+            setIsLoading(false);
+            setLoadingMessage("");
+        }
     }
 
     const handleOnChangeNumberLateTime = (value) => {
@@ -154,6 +159,8 @@ function CreateTimetableDragAndDrop() {
         try {
             const text = `คุณต้องการที่จะลบวิชา ${timetablethistime.subject.subNameThai} ในคาบ ${schedule.period} เวลา ${schedule.timetableformate}`
             if (confirm(text) === true) {
+                setIsLoading(true);
+                setLoadingMessage("กำลังลบข้อมูล...");
                 const response = await axios.delete(`${HOSTNAME}/a/timetable/${timetablethistime.timetableId}`)
                 if (response.status === 200) {
                     // console.log('delete sucessful');
@@ -161,16 +168,22 @@ function CreateTimetableDragAndDrop() {
                 } else {
                     throw new Error(response.data.message);
                 }
-            } else {
-                return;
             }
+            return;
         } catch (error) {
-            console.error(error)
+            // console.error(error)
+            setIsLoading(false);
+            setLoadingMessage("");
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
     const callCreateTimetableBySubject = async (classroom, timetable, schedule, weekday) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังเพิ่มวิชาในตาราง...");
             const data = {
                 classroom,
                 timetable,
@@ -181,20 +194,22 @@ function CreateTimetableDragAndDrop() {
             fetchTimetable(classroom.classId);
         } catch (error) {
             setError(true);
-            // ถ้า server ส่ง error แบบ JSON ที่มี message
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
-
     }
 
     const callSwitchTimetableSubjectPeriod = async (timetable, classroom, schedule, weekday) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังย้ายวิชาไปยังคาบอื่น...");
             const data = {
                 classroom,
                 timetable,
@@ -205,19 +220,22 @@ function CreateTimetableDragAndDrop() {
             fetchTimetable(classroom.classId);
         } catch (error) {
             setError(true);
-            // ถ้า server ส่ง error แบบ JSON ที่มี message
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
     const callSwitchSubjectAndSubject = async (firstTimetable, secondTimetable, schedule) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("กำลังสลับวิชา...");
             const data = {
                 firstTimetable,
                 secondTimetable,
@@ -229,12 +247,13 @@ function CreateTimetableDragAndDrop() {
             setError(true);
             const message = error.response?.data?.message || error.message;
             setMessage(message);
-
             setTimeout(() => {
                 setError(false);
                 setMessage(null);
             }, 5000);
-
+        } finally {
+            setIsLoading(false);
+            setLoadingMessage("");
         }
     }
 
@@ -330,6 +349,14 @@ function CreateTimetableDragAndDrop() {
                     <ErrorAlertDialog message={message} />
                 </div>
             )}
+
+            {isLoading && (
+                <div className="fixed inset-0 z-50 w-full h-full flex flex-col justify-center items-center py-12 gap-5 ">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
+                    <p className="text-primary">{loadinMessage}</p>
+                </div>
+            )}
+
             <div>
                 <div className="mb-6">
                     <h1 className="text-2xl md:text-3xl font-bold text-primary font-heading">ปฏิทินการเรียน</h1>
@@ -345,38 +372,28 @@ function CreateTimetableDragAndDrop() {
                         <h2 className="text-lg font-medium text-text-color font-heading">
                             จัดการตารางเรียน
                         </h2>
-                        <p className="text-sm text-text-color-alt font-body">กำหนดวิชาที่ต้องเรียนในวันนั้น</p>
+                        <p className="text-sm text-text-color-alt font-body"> ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}</p>
                     </div>
                 </div>
             </div>
             {/* <h3 className="text-lg font-bold text-text-color font-heading">
-                                            ม.{classroom.classLevel}/{classroom.classRoom} เทอม {classroom.term.semester} ปีการศึกษา {classroom.term.academicYear + 543}
+                                           
                                         </h3> */}
             <div className="mt-5 content-center flex gap-4">
-                <div className="overflow-auto h-full w-[80%]">
+                <div className="overflow-auto h-full w-3/4">
                     <table className="w-full border-collapse">
                         <thead>
-                            <tr>
-                                <th className="px-2 py-3 border border-gray-200 text-center w-40">
-                                    <div className="text-xs text-nowrap font-medium text-text-color-alt tracking-wider uppercase font-heading">
-                                        วัน / คาบเรียน
-                                    </div>
-                                </th>
-                                {timeStudyList.map((time, index) => (
-                                    <th key={index} className={`w-40 py-3 px-2 text-center border border-gray-200 `}>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs text-nowrap font-medium text-primary tracking-wider uppercase font-heading">
-                                                {typeof time.period === 'number' ? `คาบที่ ${time.period}` : time.period}
-                                            </span>
-                                            <span className="text-xs text-nowrap text-text-color-alt font-body mt-1">
-                                                {time.timetableformate}
-                                            </span>
-                                        </div>
+                            <tr className="text-left text-xs">
+                                <th className="min-w-12  pb-2"></th>
+                                {timeStudyList.map((timeStudy, index) => (
+                                    <th key={index} className="min-w-52 pb-2">
+                                        <p className="text-blue-600">{timeStudy.period === "พักเที่ยง" ? "พักเที่ยง" : `คาบที่ ${timeStudy.period}`}</p>
+                                        <p className="text-gray-700">{timeStudy.timetableformate}</p>
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="text-xs">
                             {dateKey.length > 0 && (
                                 dateKey.map((date, index) => (
                                     <React.Fragment key={index}>

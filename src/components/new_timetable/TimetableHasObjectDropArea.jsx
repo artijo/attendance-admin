@@ -4,7 +4,20 @@ import { HOSTNAME } from "../../config";
 import { DateTime } from "luxon";
 // import DeleteDialog from "../dialog/DeleteDialog";
 
-export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, onDrop, schedule, weekday, callDeleteTimetableApi, handleFormEnable}) => {
+const BuildingIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+);
+
+const UserIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+);
+
+
+export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, onDrop, schedule, weekday, callDeleteTimetableApi, handleFormEnable }) => {
     const [deleteDiologShow, setDeleteDiologShow] = useState(false);
     const [clicked, setClicked] = useState(false);
     const timeStartActiveCard = DateTime.fromISO(timetablethistime.timeStart);
@@ -15,7 +28,12 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
         x: 0,
         y: 0,
     });
-    
+    const [isActive, setIsActive] = useState(false);
+
+    const subject = timetablethistime.subject;
+    const teacher = timetablethistime.subject.teacher;
+    const teacherFullName = `คุณครู${teacher.fName} ${teacher.lName}`
+
     const getSubjectCardStyle = (subject) => {
         // Generate a consistent color based on subject code
         const hash = subject.subCode.split('').reduce((acc, char) => {
@@ -27,28 +45,36 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
         const lightness = 40 + (hash % 10);
 
         return {
-            backgroundColor: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
-            borderLeft: `4px solid hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%)`
+            borderTop: `4px solid hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%)`
         };
     };
-    const subjectStyle = getSubjectCardStyle(timetablethistime.subject);
+    // const subjectStyle = getSubjectCardStyle(timetablethistime.subject);
 
     useEffect(() => {
         const handleClick = () => setClicked(false);
         window.addEventListener("click", handleClick);
-        
+
         return () => {
             window.removeEventListener("click", handleClick);
         };
     }, []);
 
     return (
-        <div
-            className="w-full text-nowrap h-[150px] text-left bg-gray-50 border border-gray-200 transition-transform duration-150 active:opacity-70 active:cursor-grab"
+        <td
+            style={getSubjectCardStyle(subject)}
+            className="min-w-52 h-20 border border-gray-100 p-2 cursor-grab"
             draggable
-            onDragStart={() => setActiveCard(timetablethistime)}
-            onDragEnd={() => setActiveCard(null)}
-            onDrop={() => onDrop(weekday, schedule)}
+            onDragStart={() => {
+                setActiveCard(timetablethistime)
+                setIsActive(true);
+            }}
+            onDragEnd={() => {
+                setActiveCard(null)
+                setIsActive(false);
+            }}
+            onDrop={() => {
+                onDrop(weekday, schedule)
+            }}
             onDragOver={e => e.preventDefault()}
             onContextMenu={(e) => {
                 e.preventDefault();
@@ -59,34 +85,27 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
                 });
             }}
         >
-            <div
-                className="h-full text-white flex flex-col relative"
-                style={subjectStyle}
-            >
-                
-                <div>
-                    <h5 className="w-fit text-sm font-medium mb-1 line-clamp-2 mt-2 ml-2">
-                        {timetablethistime.subject.subNameThai}
-                    </h5>
-                    <div className="text-xs bg-white/20 rounded px-1.5 py-0.5 w-fit ml-2 mb-1">
-                        {timetablethistime.subject.subCode}
-                    </div>
-                    <div className="mt-auto text-xs ml-2">
-                        <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            {timetablethistime.subject.teacher?.fName} {timetablethistime.subject.teacher?.lName}
-                        </div>
-                    </div>
-                    <p 
-                        className="text-xs mt-3 ml-auto mr-2 w-fit px-1.5 py-0.5 bg-white/50 rounded"
-                    >เลท {diffLateTime.minutes} นาที</p>
-                </div>
+            <div className={`${isActive && "opacity-50"} w-full h-full flex flex-col items-start space-y-1`}>
+                <p className="text-sm font-medium text-gray-500">{subject.subCode}</p>
+                <h5 className="text-base font-bold text-gray-800">{subject.subNameThai}</h5>
+                <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                    {subject.subNameEng}
+                </p>
+                <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                    <BuildingIcon />
+                    <span>{subject.subjectType.subTypeNameThai}</span>
+                </p>
+
+                <p className="text-sm font-medium text-gray-600 italic inline-flex items-center">
+                    <UserIcon />
+                    {teacherFullName}
+                </p>
+                <p className="text-xs font-medium text-gray-500">มาสายไม่เกิน {diffLateTime.minutes} นาที</p>
             </div>
+
             {clicked && (
                 <div
-                    className={`fixed w-[250px] box-border bg-white border border-gray-200`}
+                    className={`fixed w-[250px] box-border bg-white border border-gray-200 z-40`}
                     style={{
                         top: `${points.y}px`,
                         left: `${points.x}px`
@@ -103,7 +122,7 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
                             <p className="pt-1 group-hover/item:text-gray-700">ลบวิชานี้ออกจากคาบ</p>
 
                         </li>
-                        <li 
+                        <li
                             className="p-1 flex gap-2 group/item  items-center  text-sm hover:cursor-pointer hover:bg-gray-100 rounded"
                             onClick={() => handleFormEnable(timetablethistime, schedule)}
                         >
@@ -115,7 +134,6 @@ export const TimetableHasObjectDropArea = ({ timetablethistime, setActiveCard, o
                     </ul>
                 </div>
             )}
-            
-        </div>
+        </td>
     );
 };

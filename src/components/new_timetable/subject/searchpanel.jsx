@@ -2,7 +2,8 @@ import axios from "axios";
 import { HOSTNAME } from "../../../config";
 import { nameFormat } from "../../../helper";
 import { useEffect, useState } from "react";
-    
+import { set } from "react-hook-form";
+
 const SearchIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -26,6 +27,21 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
     const [subjectList, setSubjectList] = useState([]);
     const [filteredSubjects, setFilteredSubjects] = useState([]);
     const [value, setValue] = useState("");
+    const [isCardActive, setIsCardActive] = useState(-1);
+
+    const getSubjectCardStyle = (subject) => {
+        const hash = subject.subCode.split('').reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+
+        const hue = hash % 360;
+        const saturation = 75 + (hash % 20);
+        const lightness = 40 + (hash % 10);
+
+        return {
+            borderLeft: `4px solid hsl(${hue}, ${saturation + 10}%, ${lightness - 10}%)`
+        };
+    };
 
     const fetchSubjectList = async () => {
         try {
@@ -64,9 +80,8 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
     }, []);
 
     return (
-        <div className="relative flex flex-col h-[700px] max-w-[400px] bg-white rounded-lg shadow-lg border border-gray-200">
+        <div className="relative flex flex-col h-[730px] w-[1/4] bg-white rounded-lg shadow-lg border border-gray-200 z-0">
             
-            {/* Panel Header */}
             <div className="p-4 border-b border-gray-200">
                 <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
                     <SearchIcon />
@@ -87,39 +102,37 @@ export const Searchpanel = ({ setSubjectActiveCard }) => {
                 </div>
             </div>
 
-            {/* Scrollable List */}
             <div className="flex-grow overflow-y-auto p-2 space-y-2">
                 {filteredSubjects.length > 0 ? (
-                    filteredSubjects.map((subject) => (
-                        <div
-                            key={subject.subId}
-                            className="bg-white border border-gray-200 rounded-lg p-4 transition-all duration-150 ease-in-out hover:bg-gray-50 hover:border-blue-400 hover:cursor-grab active:cursor-grabbing"
+                    filteredSubjects.map((subject,index) => (
+                        <div 
+                            className={`${isCardActive === index && "opacity-50"}  p-4 border border-gray-200 rounded-md  w-full flex flex-col items-start space-y-1 transition-all duration-150 ease-in-out hover:bg-gray-50 hover:shadow hover:border-transparent hover:cursor-grab active:cursor-grabbing`}
+                            key={subject.subNameThai}
                             draggable
-                            onDragStart={() => setSubjectActiveCard(subject)}
-                            onDragEnd={() => setSubjectActiveCard(null)}
+                            style={getSubjectCardStyle(subject)}
+                            onDragStart={() => {
+                                setSubjectActiveCard(subject)
+                                setIsCardActive(index);
+                            }}
+                            onDragEnd={() => {
+                                setSubjectActiveCard(null)
+                                setIsCardActive(-1);
+                            }}
                         >
-                            {/* Card Header */}
-                            <div>
-                                <h5 className="font-semibold text-gray-800">{subject.subNameThai}</h5>
-                                <p className="text-sm text-gray-500">{subject.subNameEng}</p>
-                            </div>
+                            <p className="text-sm font-medium text-gray-500">{subject.subCode}</p>
+                            <h5 className="text-base font-bold text-gray-800">{subject.subNameThai}</h5>
+                            <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                                {subject.subNameEng}
+                            </p>
+                            <p className="text-sm font-medium text-gray-600 inline-flex items-center">
+                                <BuildingIcon />
+                                <span>{subject.subjectType.subTypeNameThai}</span>
+                            </p>
 
-                            {/* Card Footer with Details */}
-                            <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col space-y-1.5 text-sm text-gray-600">
-                                <div className="flex items-center">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {subject.subCode}
-                                    </span>
-                                </div>
-                                <div className="flex items-center">
-                                    <BuildingIcon />
-                                    <span>{subject.subjectType.subTypeNameThai}</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <UserIcon />
-                                    <span>คุณครู {nameFormat(subject.teacher.fName, subject.teacher.lName)}</span>
-                                </div>
-                            </div>
+                            <p className="text-sm font-medium text-gray-600 italic inline-flex items-center">
+                                <UserIcon />
+                                คุณครู {nameFormat(subject.teacher.fName, subject.teacher.lName)}
+                            </p>
                         </div>
                     ))
                 ) : (

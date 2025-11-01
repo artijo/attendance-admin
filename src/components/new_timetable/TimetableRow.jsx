@@ -2,32 +2,20 @@ import { formatDayOfWeeks } from "../../helper";
 import { TimetableDropArea } from "./TimetableDropArea";
 import { TimetableHasObjectDropArea } from "./TimetableHasObjectDropArea";
 
-export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop, callDeleteTimetableApi, handleFormEnable}) => {
+export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCard, onDrop, callDeleteTimetableApi, handleFormEnable }) => {
     return (
         <tr>
-            <th className="bg-gray-50 border border-gray-200">
-                <div className="text-sm font-medium text-text-color font-heading">
-                    {formatDayOfWeeks(date)}
-                </div>
-            </th>
+            <th className="text-right pr-2">{formatDayOfWeeks(date)}</th>
             {timeStudyList.map((schedule, index) => {
                 const timetablethistime = scheduleWeekDay.find((tt) => tt.timeStart === schedule.startDatabaseFormat);
                 if (schedule.startDatabaseFormat === "12:00:00") {
                     return (
-                        <td key={index} className="bg-gray-50 border border-gray-200  text-nowrap">
-                            <div className="flex flex-col justify-center items-center h-[150px] bg-amber-100 p-2 text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className="text-sm font-medium text-text-color">พักเที่ยง</span>
-                                <span className="text-xs text-text-color-alt">12:00 - 13:00</span>
-                            </div>
-                        </td>
+                        <td className="min-w-52 h-32 bg-white border border-gray-200" key={index}></td>
                     )
                 } else if (!timetablethistime) {
                     return (
-                        <td key={index} className="border border-gray-100 p-0">
-                            <TimetableDropArea 
+                        <td key={index} className="min-w-52 h-32 border border-gray-200 bg-gray-50">
+                            <TimetableDropArea
                                 schedule={schedule}
                                 weekday={date}
                                 onDrop={onDrop}
@@ -36,17 +24,16 @@ export const TimetableRow = ({ scheduleWeekDay, timeStudyList, date, setActiveCa
                     )
                 } else {
                     return (
-                        <td key={index} className="border border-gray-100 p-0 ">
-                            <TimetableHasObjectDropArea
-                                timetablethistime={timetablethistime}
-                                setActiveCard={setActiveCard}
-                                schedule={schedule}
-                                weekday={date}
-                                onDrop={onDrop}
-                                callDeleteTimetableApi={callDeleteTimetableApi}
-                                handleFormEnable={handleFormEnable}  
-                            />
-                        </td>
+                        <TimetableHasObjectDropArea
+                            timetablethistime={timetablethistime}
+                            setActiveCard={setActiveCard}
+                            schedule={schedule}
+                            weekday={date}
+                            onDrop={onDrop}
+                            callDeleteTimetableApi={callDeleteTimetableApi}
+                            handleFormEnable={handleFormEnable}
+                            key={index}
+                        />
                     )
                 }
             })}
