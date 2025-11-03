@@ -307,7 +307,7 @@ const DepartmentManage = () => {
 
       {/* Modals */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 bg-white border shadow-lg rounded-xl border-line">
             <div className="mb-5 text-center">
               <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-red-50">
@@ -355,7 +355,7 @@ const DepartmentManage = () => {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 bg-white border shadow-lg rounded-xl border-line">
             <div className="mb-5">
               <h3 className="mb-2 text-xl font-bold text-text-color font-heading">
