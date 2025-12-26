@@ -372,7 +372,7 @@ const ClassroomTypeManage = () => {
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
             <div className="text-center mb-5">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4">
@@ -421,7 +421,7 @@ const ClassroomTypeManage = () => {
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-line">
             {validationErrors.general && (
               <div className="mb-4" onClick={() => setValidationErrors({})}>
