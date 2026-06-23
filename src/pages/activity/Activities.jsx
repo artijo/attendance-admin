@@ -21,9 +21,8 @@ function Activities() {
       axios.get(HOSTNAME + "/a/activities/2"),
     ])
       .then(([continuousRes, nonContinuousRes]) => {
-        const continuous = continuousRes.data[0]?.activity || [];
-        const nonContinuous = nonContinuousRes.data[0]?.activity || [];
-
+        const continuous = continuousRes.data ?? [];
+        const nonContinuous = nonContinuousRes.data ?? [];
         setContinuousActivities(continuous);
         setNonContinuousActivities(nonContinuous);
         setTotalActivities(continuous.length + nonContinuous.length);
